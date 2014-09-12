@@ -26,6 +26,10 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use Myth\Route as Route;
+
+$routes = new Route();
+
 /*
 | -------------------------------------------------------------------------
 | URI ROUTING
@@ -77,6 +81,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'home';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+
+
+//--------------------------------------------------------------------
+
+// Make sure CI's Router gets the array they expect.
+$route = $routes->map($route);
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */
