@@ -10,3 +10,4 @@ src/vendor/*
 oldstuff/*
 src/application/logs/*
 src/application/cache/*
+tests/_output/*
