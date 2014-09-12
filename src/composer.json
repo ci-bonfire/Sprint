@@ -1,0 +1,25 @@
+{
+    "name" : "sprintphp/sprintphp",
+	"description" : "Dependencies for CodeIgniter's testing environment",
+    "version": "1.0-dev",
+    "type": "project",
+    "keywords": ["php", "codeigniter"],
+    "homepage": "http://sprintphp.com",
+    "license": "MIT AND OSL-3.0",
+    "authors": [
+        {
+            "name": "Lonnie Ezell",
+            "email": "lonnie@newmythmedia.com",
+            "homepage": "http://newmythmedia.com",
+            "role": "developer"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Myth\\": "myth/"
+        }
+    },
+	"require": {
+		"php": ">=5.3.0"
+	}
+}
