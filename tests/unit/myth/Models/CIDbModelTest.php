@@ -349,6 +349,19 @@ class CIDbModelTest extends \Codeception\TestCase\Test
 
     //--------------------------------------------------------------------
 
+    public function testReplace()
+    {
+        $data = [ 'some data' ];
+
+        $this->model->db->shouldReceive('replace')->once()->with('records_table', $data)->andReturn( true );
+        $this->model->db->shouldReceive('insert_id')->once()->andReturn(11);
+
+        $obj = $this->model->replace($data);
+        $this->assertEquals($obj, 11);
+    }
+
+    //--------------------------------------------------------------------
+
     public function testUpdateReturnsTrueOnSuccess()
     {
         $data = [ 'some data' ];
@@ -659,5 +672,18 @@ class CIDbModelTest extends \Codeception\TestCase\Test
 
     //--------------------------------------------------------------------
 
+    //--------------------------------------------------------------------
+    // CI's Database Methods
+    //--------------------------------------------------------------------
+    
+    public function testCanAccessSelect()
+    {
+        $this->model->db->shouldReceive('select')->once();
 
+        $this->model->select('something');
+    }
+    
+    //--------------------------------------------------------------------
+    
+    
 }

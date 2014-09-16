@@ -193,10 +193,10 @@ class CIDbModel
      * Does basic setup. Can pass the database connection into the constructor
      * to use that $db instead of the global CI one.
      *
-     * @param object $db                // A database/driver instance
-     * @param object $form_validaiton   // A form_validation library instance
+     * @param object $db // A database/driver instance
+     * @param object $form_validaiton // A form_validation library instance
      */
-    public function __construct($db=null, $form_validation=null)
+    public function __construct($db = null, $form_validation = null)
     {
         // Always protect our attributes
         array_unshift($this->before_insert, 'protect_attributes');
@@ -211,18 +211,16 @@ class CIDbModel
         $this->temp_return_type = $this->return_type;
 
         // Make sure our database is loaded
-        if (! is_null($db))
-        {
+        if (!is_null($db)) {
             $this->db = $db;
         }
 
-        if (! is_object($this->db)) {
+        if (!is_object($this->db)) {
             $this->load->database();
         }
 
         // Do we have a form_validation library?
-        if (! is_null($form_validation))
-        {
+        if (!is_null($form_validation)) {
             $this->form_validation = $form_validation;
         }
 
@@ -482,6 +480,45 @@ class CIDbModel
     //--------------------------------------------------------------------
 
     /**
+     * Performs the SQL standard for a combined DELETE + INSERT, using
+     * PRIMARY and UNIQUE keys to determine which row to replace.
+     *
+     * See CI's documentation for the replace method. We simply wrap
+     * our validation and triggers around their method.
+     *
+     * @param $data
+     * @param null $skip_validation
+     * @return bool
+     */
+    public function replace($data, $skip_validation=null)
+    {
+        $skip_validation = is_null($skip_validation) ? $this->skip_validation : $skip_validation;
+
+        if ($skip_validation === FALSE) {
+            $data = $this->validate($data, 'insert', $skip_validation);
+        }
+
+        if ($data !== FALSE) {
+            $this->db->replace($this->table_name, $data);
+
+            if ($this->return_insert_id) {
+                $id = $this->db->insert_id();
+
+                $this->trigger('after_insert', $id);
+
+                return $id;
+            }
+
+            return TRUE;
+        } else {
+            return FALSE;
+        }
+    }
+
+    //--------------------------------------------------------------------
+
+
+    /**
      * Updates an existing record in the database.
      *
      * @param  mixed $id The primary_key value of the record to update.
@@ -575,7 +612,7 @@ class CIDbModel
      */
     public function update_many($ids, $data, $skip_validation = null)
     {
-        if (! is_array($ids) || count($ids) == 0) return NULL;
+        if (!is_array($ids) || count($ids) == 0) return NULL;
 
         $skip_validation = is_null($skip_validation) ? $this->skip_validation : $skip_validation;
 
@@ -726,7 +763,7 @@ class CIDbModel
 
     public function delete_many($ids)
     {
-        if (! is_array($ids) || count($ids) == 0) return NULL;
+        if (!is_array($ids) || count($ids) == 0) return NULL;
 
         $ids = $this->trigger('before_delete', $ids);
 
@@ -834,7 +871,7 @@ class CIDbModel
      * @param bool $skip
      * @return $this
      */
-    public function skip_validation($skip=true)
+    public function skip_validation($skip = true)
     {
         $this->skip_validation = $skip;
 
@@ -896,38 +933,6 @@ class CIDbModel
         $this->return_insert_id = (bool)$return;
 
         return $this;
-    }
-
-    //--------------------------------------------------------------------
-
-
-    /**
-     * A convenience method to return options for form dropdown menus.
-     *
-     * Can pass either Key ID and Label Table names or Just Label Table name.
-     *
-     * @return array The options for the dropdown.
-     */
-    function format_dropdown()
-    {
-        $args = &func_get_args();
-
-        if (count($args) == 2) {
-            list($key, $value) = $args;
-        } else {
-            $key = $this->primary_key;
-            $value = $args[0];
-        }
-
-        $query = $this->db->select(array($key, $value))->get($this->table_name);
-
-        $options = array();
-        foreach ($query->result() as $row) {
-            $options[$row->{$key}] = $row->{$value};
-        }
-
-        return $options;
-
     }
 
     //--------------------------------------------------------------------
@@ -1010,7 +1015,7 @@ class CIDbModel
      */
     public function created_on($row)
     {
-        if (! array_key_exists($this->created_field, $row)) {
+        if (!array_key_exists($this->created_field, $row)) {
             $row[$this->created_field] = $this->set_date();
         }
 
@@ -1029,7 +1034,7 @@ class CIDbModel
      */
     public function modified_on($row)
     {
-        if (is_array($row) && ! array_key_exists($this->modified_field, $row)) {
+        if (is_array($row) && !array_key_exists($this->modified_field, $row)) {
             $row[$this->modified_field] = $this->set_date();
         }
 
@@ -1109,7 +1114,7 @@ class CIDbModel
      * @param  string $type Either 'update' or 'insert'.
      * @return array/bool       The original data or FALSE
      */
-    public function validate($data, $type = 'update', $skip_validation=null)
+    public function validate($data, $type = 'update', $skip_validation = null)
     {
         $skip_validation = is_null($skip_validation) ? $this->skip_validation : $skip_validation;
 
@@ -1220,47 +1225,19 @@ class CIDbModel
     //--------------------------------------------------------------------
 
     /**
-     * Allows you to retrieve error messages from the database
+     * Returns an array containing the 'code' and 'message' of the
+     * database's error, as provided by CI's database drivers.
      *
-     * @return string
+     * @return mixed
      */
-    public function get_db_error_message()
+    public function error()
     {
-        switch ($this->db->platform()) {
-            case 'cubrid':
-                return cubrid_errno($this->db->conn_id);
-            case 'mssql':
-                return mssql_get_last_message();
-            case 'mysql':
-                return mysql_error($this->db->conn_id);
-            case 'mysqli':
-                return mysqli_error($this->db->conn_id);
-            case 'oci8':
-                // If the error was during connection, no conn_id should be passed
-                $error = is_resource($this->db->conn_id) ? oci_error($this->db->conn_id) : oci_error();
-                return $error['message'];
-            case 'odbc':
-                return odbc_errormsg($this->db->conn_id);
-            case 'pdo':
-                $error_array = $this->db->conn_id->errorInfo();
-                return $error_array[2];
-            case 'postgre':
-                return pg_last_error($this->db->conn_id);
-            case 'sqlite':
-                return sqlite_error_string(sqlite_last_error($this->db->conn_id));
-            case 'sqlsrv':
-                $error = array_shift(sqlsrv_errors());
-                return !empty($error['message']) ? $error['message'] : null;
-            default:
-                /*
-                 * !WARNING! $this->db->_error_message() is supposed to be private and
-                 * possibly won't be available in future versions of CI
-                 */
-                return $this->db->_error_message();
-        }
+        return $this->db->error();
     }
 
     //--------------------------------------------------------------------
+
+
 
     //--------------------------------------------------------------------
     // CI Database  Wrappers
@@ -1429,6 +1406,54 @@ class CIDbModel
     {
         return $this->db->count_all_results($this->table_name);
     }
+
+    public function group_start($not = '', $type = 'AND ')
+    {
+        return $this->db->group_start($not, $type);
+    }
+
+    public function or_group_start()
+    {
+        return $this->db->or_group_start();
+    }
+
+    public function not_group_start()
+    {
+        return $this->db->not_group_start();
+    }
+
+    public function or_not_group_start()
+    {
+        return $this->db->or_not_group_start();
+    }
+
+    public function group_end()
+    {
+        return $this->db->group_end();
+    }
+
+    public function get_compiled_select($reset = TRUE)
+    {
+        return $this->db->get_compiled_select($this->table_name, $reset);
+    }
+
+    public function get_compiled_insert($reset = TRUE)
+    {
+        return $this->db->get_compiled_insert($this->table_name, $reset);
+    }
+
+    public function get_compiled_update($reset = TRUE)
+    {
+        return $this->db->get_compiled_update($this->table_name, $reset);
+    }
+
+    public function get_compiled_delete($reset = TRUE)
+    {
+        return $this->db->get_compiled_delete($this->table_name, $reset);
+    }
+
+
+    //--------------------------------------------------------------------
 
     /**
      * __get magic
