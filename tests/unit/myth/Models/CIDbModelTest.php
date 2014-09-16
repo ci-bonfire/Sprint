@@ -632,6 +632,78 @@ class CIDbModelTest extends \Codeception\TestCase\Test
 
     //--------------------------------------------------------------------
 
+    public function testIncrement()
+    {
+        $this->model->db->shouldReceive('where')->with('id', 11)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('set')->with('hits', 'hits+1', false)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('update')->with('records_table')->once()->andReturn(true);
+
+        $obj = $this->model->increment(11, 'hits');
+        $this->assertTrue($obj);
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testIncrementWithDifferentValue()
+    {
+        $this->model->db->shouldReceive('where')->with('id', 11)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('set')->with('hits', 'hits+5', false)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('update')->with('records_table')->once()->andReturn(true);
+
+        $obj = $this->model->increment(11, 'hits', 5);
+        $this->assertTrue($obj);
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testIncrementConvertsWrongSignsOnValues()
+    {
+        $this->model->db->shouldReceive('where')->with('id', 11)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('set')->with('hits', 'hits+5', false)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('update')->with('records_table')->once()->andReturn(true);
+
+        $obj = $this->model->increment(11, 'hits', -5);
+        $this->assertTrue($obj);
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testDecrement()
+    {
+        $this->model->db->shouldReceive('where')->with('id', 11)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('set')->with('hits', 'hits-1', false)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('update')->with('records_table')->once()->andReturn(true);
+
+        $obj = $this->model->decrement(11, 'hits');
+        $this->assertTrue($obj);
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testDecrementWithDifferentValue()
+    {
+        $this->model->db->shouldReceive('where')->with('id', 11)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('set')->with('hits', 'hits-5', false)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('update')->with('records_table')->once()->andReturn(true);
+
+        $obj = $this->model->decrement(11, 'hits', 5);
+        $this->assertTrue($obj);
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testDecrementConvertsWrongSignsOnValues()
+    {
+        $this->model->db->shouldReceive('where')->with('id', 11)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('set')->with('hits', 'hits-5', false)->once()->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('update')->with('records_table')->once()->andReturn(true);
+
+        $obj = $this->model->decrement(11, 'hits', -5);
+        $this->assertTrue($obj);
+    }
+
+    //--------------------------------------------------------------------
+
     //--------------------------------------------------------------------
     // Validation Checks
     //--------------------------------------------------------------------

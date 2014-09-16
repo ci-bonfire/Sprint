@@ -712,6 +712,48 @@ class CIDbModel
     //--------------------------------------------------------------------
 
     /**
+     * Increments the value of field for a given row, selected by the
+     * primary key for the table.
+     *
+     * @param $id
+     * @param $field
+     * @param int $value
+     * @return mixed
+     */
+    public function increment($id, $field, $value=1)
+    {
+        $value = (int)abs($value);
+
+        $this->db->where($this->primary_key, $id);
+        $this->db->set($field, "{$field}+{$value}", false);
+
+        return $this->db->update($this->table_name);
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Increments the value of field for a given row, selected by the
+     * primary key for the table.
+     *
+     * @param $id
+     * @param $field
+     * @param int $value
+     * @return mixed
+     */
+    public function decrement($id, $field, $value=1)
+    {
+        $value = (int)abs($value);
+
+        $this->db->where($this->primary_key, $id);
+        $this->db->set($field, "{$field}-{$value}", false);
+
+        return $this->db->update($this->table_name);
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
      * Deletes a row by it's primary key value.
      *
      * @param  mixed $id The primary key value of the row to delete.
