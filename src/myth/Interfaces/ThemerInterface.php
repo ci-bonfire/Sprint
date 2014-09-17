@@ -64,6 +64,16 @@ interface ThemerInterface
     //--------------------------------------------------------------------
 
     /**
+     * Sets the default theme to use.
+     *
+     * @param $theme
+     * @return mixed
+     */
+    public function setDefaultTheme($theme);
+
+    //--------------------------------------------------------------------
+
+    /**
      * Sets the current view file to render.
      *
      * @param $file

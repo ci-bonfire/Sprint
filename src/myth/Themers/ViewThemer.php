@@ -9,6 +9,8 @@ class ViewThemer implements ThemerInterface
 
     protected $theme = '';
 
+    protected $default_theme = null;
+
     protected $layout = 'index';
 
     protected $view = '';
@@ -37,7 +39,7 @@ class ViewThemer implements ThemerInterface
         }
 
         // Set our default theme.
-        $this->theme = config_item('theme.default_theme');
+        $this->default_theme = config_item('theme.default_theme');
 
         // Register our variants with the engine.
         $variants = config_item('theme.variants');
@@ -65,14 +67,16 @@ class ViewThemer implements ThemerInterface
         // Render our current view content
         $data['view_content'] = $this->content();
 
-        if (! isset($this->folders[$this->theme])) {
-            throw new \LogicException("No folder found for theme: {$this->theme}.");
+        $theme = empty($this->theme) ? $this->default_theme : $this->theme;
+
+        if (! isset($this->folders[$theme])) {
+            throw new \LogicException("No folder found for theme: {$theme}.");
         }
 
         // Make the path available within views.
-        $data['theme_path'] = $this->folders[$this->theme];
+        $data['theme_path'] = $this->folders[$theme];
 
-        return $this->display($this->folders[$this->theme] . '/' . $this->layout, $data);
+        return $this->display($this->folders[$theme] . '/' . $this->layout, $data);
     }
 
     //--------------------------------------------------------------------
@@ -178,6 +182,20 @@ class ViewThemer implements ThemerInterface
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Sets the default theme to use if another isn't specified.
+     *
+     * @param $theme
+     * @return mixed|void
+     */
+    public function setDefaultTheme($theme)
+    {
+        $this->default_theme = $theme;
+    }
+
+    //--------------------------------------------------------------------
+
 
     /**
      * Sets the current view file to render.
