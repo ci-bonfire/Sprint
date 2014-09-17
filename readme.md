@@ -22,9 +22,10 @@ The following is being built for the initial release:
 * (Done) Powerful MY_Model with standard CRUD, db wrappers, observer methods and in-model validation
 * (Done) MY_Controller with simple theming, rendering methods for other data types (like json) and more
 * (Done) Extended Router to include module support, named routes, HTTP verb-based routing, Restful resources and scoped routes/areas.
+* (Done, needs more testing) Simple, but flexible, Template system
 * Simple Auth system 
 * Module Support, without being able to call other controllers. That simply gets too complex and causes too many problems. Instead, it's simply the ability to keep MVC triads in modules that can still be called from the URI.
-* Ready-to-roll AJAX system using [Eldarion AJAX](https://github.com/eldarion/eldarion-ajax)
+* (Partially Done) Ready-to-roll AJAX system using [Eldarion AJAX](https://github.com/eldarion/eldarion-ajax)
 * Better Database Migrations, with CLI tool for building and running
 * Database Seeding with CLI tool
 * Code Builder with simple generators in place, but fully customizable and easy to add your own.

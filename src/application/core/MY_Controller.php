@@ -1,7 +1,5 @@
 <?php
 
-use Myth\Controllers\BaseController as BaseController;
-
-class MY_Controller extends BaseController {
+class MY_Controller extends \Myth\Controllers\ThemedController {
 
 }

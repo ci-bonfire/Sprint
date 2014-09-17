@@ -23,19 +23,6 @@ class BaseController extends \CI_Controller
     // If set, this model file will automatically be loaded.
     protected $model_file = NULL;
 
-    private $use_view = '';
-    protected $view_folder = '';
-    private $use_layout = '';
-
-    protected $external_scripts = array();
-    protected $stylesheets = array();
-
-    // Stores data variables to be sent to the view.
-    protected $vars = array();
-
-    // For status messages
-    protected $message;
-
     //--------------------------------------------------------------------
 
     public function __construct()
@@ -171,145 +158,9 @@ class BaseController extends \CI_Controller
 
     //--------------------------------------------------------------------
 
-    /**
-     * Sets a data variable to be sent to the view during the render() method.
-     *
-     * @param string $name
-     * @param mixed $value
-     */
-    public function setVar($name, $value = null)
-    {
-        if (is_array($name)) {
-            foreach ($name as $k => $v) {
-                $this->vars[$k] = $v;
-            }
-        } else {
-            $this->vars[$name] = $value;
-        }
-    }
 
     //--------------------------------------------------------------------
-
-
-    /**
-     * Specifies a custom view file to be used during the render() method.
-     * Intended to be used as a chainable 'scope' method prioer to calling
-     * the render method.
-     *
-     * Examples:
-     *      $this->view('my_view')->render();
-     *      $this->view('users/login')->render();
-     *
-     * @param  string $view The relative path/name of the view file to use.
-     * @return MY_Controller instance
-     */
-    public function view($view)
-    {
-        $this->use_view = $view;
-
-        return $this;
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Specifies a custom layout file to be used during the render() method.
-     * Intended to be used as a chainable 'scope' method prioer to calling
-     * the render method.
-     *
-     * Examples:
-     *      $this->layout('two_left')->render();
-     *
-     * @param  string $view The relative path/name of the view file to use.
-     * @return MY_Controller instance
-     */
-    public function layout($view)
-    {
-        $this->use_layout = $view;
-
-        return $this;
-    }
-
-    //--------------------------------------------------------------------
-
-    //--------------------------------------------------------------------
-    // Status Messages
-    //--------------------------------------------------------------------
-
-    /**
-     * Sets a status message (for displaying small success/error messages).
-     * This is used in place of the session->flashdata functions since you
-     * don't always want to have to refresh the page to show the message.
-     *
-     * @param string $message The message to save.
-     * @param string $type The string to be included as the CSS class of the containing div.
-     */
-    public function setMessage($message = '', $type = 'info')
-    {
-        if (!empty($message)) {
-            if (isset($this->session)) {
-                $this->session->set_flashdata('message', $type . '::' . $message);
-            }
-
-            $this->message = array(
-                'type' => $type,
-                'message' => $message
-            );
-        }
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Retrieves the status message to display (if any).
-     *
-     * @param  string $message [description]
-     * @param  string $type [description]
-     * @return array
-     */
-    public function message($message = '', $type = 'info')
-    {
-        $return = array(
-            'message' => $message,
-            'type' => $type
-        );
-
-        // Does session data exist?
-        if (empty($message) && class_exists('CI_Session')) {
-            $message = $this->session->flashdata('message');
-
-            if (!empty($message)) {
-                // Split out our message parts
-                $temp_message = explode('::', $message);
-                $return['type'] = $temp_message[0];
-                $return['message'] = $temp_message[1];
-
-                unset($temp_message);
-            }
-        }
-
-        // If message is empty, we need to check our own storage.
-        if (empty($message)) {
-            if (empty($this->message['message'])) {
-                return '';
-            }
-
-            $return = $this->message;
-        }
-
-        // Clear our session data so we don't get extra messages on rare occassions.
-        if (class_exists('CI_Session')) {
-            $this->session->set_flashdata('message', '');
-        }
-
-        return $return;
-    }
-
-    //--------------------------------------------------------------------
-
-
-    //--------------------------------------------------------------------
-    // Other Rendering Methods
+    // Simple Rendering Methods
     //--------------------------------------------------------------------
 
     /**
@@ -321,7 +172,7 @@ class BaseController extends \CI_Controller
      * @param  bool $typography If TRUE, will run the text through 'Auto_typography'
      *                          before outputting to the browser.
      *
-     * @return [type]       [description]
+     * @return void [type]       [description]
      */
     public function renderText($text, $typography = false)
     {
@@ -348,7 +199,8 @@ class BaseController extends \CI_Controller
      * Do NOT do any further actions after calling this action.
      *
      * @param  mixed $json The data to be converted to JSON.
-     * @return [type]       [description]
+     * @throws RenderException
+     * @return void [type]       [description]
      */
     public function renderJSON($json)
     {
@@ -390,7 +242,8 @@ class BaseController extends \CI_Controller
      * Headers already sent error.
      *
      * @param  mixed $js The javascript to output.
-     * @return [type]       [description]
+     * @throws RenderException
+     * @return void [type]       [description]
      */
     public function renderJS($js = null)
     {
@@ -464,40 +317,6 @@ class BaseController extends \CI_Controller
         $as_array = $format == 'array' ? true : false;
 
         return json_decode(file_get_contents('php://input'), $as_array, $depth);
-    }
-
-    //--------------------------------------------------------------------
-
-    //--------------------------------------------------------------------
-    // 'Asset' functions
-    //--------------------------------------------------------------------
-
-    /**
-     * Adds an external javascript file to the 'external_scripts' array.
-     *
-     * @param [type] $filename [description]
-     */
-    public function addScript($filename)
-    {
-        if (strpos($filename, 'http') === FALSE) {
-            $filename = base_url() . 'assets/js/' . $filename;
-        }
-
-        $this->external_scripts[] = $filename;
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Adds an external stylesheet file to the 'stylesheets' array.
-     */
-    public function addStyle($filename)
-    {
-        if (strpos($filename, 'http') === FALSE) {
-            $filename = base_url() . 'assets/css/' . $filename;
-        }
-
-        $this->stylesheets[] = $filename;
     }
 
     //--------------------------------------------------------------------

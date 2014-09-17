@@ -56,10 +56,54 @@
     $config['backup_cache_type']    = 'dummy';
 
 //--------------------------------------------------------------------
+// Themer
+//--------------------------------------------------------------------
+// Sets the Themer Engine to use.
+//
+    $config['active_themer'] = '\Myth\Themers\ViewThemer';
+
+//--------------------------------------------------------------------
+// Theme Paths
+//--------------------------------------------------------------------
+// The aliases and paths to the theme folders. The key of each element
+// is the alias name. This is used to reference within the 'display'
+// method of the
+    $config['theme.paths'] = array(
+        'bootstrap'  => APPPATH .'../themes/bootstrap3',
+        'foundation' => APPPATH .'../themes/foundation5',
+        'docs'       => APPPATH .'../themes/docs'
+    );
+
+//--------------------------------------------------------------------
+// Variants
+//--------------------------------------------------------------------
+// Variants are different versions of the view files that can be used.
+// These are used by Themers to serve up different versions of
+// the view files based on the device type that is looking at the page.
+//
+// The key is the name the variant is referenced by.
+// The value is the string that is added to the view name.
+//
+    $config['theme.variants'] = array(
+        'phone'  => '+phone',
+        'tablet' => '+tablet'
+    );
+
+//--------------------------------------------------------------------
+// AutoDetect Variants?
+//--------------------------------------------------------------------
+// If TRUE, the ThemedController (and children) will automatically
+// attempt to determine whether the user is using a desktop,
+// mobile phone, or tablet to browse the site. This is then set
+// in the Themer so it will attempt to use variant files.
+//
+    $config['theme.autodetect_variant'] = true;
+
+//--------------------------------------------------------------------
 // Default Theme
 //--------------------------------------------------------------------
 // This is the name of the folder that holds the default theme parts.
 // This can be overridden in each controller via the $theme class variable.
 //
-$config['default_theme'] = 'bootstrap3';
+    $config['theme.default_theme'] = 'bootstrap';
 
