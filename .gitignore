@@ -2,12 +2,12 @@
 .idea/*
 
 # Development Settings
-src/application/config/development/*
+application/config/development/*
 
 # Composer Installs
-src/vendor/*
+vendor/*
 
 oldstuff/*
-src/application/logs/*
-src/application/cache/*
+application/logs/*
+application/cache/*
 tests/_output/*

@@ -1,8 +1,8 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
 /* load MX core classes */
-require_once dirname(__FILE__).'/Lang.php';
-require_once dirname(__FILE__).'/Config.php';
+require_once dirname(__FILE__) . '/Lang.php';
+require_once dirname(__FILE__) . '/Config.php';
 
 /**
  * Modular Extensions - HMVC
@@ -11,10 +11,9 @@ require_once dirname(__FILE__).'/Config.php';
  * @link	http://codeigniter.com
  *
  * Description:
- * This library extends the CodeIgniter CI_Controller class and creates an application 
- * object allowing use of the HMVC design pattern.
+ * This library creates a CI class which allows the use of modules in an application.
  *
- * Install this file as application/third_party/MX/Base.php
+ * Install this file as application/third_party/MX/Ci.php
  *
  * @copyright	Copyright (c) 2011 Wiredesignz
  * @version 	5.4
@@ -37,22 +36,20 @@ require_once dirname(__FILE__).'/Config.php';
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **/
-class CI extends CI_Controller
+class CI
 {
 	public static $APP;
 	
 	public function __construct() {
 		
 		/* assign the application instance */
-		self::$APP = $this;
+		self::$APP = CI_Controller::get_instance();
 		
 		global $LANG, $CFG;
 		
 		/* re-assign language and config for modules */
 		if ( ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
 		if ( ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
-		
-		parent::__construct();
 	}
 }
 
