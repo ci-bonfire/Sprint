@@ -27,26 +27,9 @@ class ViewThemer implements ThemerInterface
 
     //--------------------------------------------------------------------
 
-    public function __construct()
+    public function __construct( $ci )
     {
-        $this->ci =& get_instance();
-
-        // Register our paths with the themer
-        $paths = config_item('theme.paths');
-
-        foreach ($paths as $key => $path) {
-            $this->addThemePath($key, $path);
-        }
-
-        // Set our default theme.
-        $this->default_theme = config_item('theme.default_theme');
-
-        // Register our variants with the engine.
-        $variants = config_item('theme.variants');
-
-        foreach ($variants as $key => $value) {
-            $this->addVariant($key, $value);
-        }
+        $this->ci = $ci;
     }
 
     //--------------------------------------------------------------------
@@ -56,6 +39,7 @@ class ViewThemer implements ThemerInterface
      * controller and is generally the last method called.
      *
      * @param string $layout If provided, will override the default layout.
+     * @return mixed
      */
     public function render($layout = null)
     {

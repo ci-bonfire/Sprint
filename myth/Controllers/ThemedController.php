@@ -75,7 +75,24 @@ class ThemedController extends BaseController
             throw new \RuntimeException('No Themer chosen.');
         }
 
-        $this->themer = new $themer();
+        $this->themer = new $themer( get_instance() );
+
+        // Register our paths with the themer
+        $paths = config_item('theme.paths');
+
+        foreach ($paths as $key => $path) {
+            $this->themer->addThemePath($key, $path);
+        }
+
+        // Set our default theme.
+        $this->themer->setDefaultTheme( config_item('theme.default_theme') );
+
+        // Register our variants with the engine.
+        $variants = config_item('theme.variants');
+
+        foreach ($variants as $key => $value) {
+            $this->themer->addVariant($key, $value);
+        }
 
         $this->detectVariant();
     }
@@ -217,6 +234,14 @@ class ThemedController extends BaseController
 
     //--------------------------------------------------------------------
 
+    //--------------------------------------------------------------------
+    // Utility Methods
+    //--------------------------------------------------------------------
+
+    /**
+     * Detects whether the item is being displayed on a desktop, phone,
+     * or tablet device.
+     */
     protected function detectVariant()
     {
         // Variant Detection and setup

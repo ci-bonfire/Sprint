@@ -26,7 +26,7 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Home extends MY_Controller {
+class Home extends \Myth\Controllers\ThemedController {
 
 	/**
 	 * Index Page for this controller.
