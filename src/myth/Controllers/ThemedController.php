@@ -34,6 +34,18 @@ class ThemedController extends BaseController
     protected $themer = null;
 
     /**
+     * Allows per-controller override of theme.
+     * @var null
+     */
+    protected $theme = null;
+
+    /**
+     * Per-controller override of the current layout file.
+     * @var null
+     */
+    protected $layout = null;
+
+    /**
      * Stores an array of javascript files.
      * @var array
      */
@@ -80,6 +92,14 @@ class ThemedController extends BaseController
      */
     public function render($data = array())
     {
+        // Determine the correct theme to use
+        $theme = ! empty($this->theme) ? $this->theme : config_item('theme.default_theme');
+        $this->themer->setTheme($theme);
+
+        // Determine the correct layout to use
+        $layout = !empty($this->layout) ? $this->layout : 'index';
+        $this->themer->setLayout($layout);
+
         // Merge any saved vars into the data
         $data = array_merge($data, $this->vars);
 
@@ -90,6 +110,10 @@ class ThemedController extends BaseController
 
         // Build our notices from the theme's view file.
         $data['notice'] = $this->themer->display($this->themer->theme() . ':notice', ["notice" => $this->message()]);
+
+        // Make sure any scripts/stylesheets are available to the view
+        $data['external_scripts'] = $this->external_scripts;
+        $data['stylesheets'] = $this->stylesheets;
 
         $this->themer->set($data);
 
