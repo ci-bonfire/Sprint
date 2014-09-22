@@ -1,0 +1,282 @@
+/*--------------------------------------------------------------------
+// Basic Styles
+//--------------------------------------------------------------------*/
+
+html, body {
+	height: 100%;
+}
+body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42;
+    background-color: #fff;
+    color: #333;
+}
+h1, h2, h3, h4, h5 {
+	line-height: 1.5em;
+	margin: 0;
+}
+ul, ol, dl {
+	line-height: 1.7em;
+}
+a:link,
+a:visited {
+    color: #eba768;
+}
+
+/*
+    Sidebar
+*/
+.sidebar {
+    padding-top: 40px;
+}
+.sidebar h3 {
+    text-transform: uppercase;
+    font-weight: normal;
+    font-size: 1em;
+    margin-bottom: 1em;
+}
+.sidebar .nav > li > a {
+    padding: 0 0 0 1em;
+}
+
+/*
+    Document Map
+*/
+.doc-map .nav > li > a:link,
+.doc-map .nav > li > a:visited {
+    color: #999;
+    font-weight: 500;
+    font-size: 13px;
+}
+.doc-map .nav > li > .nav > li > a:link,
+.doc-map .nav > li > .nav > li > a:visited {
+    color: #999;
+    font-weight: 400;
+    font-size: 12px;
+    padding-left: 30px;
+}
+
+/*
+    TOC
+*/
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+.toc-wrapper {
+    position: relative;
+    padding-bottom: 7px;
+    background: #5b8089;
+    margin-bottom: 30px;
+}
+.toc-wrapper .container {
+    position: relative;
+}
+#toc-btn {
+    position: absolute;
+    right: 2px;
+    padding: 4px 12px;
+    background: #5b8089;
+    color: #fff;
+    font-weight: lighter;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    z-index: 99;
+}
+.inner-shadow {
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/*
+    Help Formatting
+ */
+.page {
+    padding-right: 40px;
+}
+.page > *:first-child { margin: 0 !important; }
+.page p, .page blockquote, .page ul, .page ol,
+.page dl, .page table, .page pre {
+    margin: 15px 0;
+}
+.page ul ul {
+	margin-top: 0;
+}
+.page p {
+    line-height: 1.7;
+}
+.page h1 {
+    font-size: 2.8em;
+    padding-bottom: 9px;
+    margin: 30px 0 20px;
+    border-bottom: 1px solid #eee;
+}
+.page h2 {
+    font-size: 2.2em;
+    border-bottom: 1px solid #eee;
+    margin: 1.5em 0 15px;
+    padding: 0;
+    font-weight: bold;
+    line-height: 1.7;
+}
+.page h3 {
+    font-size: 1.5em;
+    margin: 1em 0 15px;
+    padding: 0;
+    font-weight: bold;
+    line-height: 1.7;
+    cursor: text;
+    position: relative;
+}
+.page h4 {
+    font-weight: 300;
+    font-height: 1.5em;
+    text-transform: uppercase;
+    padding-top: 2.0em;
+}
+.page h5 {
+    font-size: 1.3em;
+    font-weight: bold;
+    padding-top: 1.0em;
+}
+tt {
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    overflow: auto;
+    padding: 0px 5px;
+    border-radius: 3px;
+}
+
+.page table {
+    width: 100%;
+    overflow: auto;
+    display: block;
+    border-collapse: collapse;
+    border-spacing: 2px;
+    border: 1px solid #ccc;
+}
+.page tr {
+    border-top: 1px solid #ccc;
+}
+.page table th, .page table td {
+    border: 1px solid #ddd;
+    padding: 6px 13px;
+    font-size: 15px;
+    line-height: 1.7
+}
+.page table th { font-weight: bold; }
+.page table tr:nth-child(2n) {
+    background-color: #f8f8f8
+}
+
+.top-btn {
+    float: right;
+    position: relative;
+    margin-top: -3em;
+    color: #ddd;
+    text-decoration: none;
+    font-weight: lighter;
+}
+.top-btn:hover { color: #777; }
+
+/*
+    Table of Contents
+*/
+.toc { font-size: 12px; font-weight: normal; }
+.toc > div {
+    padding-top: 1em;
+}
+.toc h3 {
+    font-size: 13px;
+    line-height: 2.5;
+    font-weight: bold;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+.toc .nav {
+    margin-bottom: 1.5em;
+}
+.toc .nav > li {
+    margin: 0;
+    padding: 0 0 2px 0;
+}
+.toc .nav > li > a {
+    color: #eee;
+    padding: 0px 0px;
+    margin: 0px;
+    line-height: 1.4;
+}
+.toc .nav > li > a:hover {
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+code,
+pre {
+  padding: 0 3px 2px;
+  font-family: Monaco, Menlo, Consolas, "Courier New", monospace;
+  font-size: 12px;
+  color: #333333;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+code {
+  padding: 2px 4px;
+  color: #d14;
+  background-color: #f7f7f9;
+  border: 1px solid #e1e1e8;
+  white-space: nowrap;
+}
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 20px;
+  word-break: break-all;
+  word-wrap: break-word;
+  white-space: pre;
+  white-space: pre-wrap;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+pre.prettyprint {
+  margin-bottom: 20px;
+}
+pre code {
+  padding: 0;
+  color: inherit;
+  white-space: pre;
+  white-space: pre-wrap;
+  background-color: transparent;
+  border: 0;
+}
+.pre-scrollable {
+  max-height: 340px;
+  overflow-y: scroll;
+}
+
+/*
+    Search Results
+*/
+.search-result {
+   padding-bottom: 1em;
+    margin-bottom: 1em;
+    border-bottom: 1px solid #eee;
+}
+.search-result .result-header{
+    font-weight: bold;
+    font-size: 120%;
+    margin-bottom: 0;
+}
+.search-result .result-url {
+    color: #ccc;
+    font-weight: 300;
+}
+
