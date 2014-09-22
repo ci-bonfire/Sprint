@@ -18,7 +18,7 @@
 */
 $config['docs.folders'] = [
     'application'   => APPPATH .'docs',
-    'sprint'        => APPPATH .'../myth/_docs_src'
+    'developer'     => APPPATH .'../myth/_docs_src'
 ];
 
 /*
@@ -37,7 +37,7 @@ $config['docs.theme'] = 'docs';
 | Sets the default group that the docs will redirect to if no area is
 | provided. Must match the alias of one of the paths in 'docs.folders'.
 */
-$config['docs.default_group'] = 'sprint';
+$config['docs.default_group'] = 'developer';
 
 /*
 |--------------------------------------------------------------------

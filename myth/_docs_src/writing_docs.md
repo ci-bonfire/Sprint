@@ -1,6 +1,6 @@
 # Writing Your Own Documentation
 
-Bonfire makes including documentation with your application, or even just one of your custom modules, as simple as including some text files.
+Sprint makes including documentation with your application, or even just one of your custom modules, as simple as including some text files.
 
 ## Docs Locations
 
@@ -16,13 +16,13 @@ For any modules that you create and want to create documentation for, just place
 The files must have the file extension of `.md` in order to be recognized by the system. When a page is displayed, the Document Map in the sidebar will automatically scan your docs and generate the map based on the `<h2>` and <`h3>` tags in the document.
 
 ### Documentation Groups
-By default, Bonfire ships with documentation in two groups, one for your application and one for Bonfire's docs. These can be found at `application/docs` and `bonfire/docs` respectively. These groups are the items you see in the topbar when viewing the default documentation. You can create your own groups to further customize your documentation.
+By default, Sprint ships with documentation in two groups, one for your application and one for Sptint's docs. These can be found at `application/docs` and `myth/_docs_src` respectively. These groups are the items you see in the topbar when viewing the default documentation. You can create your own groups to further customize your documentation.
 
-The settings are located in the docs module, `config/docs.php` configuration file.
+The settings are located in the docs module, `myth/CIModules/docs/config/docs.php` configuration file. To make changes to this you should consider copying this file to the `application/config` folder.
 
 	$config['docs.folders'] = [
 	    'application'   => APPPATH .'docs',
-    	'bonfire'     => BFPATH .'docs'
+    	'developer'     => APPPATH .'../myth/_docs_src'
 	];
 
 The keys of the array determine the URI segment they will be displayed at, as well as the name that is displayed in the topbar. The value of the array items is the folder where the doc files can be found.
@@ -38,20 +38,18 @@ To use a TOC, create a file called `_toc.ini` within your docs folder. This file
 
 To group the files and provide a header, you would use the .ini's section syntax.
 
-<pre>
-[Section 1]
-my_page = My New Documentation Package
-</pre>
+	[Section 1]
+	my_page = My New Documentation Package
 
-The filename must include in it's "path" the area the documentation came from, either 'application', 'bonfire', or your module's folder name.
+The filename must include in it's "path" the area the documentation came from, either 'application', 'developer', or your module's folder name.
 
     application/my_page = My New Documentation Package
     my_module/my_page   = My New Module Docs
     
 ## Configuring Documentation
-The docs system allows you to do some simple customization that allows you to integrate it into the needs of your application easily. The system uses 2 groups 'application' and 'developer' to separate your application specific documentation from Bonfire's core documentation.
+The docs system allows you to do some simple customization that allows you to integrate it into the needs of your application easily. The system uses 2 groups 'application' and 'developer' to separate your application specific documentation from Sprint's core documentation.
 
-All documentation config settings can be found in the module's config file at `bonfire/modules/docs/config/docs.php`. 
+All documentation config settings can be found in the module's config file at `myth/CIModules/docs/config/docs.php`. 
 
 ### Setting Theme
 To specify a theme to be used only for the documentation, set the `docs.theme` setting. This allows you to completely customize the how the information looks and is displayed to match your branding, ad needs, etc.
@@ -61,7 +59,7 @@ To specify a theme to be used only for the documentation, set the `docs.theme` s
 ### Default Group
 You can specify any of the available docs groups to be the default group displayed when a user simply views `/docs` on your site.
 
-	$config['docs.default_group'] = 'bonfire';
+	$config['docs.default_group'] = 'developer';
 
 ### File Extension
 The docs system requires that your files be in Markdown formatting, but you can use any file extension that you choose. Note, though, that it only recognizes a single extension, so if you change it, you must change the file extension for all of the files within `bonfire/docs` also.
