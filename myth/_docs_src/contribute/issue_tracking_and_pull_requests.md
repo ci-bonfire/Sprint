@@ -6,15 +6,16 @@ In return, we will show the same respect in addressing your issue.
 
 If you think this guide can be improved, please let us know.
 
-## Types of issues<a name="types-of-issues"></a>
+<a name="types-of-issues"></a>
+## Types of issues
 
 The GitHub issue tracker should only be used for one of the following:
 
-+ **Bugs** &mdash; when a feature of the project has been _identified as
++ **Bugs** - when a feature of the project has been _identified as
   broken_.
-+ **Feature requests** &mdash; when you ask for a _new feature_ to be added to a
++ **Feature requests** -when you ask for a _new feature_ to be added to a
   Bonfire.
-+ **Contribution enquiries** &mdash; when you want to discuss whether a _new
++ **Contribution enquiries** - when you want to discuss whether a _new
   feature_ or _change_ would be accepted in Sprint before you begin
 development work on it.
 
@@ -27,7 +28,8 @@ user guides,  CodeIgniter has great user doc's and a execellent forum.
 + **Please avoid derailing issues.** Keep the discussion on topic and respect the
 opinions of others.
 
-## Bugs<a name="bugs"></a>
+<a name="bugs"></a>
+## Bugs
 
 A bug is a _demonstrable problem_ that is caused by the code in the
 repository.
@@ -38,18 +40,18 @@ improve the code for everyone else!
 
 Please read the following guidelines for reporting bugs:
 
-1. **Use the GitHub issue search** &mdash; check if the issue has already been
+1. **Use the GitHub issue search** - check if the issue has already been
    reported. If it has been, please comment on the existing issue.
 
-2. **Check if the issue has been fixed** &mdash; the latest `master` or
+2. **Check if the issue has been fixed** -the latest `master` or
    development branch may already contain a fix.
 
-3. **Isolate the demonstrable problem** &mdash; make sure that the code in the
+3. **Isolate the demonstrable problem** - make sure that the code in the
    project's repository is _definitely_ responsible for the issue. Create a
 [reduced test case](http://css-tricks.com/6263-reduced-test-cases/) - an
 extremely simple and immediately viewable example of the issue.
 
-4. **Include a live example** &mdash; provide a link to your reduced test case
+4. **Include a live example** - provide a link to your reduced test case
    when appropriate (e.g. if the issue is related to frond-end technologies).
 Please use [jsFiddle](http://jsfiddle.net) to host examples.
 
@@ -79,14 +81,16 @@ details will help me and others to assess and fix any potential bugs.
 A good bug report shouldn't leave us needing to chase you up to get further
 information that is required to assess or fix the bug.
 
-## Feature requests<a name="feature-requests"></a>
+<a name="feature-requests"></a>
+## Feature requests
 
 Feature requests are welcome! Please provide links to examples or articles that
 help to illustrate the specifics of a feature you're requesting. The more
 detail, the better. It will help us to decide whether the feature is something we
 agree should become part of the project.
 
-## Contribution enquiries<a name="enquiries"></a>
+<a name="enquiries"></a>
+## Contribution enquiries
 
 Contribution enquiries should take place before any significant pull request,
 otherwise you risk spending a lot of time working on something that we might not
@@ -98,7 +102,8 @@ enquiries might revolve around refactoring code or porting a project to
 different languages.
 
 
-## Pull requests<a name="pull-requests"></a>
+<a name="pull-requests"></a>
+## Pull requests
 
 Good pull requests - patches, improvements, new features - are a fantastic
 help.
@@ -125,7 +130,7 @@ project:
    <dev-branch>`).
 5. Create a new topic branch to contain your feature, change, or fix ( `git
    checkout -b <topic-branch-name>` ).
-6. Make sure that your changes adhere to the current [coding conventions](coding_conventions) used
+6. Make sure that your changes adhere to the current [coding conventions](contribute/coding_conventions) used
    throughout the project - indentation, accurate comments, etc.
 7. Commit your changes in logical chunks. Please adhere to these [git commit
    message guidelines](http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)
