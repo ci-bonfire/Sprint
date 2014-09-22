@@ -27,7 +27,7 @@ class ViewThemer implements ThemerInterface
 
     //--------------------------------------------------------------------
 
-    public function __construct( $ci )
+    public function __construct($ci)
     {
         $this->ci = $ci;
     }
@@ -74,15 +74,17 @@ class ViewThemer implements ThemerInterface
         // Calc our view name based on current method/controller
         $dir = $this->ci->router->fetch_directory();
 
-//        if (strpos($dir, 'modules')) {
-//            $dir = str_replace(APPPATH . 'modules/', '', $dir);
-//            $dir = str_replace(BFPATH . 'modules/', '', $dir);
-//            $dir = str_replace('controllers/', '', $dir);
-//        }
+        foreach (\Modules::$locations as $key => $offset) {
 
-//        if ($dir == $this->ci->router->fetch_module() . '/') {
-//            $dir = '';
-//        }
+            if (stripos($dir, 'module') !== false) {
+                $dir = str_replace($offset, '', $dir);
+                $dir = str_replace('controllers/', '', $dir);
+            }
+        }
+
+        if ($dir == $this->ci->router->fetch_module() . '/') {
+            $dir = '';
+        }
 
         $view = ! empty($this->view) ? $this->view :
             $dir . $this->ci->router->fetch_class() . '/' . $this->ci->router->fetch_method();
@@ -107,7 +109,7 @@ class ViewThemer implements ThemerInterface
      * @param $view
      * @return mixed
      */
-    public function display($view, $data=null)
+    public function display($view, $data = null)
     {
         $theme = null;
         $variant_view = null;
@@ -124,17 +126,19 @@ class ViewThemer implements ThemerInterface
         $data = is_array($data) ? $data : $this->vars;
 
         // if using a variant, add it to the view name.
-        if (! empty($this->current_variant))
-        {
-            $variant_view = $this->variants[ $this->current_variant ];
+        if (! empty($this->current_variant)) {
+            $variant_view = $this->variants[$this->current_variant];
 
             $output = $this->ci->load->view_path($variant_view, $data, true);
         }
 
         // If that didn't find anything, then try it without a variant
-        if (empty($output))
-        {
-            $output = $this->ci->load->view_path($view, $data, true);
+        if (empty($output)) {
+            if (realpath($view .'.php')) {
+                $output = $this->ci->load->view_path($view, $data, true);
+            } else {
+                $output = $this->ci->load->view($view, $data, true);
+            }
         }
 
         return $output;
@@ -242,7 +246,7 @@ class ViewThemer implements ThemerInterface
      * view as if it was a single $key/$value pair.
      *
      * @param string|array $key
-     * @param mixed        $value
+     * @param mixed $value
      * @return $this
      */
     public function set($key, $value = null)
