@@ -1,16 +1,16 @@
 # Enhanced Routes
 
-CodeIgniter's Router is showing it's age against the powerful solutions found in other PHP frameworks like Laravel. Bonfire's Routing is meant to help bring CodeIgniter into the modern age, or at least help it take a step in that direction.
+CodeIgniter's Router is showing it's age against the powerful solutions found in other PHP frameworks like Laravel. Sprint's Routing is meant to help bring CodeIgniter into the modern age, or at least help it take a step in that direction.
 
 The Route library is the core of the new flexibility. It is inspired by Jamie Rumbelow's excellent [Pigeon](https://github.com/jamierumbelow/pigeon) class, as well as [Laravel's routing system](http://laravel.com/docs/routing).
 
 ## Initializing the class
 This class is automatically loaded for you in the router and you should not have need to do it yourself. If you do, though, it is found through the autoloader: 
 
-	$route = new \Bonfire\Route();
+	$route = new \Myth\Route();
 
 ## Basic Routes
-When creating your routes file, you have the option of sticking with the standard CodeIgniter routes array, or using Bonfire's `Route` library. The Route library provides enhanced features, including named routes, grouping, creating `areas` (like Bonfire's old contexts), and more.
+When creating your routes file, you have the option of sticking with the standard CodeIgniter routes array, or using Sprint's `Route` library. The Route library provides enhanced features, including named routes, grouping, creating `areas`, and more.
 
 When using the Route library, you use the `any()` method in place of adding to the `$routes` array.
 
@@ -148,11 +148,11 @@ These can then be used within any of your routing calls.
 	$route->any('users/{my_name}', 'users/by_name/$1');
 	
 
-## Route Prefixing
+## Route Groups
 
-There are times when you'll want to group a disparate set of routes under a single section. You can use route prefixing for this.
+There are times when you'll want to group a disparate set of routes under a single section. You can use route groups for this.
 
-    Route::prefix('api', function() {
+    Route::group('api', function() {
         Route::all('users', 'users/index');
         Route::get('photos', 'photos/show');
     });
@@ -161,30 +161,6 @@ Would be equivalent to the following routes:
 
     $route['api/users'] = 'users/index';
     $route['api/photos'] = 'photos/show';
-
-
-
-
-## Named Routes
-
-You can save routes with a name associated with them that makes it much easier and safer to call routes within your application. The provides a single name that you can always count on being the same that maps to the $from portion of the route. If you need to restructure your site, simply change the routing while keeping the name the same. Any place in your application that called that route will still work. This works with prefixing and all of the other flexbile routing the class provides.
-
-    Route::prefix('area', function(){
-        Route::any('posts', 'posts/index', array('as' => 'blog'));
-    });
-
-    redirect( Route::named('blog') );
-
-
-## Grouping Routes
-You can group routes to make it instantly clear that they're all together and for semantics sake. This effectively adds a prefix to the routes inside of the group. You can even group routes within groups, if you need to.
-
-	$route->group('api/v1', function () {
-		$route->resources('photos');
-	});
-
-	// Would have routes like: 
-	$route['api/v1/photos'] = 'photos';
 
 
 
@@ -214,7 +190,7 @@ If you need to offset your parameter numbers for the above routes, you can pass 
    
 ## Blocking Routes
 
-You might find times where you need to block access to one or more routes. For example, you might have relocated the default user login page so that script-kiddies couldn't find your page by assuming it's a Bonfire site and would be at a normal location. In this case, you would want to block any access to /users/login, which would normally work just fine. In this case you can use the `block()` method to block as many routes as you'd like.
+You might find times where you need to block access to one or more routes. For example, you might have relocated the default user login page so that script-kiddies couldn't find your page by assuming it's a Sprint site and would be at a normal location. In this case, you would want to block any access to /users/login, which would normally work just fine. In this case you can use the `block()` method to block as many routes as you'd like.
 
     $route->block('users/login', 'photos/(:num)');
 

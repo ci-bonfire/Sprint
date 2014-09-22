@@ -26,9 +26,8 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-use Myth\Route as Route;
 
-$routes = new Route();
+$routes = new \Myth\Route();
 
 /*
 | -------------------------------------------------------------------------
