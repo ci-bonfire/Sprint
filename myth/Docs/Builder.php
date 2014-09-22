@@ -54,13 +54,12 @@ class Builder implements DocBuilderInterface
 
     //--------------------------------------------------------------------
 
-    public function __construct( $config=array() )
+    public function __construct($config = array())
     {
-        $this->apppath = ! empty($config['apppath']) ? rtrim($config['apppath'], '/') .'/' : '';
+        $this->apppath = ! empty($config['apppath']) ? rtrim($config['apppath'], '/') . '/' : '';
     }
 
     //--------------------------------------------------------------------
-
 
 
     /**
@@ -70,7 +69,7 @@ class Builder implements DocBuilderInterface
      * search through all of the folders in the order they were given to the library,
      * until it finds the first one.
      *
-     * @param string $path             The 'path' of the file (relative to the docs
+     * @param string $path The 'path' of the file (relative to the docs
      *                                 folder. Usually from the URI)
      * @param string $restrictToFolder (Optional) The folder nickname
      *
@@ -127,8 +126,8 @@ class Builder implements DocBuilderInterface
         }
 
         // Prepare some things and cleanup others
-        $groups      = array_keys($this->doc_folders);
-        $site_url    = rtrim($site_url, '/') . '/';
+        $groups = array_keys($this->doc_folders);
+        $site_url = rtrim($site_url, '/') . '/';
         $current_url = rtrim($current_url, '#/');
 
         // Try to determine the current_url if one isn't set.
@@ -193,8 +192,8 @@ class Builder implements DocBuilderInterface
             $content = substr($content, 5);
 
             // Trailing div also?
-            if (substr($content, - 6) == '</div>') {
-                $content = substr($content, 0, - 6);
+            if (substr($content, -6) == '</div>') {
+                $content = substr($content, 0, -6);
             }
         }
 
@@ -220,14 +219,14 @@ class Builder implements DocBuilderInterface
      * extend the
      *
      * @param string $callback_name
-     * @param bool   $cascade       // If FALSE the formatting of a component ends here. If TRUE, will be passed to next formatter.
+     * @param bool $cascade // If FALSE the formatting of a component ends here. If TRUE, will be passed to next formatter.
      * @return $this
      */
-    public function registerFormatter($callback_name='', $cascade=false)
+    public function registerFormatter($callback_name = '', $cascade = false)
     {
         if (empty($callback_name)) return;
 
-        $this->formatters[] = array( $callback_name => $cascade );
+        $this->formatters[] = array($callback_name => $cascade);
 
         return $this;
     }
@@ -244,8 +243,7 @@ class Builder implements DocBuilderInterface
     {
         if (! is_array($this->formatters)) return $str;
 
-        foreach ($this->formatters as $formatter)
-        {
+        foreach ($this->formatters as $formatter) {
             $method = key($formatter);
             $cascade = $formatter[$method];
 
@@ -357,11 +355,11 @@ class Builder implements DocBuilderInterface
         // deal with that also.
         $columns = [];
 
-        $current_column       = 0;
+        $current_column = 0;
         $current_column_count = 0;
-        $keys                 = array_keys($toc);
+        $keys = array_keys($toc);
 
-        for ($i = 0; $i <= $section_count; $i ++) {
+        for ($i = 0; $i <= $section_count; $i++) {
             if (! isset($keys[$i])) {
                 continue;
             }
@@ -374,7 +372,7 @@ class Builder implements DocBuilderInterface
                 $current_column_count += count($section) + 1;
             } else {
                 $current_column_count = 0;
-                $current_column ++;
+                $current_column++;
             }
 
             $columns[$current_column][$keys[$i]] = $section;
@@ -498,7 +496,7 @@ class Builder implements DocBuilderInterface
      * search through all of the folders in the order they were given to the library,
      * until it finds the first one.
      *
-     * @param string $path             The 'path' of the file (relative to the docs
+     * @param string $path The 'path' of the file (relative to the docs
      *                                 folder. Usually from the URI)
      * @param string $restrictToFolder (Optional) The nickname of one of the
      *                                 folders to restrict the search to.
@@ -633,13 +631,13 @@ class Builder implements DocBuilderInterface
         $currentChild = 0;
 
         foreach ($xml->children() as $childType => $line) {
-            $currentChild ++;
+            $currentChild++;
 
             // Make sure that our current object is
             // stored and reset.
             if ($childType == 'h1' || $childType == 'h2') {
                 if (count($current_obj)) {
-                    $map[]       = $current_obj;
+                    $map[] = $current_obj;
                     $current_obj = [];
                 }
             }
@@ -648,8 +646,8 @@ class Builder implements DocBuilderInterface
                 $name = (string)$line;
                 $link = strtolower(str_replace(' ', '_', (string)$line));
 
-                $current_obj['name']  = $name;
-                $current_obj['link']  = '#' . $link;
+                $current_obj['name'] = $name;
+                $current_obj['link'] = '#' . $link;
                 $current_obj['items'] = [];
 
                 // Insert a named anchor into the $content
@@ -698,36 +696,30 @@ class Builder implements DocBuilderInterface
      * representation of it. Sub-folders contained with the
      * directory will be mapped as well.
      *
-     * @param	string	$source_dir		Path to source
-     * @param	int	$directory_depth	Depth of directories to traverse
-     *						(0 = fully recursive, 1 = current dir, etc)
-     * @param	bool	$hidden			Whether to show hidden files
-     * @return	array
+     * @param    string $source_dir Path to source
+     * @param    int $directory_depth Depth of directories to traverse
+     *                        (0 = fully recursive, 1 = current dir, etc)
+     * @param    bool $hidden Whether to show hidden files
+     * @return    array
      */
     protected function directory_map($source_dir, $directory_depth = 0, $hidden = FALSE)
     {
-        if ($fp = @opendir($source_dir))
-        {
-            $filedata	= array();
-            $new_depth	= $directory_depth - 1;
-            $source_dir	= rtrim($source_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        if ($fp = @opendir($source_dir)) {
+            $filedata = array();
+            $new_depth = $directory_depth - 1;
+            $source_dir = rtrim($source_dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-            while (FALSE !== ($file = readdir($fp)))
-            {
+            while (FALSE !== ($file = readdir($fp))) {
                 // Remove '.', '..', and hidden files [optional]
-                if ($file === '.' OR $file === '..' OR ($hidden === FALSE && $file[0] === '.'))
-                {
+                if ($file === '.' OR $file === '..' OR ($hidden === FALSE && $file[0] === '.')) {
                     continue;
                 }
 
-                is_dir($source_dir.$file) && $file .= DIRECTORY_SEPARATOR;
+                is_dir($source_dir . $file) && $file .= DIRECTORY_SEPARATOR;
 
-                if (($directory_depth < 1 OR $new_depth > 0) && is_dir($source_dir.$file))
-                {
-                    $filedata[$file] = directory_map($source_dir.$file, $new_depth, $hidden);
-                }
-                else
-                {
+                if (($directory_depth < 1 OR $new_depth > 0) && is_dir($source_dir . $file)) {
+                    $filedata[$file] = directory_map($source_dir . $file, $new_depth, $hidden);
+                } else {
                     $filedata[] = $file;
                 }
             }

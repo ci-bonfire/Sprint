@@ -1,6 +1,7 @@
 <?php
 
 namespace Myth\Docs;
+
 use Myth\Interfaces\DocSearchInterface;
 
 /**
@@ -72,7 +73,7 @@ class Search implements DocSearchInterface
     /**
      * The entry point for performing a search of the documentation.
      *
-     * @param null  $terms
+     * @param null $terms
      * @param array $folders
      *
      * @return array|null
@@ -83,7 +84,7 @@ class Search implements DocSearchInterface
             return null;
         }
 
-        $results           = [];
+        $results = [];
         $this->doc_folders = $folders;
 
         foreach ($folders as $group => $folder) {
@@ -141,12 +142,12 @@ class Search implements DocSearchInterface
                 continue;
             }
 
-            $path      = is_string($dir) ? $folder . '/' . $dir . '/' . $file : $folder . '/' . $file;
+            $path = is_string($dir) ? $folder . '/' . $dir . '/' . $file : $folder . '/' . $file;
             $term_html = htmlentities($term);
 
             // Read in the file text
             $handle = fopen($path, 'r');
-            $text   = fread($handle, $this->byte_size);
+            $text = fread($handle, $this->byte_size);
 
             // Do we have a match in here somewhere?
             $found = stristr($text, $term) || stristr($text, $term_html);
@@ -156,9 +157,9 @@ class Search implements DocSearchInterface
             }
 
             // Escape our terms to safely use in a preg_match
-            $excerpt   = strip_tags($text);
-            $term      = preg_quote($term);
-            $term      = str_replace("/", "\/", "{$term}");
+            $excerpt = strip_tags($text);
+            $term = preg_quote($term);
+            $term = str_replace("/", "\/", "{$term}");
             $term_html = preg_quote($term_html);
             $term_html = str_replace("/", "\/", "{$term_html}");
 
@@ -173,20 +174,20 @@ class Search implements DocSearchInterface
                     if ($file_count >= $this->max_per_file) {
                         continue;
                     }
-                    $result_url = '/docs/'. $group_name .'/'. str_replace('.md', '', $file);
+                    $result_url = '/docs/' . $group_name . '/' . str_replace('.md', '', $file);
 
                     foreach ($this->doc_folders as $alias => $folder) {
                         $result_url = str_replace($folder, $alias, $result_url);
                     }
 
                     $results[] = [
-                        'title'   => $this->extractTitle($excerpt, $file),
-                        'file'    => $folder . '/' . $file,
-                        'url'     => $result_url,
+                        'title' => $this->extractTitle($excerpt, $file),
+                        'file' => $folder . '/' . $file,
+                        'url' => $result_url,
                         'extract' => $this->buildExtract($excerpt, $term, $match[0][0])
                     ];
 
-                    $file_count ++;
+                    $file_count++;
                 }
             }
         }
@@ -203,14 +204,14 @@ class Search implements DocSearchInterface
      * extend the
      *
      * @param string $callback_name
-     * @param bool   $cascade       // If FALSE the formatting of a component ends here. If TRUE, will be passed to next formatter.
+     * @param bool $cascade // If FALSE the formatting of a component ends here. If TRUE, will be passed to next formatter.
      * @return $this
      */
-    public function registerFormatter($callback_name='', $cascade=false)
+    public function registerFormatter($callback_name = '', $cascade = false)
     {
         if (empty($callback_name)) return;
 
-        $this->formatters[] = array( $callback_name => $cascade );
+        $this->formatters[] = array($callback_name => $cascade);
 
         return $this;
     }
@@ -227,8 +228,7 @@ class Search implements DocSearchInterface
     {
         if (! is_array($this->formatters)) return $str;
 
-        foreach ($this->formatters as $formatter)
-        {
+        foreach ($this->formatters as $formatter) {
             $method = key($formatter);
             $cascade = $formatter[$method];
 
@@ -241,7 +241,6 @@ class Search implements DocSearchInterface
     }
 
     //--------------------------------------------------------------------
-
 
 
     //--------------------------------------------------------------------
@@ -308,9 +307,9 @@ class Search implements DocSearchInterface
 
         $extract = substr($excerpt, $start_offset);
 
-        $extract = strip_tags( $this->format($extract) );
+        $extract = strip_tags($this->format($extract));
 
-        $extract = $this->firstXWords($extract,$this->excerpt_length);
+        $extract = $this->firstXWords($extract, $this->excerpt_length);
 
         // Wrap the search term in a span we can style.
         $extract = str_ireplace($term, '<span class="term-hilight">' . $term . '</span>', $extract);
@@ -362,36 +361,30 @@ class Search implements DocSearchInterface
      * representation of it. Sub-folders contained with the
      * directory will be mapped as well.
      *
-     * @param	string	$source_dir		Path to source
-     * @param	int	$directory_depth	Depth of directories to traverse
-     *						(0 = fully recursive, 1 = current dir, etc)
-     * @param	bool	$hidden			Whether to show hidden files
-     * @return	array
+     * @param    string $source_dir Path to source
+     * @param    int $directory_depth Depth of directories to traverse
+     *                        (0 = fully recursive, 1 = current dir, etc)
+     * @param    bool $hidden Whether to show hidden files
+     * @return    array
      */
     protected function directory_map($source_dir, $directory_depth = 0, $hidden = FALSE)
     {
-        if ($fp = @opendir($source_dir))
-        {
-            $filedata	= array();
-            $new_depth	= $directory_depth - 1;
-            $source_dir	= rtrim($source_dir, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR;
+        if ($fp = @opendir($source_dir)) {
+            $filedata = array();
+            $new_depth = $directory_depth - 1;
+            $source_dir = rtrim($source_dir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-            while (FALSE !== ($file = readdir($fp)))
-            {
+            while (FALSE !== ($file = readdir($fp))) {
                 // Remove '.', '..', and hidden files [optional]
-                if ($file === '.' OR $file === '..' OR ($hidden === FALSE && $file[0] === '.'))
-                {
+                if ($file === '.' OR $file === '..' OR ($hidden === FALSE && $file[0] === '.')) {
                     continue;
                 }
 
-                is_dir($source_dir.$file) && $file .= DIRECTORY_SEPARATOR;
+                is_dir($source_dir . $file) && $file .= DIRECTORY_SEPARATOR;
 
-                if (($directory_depth < 1 OR $new_depth > 0) && is_dir($source_dir.$file))
-                {
-                    $filedata[$file] = $this->directory_map($source_dir.$file, $new_depth, $hidden);
-                }
-                else
-                {
+                if (($directory_depth < 1 OR $new_depth > 0) && is_dir($source_dir . $file)) {
+                    $filedata[$file] = $this->directory_map($source_dir . $file, $new_depth, $hidden);
+                } else {
                     $filedata[] = $file;
                 }
             }
@@ -412,18 +405,19 @@ class Search implements DocSearchInterface
      * @param int $wordCount
      * @return string
      */
-    protected function firstXWords( $str, $wordCount = 10 ) {
+    protected function firstXWords($str, $wordCount = 10)
+    {
         return implode(
             '',
             array_slice(
                 preg_split(
                     '/([\s,\.;\?\!]+)/',
                     $str,
-                    $wordCount*2+1,
+                    $wordCount * 2 + 1,
                     PREG_SPLIT_DELIM_CAPTURE
                 ),
                 0,
-                $wordCount*2-1
+                $wordCount * 2 - 1
             )
         );
     }
