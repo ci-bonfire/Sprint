@@ -1,6 +1,8 @@
 <?php
 
-class MY_Loader extends CI_Loader {
+require_once APPPATH .'third_party/MX/Loader.php';
+
+class MY_Loader extends MX_Loader {
 
     /**
      * Does the same thing that load->view does except ensures that the

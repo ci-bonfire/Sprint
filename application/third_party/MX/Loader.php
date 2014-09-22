@@ -390,7 +390,8 @@ class MX_Loader extends CI_Loader
         // Set the path to the requested file
         if (is_string($_ci_path) && $_ci_path !== '')
         {
-            $_ci_file = end(explode('/', $_ci_path));
+            $temp = explode('/', $_ci_path);
+            $_ci_file = end($temp);
         }
         else
         {

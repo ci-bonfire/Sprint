@@ -26,15 +26,7 @@
 // Profiler
 //--------------------------------------------------------------------
 //
-    $config['show_profiler'] = true;
-
-//--------------------------------------------------------------------
-// Modules
-//--------------------------------------------------------------------
-//
-    $config['modules_locations'] = array(
-        APPPATH .'modules/'
-    );
+    $config['show_profiler'] = false;
 
 //--------------------------------------------------------------------
 // Caching
@@ -106,4 +98,5 @@
 // This can be overridden in each controller via the $theme class variable.
 //
     $config['theme.default_theme'] = 'bootstrap';
+
 

@@ -26,6 +26,15 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+//--------------------------------------------------------------------
+// Module Locations
+//--------------------------------------------------------------------
+
+$config['modules_locations'] = array(
+    APPPATH .'modules/'             => '../modules/',
+    APPPATH .'../myth/CIModules/'   => '../../myth/CIModules/'
+);
+
 /*
 |--------------------------------------------------------------------------
 | Base Site URL
