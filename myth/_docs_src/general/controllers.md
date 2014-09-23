@@ -1,175 +1,107 @@
-# Bonfire Controllers
+# Controllers
 
-CodeIgniter provides a `CI_Controller` that is meant to be used as the basis for all of your own controllers. It handles the behind-the-scenes work of assigning class vars and the Loader so that you can access them. Bonfire extends this concept and provides several additional Controllers that can be used as base classes throughout your project. This helps you to keep from repeating code any more than necessary by providing a central place for any site-wide code to sit. 
+CodeIgniter provides a `CI_Controller` that is meant to be used as the basis for all of your own controllers. It handles the behind-the-scenes work of assigning class vars and the Loader so that you can access them. Sprint extends this concept and provides several additional Controllers that can be used as base classes throughout your project. This helps you to keep from repeating code any more than necessary by providing a central place for any site-wide code to sit. 
 
-The `MY_Controller` file is currently not used by Bonfire and is left alone so that you can use it for your own needs.
+The `MY_Controller` file is left for you to modify as you need. It extends from `Myth\Controllers\BaseController` that we do all of our work in.
 
-## Extending Controllers
-Each controller is stored in its own file in the `application/libraries/Controllers` folder and the file is named the same as the class name. They are all namespaced in `\Bonfire\Controllers\{controller_name}`. To use the controller as a base class, you should extend your controller from the appropriate Bonfire Controller.
+## Provided Controllers
+Under the `Myth` namespace, we provide the following controllers for your work to extend from: 
 
-	class SomeController extends \Bonfire\Controllers\ThemedController {
-	    . . .
-	}
+- **BaseController** This forms the basis of all of the rest of the controllers, setting up profilers, caching, autoloading language and model files, auto-migrating the application if necessary, and providing common utility methods. 
+- **ThemedController** Builds on top of BaseController to provide additional methods and variables for simple, consistent theming of your controllers. 
+- **CLIController** (Coming Soon) Intended solely for use from the command line, it provides features for colored text and working with interactive CLI scripts.
+- **ApiClientController** (Coming Soon) provides simple, common utilities for calling external API's.
+- **ApiServerController** (Coming Soon) provides simple, common utilities for building a flexible API.
+
+Aside from this, the following controllers can be found in `application/libraries` and can be modified as you need for your specific application.
+
+- **FrontController** intended to do any common setup needed for front-facing pages. Extends from ThemedController.
+- **AuthenticatedController** simply ensures that a user is logged in and can be used for any controller that requries access restriction. Extends from BaseController.
 
 ## BaseController
 
-All of the custom controllers extend from the `Base_Controller`.  This class extends the MX\_Controller which gives you all of the power of WireDesign’s [HMVC](https://bitbucket.org/wiredesignz/codeigniter-modular-extensions-hmvc/wiki/Home) available to all of your classes.  That allows for a different way of working, but also a very powerful one, and one that is not necessary to use.
+All of the custom controllers extend from `Myth\Controllers\BaseController`.  This class extends the CI_Controller. It intentionally does NOT extend from our HMVC solution since that has caused too many problems and encourages a design pattern that is better  based around libraries that are much more testable.
 
 This controller provides common functionality to all of the other controllers and should be the minimal class you extend if you want to take advantage of Bonfire's capabilities.
 
-#### Properties
+### Properties
 
-##### $autoload
-This array provides a simple means of loading various libraries, helpers and models automatically within your application. 
+#### $cache_type
+This can be set to allow a per-controller override of the primary cache engine configuration settings in `config/application.php`. If not set, it will default to the settings in the configuration file.
 
-	protected $autoload = array(
-	    'helper'    => array(),
-	    'language'  => array(),
-	    'libraries' => array('settings/settings_lib'),
-	    'model'     => array(),
-	    'modules'   => array(),
-	    'sparks'    => array()
-	);
+#### $backup_cache
+This can be set to allow a per-controller override of the backup cache engine configuration settings in `config/application.php`. If not set, it will default to the settings in the configuration file.
 
-You will not, however, want to extend this directly since you will override parent class autoload needs. Instead, set the value in your class' constructor prior to calling the parent's constructor.
+#### $ajax_notices
+If TRUE, notices will be sent back with and AJAX response in the `fragments` array. This works with the provided [eldarion-ajax](https://github.com/eldarion/eldarion-ajax) javascript library. Defaults to TRUE.
 
-	public function __construct()
-	{
-	    $this->autoload['helpers'][] = 'my_new_helper';
-	
-	    parent::__construct();
-	}
+#### $language_file
+If set, the file listed will be automatically loaded. Only loads a single file and is intended to load controller or module-specific language code. Any other language files should be loaded manually, or automatically loaded through the `autoload` config file.
 
-##### $init\_methods
-This is an array of method names that will be called during the initial `init()` method call in the constructor. This is intended for use by Traits. If your class uses a Trait then you'll need to put it's init method in here. This is already handled for you by the child Controller classes.
+#### $model_file
+If set, this listed model will be automatically loaded.
 
-	class ThemedController extends BaseController {
-	    use ThemeableTrait;
-	
-	    protected $init_methods = [
-	        'init_themes'
-	    ];
-	}
 
-#### Class Methods
+### Class Methods
 The BaseController provides a number of helper methods for outputting data in various formats and more. They are described below. All of the render methods set the proper content type, and should be called as the last method. Most also turn off the profiler so you don't need to worry about that in your code.
 
-##### renderText()
+#### setupCache()
+This is called during the constructor to get the cache engine up and running. Developers will typically not need to modify it, but it is split out into a separate method for easy child-class overriding if it's needed.
+
+#### autoload()
+This is called during the constructor to load the language and model files. Developers will typically not need to modify it, but it is split out into a separate method for easy child-class overriding if it's needed.
+
+#### autoMigrate()
+This is called during the constructor to handle the auto-migration capabilities. Developers will typically not need to modify it, but it is split out into a separate method for easy child-class overriding if it's needed.
+
+#### setupProfiler()
+This is called during the constructor to get the profiler setup. Is split out into a separate method for easy child-class overriding if the profiler capabilities need to be modified.
+
+
+#### renderText()
 Renders a string of arbitrary text. Best used during an AJAX call or web service request that is expecting something other  than proper HTML. 
 
 The first parameter is the string to be rendered. To have the string run through the `auto_typography` method, you can pass in TRUE as the second parameter.
 
 	$this->renderText($text);
 
-##### renderJson()
-Renders an array or object of data to be output in JSON format. The only parameter is the data to be output.
-
-	$this->renderJson($array);
-
-##### renderJS()
+#### renderJS()
 Sends the supplied string to the browser with a MIME type of text/javascript. Will throw a Logic Exception if the passed element is not a string.
 
 	$this->renderJS($js);
 
-##### renderRealtime()
+#### renderRealtime()
 Disables any output buffering so that any content echoed out will echo out as it happens, instead of waiting for all of the content to echo out. This is especially handy for debugging long running scripts.
 
 	$this->renderRealtime();
 
-##### ajaxRedirect()
-This is the only method that requires any external dependencies. This uses the [eldarion-ajax](https://github.com/eldarion/eldarion-ajax) scripts (which are used extensively throughout Bonfire) to break out of the current AJAX method and perform a javascript-powered redirect. Use this while in an AJAX method instead of CodeIgniter's built-in `redirect()` method.
+#### ajaxRedirect()
+This is one of two methods that requires any external dependencies. This uses the [eldarion-ajax](https://github.com/eldarion/eldarion-ajax) scripts to break out of the current AJAX method and perform a javascript-powered redirect. Use this while in an AJAX method instead of CodeIgniter's built-in `redirect()` method.
 
 	$this->ajaxRedirect( 'new/location' );
 
-##### getJson()
+#### renderJson()
+Renders an array or object of data to be output in JSON format. The only parameter is the data to be output.
+
+	$this->renderJson($array);
+	
+This works hand-in-hand with the `eldarion-ajax` javascript we use. If profiler is turned on, it will reload the profiler in a div with id='profiler'. If ajax_notices is true, the notice will replace a div with id='notices' when it returns.
+
+#### getJson()
 Attempts to get any information from `php://input` and return it as JSON data. This should only be used when you know you are expecting JSON data, like from an AJAX or API call.
 
 The first parameter is the type of element to return the data as. The only two value strings are `object` (the default) or `array`. 
 
-The second parameter is the number of levels deep to decode. Smaller numbers can increase processing time at the expense of potentially lost data. Default value is 512. 
+The second parameter is the number of levels deep to decode. Smaller numbers can decrease processing time at the expense of potentially lost data. Default value is 512. 
 
 	$data = $this->getJson('array');
 
-##### callFilters()
-This is used by the [Filters](#filters) system. Can be called from, for example, a hook to run custom filters.
-
-The only parameter is the `type` or name of the filters group to run, like `before` or `after`.
-
-	$this->callFilters('before');
+ 
+ 
  
 ## ThemedController
 This controller provides theming functions into the controller with several convenience methods. Makes integrating full-featured templates into your application a breeze. It extends from [BaseController](#basecontroller).
 
-Full details on the usage can be found in the [Theming](#themes) guide in the docs.
-
-## FrontController
-
-The `Front_Controller` is intended to be used as the base for any public-facing controllers.  As such, anything that needs to be done for the front-end can be done here.
-
-Currently, it simply ensures that the Assets and Template libraries are available.  You could also set the active and default themes here, if you create a parent theme ‘framework’ to use with all of your sites that you extend with child themes.
+Full details on the usage can be found in the [Theming](themes) guide in the docs.
 
 
-## AuthenticatedController
-
-This controller forms the base for the Admin Controller.  It was broken into two parts in case you needed to create a front-end area that was only accessible to your users, but that was not part of the Admin area and didn’t share the same themes, etc.  All changes you make here will affect your Admin Controller’s, though, so use with care.  If you need to, reset the values in the Admin Controller.
-
-This controller currently...
-
-* Loads in all of the authentication library
-* Restricts access to only logged in users
-* Gets form\_validation setup and working correctly with HMVC.
-
-
-## AdminController
-
-The final controller sets things up even more for use within the Admin area of your site.  That is, the area that Bonfire has setup for you as a base of operations.  It currently...
-
-* Sets the pagination settings for a consistent user experience.
-* Gets the admin theme loaded and makes sure that some consistent CSS files are loaded so we don’t have to worry about it later.
-
-	 
-## Filters
-Filters allow methods to be called at certain points during a controller's execution. They are typically used to filter access to a method, or perform cleanup actions after a method. 
-
-### Defining Filters
-Filters are defined globally in a config located at `application/config/filters.php`.  They must be anonymous functions, and accept two parameters: `$params` and `$ci`.
-
-	$config['auth'] = function ($params, &$ci)
-	{
-	    . . .
-	}
-
-The first parameter is an array of params, typically provided when you assign the filter in your controller. The second is an instance of the CodeIgniter superglobal object. This ensures that all functions share the same instance of $ci and aids in testing functions.
-
-If you need to access a class, or just wish to keep your functionality in a class, then you can call the class from the global namespace within this function.
-
-During the execution of the filter, a successful check within the filter requires that nothing is returned. If anything is returned, execution is stopped and the controller's method is never executed. This is handy for redirecting the user to a login screen, for example.
-
-### Assigning Filters
-To assign filters to specific methods within your controller you must fill out the `$filtered_methods` class variable with the `before` and `after` arrays filled with the names of the filters to call.
-
-	class Users extends Base_Controller {
-	    protected $filtered_methods = [
-	        'method_name'   => [
-	            'before'    => 'auth',
-	            'after'     => 'someFilter'
-	        ]
-	    ]
-	}
-
-To specify multiple filters on a method, separate each with a pipe (`|`).
- 
-	'before'    => 'auth|anotherFilter',
- 
-### Filter Execution
- Bonfire has two times that the filters are executed.
- 
- * `before` - executed during the controller's instantiation, but before the method has been called. This means that all classes, helpers, libraries, etc, have been loaded and are available for you use. 
- * `after` - called in the `post_controller` hook.
-
-You can also call the `callFilters` method at any time with your own name, and then add those into the $filtered\_methods array just like a before or after call.
-
-### Pre-defined Filters
-Bonfire provides several pre-defined filters ready for your use. 
-
-* `debug` - Checks for the presence of the $\_GET variable `?debug` and defines the constant 'DEBUG\_MODE' to TRUE, if the current environment is 'development'. This allows you to build in additional debug code to your modules and simply add a URL flag to turn it on.
