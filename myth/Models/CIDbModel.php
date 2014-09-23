@@ -213,6 +213,15 @@ class CIDbModel
     protected $validation_rules = array();
 
     /**
+     * An array of extra rules to add to validation rules during inserts only.
+     * Often used for adding 'required' rules to fields on insert, but not udpates.
+     *
+     *   array( 'username' => 'required|strip_tags' );
+     * @var array
+     */
+    protected $insert_validate_rules = array();
+
+    /**
      * Optionally skip the validation. Used in conjunction with
      * skip_validation() to skip data validation for any future calls.
      */
@@ -233,6 +242,25 @@ class CIDbModel
         so you can turn it off with the return_insert_id(false) method.
      */
     protected $return_insert_id = true;
+
+    /**
+     * @var Array Metadata for the model's database fields
+     *
+     * This can be set to avoid a database call if using $this->prep_data()
+     * and/or $this->get_field_info().
+     *
+     * @see http://ellislab.com/codeigniter/user-guide/database/fields.html
+     *
+     * Each field's definition should be as follows:
+            array(
+            'name'            => $field_name,
+            'type'            => $field_data_type,
+            'default'         => $field_default_value,
+            'max_length'      => $field_max_length,
+            'primary_key'     => (1 if the column is a primary key),
+            ),
+     */
+    protected $field_info = array();
 
     //--------------------------------------------------------------------
 
@@ -1089,6 +1117,102 @@ class CIDbModel
 
     //--------------------------------------------------------------------
 
+    /**
+     * Get the metadata for the model's database fields
+     *
+     * Returns the model's database field metadata stored in $this->field_info
+     * if set, else it tries to retrieve the metadata from
+     * $this->db->field_data($this->table_name);
+     *
+     * @todo The MongoDB driver is the only one that doesn't appear to support
+     * $this->db->field_data, though it's possible other drivers don't support
+     * more extensive metadata (such as type/max_length) supported by MySQL
+     *
+     * @return array    Returns the database field metadata for this model
+     */
+    public function get_field_info()
+    {
+        if (empty($this->field_info)) {
+            $this->field_info = $this->db->field_data($this->table_name);
+        }
+
+        return $this->field_info;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Extracts the model's fields (except the key and those handled by
+     * Observers) from the $post_data and returns an array of name => value pairs
+     *
+     * @param Array $post_data The post data, usually $this->input->post() when called from the controller
+     *
+     * @return Array    An array of name => value pairs containing the data for the model's fields
+     */
+    public function prep_data($post_data)
+    {
+        $data = array();
+        $skippedFields = array();
+        $skippedFields[] = $this->created_field;
+        $skippedFields[] = $this->created_by_field;
+        $skippedFields[] = $this->deleted_by_field;
+        $skippedFields[] = $this->modified_field;
+        $skippedFields[] = $this->modified_by_field;
+
+        // Though the model doesn't support multiple keys well, $this->key
+        // could be an array or a string...
+        $skippedFields = array_merge($skippedFields, (array)$this->key);
+
+        // If the field is the primary key, one of the created/modified/deleted
+        // fields, or has not been set in the $post_data, skip it
+        foreach ($this->get_field_info() as $field) {
+            if (isset($field->primary_key) && $field->primary_key
+                || in_array($field->name, $skippedFields)
+                || ! isset($post_data[$field->name])
+            ) {
+                continue;
+            }
+
+            $data[$field->name] = $post_data[$field->name];
+        }
+
+        return $data;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Returns the last query string, if available. Simply a wrapper for
+     * CodeIgniter's database method of the same name.
+     *
+     * @return string
+     */
+    public function last_query ()
+    {
+        return $this->db->last_query();
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Returns the elapsed time for the last query that was executed, if
+     * available, or NULL if not available, like if debug mode is off.
+     *
+     * @return mixed
+     */
+    public function last_query_time ()
+    {
+        $times = $this->db->query_times;
+
+        if (! is_array($this->db->query_times) || ! count($this->db->query_times))
+        {
+            return null;
+        }
+
+        return end($times);
+    }
+
+    //--------------------------------------------------------------------
 
     //--------------------------------------------------------------------
     // Observers

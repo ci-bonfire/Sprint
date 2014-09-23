@@ -1,8 +1,8 @@
-# Bonfire Models
+# Sprint Models
 
-Keeping with the MVC spirit, Bonfire uses Models to allow you interact with your database in a simple, consistent manner. By using the **BF_Model** as the base class for all of your models, you can very quickly setup a simple model capable of finding records, creating new and editing existing records, deleting records, checking if a key/value is unique in this table, counting the results, and more.
+Keeping with the MVC spirit, Bonfire uses Models to allow you interact with your database in a simple, consistent manner. By using the **CIDbModel** as the base class for all of your models, you can very quickly setup a simple model capable of finding records, creating new and editing existing records, deleting records, checking if a key/value is unique in this table, counting the results, and more.
 
-BF_Model acts as a middleman layer between your models and CodeIgniter's standard Model class, working hand-in-hand with ActiveRecord query builder. If you don't need any special queries, you can have a working model in just a handful of lines.
+CIDbModel acts as a middleman layer between your models and CodeIgniter's standard Model class, working hand-in-hand with ActiveRecord query builder. If you don't need any special queries, you can have a working model in just a handful of lines.
 
 
 ## A Skeleton Model
@@ -10,12 +10,11 @@ BF_Model acts as a middleman layer between your models and CodeIgniter's standar
 To get started with a new model, you can use the following skeleton file:
 
 
-    class X_model extends BF_Model
+    class X_model extends CIDbModel
 	{
         protected $table_name	= '';
         protected $key			= 'id';
-        protected $soft_deletes	= FALSE;
-        protected $date_format	= 'int';
+        protected $date_format	= 'datetime';
         protected $log_user		= FALSE;
 
         protected $set_created	= TRUE;
@@ -26,7 +25,8 @@ To get started with a new model, you can use the following skeleton file:
         protected $modified_field	= 'modified_on';
         protected $modified_by_field = 'modified_by';
 
-        protected $deleted_field    = 'deleted';
+		protected $soft_deletes	= FALSE;
+        protected $soft_delete_key    = 'deleted';
         protected $deleted_by_field = 'deleted_by';
 
         // Observers
@@ -42,7 +42,6 @@ To get started with a new model, you can use the following skeleton file:
         protected $return_insert_id = true;
         protected $return_type      = 'object';
         protected $protected_attributes = array();
-        protected $field_info           = array();
 
         protected $validation_rules         = array();
         protected $insert_validation_rules  = array();
@@ -51,29 +50,29 @@ To get started with a new model, you can use the following skeleton file:
     }
 
 
-This is the bare minimum needed to take advantage of BF_Model's built-in functions. All variables shown here are set to their default, so you don't need to show them if you are using the default values.  Model_name is the name of your class and follows the same rules as [CodeIgniter models](http://codeigniter.com/user_guide/general/models.html).
+This is the bare minimum needed to take advantage of CIDbModel's built-in functions. All variables shown here are set to their default, so you don't need to show them if you are using the default values.  Model_name is the name of your class and follows the same rules as [CodeIgniter models](http://codeigniter.com/user_guide/general/models.html).
 
-BF_Model supports quite a few ways to customize how your class works with the database.
+CIDbModel supports quite a few ways to customize how your class works with the database.
 
 
 ### $table_name
 
-The var `$table_name` should be set to the name of the table in your database. If you database is set to use a prefix (Bonfire defaults to a `bf_` prefix), you should leave the prefix off. So a table named `bf_users` should be entered as `users`.
+The var `$table_name` should be set to the name of the table in your database. If you database is set to use a prefix (Sprint defaults to a `bf_` prefix), you should leave the prefix off. So a table named `bf_users` should be entered as `users`.
 
 
 ### $key
 
-The var `$key` should be the name of the primary key for your table. BF_Model requires that your table has primary key. If it doesn't you should extend Model and will need to write your own methods to interface with the database. The `$key` is expected to be linked to an INT field.
+The var `$key` should be the name of the primary key for your table. CIDbModel requires that your table has primary key. If it doesn't you should extend Model and will need to write your own methods to interface with the database. The `$key` is expected to be linked to an INT field.
 
 
 ### $soft_deletes
 
-Bonfire uses the concept of *soft deletes* that will set a flag that an item has been deleted instead of actually deleting the item. This allows you to later restore the user in case the deletion was accidental, or to keep a permanent record of any sensitive information, like transaction records.
+Sprint uses the concept of *soft deletes* that will set a flag that an item has been deleted instead of actually deleting the item. This allows you to later restore the user in case the deletion was accidental, or to keep a permanent record of any sensitive information, like transaction records.
 
 To use soft_deletes, your table must have a `deleted` field that is a **TINYINT (1)**. A value of `0` means the record has not been deleted, while a value of `1` shows that the item has been deleted.
 The name of the `deleted` field may be modified by setting `$deleted_field`.
 
-If `$soft_deletes == TRUE`, Bonfire will automatically update the record to set `deleted` to a value of `1`.
+If `$soft_deletes == TRUE`, Sprint will automatically update the record to set `deleted` to a value of `1`.
 
 If `$soft_deletes == FALSE`, the record will be permanently deleted from the database.
 
@@ -91,18 +90,18 @@ While ‘int’ seems to be one of the most common amongst PHP developers, datet
 
 ### $set_created
 
-Bonfire can automatically set your created on dates and times for you, in the format specified through `$date_format`. To use this, your table must have a `created_on` field of the proper type.
+Sprint can automatically set your created on dates and times for you, in the format specified through `$date_format`. To use this, your table must have a `created_on` field of the proper type.
 
-If `$set_created == TRUE`, Bonfire will set the `created_on` field value for you at the time of an `insert()` call.
+If `$set_created == TRUE`, Sprint will set the `created_on` field value for you at the time of an `insert()` call.
 The name of the `created_on` field may be modified by setting `$created_field`.
 
 
 ### $set_modified
 
-Bonfire can automatically set your modified on dates and times for you, in the format specified through `$date_format`. To use this, your table must have a `modified_on` field of the proper type.
+Sprint can automatically set your modified on dates and times for you, in the format specified through `$date_format`. To use this, your table must have a `modified_on` field of the proper type.
 The name of the `modified_on` field may be modified by setting `$modified_field`.
 
-If `$set_created == TRUE`, Bonfire will set the `created_on` field value for you at the time of an `insert()` call.
+If `$set_created == TRUE`, Sprint will set the `created_on` field value for you at the time of an `insert()` call.
 
 ### $created_field
 ### $modified_field
@@ -165,7 +164,7 @@ The field definition should be as follows:
 
 ## Provided Methods
 
-By using the skeleton file, you get a number of methods ready to use on your model. All of these methods can be overriden in your own model if you need to customize them by joining other tables, processing the results before handing off to the controller, etc.
+By using the skeleton file, you get a number of methods ready to use on your model, in addition to all of the standard CodeIgniter Query Builder methods. All of these methods can be overriden in your own model if you need to customize them by joining other tables, processing the results before handing off to the controller, etc.
 
 
     $user = $this->user_model->select(‘id, username, email’)
@@ -174,10 +173,10 @@ By using the skeleton file, you get a number of methods ready to use on your mod
                              ->find_all();
 
 
-If you need to do additional processing, join tables, etc than you can do that in your model using CodeIgniter’s built-in ActiveRecord commands.
+If you need to do additional processing, join tables, etc than you can do that in your model using CodeIgniter’s built-in Query Builder commands.
 
 
-    class User_model extends BF_Model {
+    class User_model extends CIDbModel {
         public function find_all()
         {
             $this->db->join(...);
@@ -230,7 +229,11 @@ This defaults to combining all criteria as "AND" but can be modified by passing 
 
     # SQL: SELECT * FROM `bf_users` WHERE email='darth@theempire.com' OR deleted='0'
 
+### find_many()
+Locates all records in the table that have primary keys matching the keys sent in the first parameter.  The first paremeter is an array of `ids`. 
 
+ 	$ids = array(1, 2, 15, 38);
+	$this->user_model->find_many($ids);
 
 ### find_all()
 
@@ -255,15 +258,12 @@ If you need to modify the search criteria you can use any of the chainable metho
 Returns an array of objects where each object holds the results of a single record.
 
 
-### find_all_by()
-
+### find_many_by()
 Locates all records matching certain criteria. This is a convenience method for using a `where()` and a `find_all()` in one command.
 
-    $this->user_model->find_all_by('deleted', 1);
-
+    $this->user_model->find_many_by('deleted', 1);
 
 Any of the standard options available to a CodeIgniter `where()` method may be used here.
-
 
     $this->user_model->find_all_by('deleted', 1);
     $this->user_model->find_all_by('deleted !=', 0);
@@ -275,7 +275,6 @@ Returns an array of objects where each object holds the results of a single reco
 ## Inserting Data
 
 ### insert()
-
 Creates a new record. Will set the `created_on` field if the model is setup to allow that. The first parameter should be an associative array of field/values to insert.
 
 
@@ -287,13 +286,10 @@ Creates a new record. Will set the `created_on` field if the model is setup to a
 
     # SQL: INSERT INTO `bf_users` (email, username, created_on) VALUES ('darth@theempire.com', 'darth.vader', 1321645674);
 
-
 Returns an INT ID of the new record on success, or `FALSE` on failure.
 
 
-
 ### insert_batch()
-
 Allows for inserting more than one record at a time. Works just like CodeIgniter’s stock method, but handles setting the table name for you.
 
 
@@ -312,11 +308,14 @@ Allows for inserting more than one record at a time. Works just like CodeIgniter
 
     $this->db->insert_batch('mytable', $data);
 
+### replace()
+Performs the SQL standard for a combined DELETE + INSERT, using primary and unique keys to determine which rows to replace.
+
+See CI's documentation for the replcae method. This is simply a wrapper to allow our validation and triggers to work with the method.
 
 ## Updating Data
 
 ### update()
-
 Updates an existing record in the database by ID. Will set the correct time for the `modified_on` field, if the model requires it.
 
     $user = array(
@@ -331,16 +330,22 @@ Updates an existing record in the database by ID. Will set the correct time for 
 Returns a boolean `TRUE/FALSE` on success/failure.
 
 
-### update_where()
+### update_by()
 
-Updates a single record in the database by a key/value pair. Will set the correct time for the `modified_on` field, if the model requires it.
+Updates a single record in the database by a standard where clause. Will set the correct time for the `modified_on` field, if the model requires it.
 
+Your last parameter should be the $data array with values to update on the rows. Any additional parameters should be provided to make up a typical WHERE clause. This could be a single array, or a column name and a value.
+
+	$data = array('deleted_by' => 1);
+	$wheres = array('user_id' => 15);
+	$this->model->update_by($wheres, $data);
+	# SQL: UPDATE `bf_users` SET deleted_by=1, modified_on=1321645674 WHERE user_id=15;
 
     $user = array(
         'email'     => 'dart@theempire.com',
         'username'  => 'darth.vader'
     );
-    $this->user_model->update('is_father', 1, $user);
+    $this->user_model->update_by('is_father', 1, $user);
 
     # SQL: UPDATE `bf_users` SET email='darth@theempire.com', username='darth.vader', modified_on=1321645674 WHERE is_father=1;
 
@@ -368,6 +373,26 @@ Updates multiple records with a single method call.
 
 The first parameter is an array of values. The second parameter is the where key.
 
+### update_many()
+Updates a number of rows with primary keys that match the array values passed into the first parameter. The second parameter is an array with the column/value pairs to update. 
+
+	$ids = array(1, 2, 3, 5, 12);
+	$data = array( 'deleted_by' => 1);
+	$this->model->update_many($ids, $data);
+	
+You can skip validation for this call only by passing in TRUE as the third parameter.
+
+### increment()
+Increments the value of a single row's column.  The column must be an integer-based column. The first paremeter is row's primary_key. The second parameter is the column name. The third parameter is the amount to increment the value by. By default, it will increment it 1. 
+
+	$this->model->increment($id, 'hits', 5);
+	# SQL: UPDATE `page_views` SET hits=hits+5 WHERE id=$id;
+
+### decrement()
+decrements the value of a single row's column.  The column must be an integer-based column. The first paremeter is row's primary_key. The second parameter is the column name. The third parameter is the amount to decrement the value by. By default, it will decrement it by 1. 
+
+	$this->model->decrement($id, 'hits', 5);
+	# SQL: UPDATE `page_views` SET hits=hits-5 WHERE id=$id;
 
 ## Deleting Data
 
@@ -383,7 +408,7 @@ Deletes a single record from the database. If `$soft_deletes` are on, then will 
 
 Returns a boolean `TRUE/FALSE` on success/failure.
 
-###  delete_where()
+###  delete_by()
 
 Deletes one or more records that match certain requirements. If `$soft_deletes == true`, will set the `deleted` field to 1, otherwise will delete the record permenantly.
 
@@ -394,10 +419,19 @@ The first parameter accepts an array of key/value pairs to form the ‘where’ 
         ‘active’    => 0,
         ‘last_login’ => ‘< ‘. time()
     );
-    $this->model->delete_where($wheres);
+    $this->model->delete_by($wheres);
 
+### delete_many()
+Deletes all rows that have primary key values contained within the array passed into the first parameter.
+
+	$ids = array(1, 2, 3, 5, 12);
+	$this->model->delete_many($ids);
+	
+	#SQL with soft_deletes: UPDATE bf_users SET deleted=1 WHERE id IN ($ids);
+	# SQL w/out soft_deletes: DELETE FROM bf_users WHERE id IN ($ids);
 
 ## Utility Methods
+
 ### is_unique()
 
 Checks to see if a given field/value combination would be unique in the table.
@@ -434,19 +468,6 @@ A convenience method to return only a single field of the specified row. The fir
 
 
 Returns the value of the row's field, or FALSE.
-
-### get_created_field()
-### get_modified_field()
-### get_deleted_field()
-### get_created_by_field()
-### get_modified_by_field()
-### get_deleted_by_field()
-
-Returns the names of the respective fields, or an empty string if the fields are not used by the model (based on the values of `set_created`, `set_modified`, `soft_deletes`, and `log_user`).
-
-### get_field_info()
-
-Returns the `$field_info` array, attempting to populate it from the database if empty.
 
 ### prep_data()
 
@@ -515,6 +536,11 @@ The User Settings controller then uses the model's `prep_data` method to process
 
 	}//end save_user()
 
+### last_query()
+Returns the last query the database executed. Note that this is not specific to this model, but to the database driver in general, as it simply provides a convenient way to tap into CodeIgniter's database method of the same name.
+
+	$this->model->last_query();
+
 ### last_query_time()
 Returns the elapsed time for the last query. Simply provides a method to tap into CodeIgniter's stats. 
 
@@ -540,11 +566,11 @@ A chainable method that specifies the model should return the results as a JSON 
 
 ## Chainable Methods
 
-Thanks to CodeIgniter's [ActiveRecord](http://ellislab.com/codeigniter/user-guide/database/active_record.html) library, it is very simply to modify the BF_Model's methods. This can be done through either chainable methods or by extending methods.
+Thanks to CodeIgniter's [ActiveRecord](http://ellislab.com/codeigniter/user-guide/database/active_record.html) library, it is very simply to modify the CIDbModel's methods. This can be done through either chainable methods or by extending methods.
 
-Chainable methods are a feature of PHP 5 and higher that allow you to return the results of one function into another, and to keep this 'chain' of events continuing through several functions. Bonfire duplicates several of the stock ActiveRecord methods in BF_Model to make it simple and elegant to customize your queries.
+Chainable methods are a feature of PHP 5 and higher that allow you to return the results of one function into another, and to keep this 'chain' of events continuing through several functions. Sprint duplicates several of the stock ActiveRecord methods in CIDbModel to make it simple and elegant to customize your queries.
 
-Bonfire's model supports chaining for most of the ActiveRecord methods available, including:
+Sprint's model supports chaining for most of the ActiveRecord methods available, including:
 
 * select
 * select_max
@@ -567,10 +593,20 @@ Bonfire's model supports chaining for most of the ActiveRecord methods available
 * group_by
 * having
 * or_having
+* order_by
 * limit
 * offset
 * set
-* last_query
+* count_all_results
+* group_start
+* or_group_start
+* not_group_start
+* or_not_group_start
+* group_end
+* get_compiled_select
+* get_compiled_insert
+* get_compiled_update
+* get_compiled_delete
 
 All of these methods accept the same parameters as their [CodeIgniter](http://ellislab.com/codeigniter/user-guide/database/active_record.html) counterparts. These are included for the sole reason of making your syntax more expressive. You can now do things like:
 
@@ -615,7 +651,7 @@ While it is possible to modify the query via the chainable methods any time you 
 
 Sometimes, you might want to do some additional processing to the database results before passing it on to the controller. This is another perfect example of when to extend the model's method.
 
-To extend an existing method, you simply create a new method in your model that accepts the same parameters as the original BF_Model method.
+To extend an existing method, you simply create a new method in your model that accepts the same parameters as the original CIDbModel method.
 
 
     // Extend the existing functionality.
@@ -636,7 +672,7 @@ To extend an existing method, you simply create a new method in your model that 
 
 ## Modify Query in Controller
 
-You can modify a query in your model for a single use by using CodeIgniter's ActiveRecord commands in your controllers. Since BF_Model uses the ActiveRecord commands, the changes in your controller will affect the results of the next query in your model.
+You can modify a query in your model for a single use by using CodeIgniter's ActiveRecord commands in your controllers. Since CIDbModel uses the ActiveRecord commands, the changes in your controller will affect the results of the next query in your model.
 
 
     // In your controller.
@@ -699,7 +735,7 @@ empty_validation_rules  | array         | An array of temporary validation rules
 
 ## Validating Data
 
-The model should contain all of the validation rules for your data so that it is always kept in a single place with the model that represents it. Bonfire's models provide a simple way to automatically have your data validated during inserts and updates.
+The model should contain all of the validation rules for your data so that it is always kept in a single place with the model that represents it. Sprint's models provide a simple way to automatically have your data validated during inserts and updates.
 
 ### Basic Validation
 
