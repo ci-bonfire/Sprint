@@ -1,6 +1,6 @@
 # Sprint Models
 
-Keeping with the MVC spirit, Bonfire uses Models to allow you interact with your database in a simple, consistent manner. By using the **CIDbModel** as the base class for all of your models, you can very quickly setup a simple model capable of finding records, creating new and editing existing records, deleting records, checking if a key/value is unique in this table, counting the results, and more.
+Keeping with the MVC spirit, Sprint uses Models to allow you interact with your database in a simple, consistent manner. By using the **CIDbModel** as the base class for all of your models, you can very quickly setup a simple model capable of finding records, creating new and editing existing records, deleting records, checking if a key/value is unique in this table, counting the results, and more.
 
 CIDbModel acts as a middleman layer between your models and CodeIgniter's standard Model class, working hand-in-hand with ActiveRecord query builder. If you don't need any special queries, you can have a working model in just a handful of lines.
 
@@ -10,7 +10,7 @@ CIDbModel acts as a middleman layer between your models and CodeIgniter's standa
 To get started with a new model, you can use the following skeleton file:
 
 
-    class X_model extends CIDbModel
+    class X_model extends \Myth\Models\CIDbModel
 	{
         protected $table_name	= '';
         protected $key			= 'id';
