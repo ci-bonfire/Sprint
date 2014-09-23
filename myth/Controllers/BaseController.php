@@ -76,10 +76,33 @@ class BaseController extends \CI_Controller
     {
         parent::__construct();
 
-        //--------------------------------------------------------------------
-        // Cache Setup
-        //--------------------------------------------------------------------
+        $this->setupCache();
 
+        $this->autoload();
+
+        $this->autoMigrate();
+
+        $this->setupProfiler();
+
+        log_message('debug', get_class($this) .' controller loaded.');
+    }
+
+    //--------------------------------------------------------------------
+
+    //--------------------------------------------------------------------
+    // Setup Methods
+    //--------------------------------------------------------------------
+    // These methods are used during the initial constructor, but split out
+    // here so that child controllers can easily override individual methods
+    // if they need to customize that aspect of the startup.
+
+    /**
+     * Gets the cache up and running. The site-wide cache settings can be
+     * set in the application config file. Each controller can override these
+     * settings using the 'cache_type' and 'backup_cache' class vars.
+     */
+    protected function setupCache()
+    {
         // If the controller doesn't override cache type, grab the values from
         // the defaults set in the start file.
         if (empty($this->cache_type)) $this->cache_type = $this->config->item('cache_type');
@@ -88,22 +111,32 @@ class BaseController extends \CI_Controller
         // Make sure that caching is ALWAYS available throughout the app
         // though it defaults to 'dummy' which won't actually cache.
 //        $this->load->driver('cache', array('adapter' => $this->cache_type, 'backup' => $this->backup_cache));
+    }
 
-        //--------------------------------------------------------------------
-        // Language & Model Files
-        //--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 
+    /**
+     * Handles any autoloading of files, like language or model files,
+     * that can be used throughout the controller.
+     */
+    protected function autoload()
+    {
         if (!is_null($this->language_file)) $this->lang->load($this->language_file);
 
         if (!is_null($this->model_file)) {
             $this->load->database();
             $this->load->model($this->model_file);
         }
+    }
 
-        //--------------------------------------------------------------------
-        // Migrations
-        //--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 
+    /**
+     * If settings allow, will auto-migrate the system to the latest
+     * available migrations.
+     */
+    protected function autoMigrate()
+    {
         // Try to auto-migrate any files stored in APPPATH ./migrations
         if ($this->config->item('auto_migrate') === TRUE) {
             $this->load->library('migration');
@@ -116,30 +149,25 @@ class BaseController extends \CI_Controller
                 $this->migration->latest();
             }
         }
+    }
 
-        //--------------------------------------------------------------------
-        // Profiler
-        //--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 
+    /**
+     * Handles setting up the profiler.
+     */
+    protected function setupProfiler()
+    {
         // The profiler is dealt with twice so that we can set
         // things up to work correctly in AJAX methods using $this->render_json
         // and it's cousins.
         if ($this->config->item('show_profiler') == true) {
             $this->output->enable_profiler(true);
         }
-
-        //--------------------------------------------------------------------
-        // Development Environment Setup
-        //--------------------------------------------------------------------
-        //
-        if (ENVIRONMENT == 'development') {
-
-        }
-
-//        $this->load->driver('Auth');
     }
 
     //--------------------------------------------------------------------
+
 
     //--------------------------------------------------------------------
     // Simple Rendering Methods
