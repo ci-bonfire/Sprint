@@ -1,17 +1,17 @@
 # Views
 
-Bonfire uses CodeIgniter's standard views to form the basis of its Template system. The documentation in here only applies when using the default `ViewTemplate` engine. See [Custom Template Engines](template_engines.md) for more information about using other template systems with Bonfire.
+Sprint uses CodeIgniter's standard views to form the basis of its Template system. The documentation in here only applies when using the default `ViewThemer` engine. See [Custom Template Engines](template_engines.md) for more information about using other template systems with Bonfire.
 
 ## Using the Template System
-In order to use the view and template methods in this document, your controller must extend the `ThemedController` or one of its children, like the `FrontController` or `AdminController`.
+In order to use the view and template methods in this document, your controller must extend `Myth\Controllers\ThemedController` or one of its children, like the `FrontController`.
 
-	class SuperHeroController extends \Bonfire\Libraries\Controllers\ThemedController
+	class SuperHeroController extends \Myth\Controllers\ThemedController
 	{
 	    . . .
 	}
 
 ## Views
-The system expects your views to be follow some conventions to simplify organizing your view files and make the system a little easier and cleaner to use.  The following conventions are used when trying to determine the view file we should render: 
+The system expects your views to be follow some conventions to simplify organizing your view files and make the whole a little easier and cleaner to use.  The following conventions are used when trying to determine the view file that should be rendered: 
 
 * The file must be under the `application/views` folder or the `views` folder within a module.
 * It must be in a folder named after the `controller`.
@@ -21,7 +21,7 @@ If you were in the `members` controller, and the `profile()` method, the system 
 
 	application/views/members/profile.php
 
-If your controller is in a sub-folder, the views should follow that same structure. So it that members controller was under the `admin` folder, the view would then be found at
+If your controller is in a sub-folder, the views should follow that same structure. So if that members controller was under the `admin` folder, the view would then be found at
 
 	application/views/admin/members/profile.php
 
@@ -29,7 +29,7 @@ If your controller is in a sub-folder, the views should follow that same structu
 ### Specifying Which View
 If you need to use a view that is named differently than the conventions above you can tell it which view to use with the `setView` method.
 
-	$this->template->setView('alternate/path/to/my_view');
+	$this->themer->setView('alternate/path/to/my_view');
  
 Your view must be relative the `application/views` folder, a `module views` folder, or a full system path to anywhere on your server that your script can access.
 
@@ -62,7 +62,7 @@ If the first parameter is an array, the $value parameter will be ignored and all
 ## Variants
 Variants are different versions of a single view that must be presented at different times. This is most commonly done to provide customized layouts or views for mobile phones or tablets. 
 
-Imagine you have a `members` controller, `profile` method and you want to customize the views for cell phones and tablets to make the best use of our devices. You would start with the desktop version, with a view named `members/profile.php`. The phone and tablet varieties should then be named: 
+Imagine you have a `members` controller, `profile` method and you want to customize the views for cell phones and tablets to make the best use of the devices. You would start with the desktop version, with a view named `members/profile.php`. The phone and tablet varieties should then be named: 
 
 * tablet - `members/profile+tablet.php`
 * phone - `members/profile+phone.php`
