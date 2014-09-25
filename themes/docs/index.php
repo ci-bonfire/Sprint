@@ -29,7 +29,7 @@
             <div class="collapse navbar-collapse" id="main-nav-collapse">
                 <ul class="nav navbar-nav navbar-left">
                     <?php foreach (config_item('docs.folders') as $group => $path) : ?>
-                        <li <?php //$this->uri->(1, $group, 'class="active"') ?>>
+                        <li <?php if ($this->uri->segment(2) == $group) echo 'class="active"'; ?>>
                             <a href="<?= site_url("docs/{$group}"); ?>"><?= ucwords($group) ?></a>
                         </li>
                     <?php endforeach; ?>
@@ -85,6 +85,10 @@
 
         </div>
 
+    </div>
+
+    <div class="container footer">
+        <small>Page rendered in {elapsed_time} sec. using {memory_usage}.</small>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
