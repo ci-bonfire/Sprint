@@ -5,8 +5,8 @@
     <title>Docs</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/themes/docs/css/default.css" />
     <link rel="stylesheet" type="text/css" href="/themes/docs/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="/themes/docs/css/codestyles/rainbow.css" />
 </head>
 <body>
 

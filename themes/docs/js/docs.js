@@ -8,4 +8,8 @@ $(document).ready(function() {
         $('.toc').slideToggle('fast');
         $('.toc-wrapper').toggleClass('inner-shadow');
     });
+
+    $('pre > code').addClass('php');
+
+    hljs.initHighlightingOnLoad();
 });
