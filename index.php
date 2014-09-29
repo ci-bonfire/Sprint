@@ -44,13 +44,13 @@ include "vendor/autoload.php";
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	$domain = strtolower($_SERVER['HTTP_HOST']);
+	$domain = ! empty($_SERVER['HTTP_HOST']) ? strtolower($_SERVER['HTTP_HOST']) : 'cli';
 
     /**
      * A simple method to automatically determine the environment that
      * the script is running on. Modify to support your needs.
      */
-    if (strpos($domain, '.dev') !== false)
+    if (strpos($domain, '.dev') !== false || $domain == 'cli')
     {
         define('ENVIRONMENT', 'development');
     }

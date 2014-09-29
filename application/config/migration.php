@@ -36,7 +36,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | and disable it back when you're done.
 |
 */
-$config['migration_enabled'] = FALSE;
+$config['migration_enabled'] = true;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,15 +98,18 @@ $config['migration_version'] = 0;
 
 /*
 |--------------------------------------------------------------------------
-| Migrations Path
+| Migrations Paths
 |--------------------------------------------------------------------------
 |
-| Path to your migrations folder.
+| Path to your migrations folders.
 | Typically, it will be within your application path.
 | Also, writing permission is required within the migrations path.
 |
+| The key is the alias that you will refer to when running migrations.
 */
-$config['migration_path'] = APPPATH.'migrations/';
+$config['migration_paths'] = array(
+    'app'       => APPPATH . 'database/migrations/'
+);
 
 /* End of file migration.php */
 /* Location: ./application/config/migration.php */

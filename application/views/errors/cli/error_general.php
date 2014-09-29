@@ -26,8 +26,5 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-echo "\nERROR: ",
-	$heading,
-	"\n\n",
-	$message,
-	"\n\n";
+echo \Myth\CLI::error("\n\t$heading");
+echo \Myth\CLI::write("$message\n");
