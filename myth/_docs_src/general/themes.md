@@ -61,3 +61,27 @@ To display view fragments from within your theme itself, you will prefix the nam
 
 	<?= $themer->display('admin:parts/header'); ?>
 
+## Callbacks
+Callbacks allow you to call other code from within your theme file. They allow you to easily include formatted modules, or simply to collect pieces of commonly used code from across your application into one place so that you don't have to keep coding that information. 
+
+For example, say you had a set of recent blog posts. That block of posts might show up on the home page, on the sidebar of the blog, and on the individual posts page. That's three different places in your controllers that you would need to remember to call the model and include this data as a view variable. Instead, we can create a callback that will load the model, grab the data, render it into a view for us, and spit out the formatted data.
+
+### Calling the Callbacks
+Callbacks are intended to be used within view files. They should return the data, not echo it out. 
+
+	<?= $themer->call('posts:recent show=10 order=title dir=asc'); ?>
+	
+The first parameter is a string that allows you to, very flexibly, define the class, the method and any number of named parameters that can be sent to the callback. 
+
+### Caching Callback Results
+You can tell the system to simply cache the results for a period of time, instead of hitting the callback constantly. This is done by passing in the number of seconds to cache the results for. This will use the built-in CodeIgniter caching library that is setup in the BaseController, and defined in either the application config file or the controller itself. 
+
+	// Cache it for 1 hour
+	 <?= $themer->call('posts:recent show=10 order=title dir=asc', 60); ?>
+
+### Creating Callbacks
+Callbacks are simple classes. The system will attempt to locate them through Composer's autoload and, if that doesn't work, will try to load them as CodeIgniter libraries.
+
+The methods must NOT be static methods. 
+
+The methods must return the data as a string. This will be cached, if desired, and echoed out directly the view file.

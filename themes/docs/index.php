@@ -47,7 +47,7 @@
         </div>
     </header>
 
-    <?php if (CI::$APP->uri->segment(2) !== 'search') : ?>
+    <?php if ($this->uri->segment(2) !== 'search') : ?>
     <div class="toc-wrapper">
         <div class="container">
 

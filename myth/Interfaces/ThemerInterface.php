@@ -227,4 +227,16 @@ interface ThemerInterface
     public function removeVariant($name);
 
     //--------------------------------------------------------------------
+
+    /**
+     * Runs a callback method and returns the contents to the view.
+     *
+     * @param $command
+     * @param int $cache_minutes
+     * @return mixed
+     */
+    public function call($command, $cache_minutes=0);
+
+    //--------------------------------------------------------------------
+
 }

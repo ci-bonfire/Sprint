@@ -147,6 +147,59 @@ class ViewThemer implements ThemerInterface
     //--------------------------------------------------------------------
 
     /**
+     * Runs a callback method and returns the contents to the view.
+     *
+     * @param $command
+     * @param int $cache_time
+     * @return mixed|void
+     */
+    public function call($command, $cache_time=0)
+    {
+        $cache_name = 'theme_call_'. md5($command);
+
+        if (! $output = $this->ci->cache->get($cache_name)) {
+            $parts = explode(' ', $command);
+
+            list($class, $method) = explode(':', array_shift($parts));
+
+            // Prepare our parameter list to send to the callback
+            // by splitting $parts on equal signs.
+            $params = array();
+
+            foreach ($parts as $part) {
+                $params[] = explode('=', $part);
+            }
+
+            // Let PHP try to autoload it through any available autoloaders
+            // (including Composer and user's custom autoloaders). If we
+            // don't find it, then assume it's a CI library that we can reach.
+            if (! class_exists($class)) {
+                $class = new $class();
+            } else {
+                $this->ci->load->library($class);
+                $class =& $this->ci->$class;
+            }
+
+            if (! method_exists($class, $method)) {
+                throw new \RuntimeException("Method not found in View Callback - {$class}::{$method}");
+            }
+
+            // Call the class with our parameters
+            $output = $class->{$method}($params);
+
+            // Cache it
+            if ((int)$cache_time > 0)
+            {
+                $this->ci->cache->save($cache_name, $output, (int)$cache_time);
+            }
+        }
+
+        return $output;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
      * Sets the active theme to use. This theme should be
      * relative to one of the 'theme_paths' folders.
      *
