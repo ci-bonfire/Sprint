@@ -220,9 +220,10 @@ EOT;
     //--------------------------------------------------------------------
 
     /**
-     * Installs any database seeds stored in database/seeds
+     * Installs any database seeds stored in database/seeds. Seeds just need to
+     * extend the Seeder class and have a method named run.
      */
-    public function seed($name = 'DatabaseSeeder')
+    public function seed($name = null)
     {
         $this->load->library('seeder');
 
