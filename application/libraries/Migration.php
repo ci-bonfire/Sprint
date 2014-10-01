@@ -281,7 +281,7 @@ class CI_Migration {
         if ($current_version <> $target_version)
         {
             $current_version = $target_version;
-            $this->_update_version($current_version);
+            $this->_update_version($type, $current_version);
         }
 
         log_message('debug', 'Finished migrating to '.$current_version);

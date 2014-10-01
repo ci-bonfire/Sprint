@@ -49,10 +49,24 @@ class Database extends \Myth\Controllers\CLIController
         $latest = empty($latest) ? 0 : $latest;
 
         if (empty($latest)) {
-            return CLI::write(CLI::color("\tNo migrations found.", 'yellow'));
+            return CLI::write("\tNo migrations found.", 'yellow');
         }
 
         $current = $this->migration->get_version($type);
+
+        // Already at the desired version?
+        if (! is_null($to) && $current == $to)
+        {
+            if ($silent)
+            {
+                return true;
+            }
+            else {
+                return CLI::write("\tDatabase is already at the desired version ({$to})", 'yellow');
+            }
+        }
+
+        $target = is_null($to) ? $latest : $to;
 
         // Just to be safe, verify with the user they want to migrate
         // to the latest version.
@@ -66,16 +80,18 @@ class Database extends \Myth\Controllers\CLIController
                 }
             }
 
-            if (! $this->migration->latest()) {
+            if (! $this->migration->latest($type)) {
                 return CLI::error("\n\tERROR: " . $this->migration->error_string() . "\n");
             }
         } else {
-            if (! $this->migration->version($to)) {
+            if ($this->migration->version($type, $to) === false) {
+                die(var_dump($result));
                 return CLI::error("\n\tERROR: " . $this->migration->error_string() . "\n");
             }
         }
 
-        CLI::write("\n\tSuccessfully migrated database from version {$current} to {$latest}.\n", 'green');
+        return $silent ? true :
+            CLI::write("\n\tSuccessfully migrated database from version {$current} to {$target}.\n", 'green');
     }
 
     //--------------------------------------------------------------------
@@ -99,17 +115,17 @@ class Database extends \Myth\Controllers\CLIController
     /**
      * Migrates the database back to 0, then back up to the latest version.
      */
-    public function refresh()
+    public function refresh($type='app')
     {
         $this->load->library('migration');
 
-        if (! $this->migration->version(0)) {
+        if ($result = $this->migration->version($type, 0) === false) {
             return CLI::error("\tERROR: " . $this->migration->error_string());
         }
 
         CLI::write(CLI::color("\tCleared the database.", 'green'));
 
-        if (! $this->migration->latest()) {
+        if ($this->migration->latest($type) === false) {
             return CLI::error("\tERROR: " . $this->migration->error_string());
         }
 
