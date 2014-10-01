@@ -177,6 +177,7 @@ class CI_Migration {
         {
             show_error($this->error_string());
         }
+
     }
 
     // --------------------------------------------------------------------
@@ -187,13 +188,15 @@ class CI_Migration {
      * Calls each migration step required to get to the schema version of
      * choice
      *
+     * @param string $type  Any key from _migration_paths, or {module_name}
      * @param	string	$target_version	Target schema version
+     *
      * @return	mixed	TRUE if already latest, FALSE if failed, string if upgraded
      */
-    public function version($target_version)
+    public function version($type='all', $target_version)
     {
         // Note: We use strings, so that timestamp versions work on 32-bit systems
-        $current_version = $this->_get_version();
+        $current_version = $this->get_version($type);
 
         if ($this->_migration_type === 'sequential')
         {
@@ -204,7 +207,7 @@ class CI_Migration {
             $target_version = (string) $target_version;
         }
 
-        $migrations = $this->find_migrations();
+        $migrations = $this->find_migrations($type);
 
         if ($target_version > 0 && ! isset($migrations[$target_version]))
         {
@@ -269,7 +272,7 @@ class CI_Migration {
                 log_message('debug', 'Migrating '.$method.' from version '.$current_version.' to version '.$number);
                 call_user_func(array($instance, $method));
                 $current_version = $number;
-                $this->_update_version($current_version);
+                $this->_update_version($type, $current_version);
             }
         }
 
@@ -291,11 +294,31 @@ class CI_Migration {
     /**
      * Sets the schema to the latest migration
      *
+     * @param string $type  Any key from _migration_paths, or {module_name}
+     *
      * @return	mixed	TRUE if already latest, FALSE if failed, string if upgraded
      */
-    public function latest()
+    public function latest($type='app')
     {
-        $migrations = $this->find_migrations();
+        $last_migration = $this->get_latest($type);
+
+        // Calculate the last migration step from existing migration
+        // filenames and proceed to the standard version migration
+        return $this->version($type, $this->_get_migration_number($last_migration));
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Retrieves the latest migration version available.
+     *
+     * @param string $type  Any key from _migration_paths, or {module_name}
+     *
+     * @return bool|string
+     */
+    public function get_latest($type='app')
+    {
+        $migrations = $this->find_migrations($type);
 
         if (empty($migrations))
         {
@@ -303,14 +326,12 @@ class CI_Migration {
             return FALSE;
         }
 
-        $last_migration = basename(end($migrations));
-
-        // Calculate the last migration step from existing migration
-        // filenames and proceed to the standard version migration
-        return $this->version($this->_get_migration_number($last_migration));
+        return basename(end($migrations));
     }
 
-    // --------------------------------------------------------------------
+    //--------------------------------------------------------------------
+
+
 
     /**
      * Sets the schema to the migration version set in config
@@ -341,12 +362,14 @@ class CI_Migration {
      *
      * @return	array	list of migration file paths sorted by version
      */
-    public function find_migrations()
+    public function find_migrations($type='app')
     {
         $migrations = array();
 
+        $path = $this->_determine_migration_path($type);
+
         // Load all *_*.php files in the migrations path
-        foreach (glob($this->_migration_path.'*_*.php') as $file)
+        foreach (glob($path.'*_*.php') as $file)
         {
             $name = basename($file, '.php');
 
@@ -371,6 +394,88 @@ class CI_Migration {
     }
 
     // --------------------------------------------------------------------
+
+    /**
+     * Retrieves current schema version
+     *
+     * @return	string	Current migration version
+     */
+    public function get_version()
+    {
+        $row = $this->db->select('version')->get($this->_migration_table)->row();
+        return $row ? $row->version : '0';
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * Given the string for the name of the file, will
+     * generate the rest of the filename based on the current
+     * $config['migration_type'] setting.
+     *
+     * @param $name
+     * @return string The final name (with extension)
+     */
+    public function make_name($name)
+    {
+        if (empty($name))
+        {
+            return null;
+        }
+
+        if ($this->_migration_type == 'timestamp')
+        {
+            $prefix = date('YmdHis');
+        }
+        else
+        {
+            $prefix = str_pad($this->get_version() + 1, 3, '0', STR_PAD_LEFT);
+        }
+
+        return $prefix .'_'. $name .'.php';
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Enable the use of CI super-global
+     *
+     * @param	string	$var
+     * @return	mixed
+     */
+    public function __get($var)
+    {
+        return get_instance()->$var;
+    }
+
+    //--------------------------------------------------------------------
+
+    //--------------------------------------------------------------------
+    // Protected Methods
+    //--------------------------------------------------------------------
+
+    /**
+     * Based on the 'type', determines the correct migration path.
+     *
+     * @todo: find migration paths for modules.
+     *
+     * @param $type
+     */
+    protected function _determine_migration_path($type)
+    {
+        $type = strtolower($type);
+
+        if (! empty($this->_migration_paths[$type]))
+        {
+            return $this->_migration_paths[$type];
+        }
+
+        // Else: Find it from our modules...
+
+        return null;
+    }
+
+    //--------------------------------------------------------------------
 
     /**
      * Extracts the migration number from a filename
@@ -402,74 +507,23 @@ class CI_Migration {
     // --------------------------------------------------------------------
 
     /**
-     * Retrieves current schema version
-     *
-     * @return	string	Current migration version
-     */
-    protected function _get_version()
-    {
-        $row = $this->db->select('version')->get($this->_migration_table)->row();
-        return $row ? $row->version : '0';
-    }
-
-    // --------------------------------------------------------------------
-
-    /**
      * Stores the current schema version
      *
+     * @param   string  $type  Any key from _migration_paths, or {module_name}
      * @param	string	$migration	Migration reached
-     * @return	void	Outputs a report of the migration
+     * @return	mixed	Outputs a report of the migration
      */
-    protected function _update_version($migration)
+    protected function _update_version($type='all', $migration)
     {
         return $this->db->update($this->_migration_table, array(
-            'version' => $migration
+            'version'   => $migration,
+            'alias'     => $type,
+            'ondate'    => date('Y-m-d H:i:s')
         ));
     }
 
     // --------------------------------------------------------------------
 
-    /**
-     * Enable the use of CI super-global
-     *
-     * @param	string	$var
-     * @return	mixed
-     */
-    public function __get($var)
-    {
-        return get_instance()->$var;
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Given the string for the name of the file, will
-     * generate the rest of the filename based on the current
-     * $config['migration_type'] setting.
-     *
-     * @param $name
-     * @return string The final name (with extension)
-     */
-    public function make_name($name)
-    {
-        if (empty($name))
-        {
-            return null;
-        }
-
-        if ($this->_migration_type == 'timestamp')
-        {
-            $prefix = date('YmdHis');
-        }
-        else
-        {
-            $prefix = str_pad($this->_get_version() + 1, 3, '0', STR_PAD_LEFT);
-        }
-
-        return $prefix .'_'. $name .'.php';
-    }
-
-    //--------------------------------------------------------------------
 }
 
 /* End of file Migration.php */

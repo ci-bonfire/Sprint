@@ -1176,6 +1176,8 @@ class CI_Loader {
 		$CI->$object_name = isset($config)
 			? new $name($config)
 			: new $name();
+
+        return $CI->$object_name;
 	}
 
 	// --------------------------------------------------------------------
