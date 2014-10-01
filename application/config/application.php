@@ -6,7 +6,9 @@
 // We can automatically run any outstanding migrations in the core,
 // the application and the modules themselves if this is set to TRUE.
 //
-    $config['auto_migrate'] = false;
+    $config['auto_migrate'] = array(
+        'app'   // Comment this line out to turn off auto-migrations.
+    );
 
 //--------------------------------------------------------------------
 // Site Information

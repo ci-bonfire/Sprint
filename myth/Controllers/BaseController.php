@@ -137,17 +137,16 @@ class BaseController extends \CI_Controller
      */
     protected function autoMigrate()
     {
-        // Try to auto-migrate any files stored in APPPATH ./migrations
-        if ($this->config->item('auto_migrate') === TRUE) {
-            $this->load->library('migration');
+        $migrations = config_item('auto_migrate');
 
-            // We can specify a version to migrate to by appending ?migrate_to=X
-            // in the URL.
-            if ($mig_version = $this->input->get('migrate_to')) {
-                $this->migration->version($mig_version);
-            } else {
-                $this->migration->latest();
-            }
+        if (! is_array($migrations) || ! count($migrations)) return;
+
+        $this->load->library('migration');
+
+        // Run all of our migrations for each group.
+        foreach ($migrations as $group)
+        {
+            $this->migration->latest($group);
         }
     }
 
