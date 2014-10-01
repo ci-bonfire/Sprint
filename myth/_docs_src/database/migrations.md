@@ -93,6 +93,8 @@ If no migrations are found, or the database is already at the current migration,
 ### refresh()
 This will run the down() method on all migrations in the specified group in reverse order, effectively uninstalling those changes, and then rerun them up to the latest available migration. This is useful to reset the data to a pristine version before running [seeds](database/seeds).
 
+	php index.php database refresh
+
 ## Auto-Running Migrations
 
 Migrations can be set to auto-run when discovered by changing a couple of lines in the `application/config/config.php` file. 
