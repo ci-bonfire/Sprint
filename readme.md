@@ -39,3 +39,10 @@ The following is being built for the initial release:
 Sprint will not include much in the way of a built-in admin area, though it will have default views that can be incorporated into your own areas.
 
 It will not include a method for working with assets as much of this can be handled easier and with higher performance on a per-project basis, often using something like [CodeKit](http://incident57.com/codekit/).
+
+## Where's the Docs?
+Docs are included in the repo itself, and it comes with a pretty nice documentation system built on simple Markdown-formatted files. 
+
+To view the documentation, download the code, and point your browser to `/docs`. The rest should be working fine, but please [let me know](https://github.com/ci-bonfire/Sprint/issues) if you hit any snags! 
+
+To view the docs prior to downloading, you'll have to [browse the files](https://github.com/ci-bonfire/Sprint/tree/develop/myth/_docs_src) in the repo for now. Before too long, we'll have a site setup for it. But the current focus is on the initial release getting whipped into shape. 
