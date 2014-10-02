@@ -127,9 +127,14 @@ class ViewThemer implements ThemerInterface
 
         // if using a variant, add it to the view name.
         if (! empty($this->current_variant)) {
-            $variant_view = $this->variants[$this->current_variant];
+            $variant_view = $view . $this->variants[$this->current_variant];
 
-            $output = $this->ci->load->view_path($variant_view, $data, true);
+            if (realpath($variant_view .'.php')) {
+                $output = $this->ci->load->view_path($variant_view, $data, true);
+            }
+            else {
+                $output = $this->ci->load->view($variant_view, $data, true, true);
+            }
         }
 
         // If that didn't find anything, then try it without a variant

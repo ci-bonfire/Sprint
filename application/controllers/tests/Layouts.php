@@ -28,6 +28,12 @@ class Layouts extends \Myth\Controllers\ThemedController {
             $this->addStyle( site_url('themes/foundation5/css/theme.css') );
         }
 
+        // Any variant specified
+        if ($variant = $this->input->get('variant'))
+        {
+            $this->themer->setVariant($variant);
+        }
+
         $this->setMessage('Status messages would go here. Luckily everything is great, now!', 'success');
 
         $this->setVar('layout_title', str_replace('_', ' ', $layout));

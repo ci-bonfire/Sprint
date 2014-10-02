@@ -345,7 +345,7 @@ class MX_Loader extends CI_Loader
     //--------------------------------------------------------------------
 
     /** Load a module view **/
-    public function view($view, $vars = array(), $return = FALSE)
+    public function view($view, $vars = array(), $return = FALSE, $allow_failure=false)
     {
         list($path, $new_view) = Modules::find($view, $this->_module, 'views/');
 
@@ -358,7 +358,7 @@ class MX_Loader extends CI_Loader
             $view = $new_view;
         }
 
-        return $this->_ci_load(array('_ci_view' => $view, '_ci_vars' => $this->_ci_object_to_array($vars), '_ci_return' => $return));
+        return $this->_ci_load(array('_ci_view' => $view, '_ci_vars' => $this->_ci_object_to_array($vars), '_ci_return' => $return), $allow_failure);
     }
 
     //--------------------------------------------------------------------
@@ -379,7 +379,7 @@ class MX_Loader extends CI_Loader
 
     //--------------------------------------------------------------------
 
-    function _ci_load($_ci_data) {
+    function _ci_load($_ci_data, $allow_failure=false) {
 
         foreach (array('_ci_view', '_ci_vars', '_ci_path', '_ci_return') as $_ci_val)
         {
@@ -417,6 +417,11 @@ class MX_Loader extends CI_Loader
 
         if (! $file_exists && ! file_exists($_ci_path))
         {
+            if ($allow_failure)
+            {
+                return null;
+            }
+
             show_error('Unable to load the requested file: '.$_ci_file);
         }
 
