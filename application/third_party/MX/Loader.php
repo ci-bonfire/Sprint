@@ -347,7 +347,7 @@ class MX_Loader extends CI_Loader
     /** Load a module view **/
     public function view($view, $vars = array(), $return = FALSE)
     {
-        list($path, $view) = Modules::find($view, $this->_module, 'views/');
+        list($path, $new_view) = Modules::find($view, $this->_module, 'views/');
 
         // If we found a module path, add it to the top
         // of the list of folders to check.
@@ -355,6 +355,7 @@ class MX_Loader extends CI_Loader
         {
             $path = [$path => true];
             $this->_ci_view_paths = array_merge($path, $this->_ci_view_paths);
+            $view = $new_view;
         }
 
         return $this->_ci_load(array('_ci_view' => $view, '_ci_vars' => $this->_ci_object_to_array($vars), '_ci_return' => $return));

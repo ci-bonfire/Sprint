@@ -28,7 +28,7 @@
 // Profiler
 //--------------------------------------------------------------------
 //
-    $config['show_profiler'] = false;
+    $config['show_profiler'] = true;
 
 //--------------------------------------------------------------------
 // Caching
@@ -63,9 +63,9 @@
 // is the alias name. This is used to reference within the 'display'
 // method of the
     $config['theme.paths'] = array(
-        'bootstrap'  => APPPATH .'../themes/bootstrap3',
-        'foundation' => APPPATH .'../themes/foundation5',
-        'docs'       => APPPATH .'../themes/docs'
+        'bootstrap'  => FCPATH .'themes/bootstrap3',
+        'foundation' => FCPATH .'themes/foundation5',
+        'docs'       => FCPATH .'themes/docs'
     );
 
 //--------------------------------------------------------------------

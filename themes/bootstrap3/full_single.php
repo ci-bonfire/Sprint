@@ -2,7 +2,7 @@
 
 <?= $themer->display('bootstrap:fragments/topbar') ?>
 
-<div class="container">
+<div class="container-fluid">
 
     <?= $notice ?>
 

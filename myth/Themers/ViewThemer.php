@@ -109,7 +109,7 @@ class ViewThemer implements ThemerInterface
      * @param $view
      * @return mixed
      */
-    public function display($view, $data = null)
+    public function display($view, $data = array())
     {
         $theme = null;
         $variant_view = null;
@@ -123,7 +123,7 @@ class ViewThemer implements ThemerInterface
             $view = rtrim($this->folders[$theme], '/') . '/' . $view;
         }
 
-        $data = is_array($data) ? $data : $this->vars;
+        $data = array_merge($this->vars, $data);
 
         // if using a variant, add it to the view name.
         if (! empty($this->current_variant)) {
