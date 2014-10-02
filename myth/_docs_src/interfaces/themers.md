@@ -70,3 +70,10 @@ The available variants are defined in the `config/application.php` file.
 
 ### removeVariant()
 Removes a variant from the list of available variants.
+
+### call()
+Allows the user to call a class/method and return the results. This allows a simple way to consolidate code into a single place, instead of calling it several different times in different controllers. 
+
+For example, say you had a set of recent blog posts. That block of posts might show up on the home page, on the sidebar of the blog, and on the individual posts page. That's three different places in your controllers that you would need to remember to call the model and include this data as a view variable. Instead, we can create a callback that will load the model, grab the data, render it into a view for us, and spit out the formatted data.
+
+The [themes](general/themes) guide contains more detailed information on the expected usage. When implementing a new Themer, you should be able to copy this method directly from the `ViewThemer` class file.
