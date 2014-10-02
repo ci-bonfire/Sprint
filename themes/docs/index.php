@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <title>Docs</title>
 
+    <meta name=viewport content="width=device-width, initial-scale=1">
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/themes/docs/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="/themes/docs/css/codestyles/rainbow.css" />
@@ -91,7 +93,8 @@
         <small>Page rendered in {elapsed_time} sec. using {memory_usage}.</small>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="/themes/docs/js/ajax.js"></script>
     <script src="/themes/docs/js/highlight.min.js"></script>
     <script src="/themes/docs/js/docs.js"></script>
