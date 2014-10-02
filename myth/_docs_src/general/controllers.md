@@ -105,3 +105,8 @@ This controller provides theming functions into the controller with several conv
 Full details on the usage can be found in the [Theming](themes) guide in the docs.
 
 
+
+## CLIController
+Provides access to the [CLI library](general/cli_controllers) and restricts the controller's usage to the Command Line. Extends from [BaseController](#basecontroller) to provide access to all of the tools you're used to.
+
+Full details on the usage can be found in the [CLI Controllers](general/cli_controllers) guide in the docs.
