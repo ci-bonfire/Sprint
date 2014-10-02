@@ -22,6 +22,12 @@ class CLIController extends \CI_Controller {
     {
         parent::__construct();
 
+        // Restrict usage to the command line.
+        if (! is_cli() )
+        {
+            show_error('This controller must be called from the command line.');
+        }
+
         // Make sure the CLI library is loaded and ready.
         $cli = new CLI();
         $cli::_init();
