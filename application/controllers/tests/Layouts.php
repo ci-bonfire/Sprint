@@ -23,10 +23,16 @@ class Layouts extends \Myth\Controllers\ThemedController {
         $this->layout = $layout;
         $this->theme = $theme;
 
+        if ($theme == 'foundation')
+        {
+            $this->addStyle( site_url('themes/foundation5/css/theme.css') );
+        }
+
         $this->setMessage('Status messages would go here. Luckily everything is great, now!', 'success');
 
         $this->setVar('layout_title', str_replace('_', ' ', $layout));
         $this->setVar('layout_desc', $this->describe($layout));
+        $this->setVar('theme', $this->theme);
         $this->render();
     }
 
