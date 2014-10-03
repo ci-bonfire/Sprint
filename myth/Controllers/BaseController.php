@@ -217,24 +217,29 @@ class BaseController extends \CI_Controller
             throw new RenderException('Resources can not be converted to JSON data.');
         }
 
-        // If there is a fragments array and we've enabled profiling,
-        // then we need to add the profile results to the fragments
-        // array so it will be updated on the site, since we disable
-        // all profiling below to keep the results clean.
-        if (is_array($json)) {
-            if (! isset($json['fragments'])) {
-                $json['fragments'] = array();
-            }
+        // When integrating Eldarion AJAX library, we get the addtional
+        // benefit of having the notices and profiler refreshed during AJAX calls.
+        if (config_item('use_eldarion')) {
 
-            if ($this->config->item('show_profiler')) {
-                $this->load->library('profiler');
-                $json['fragments']['#profiler'] = $this->profiler->run();
-            }
+            // If there is a fragments array and we've enabled profiling,
+            // then we need to add the profile results to the fragments
+            // array so it will be updated on the site, since we disable
+            // all profiling below to keep the results clean.
+            if (is_array($json)) {
+                if (! isset($json['fragments'])) {
+                    $json['fragments'] = array();
+                }
 
-            // Also, include our notices in the fragments array.
-            if ($this->ajax_notices === true) {
-                $path = isset($this->themer) ? $this->themer->getThemePath() : '';
-                $json['fragments']['#notices'] = $this->load->view_path("{$path}/notice", array('notice' => $this->message()), true);
+                if ($this->config->item('show_profiler')) {
+                    $this->load->library('profiler');
+                    $json['fragments']['#profiler'] = $this->profiler->run();
+                }
+
+                // Also, include our notices in the fragments array.
+                if ($this->ajax_notices === true) {
+                    $path = isset($this->themer) ? $this->themer->getThemePath() : '';
+                    $json['fragments']['#notices'] = $this->load->view_path("{$path}/notice", array('notice' => $this->message()), true);
+                }
             }
         }
 
