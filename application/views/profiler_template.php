@@ -1,3 +1,4 @@
+<div id="profiler">
 <?php
 	/*
 		The location of the profiler bar. Valid locations are:
@@ -438,3 +439,4 @@ window.onload = function() {
 <?php endif; ?>
 
 </div>	<!-- /codeigniter_profiler -->
+</div>

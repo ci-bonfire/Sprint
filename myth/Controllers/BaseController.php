@@ -222,11 +222,11 @@ class BaseController extends \CI_Controller
         // array so it will be updated on the site, since we disable
         // all profiling below to keep the results clean.
         if (is_array($json)) {
-            if (!isset($json['fragments'])) {
+            if (! isset($json['fragments'])) {
                 $json['fragments'] = array();
             }
 
-            if ($this->config->item('show_profile')) {
+            if ($this->config->item('show_profiler')) {
                 $this->load->library('profiler');
                 $json['fragments']['#profiler'] = $this->profiler->run();
             }
