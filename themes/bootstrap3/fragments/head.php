@@ -12,6 +12,7 @@
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="<?= site_url('themes/bootstrap3/css/ajax.css') ?>">
     <?php foreach ($stylesheets as $style) :?>
         <link rel="stylesheet" href="<?= $style ?>" />
     <?php endforeach; ?>

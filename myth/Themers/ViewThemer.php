@@ -386,6 +386,29 @@ class ViewThemer implements ThemerInterface
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Returns the path to the active/default theme's folder.
+     *
+     * @return string|null
+     */
+    public function getThemePath()
+    {
+        $theme = empty($this->theme) ? $this->default_theme : $this->theme;
+
+        if (! isset($this->folders[ $theme ]))
+        {
+            return null;
+        }
+
+        return $this->folders[$theme];
+    }
+
+    //--------------------------------------------------------------------
+
+
+
+    //--------------------------------------------------------------------
     // Variants
     //--------------------------------------------------------------------
 

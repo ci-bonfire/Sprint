@@ -15,6 +15,10 @@
             <a class="navbar-brand" href="<?= site_url('tests/layouts') ?>">SprintPHP Samples</a>
 
                 <ul class="nav navbar-nav navbar-right">
+                    <li <?= $this->uri->segment(2) == 'ajax' ? 'class="active"' : '' ?>>
+                        <a href="<?= site_url('tests/ajax') ?>">AJAX</a>
+                    </li>
+
                     <li <?= $this->uri->segment(2) == 'callbacks' ? 'class="active"' : '' ?>>
                         <a href="<?= site_url('tests/callbacks') ?>">Callbacks</a>
                     </li>

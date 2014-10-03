@@ -9,8 +9,12 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <script src="<?= site_url('assets/js/eldarion/eldarion-ajax.min.js') ?>"></script>
+    <script src="<?= site_url('assets/js/ajax.js') ?>"></script>
     <?php foreach ($external_scripts as $script) : ?>
         <script src="<?= $script ?>"></script>
     <?php endforeach; ?>
+
+    <div id="ajax-loader" class="alert-warning">Loading...</div>
 </body>
 </html>

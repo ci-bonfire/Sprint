@@ -233,7 +233,8 @@ class BaseController extends \CI_Controller
 
             // Also, include our notices in the fragments array.
             if ($this->ajax_notices === true) {
-                $json['fragments']['#notices'] = $this->load->view('theme/notice', array('notice' => $this->message()), true);
+                $path = isset($this->themer) ? $this->themer->getThemePath() : '';
+                $json['fragments']['#notices'] = $this->load->view_path("{$path}/notice", array('notice' => $this->message()), true);
             }
         }
 
