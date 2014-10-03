@@ -38,7 +38,8 @@ class Layouts extends \Myth\Controllers\ThemedController {
 
         $this->setVar('layout_title', str_replace('_', ' ', $layout));
         $this->setVar('layout_desc', $this->describe($layout));
-        $this->setVar('theme', $this->theme);
+        $this->setVar('theme', $theme);
+        $this->setVar('layout', $layout);
         $this->render();
     }
 

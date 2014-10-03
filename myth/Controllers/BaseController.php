@@ -110,7 +110,7 @@ class BaseController extends \CI_Controller
 
         // Make sure that caching is ALWAYS available throughout the app
         // though it defaults to 'dummy' which won't actually cache.
-//        $this->load->driver('cache', array('adapter' => $this->cache_type, 'backup' => $this->backup_cache));
+        $this->load->driver('cache', array('adapter' => $this->cache_type, 'backup' => $this->backup_cache));
     }
 
     //--------------------------------------------------------------------

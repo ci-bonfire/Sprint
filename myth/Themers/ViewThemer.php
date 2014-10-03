@@ -43,13 +43,11 @@ class ViewThemer implements ThemerInterface
      */
     public function render($layout = null)
     {
-        $data = $this->vars;
-
         // Make the template engine available within the views.
-        $data['themer'] = $this;
+        $this->vars['themer'] = $this;
 
         // Render our current view content
-        $data['view_content'] = $this->content();
+        $this->vars['view_content'] = $this->content();
 
         $theme = empty($this->theme) ? $this->default_theme : $this->theme;
 
@@ -58,9 +56,9 @@ class ViewThemer implements ThemerInterface
         }
 
         // Make the path available within views.
-        $data['theme_path'] = $this->folders[$theme];
+        $this->vars['theme_path'] = $this->folders[$theme];
 
-        return $this->display($this->folders[$theme] . '/' . $this->layout, $data);
+        return $this->display($this->folders[$theme] . '/' . $this->layout);
     }
 
     //--------------------------------------------------------------------
@@ -172,13 +170,20 @@ class ViewThemer implements ThemerInterface
             $params = array();
 
             foreach ($parts as $part) {
-                $params[] = explode('=', $part);
+                $p = explode('=', $part);
+
+                if (empty($p[0]) || empty($p[1]))
+                {
+                    continue;
+                }
+
+                $params[ $p[0] ] = $p[1];
             }
 
             // Let PHP try to autoload it through any available autoloaders
             // (including Composer and user's custom autoloaders). If we
             // don't find it, then assume it's a CI library that we can reach.
-            if (! class_exists($class)) {
+            if (class_exists($class)) {
                 $class = new $class();
             } else {
                 $this->ci->load->library($class);
