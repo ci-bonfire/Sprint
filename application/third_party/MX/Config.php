@@ -1,5 +1,7 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
+use Myth\Modules as Modules;
+
 /**
  * Modular Extensions - HMVC
  *

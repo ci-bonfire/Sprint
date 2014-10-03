@@ -1,5 +1,7 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
+use Myth\Modules as Modules;
+
 /**
  * Modular Extensions - HMVC
  *
@@ -98,7 +100,7 @@ class MX_Loader extends CI_Loader
         if (class_exists('CI_DB', FALSE) AND $return == FALSE AND $active_record == NULL AND isset(CI::$APP->db) AND is_object(CI::$APP->db))
             return;
 
-        require_once BASEPATH.'database/DB'.EXT;
+        require_once BASEPATH.'database/DB'.'.php';
 
         if ($return === TRUE) return DB($params, $active_record);
 
@@ -217,11 +219,11 @@ class MX_Loader extends CI_Loader
 
         if($spark !== NULL)
         {
-            $autoload_path = $spark_path.'config/autoload'.EXT;
+            $autoload_path = $spark_path.'config/autoload.php';
         }
         else
         {
-            $autoload_path = APPPATH.'config/autoload'.EXT;
+            $autoload_path = APPPATH.'config/autoload.php';
         }
 
 

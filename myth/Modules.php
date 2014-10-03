@@ -1,12 +1,6 @@
-<?php (defined('BASEPATH')) OR exit('No direct script access allowed');
+<?php
 
-/**
- * NOTE: This file is NO LONGER USED in SprintPHP. It has been replaced
- * by Myth\Modules which takes the same code and adds in new features
- * and capabilities.
- */
-
-(defined('EXT')) OR define('EXT', '.php');
+namespace Myth;
 
 global $CFG;
 
@@ -16,7 +10,7 @@ is_array(Modules::$locations = $CFG->item('modules_locations')) OR Modules::$loc
 );
 
 /* PHP5 spl_autoload */
-spl_autoload_register('Modules::autoload');
+spl_autoload_register('\Myth\Modules::autoload');
 
 /**
  * Modular Extensions - HMVC
@@ -121,19 +115,19 @@ class Modules
 		if (strstr($class, 'CI_') OR strstr($class, config_item('subclass_prefix'))) return;
 
 		/* autoload Modular Extensions MX core classes */
-		if (strstr($class, 'MX_') AND is_file($location = dirname(__FILE__).'/'.substr($class, 3).EXT)) {
+		if (strstr($class, 'MX_') AND is_file($location = dirname(__FILE__).'/'.substr($class, 3).'.php')) {
 			include_once $location;
 			return;
 		}
 		
 		/* autoload core classes */
-		if(is_file($location = APPPATH.'core/'.$class.EXT)) {
+		if(is_file($location = APPPATH.'core/'.$class.'.php')) {
 			include_once $location;
 			return;
 		}		
 		
 		/* autoload library classes */
-		if(is_file($location = APPPATH.'libraries/'.$class.EXT)) {
+		if(is_file($location = APPPATH.'libraries/'.$class.'.php')) {
 			include_once $location;
 			return;
 		}		
@@ -142,8 +136,8 @@ class Modules
 	/** Load a module file **/
 	public static function load_file($file, $path, $type = 'other', $result = TRUE)	{
 		
-		$file = str_replace(EXT, '', $file);		
-		$location = $path.$file.EXT;
+		$file = str_replace('.php', '', $file);
+		$location = $path.$file.'.php';
 		
 		if ($type === 'other') {			
 			if (class_exists($file, FALSE))	{
@@ -176,7 +170,7 @@ class Modules
 		$segments = explode('/', $file);
 
 		$file = array_pop($segments);
-		$file_ext = (pathinfo($file, PATHINFO_EXTENSION)) ? $file : $file.EXT;
+		$file_ext = (pathinfo($file, PATHINFO_EXTENSION)) ? $file : $file.'.php';
 		
 		$path = ltrim(implode('/', $segments).'/', '/');	
 		$module ? $modules[$module] = $path : $modules = array();

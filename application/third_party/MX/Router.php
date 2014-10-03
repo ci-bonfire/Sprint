@@ -1,7 +1,11 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
-/* load the MX core module class */
-require dirname(__FILE__) . '/Modules.php';
+/*
+ * Changed from MX Modules library to an extended version
+ * in the Myth namespace.
+ */
+use \Myth\Modules as Modules;
+
 
 /**
  * Modular Extensions - HMVC
@@ -65,7 +69,7 @@ class MX_Router extends CI_Router
 		
 		$this->module = '';
 		$this->directory = '';
-		$ext = $this->config->item('controller_suffix').EXT;
+		$ext = $this->config->item('controller_suffix').'.php';
 		
 		/* use module route if available */
 		if (isset($segments[0]) AND $routes = Modules::parse_routes($segments[0], implode('/', $segments))) {

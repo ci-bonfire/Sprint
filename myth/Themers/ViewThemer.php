@@ -2,6 +2,7 @@
 
 namespace Myth\Themers;
 
+use Myth\Modules as Modules;
 use Myth\Interfaces\ThemerInterface;
 
 class ViewThemer implements ThemerInterface
@@ -72,7 +73,7 @@ class ViewThemer implements ThemerInterface
         // Calc our view name based on current method/controller
         $dir = $this->ci->router->fetch_directory();
 
-        foreach (\Modules::$locations as $key => $offset) {
+        foreach (Modules::$locations as $key => $offset) {
 
             if (stripos($dir, 'module') !== false) {
                 $dir = str_replace($offset, '', $dir);
