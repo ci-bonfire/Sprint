@@ -25,14 +25,15 @@ The following is being built for the initial release:
 * (Done) MY_Controller with simple theming, rendering methods for other data types (like json) and more
 * (Done) Extended Router to include module support, named routes, HTTP verb-based routing, Restful resources and scoped routes/areas.
 * (Done) Simple, but flexible, Template system
-* Simple, but expandable, Auth system 
-* (Mostly Done) Module Support, without being able to call other controllers. That simply gets too complex and causes too many problems. Instead, it's simply the ability to keep MVC triads in modules that can still be called from the URI.
+* (Done) Module Support, without being able to call other controllers. That simply gets too complex and causes too many problems. Instead, it's simply the ability to keep MVC triads in modules that can still be called from the URI.
 * (Done) Ready-to-roll AJAX system using [Eldarion AJAX](https://github.com/eldarion/eldarion-ajax)
 * (Mostly Done - needs Module support) Better Database Migrations, with CLI tool for building and running
 * (Done) Database Seeding with CLI tool
+* (Done) Markdown-based documentation system.
+* Simple, but expandable, Auth system 
 * Code Builder with simple generators in place, but fully customizable and easy to add your own.
 * Simple, GUI-less cron controller that can be used either through standard crontab, or from the web (for use with third-party cron runners)
-* (Done) Markdown-based documentation system.
+
 
 ## What's NOT included?
 
