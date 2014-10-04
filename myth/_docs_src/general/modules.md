@@ -1,76 +1,128 @@
-# Module Development
-A **module** is a collection of files that group functionality. This makes it simple to reuse the code in other projects or distribute the code. Modules can do as much or as little as they want: 
+# Working With Modules
 
-* Be small integration plugins or other small tasks background tasks
-* Tap into system events to execute code when system actions occur.
-* Create new controllers that can be mapped in the frontend or backend.
-* Update the database during install/update routines
-* And much more...
+Modules are simply mini-applications that are semi-self-contained and can be easily integrated into other applications or even distributed to other developers, if desired. They can contain `config files`, `controllers`, `helpers`, `libraries`, `models` and `views`.  Common uses might be for a blog, the user management section of a site and more. 
 
-Third party modules have access to the full system, just like the bundled modules.
+## Module Locations
+By default, you can store modules in the `application/modules` folder. You can edit this by adding to the array of module locations in the `application/config/config.php` file. 
 
-## Creating A Module
-Creating a module is simple and only requires two things: 
+	$config['modules_locations'] = array(
+    	APPPATH .'modules/'             => '../modules/',
+	    APPPATH .'../myth/CIModules/'   => '../../myth/CIModules/'
+	);
 
-* a folder: `application/modules/modulename/`
-* a module definition file: `application/modules/modulename/modulename.php`
+The key of each element is the full system path. The value of each element is the offset from the `application/controllers` folder to the new modules folder.
 
-Optionally, you can include a similar folder structure to the application folder, including: 
+When a module is being located it takes the first one found. If you have a module of the same name in two different folders, then the one in the first modules_locations folder will be the module used. To allow you to override the function of any of Sprint's bundled modules, you should ensure that the `CIModules` entry is always the last element in the array.
 
-* One or more models at `application/modules/modulename/models/`
-* One or more controllers at `application/modules/modulename/controllers`
-* A views folder at `application/modules/modulename/views/`
-* Additional routes specific to this module at: `application/modules/modulename/config/routes.php`
-* Helper files at `application/modules/modulename/helpers/`
-* Library files at `application/modules/modulename/libraries/`
+## Module Structure
+The name of the folder is the name of the module, as far as the system is concerned. So, a module named `Users` would need a folder (lowercase) named `users`.
 
-Of coures, you have access to all standard CodeIgniter libraries/helpers, as well as any Bonfire-specific code, or even anything you can load through Composer.
+	/application
+		/modules
+			/users
+				/config
+				/controllers
+				/helpers
+				/libraries
+				/models
+				/views
+				
+You can map a call to URL with the name of the module, as long as your controller name is the same as the module name. A module named `users` would have a controller named `users.php`, and a class named `Users`. This could be reached in the browser at `example.com/users`. 
 
-## Module Definition File
-Location: `application/modules/modulename/modulename.php`
+## Module Helpers
+A utility class, `Myth\Modules` provides a number of small commands to work with modules. For the most part you shouldn't need access to these, unless you are creating code that helps manipulate modules. 
 
-This file has 3 main purposes: 
+### listModules()
+Returns a list of all modules in the system. 
 
-1. Perform any installation/upgrade tasks, such as database table creation/modification, settings creation, etc.
-2. Registering any menu items your module needs.
-3. Subscribing to any System Events that you want to tap into to modify execution.
-
-At its simplest, the module definition file could look like this: 
-
-	class Modulename extends \Bonfire\Libraries\Module {
-		public $version = '1.0';
-		public $name = 'modulename';
-		public $description = 'My module description here.';
-	}
+	print_r( Modules::listModules() );
 	
-Here, we've specified the current module name, version and description. We've also extended the Module class which handles the shared logic for modules.
+	Array (
+		[0] => builder
+		[1] => database
+		[2] => docs
+	)
 
-If there is a class conflict (e.g., your frontend controller class is `Modulename` and you can't use `Modulename` for the definition class) you can use `ModulenameModule` (e.g. `SearchModule`) as the class name for the definition file.
+### controllerExists()
+Looks within a module to see if a certain controller exists. The first parameter is the name of the controller, and the second parameter is the module name.
 
-The CodeIgniter superobject is now accessible within our module definition file at ` $this->ci`.
+It returns either TRUE or FALSE.
 
-**No other code is required** in the module definition, but few modules will be that simple.
+    if (Modules::controllerExists('content', 'users')) { . . . }
+    
+### filePath()
+Locates a file within a module and returns the path to that file. The first parameter is the name of the module. The second parameter is the name of the folder. The last parameter is the name of the file that you're looking for (including the extension).
 
-### Install/Upgrade routines
-All installation and upgrade tasks should be handled through module-specific migration files. These files should be located under `application/modules/modulename/migrations/` and follow the same rules as standard migrations.
+It returns the full server path to the file, if found.
 
-Note that migrations will only be run for modules that have been installed already. For new modules that have not been installed, the migrations will initially be ran during the installation of the module.
+    $path = Modules::filePath('users', 'assets', 'js/users.js');
 
-### Uninstallation
-Not all modules need uninstall code. By default, any module-specific migrations will be reverted to version 0 if you tell Bonfire to remove the data from the system, otherwise the database is left intact and the module can be activated at any time.
+### path()
+Returns the full server path to a module and, optionally, a folder within that module. The first parameter is the name of the module. The second parameter is the name of the folder.
 
-If you need to handle other specific tasks during your module's uninstall routine, you can create an `uninstall()` method in the module definition file and it will be called prior to the migrations being rolled back.
+    $path = Modules::path('users', 'assets');
 
-### Admin Initialization
-When an admin page is loaded, any modules that have the `initAdmin()` method in the module definition file will have that method ran. This gives you the opportunity to run do things like add menu items. 
+### files()
+Returns an associative array of files within one or more modules.
 
-	class Modulename extends \Bonfire\Libraries\Module {
-		// .. variables, update logic, etc...
-		
-		function initAdmin() {
-			$this->menu->addChild(new MenuItem('modulename'), 'Content');
-		}
-	}
-	
-### Frontend Initialization
-Similar to `initAdmin()`, `init()` is executed on every pageload that is not within the Admin pages.
+The first parameter is the name of the module to restrict the search to. If left NULL, this will provide a list of all files within all of the modules. If a module name is specified, the search will be restricted to that module's files only.
+
+    Modules::files('sysinfo');
+
+    // Produces:
+    Array
+    (
+        [sysinfo] => Array
+        (
+            [config] => Array
+                (
+                    [0] => config.php
+                )
+
+            [controllers] => Array
+                (
+                    [0] => developer.php
+                )
+
+            [language] => Array
+                (
+                    [english] => Array
+                        (
+                            [0] => sysinfo_lang.php
+                        )
+
+                    [persian] => Array
+                        (
+                            [0] => sysinfo_lang.php
+                        )
+
+                    [portuguese_br] => Array
+                        (
+                            [0] => sysinfo_lang.php
+                        )
+
+                    [spanish_am] => Array
+                        (
+                            [0] => sysinfo_lang.php
+                        )
+
+                )
+
+            [views] => Array
+                (
+                    [developer] => Array
+                        (
+                            [0] => _sub_nav.php
+                            [1] => index.php
+                            [2] => modules.php
+                            [3] => php_info.php
+                        )
+
+                )
+
+        )
+
+    )
+
+
+The second parameter lets you specify a folder within that module to limit the file search to. If left NULL, it will provide all of the files.
