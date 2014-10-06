@@ -41,19 +41,19 @@ class Database extends \Myth\Controllers\CLIController
      * @param bool $silent If TRUE, will NOT display any prompts for verification.
      * @return bool|void
      */
-    public function migrate($type='app', $to = null, $silent = false)
+    public function migrate($type=null, $to = null, $silent = false)
     {
+        $this->load->library('migration');
+
         if (empty($type))
         {
-            $type = CLI::prompt("Migration group to refresh?");
+            $type = CLI::prompt("Migration group to refresh?", $this->migration->default_migration_path());
 
             if (empty($type))
             {
                 return $silent ? false : CLI::error("\tYou must supply a group to refresh.");
             }
         }
-
-        $this->load->library('migration');
 
         // Get our stats on the migrations
         $latest = $this->migration->get_latest($type);
@@ -125,9 +125,11 @@ class Database extends \Myth\Controllers\CLIController
      */
     public function refresh($type=null)
     {
+        $this->load->library('migration');
+
         if (empty($type))
         {
-            $type = CLI::prompt("Migration group to refresh?");
+            $type = CLI::prompt("Migration group to refresh?", $this->migration->default_migration_path());
 
             if (empty($type))
             {
@@ -135,9 +137,7 @@ class Database extends \Myth\Controllers\CLIController
             }
         }
 
-        $this->load->library('migration');
-
-        if ($result = $this->migration->version($type, 0) === false) {
+        if ($this->migration->version($type, 0) === false) {
             return CLI::error("\tERROR: " . $this->migration->error_string());
         }
 

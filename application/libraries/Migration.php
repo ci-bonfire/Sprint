@@ -167,9 +167,9 @@ class CI_Migration {
                 'ondate'  => array('type' => 'DATETIME')
             ));
 
-            $this->dbforge->create_table($this->_migration_table, TRUE);
+            $this->dbforge->add_key('alias');
 
-            $this->db->insert($this->_migration_table, array('version' => 0));
+            $this->dbforge->create_table($this->_migration_table, TRUE);
         }
 
         // Do we auto migrate to the latest migration?
@@ -436,7 +436,7 @@ class CI_Migration {
             $prefix = str_pad($this->get_version() + 1, 3, '0', STR_PAD_LEFT);
         }
 
-        return $prefix .'_'. $name .'.php';
+        return $prefix .'_'. ucfirst(strtolower($name)) .'.php';
     }
 
     //--------------------------------------------------------------------
@@ -486,6 +486,20 @@ class CI_Migration {
 
     //--------------------------------------------------------------------
 
+    /**
+     * Returns the default migration path. This is basically the first
+     * path in the migration_paths array.
+     *
+     * @return string
+     */
+    public function default_migration_path()
+    {
+        return key($this->_migration_paths);
+    }
+
+    //--------------------------------------------------------------------
+
+
     //--------------------------------------------------------------------
     // Protected Methods
     //--------------------------------------------------------------------
@@ -528,7 +542,10 @@ class CI_Migration {
      */
     protected function _update_version($type='all', $migration)
     {
-        return $this->db->update($this->_migration_table, array(
+        $this->db->where('alias', $type)
+                 ->delete($this->_migration_table);
+
+        return $this->db->insert($this->_migration_table, array(
             'version'   => $migration,
             'alias'     => $type,
             'ondate'    => date('Y-m-d H:i:s')
