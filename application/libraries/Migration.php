@@ -366,7 +366,7 @@ class CI_Migration {
     {
         $migrations = array();
 
-        $path = $this->_determine_migration_path($type);
+        $path = $this->determine_migration_path($type);
 
         // Load all *_*.php files in the migrations path
         foreach (glob($path.'*_*.php') as $file)
@@ -400,9 +400,13 @@ class CI_Migration {
      *
      * @return	string	Current migration version
      */
-    public function get_version()
+    public function get_version($type='app')
     {
-        $row = $this->db->select('version')->get($this->_migration_table)->row();
+        $row = $this->db->select('version')
+                        ->where('alias', $type)
+                        ->get($this->_migration_table)
+                        ->row();
+
         return $row ? $row->version : '0';
     }
 
@@ -450,31 +454,40 @@ class CI_Migration {
 
     //--------------------------------------------------------------------
 
-    //--------------------------------------------------------------------
-    // Protected Methods
-    //--------------------------------------------------------------------
 
     /**
      * Based on the 'type', determines the correct migration path.
      *
-     * @todo: find migration paths for modules.
-     *
      * @param $type
+     * @return null|string
      */
-    protected function _determine_migration_path($type)
+    public function determine_migration_path($type)
     {
         $type = strtolower($type);
 
-        if (! empty($this->_migration_paths[$type]))
+        // Is it a module?
+        if (strpos($type, 'mod:') === 0)
         {
-            return $this->_migration_paths[$type];
+            $module = str_replace('mod:', '', $type);
+
+            $path = \Myth\Modules::path($module, 'migrations');
+
+            return rtrim($path, '/') .'/';
         }
 
-        // Else: Find it from our modules...
+        // Look in our predefined groups.
+        if (! empty($this->_migration_paths[$type]))
+        {
+            return rtrim($this->_migration_paths[$type], '/') .'/';
+        }
 
         return null;
     }
 
+    //--------------------------------------------------------------------
+
+    //--------------------------------------------------------------------
+    // Protected Methods
     //--------------------------------------------------------------------
 
     /**

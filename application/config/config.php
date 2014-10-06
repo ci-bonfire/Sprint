@@ -32,7 +32,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $config['modules_locations'] = array(
     APPPATH .'modules/'             => '../modules/',
-    APPPATH .'../myth/CIModules/'   => '../../myth/CIModules/'
+    FCPATH .'myth/CIModules/'   => '../../myth/CIModules/'
 );
 
 /*

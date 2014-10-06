@@ -18,14 +18,11 @@ By default, migrations are stored under the `application/database/migrations` fo
 To add a new folder where migrations can be found, simply add a new row to the array. The key is an alias that you will use when you call the migrations from the command line, or define the groups to be automatically migrated in the `config/application` file. The *value* is the location on the server where the migrations can be found.
 
 ### Module Migrations
-
 Each module can contain its own migrations, that can be applied completely separate of any application or core migrations. This allows for you to easily re-use your modules in other applications.
 
-Module-level migrations are stored in `modules/my_module/migrations`.
+Module-level migrations are stored in `modules/my_module/migrations` folders.
 
-<a name="enabling"></a>
 ## Enabling Migrations
-
 A clean install has migrations enabled by default.  However, it is recommended when you move to production to disable migrations for security.
 
 To disable migrations, edit the following line in `application/config/migrations.php` to be `false`.
@@ -34,12 +31,10 @@ To disable migrations, edit the following line in `application/config/migrations
 
 
 ## Anatomy of a Migration
-
 A migration is a subclass of `CI_Migration` that implements two methods: up (perform the required transformations) and down (revert them). Within each migration you can use any of the methods that CodeIgniter provides, like the `dbutils` and `dbforge` classes.
 
 
 ## Creating a Migration
-
 The easiest way to create a migration is to call the `database newMigration` task from the command line.
 
 	php index.php database newMigration {migration_name}
@@ -49,7 +44,6 @@ The `{migration_name}` will be used as part of the filename. The  filename is pr
 This file will be created in the `app` migration folder be default. You can change by passing in the alias of the folder you want it created in after the migration name. You cannot have it automatically placed within a module's folder currently.
 
 ### File Structure
-
 The file is a standard PHP class, that must follow three simple rules:
 
 * The class must be named the same as the file, except the number is replaced by Migration.  For a file named `20141001052249_CreateUserTable.php`, the class would be named `Migration_CreateUserTable`.  The name is case-sensitive.
@@ -75,25 +69,28 @@ The file is a standard PHP class, that must follow three simple rules:
     }
 
 ## Running Migrations
-
 Migrations can be run, both up and down by using the `database` tools on the command line.
 
-### migrate()
+For all of the following commands, you can replace the group name with `mod:` followed by the module name. 
+
+	php index.php database migrate mod:users
+
+### migrate
 This will run the migrations to a specific version, or to the latest if no version is supplied. The first parameter is the `alias` of the migrations group. The second parameter is the version to migrate to. This would be the filename you want to end your migrations on. Any migrations past this will not be ran. If no version is passed in the second parameter, then will be prompted to run to the latest version available for that group, or cancel.
 
 	php index.php database migrate app
 
-### quietMigrate()
+### quietMigrate
 This is identical to the `migrate` method, but will not return any output to the command line, just a success/fail result. This is useful when part of a build script process.
 
 If no migrations are found, or the database is already at the current migration, the script will return TRUE.
 
 	php index.php database quietMigrate app
 
-### refresh()
+### refresh
 This will run the down() method on all migrations in the specified group in reverse order, effectively uninstalling those changes, and then rerun them up to the latest available migration. This is useful to reset the data to a pristine version before running [seeds](database/seeds).
 
-	php index.php database refresh
+	php index.php database refresh app
 
 ## Auto-Running Migrations
 

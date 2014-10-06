@@ -259,7 +259,7 @@ class Modules
      */
     public static function path($module=null, $folder=null)
     {
-        foreach (self::$locations as $module_folder) {
+        foreach (self::$locations as $module_folder => $offset) {
             if (is_dir($module_folder . $module)) {
                 if ( ! empty($folder) && is_dir("{$module_folder}{$module}/{$folder}")) {
                     return "{$module_folder}{$module}/{$folder}";

@@ -36,12 +36,23 @@ class Database extends \Myth\Controllers\CLIController
      * Example:
      *      > php index.php database migrate
      *
-     * @param string $type  'app', 'myth', 'all' or {module_name}
+     * @param string $type 'app', 'myth', 'all' or {module_name}
      * @param null $to
      * @param bool $silent If TRUE, will NOT display any prompts for verification.
+     * @return bool|void
      */
     public function migrate($type='app', $to = null, $silent = false)
     {
+        if (empty($type))
+        {
+            $type = CLI::prompt("Migration group to refresh?");
+
+            if (empty($type))
+            {
+                return $silent ? false : CLI::error("\tYou must supply a group to refresh.");
+            }
+        }
+
         $this->load->library('migration');
 
         // Get our stats on the migrations
@@ -57,13 +68,7 @@ class Database extends \Myth\Controllers\CLIController
         // Already at the desired version?
         if (! is_null($to) && $current == $to)
         {
-            if ($silent)
-            {
-                return true;
-            }
-            else {
-                return CLI::write("\tDatabase is already at the desired version ({$to})", 'yellow');
-            }
+            return $silent ? true : CLI::write("\tDatabase is already at the desired version ({$to})", 'yellow');
         }
 
         $target = is_null($to) ? $latest : $to;
@@ -85,7 +90,6 @@ class Database extends \Myth\Controllers\CLIController
             }
         } else {
             if ($this->migration->version($type, $to) === false) {
-                die(var_dump($result));
                 return CLI::error("\n\tERROR: " . $this->migration->error_string() . "\n");
             }
         }
@@ -101,8 +105,9 @@ class Database extends \Myth\Controllers\CLIController
      * Suitable for use within automated scripts that can't be
      * bothered with answering questions.
      *
-     * @param string $type  'app', 'myth', 'all' or {module_name}
+     * @param string $type 'app', 'myth', 'all' or {module_name}
      * @param null $to
+     * @return bool|void
      */
     public function quietMigrate($type='app', $to = null)
     {
@@ -114,9 +119,22 @@ class Database extends \Myth\Controllers\CLIController
 
     /**
      * Migrates the database back to 0, then back up to the latest version.
+     *
+     * @param string $type  The group or module to refresh.
+     * @return mixed
      */
-    public function refresh($type='app')
+    public function refresh($type=null)
     {
+        if (empty($type))
+        {
+            $type = CLI::prompt("Migration group to refresh?");
+
+            if (empty($type))
+            {
+                return CLI::error("\tYou must supply a group to refresh.");
+            }
+        }
+
         $this->load->library('migration');
 
         if ($result = $this->migration->version($type, 0) === false) {
@@ -139,7 +157,7 @@ class Database extends \Myth\Controllers\CLIController
      *
      * @param $name
      */
-    public function newMigration($name = null, $alias = 'app')
+    public function newMigration($name = null, $type = 'app')
     {
         if (empty($name)) {
             $name = CLI::prompt('Migration name? ');
@@ -149,29 +167,28 @@ class Database extends \Myth\Controllers\CLIController
             }
         }
 
-        $this->load->config('migration');
-        $paths = config_item('migration_paths');
+        $this->load->library('migration');
+
+        $path = $this->migration->determine_migration_path($type);
 
         // Does the alias path exist in our config?
-        if (empty($paths[$alias])) {
-            return CLI::error("\tThe migration path for '{$alias}' does not exist.'");
+        if (! $path) {
+            return CLI::error("\tThe migration path for '{$type}' does not exist.'");
         }
 
         // Does the path really exist?
-        if (! is_dir($paths[$alias])) {
-            return CLI::error("\tThe path for '{$alias}' is not a directory.");
+        if (! is_dir($path)) {
+            return CLI::error("\tThe path for '{$type}' is not a directory.");
         }
 
         // Is the folder writeable?
-        if (! is_writeable($paths[$alias])) {
-            return CLI::error("\tThe folder for '{$alias}' migrations is not writeable.");
+        if (! is_writeable($path)) {
+            return CLI::error("\tThe folder for '{$type}' migrations is not writeable.");
         }
-
-        $this->load->library('migration');
 
         $file = $this->migration->make_name($name);
 
-        $path = $paths[$alias] . $file;
+        $path = rtrim($path, '/') .'/'. $file;
 
         $contents = <<<EOT
 <?php
