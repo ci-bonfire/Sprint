@@ -6,7 +6,7 @@
  * Created by: SprintPHP
  * Created on: 2014-10-01 05:22:49 am
  */
-class Migration_CreateSessionTable extends CI_Migration {
+class Migration_Createsessiontable extends CI_Migration {
 
     public function up ()
     {
