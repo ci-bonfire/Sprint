@@ -79,6 +79,7 @@ For all of the following commands, you can replace the group name with `mod:` fo
 This will run the migrations to a specific version, or to the latest if no version is supplied. The first parameter is the `alias` of the migrations group. The second parameter is the version to migrate to. This would be the filename you want to end your migrations on. Any migrations past this will not be ran. If no version is passed in the second parameter, then will be prompted to run to the latest version available for that group, or cancel.
 
 	php index.php database migrate app
+	php index.php database migrate mod:users
 
 ### quietMigrate
 This is identical to the `migrate` method, but will not return any output to the command line, just a success/fail result. This is useful when part of a build script process.
@@ -86,11 +87,13 @@ This is identical to the `migrate` method, but will not return any output to the
 If no migrations are found, or the database is already at the current migration, the script will return TRUE.
 
 	php index.php database quietMigrate app
+	php index.php database quietMigrate mod:users
 
 ### refresh
 This will run the down() method on all migrations in the specified group in reverse order, effectively uninstalling those changes, and then rerun them up to the latest available migration. This is useful to reset the data to a pristine version before running [seeds](database/seeds).
 
 	php index.php database refresh app
+	php index.php database refresh mod:users
 
 ## Auto-Running Migrations
 
