@@ -2,14 +2,28 @@
 
 namespace Myth;
 
-//require_once APPPATH .'third_party/MX/CI.php';
+/**
+ * Since registerglobals doesn't exist after 5.4, you cannot get access to the CFG object
+ * when running from the CLI. So, grab the config file and get our module location manually
+ * here, then discard when we're done. It's a bit hacky, but since modules have to be
+ * available within the Router class, before get_instance() is available we'll have to
+ * live with it for now.
+ */
+include APPPATH .'config/config.php';
 
-global $CFG;
+if (isset($config))
+{
+    if (is_array($config['modules_locations']))
+    {
+        Modules::$locations = $config['modules_locations'];
+    }
+    else
+    {
+        Modules::$locations = array(APPPATH .'modules/' => '../modules/');
+    }
 
-/* get module locations from config settings or use the default module location and offset */
-is_array(Modules::$locations = $CFG->item('modules_locations')) OR Modules::$locations = array(
-	APPPATH.'modules/' => '../modules/',
-);
+    unset($config);
+}
 
 /* PHP5 spl_autoload */
 spl_autoload_register('\Myth\Modules::autoload');

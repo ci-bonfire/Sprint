@@ -20,7 +20,7 @@
         }
     },
 	"require": {
-		"php": ">=5.3.0",
+		"php": ">=5.4",
         "mobiledetect/mobiledetectlib": "dev-master"
 	},
     "require-dev": {

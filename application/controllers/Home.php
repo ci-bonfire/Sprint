@@ -26,7 +26,7 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Home extends \Myth\Controllers\ThemedController {
+class Home extends \Myth\Controllers\BaseController {
 
 	/**
 	 * Index Page for this controller.
@@ -45,7 +45,7 @@ class Home extends \Myth\Controllers\ThemedController {
 	 */
 	public function index()
 	{
-		$this->render();
+		$this->load->view('home/index');
 	}
 }
 
