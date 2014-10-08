@@ -165,12 +165,27 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function isLoggedIn()
     {
-        if ($this->ci->session->userdata('logged_in'))
+        $uuid = $this->ci->session->userdata('logged_in');
+
+        if (! $uuid)
         {
-            return true;
+            return false;
         }
 
-        return false;
+        // If the user var hasn't been filled in, we need to fill it in,
+        // since this method will typically be used as the only method
+        // to determine whether a user is logged in or not.
+        if (! $this->user)
+        {
+            $this->user = $this->user_model->find_by('uuid', $uuid);
+
+            if (empty($this->user))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     //--------------------------------------------------------------------
@@ -307,6 +322,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Check the time of last attempt and
         // determine if we're throttled by amount of time passed.
+        // @todo: add this query to login_model
         $query = $this->ci->db->where('email', $email)
                               ->order_by('datetime', 'desc')
                               ->limit(1)
@@ -511,7 +527,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->user = $user;
 
         // Let the session know that we're logged in.
-        $this->ci->session->set_userdata('logged_in', true);
+        $this->ci->session->set_userdata('logged_in', $user['uuid']);
 
         // Clear our login attempts
         $this->ci->login_model->purgeLoginAttempts($user['email']);
@@ -548,6 +564,14 @@ class LocalAuthentication implements AuthenticateInterface {
 
     //--------------------------------------------------------------------
 
+    public function purgeRememberTokens($email)
+    {
+        $this->ci->login_model->purgeRememberTokens($email);
+
+        // todo record activity of remember me purges.
+    }
+
+    //--------------------------------------------------------------------
 
 
 

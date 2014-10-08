@@ -1,6 +1,11 @@
 <?php
 
 //--------------------------------------------------------------------
+// PERSISTENT LOGINS
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
 // Allow Persistent Login Cookies (Remember me)
 //--------------------------------------------------------------------
 // While every attempt has been made to create a very strong protection
@@ -41,6 +46,13 @@
 //
     $config['auth.remember_length'] = 1209600;
 
+
+
+//--------------------------------------------------------------------
+// THROTTLING
+//--------------------------------------------------------------------
+
+
 //--------------------------------------------------------------------
 // Throttling Rules
 //--------------------------------------------------------------------
@@ -67,7 +79,7 @@
 // Throttling will start after X number of attempts. Before this,
 // the user can make attempts like normal.
 //
-    $config['auth.allowed_login_attempts'] = 4;
+    $config['auth.allowed_login_attempts'] = 5;
 
 //--------------------------------------------------------------------
 // Distributed Brute Force Checks

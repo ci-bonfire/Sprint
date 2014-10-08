@@ -205,6 +205,20 @@ class Login_model extends \Myth\Models\CIDbModel {
 
     //--------------------------------------------------------------------
 
+    /**
+     * Removes all persistent login tokens (RememberMe) for a single user
+     * across all devices they may have logged in with.
+     *
+     * @param $email
+     * @return mixed
+     */
+    public function purgeRememberTokens($email)
+    {
+        return $this->db->delete('auth_tokens', ['email' => $email]);
+    }
+
+    //--------------------------------------------------------------------
+
 
     /**
      * Purges the 'auth_tokens' table of any records that are too old
