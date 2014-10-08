@@ -662,9 +662,15 @@ class LocalAuthentication implements AuthenticateInterface {
             // Compute our daily average over the last 3 months.
             $avg_start_time = date('Y-m-d 00:00:00', strtotime('-3 months'));
 
-            $average = $this->ci->db->where('datetime >=', $avg_start_time)
-                                    ->count_all_results('auth_login_attempts');
-            $average = $average == 0 ? $average : $average / 90;
+            $query = $this->ci->db->query("SELECT COUNT(*) / COUNT(DISTINCT DATE(`datetime`)) as num_rows FROM `auth_login_attempts` WHERE `datetime` >= ?", $avg_start_time);
+            if (! $query->num_rows())
+            {
+                $average = 0;
+            }
+            else
+            {
+                $average = $query->row()->num_rows;
+            }
 
             // Get the total in the last 24 hours
             $today_start_time = date('Y-m-d H:i:s', strtotime('-24 hours'));
