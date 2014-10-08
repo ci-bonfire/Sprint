@@ -60,22 +60,6 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
-    public function testIsLoaded()
-    {
-        $this->assertTrue( class_exists('\Myth\Auth\LocalAuthentication') );
-    }
-
-    //--------------------------------------------------------------------
-
-    public function testPasswordLibraryLoaded()
-    {
-        // Technically, if we are on PHP 5.5+ this will find PHP's
-        // built-in command, but that's just fine, also...
-        $this->assertTrue( function_exists('password_hash') );
-    }
-
-    //--------------------------------------------------------------------
-
     //--------------------------------------------------------------------
     // validate
     //--------------------------------------------------------------------
