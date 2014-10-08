@@ -7,7 +7,7 @@
 // the application and the modules themselves if this is set to TRUE.
 //
     $config['auto_migrate'] = array(
-        'app',   // Comment this line out to turn off auto-migrations.
+        // 'app',   // Comment this line out to turn off auto-migrations.
     );
 
 //--------------------------------------------------------------------
