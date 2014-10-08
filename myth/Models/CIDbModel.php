@@ -290,10 +290,6 @@ class CIDbModel
             $this->db = $db;
         }
 
-        if (!is_object($this->db)) {
-            $this->load->database();
-        }
-
         // Do we have a form_validation library?
         if (!is_null($form_validation)) {
             $this->form_validation = $form_validation;
