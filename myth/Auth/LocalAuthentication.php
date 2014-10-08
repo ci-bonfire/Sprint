@@ -31,9 +31,8 @@ class LocalAuthentication implements AuthenticateInterface {
 
     //--------------------------------------------------------------------
 
-    public function __construct( &$ci=null )
+    public function __construct( $ci=null )
     {
-
         if ($ci)
         {
             $this->ci= $ci;
@@ -56,8 +55,7 @@ class LocalAuthentication implements AuthenticateInterface {
         }
 
         $this->ci->config->load('auth');
-
-        $this->ci->load->helper('cookie');
+        $this->ci->load->model('auth/login_model');
     }
 
     //--------------------------------------------------------------------
@@ -145,6 +143,8 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function logout()
     {
+        $this->ci->load->helper('cookie');
+
         // Destroy the session
         $this->ci->session->sess_destroy();
 
@@ -187,10 +187,12 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
+        $this->ci->load->helper('cookie');
+
         $token = get_cookie('remember');
 
         // Attempt to match the token against our auth_tokens table.
-        $query = $this->db->where('hash', $this->hashRememberToken($token))
+        $query = $this->db->where('hash', $this->ci->login_model->hashRememberToken($token))
                           ->get('auth_tokens');
 
         if (! $query->num_rows())
@@ -316,7 +318,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // Get our allowed attempts out of the picture.
         $attempts = $attempts - $allowed;
 
-        $dbrute_time = $this->distributedBruteForceTime();
+        $dbrute_time = $this->ci->login_model->distributedBruteForceTime();
 
         $max_time = config_item('auth.max_throttle_time');
 
@@ -418,6 +420,7 @@ class LocalAuthentication implements AuthenticateInterface {
         if (! config_item('auth.allow_remembering'))
         {
             log_message('debug', 'Auth library set to refuse "Remember Me" functionality.');
+            return false;
         }
 
         $this->refreshRememberCookie($user);
@@ -435,6 +438,8 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     protected function refreshRememberCookie($user, $token=null)
     {
+        $this->ci->load->helper('cookie');
+
         // If a token is passed in, we know we're removing the
         // old one.
         if (! empty($token))
@@ -442,7 +447,7 @@ class LocalAuthentication implements AuthenticateInterface {
             $this->invalidateRememberCookie($user['email'], $token);
         }
 
-        $new_token = $this->generateRememberToken($user);
+        $new_token = $this->ci->login_model->generateRememberToken($user);
 
         // Save the token to the database.
         $data = [
@@ -480,12 +485,7 @@ class LocalAuthentication implements AuthenticateInterface {
     protected function invalidateRememberCookie($email, $token)
     {
         // Remove from the database
-        $where = [
-            'email' => $email,
-            'hash'  => $this->hashRememberToken($token)
-        ];
-
-        $this->ci->db->delete('auth_tokens', $where);
+        $this->ci->login_model->deleteRememberToken($email, $token);
 
         // Remove the cookie
         delete_cookie(
@@ -494,59 +494,6 @@ class LocalAuthentication implements AuthenticateInterface {
             config_item('cookie_path'),
             config_item('cookie_prefix')
         );
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Generates a new token for the rememberme cookie.
-     *
-     * The token is based on the user's email address (since everyone will have one)
-     * with the '@' turned to a '.', followed by a pipe (|) and a random 128-character
-     * string with letters and numbers.
-     *
-     * @param $user
-     * @return mixed
-     */
-    protected function generateRememberToken($user)
-    {
-        $this->ci->load->helper('string');
-
-        return str_replace('@', '.', $user['email']) .'|' . random_string('alnum', 128);
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Hases the token for the Remember Me Functionality.
-     *
-     * @param $token
-     * @return string
-     */
-    protected function hashRememberToken($token)
-    {
-        return sha1(config_item('auth.salt') . $token);
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Purges the 'auth_tokens' table of any records that are too old
-     * to be of any use anymore. This equates to 1 week older than
-     * the remember_length set in the config file.
-     */
-    protected function purgeOldRememberTokens()
-    {
-        if (! config_item('auth.allow_remembering'))
-        {
-            return;
-        }
-
-        $date = time() - config_item('auth.remember_length') - strtotime('-1 week');
-        $date = date('Y-m-d 00:00:00', $date);
-
-        $this->ci->db->where('created <=', $date)
-                     ->delete('auth_tokens');
     }
 
     //--------------------------------------------------------------------
@@ -567,17 +514,17 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->ci->session->set_userdata('logged_in', true);
 
         // Clear our login attempts
-        $this->purgeLoginAttempts($user['email']);
+        $this->ci->login_model->purgeLoginAttempts($user['email']);
 
         // Record a new Login
-        $this->recordLogin($user);
+        $this->ci->login_model->recordLogin($user);
 
         // We'll give a 20% chance to need to do a purge since we
         // don't need to purge THAT often, it's just a maintenance issue.
         // to keep the table from getting out of control.
         if (mt_rand(1, 100) < 20)
         {
-            $this->purgeOldRememberTokens();
+            $this->ci->login_model->purgeOldRememberTokens();
         }
     }
 
@@ -594,120 +541,18 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function purgeLoginAttempts($email)
     {
-        $this->ci->db->where('email', $email)
-                     ->delete('auth_login_attempts');
-    }
+        $this->ci->login_model->purgeLoginAttempts($email);
 
-    //--------------------------------------------------------------------
-
-    /**
-     * Records a login attempt. This is used to implement
-     * throttling of user login attempts.
-     *
-     * @param $email
-     */
-    protected function recordLoginAttempt($email)
-    {
-        $data = [
-            'email' => $email,
-            'datetime' => date('Y-m-d H:i:s')
-        ];
-
-        $this->ci->db->insert('auth_login_attempts', $data);
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Checks to see if how many login attempts have been attempted in the
-     * last 60 seconds. If over 100, it is considered to be under a
-     * brute force attempt.
-     *
-     * @param $email
-     * @return bool
-     */
-    protected function isBruteForced($email)
-    {
-        $start_time = date('Y-m-d H:i:s', time() - 60);
-
-        $attempts = $this->ci->db->where('email', $email)
-                                 ->where('datetime >=', $start_time)
-                                 ->count_all_results('auth_login_attempts');
-
-        return $attempts > 100;
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Attempts to determine if the system is under a distributed
-     * brute force attack.
-     *
-     * To determine if we are in under a brute force attack, we first
-     * find the average number of bad logins per day that never converted to
-     * successful logins over the last 3 months. Then we compare
-     * that to the the average number of logins in the past 24 hours.
-     *
-     * If the number of attempts in the last 24 hours is more than X (see config)
-     * times the average, then institute additional throttling.
-     *
-     * @return int  The time to add to any throttling.
-     */
-    protected function distributedBruteForceTime()
-    {
-        if (! $time = $this->ci->cache->get('dbrutetime'))
-        {
-            $time = 0;
-
-            // Compute our daily average over the last 3 months.
-            $avg_start_time = date('Y-m-d 00:00:00', strtotime('-3 months'));
-
-            $query = $this->ci->db->query("SELECT COUNT(*) / COUNT(DISTINCT DATE(`datetime`)) as num_rows FROM `auth_login_attempts` WHERE `datetime` >= ?", $avg_start_time);
-            if (! $query->num_rows())
-            {
-                $average = 0;
-            }
-            else
-            {
-                $average = $query->row()->num_rows;
-            }
-
-            // Get the total in the last 24 hours
-            $today_start_time = date('Y-m-d H:i:s', strtotime('-24 hours'));
-
-            $attempts = $this->ci->db->where('datetime >=', $today_start_time)
-                                     ->count_all_results('auth_login_attempts');
-
-            if ($attempts > (config_item('auth.dbrute_multiplier') * $average) ) {
-                $time = config_item('auth.distributed_brute_add_time');
-            }
-
-            // Cache it for 3 hours.
-            $this->ci->cache->set('dbrutetime', $time, 60*60*3);
-        }
-
-        return $time;
+        // @todo record activity of login attempts purge.
     }
 
     //--------------------------------------------------------------------
 
 
 
-    /**
-     * Records a successful login. This stores in a table so that a
-     * history can be pulled up later if needed for security analyses.
-     *
-     * @param $user
-     */
-    protected function recordLogin($user)
-    {
-        $data = [
-            'user_id'   => (int)$user['id'],
-            'datetime'  => date('Y-m-d H:i:s')
-        ];
 
-        $this->ci->db->insert('auth_logins', $data);
-    }
 
-    //--------------------------------------------------------------------
+
+
+
 }
