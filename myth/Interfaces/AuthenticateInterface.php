@@ -93,7 +93,7 @@ interface AuthenticateInterface {
      * @param $userId
      * @return mixed
      */
-    public function throttle($userId);
+    public function isThrottled($userId);
 
     //--------------------------------------------------------------------
 

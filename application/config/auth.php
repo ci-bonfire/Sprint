@@ -40,3 +40,47 @@
 //      1 year   - 29030400
 //
     $config['auth.remember_length'] = 1209600;
+
+//--------------------------------------------------------------------
+// Throttling Rules
+//--------------------------------------------------------------------
+// Allow throttling of login and password resets?
+// Throttling exponentially increases the time between allowed login
+// attempts.
+//
+    $config['auth.allow_throttling'] = true;
+
+//--------------------------------------------------------------------
+// Max Throttling Time
+//--------------------------------------------------------------------
+// What is the max amount of time allowed between logins? This should
+// be balanced with the protection of brute force or DOS attacks,
+// against a user forgetting their password.
+//
+// This is the number of SECONDS max.
+//
+    $config['auth.max_throttle_time'] = 45;
+
+//--------------------------------------------------------------------
+// Start Throttling After
+//--------------------------------------------------------------------
+// Throttling will start after X number of attempts. Before this,
+// the user can make attempts like normal.
+//
+    $config['auth.allowed_login_attempts'] = 4;
+
+//--------------------------------------------------------------------
+// Distributed Brute Force Checks
+//--------------------------------------------------------------------
+// The amount to multiply the average daily logins over the last 3 months
+// by to determine if we might be under a distributed brute force attempt.
+//
+    $config['auth.dbrute_multiplier'] = 3;
+
+//--------------------------------------------------------------------
+// Additional Suspension Time for Distributed Brute Force Attempts
+//--------------------------------------------------------------------
+// This is the number of SECONDS that will be added to all login
+// attempts that are being throttled.
+//
+    $config['auth.distributed_brute_add_time'] = 45;

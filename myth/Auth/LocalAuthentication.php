@@ -11,6 +11,12 @@ use Myth\Interfaces\AuthenticateInterface;
  * at least as far as local authentication goes. It does NOT provide
  * social authentication through third-party applications.
  *
+ * The system attempts to incorporate as many of the ideas and best practices
+ * set forth in the following documents:
+ *
+ *  - http://stackoverflow.com/questions/549/the-definitive-guide-to-form-based-website-authentication
+ *  - https://www.owasp.org/index.php/Guide_to_Authentication
+ *
  * @package Myth\Auth
  */
 class LocalAuthentication implements AuthenticateInterface {
@@ -20,6 +26,8 @@ class LocalAuthentication implements AuthenticateInterface {
     protected $user = null;
 
     public $user_model = null;
+
+    public $error = null;
 
     //--------------------------------------------------------------------
 
@@ -237,15 +245,100 @@ class LocalAuthentication implements AuthenticateInterface {
     //--------------------------------------------------------------------
 
     /**
-     * Tells the system to start throttling a user. This may vary by implementation,
-     * but will often add additional time before another login is allowed.
+     * Checks to see if the user is currently being throttled.
+     *
+     *  -If they are NOT, will return FALSE.
+     *  - If they ARE, will return the number of seconds until they can try again.
      *
      * @param $userId
      * @return mixed
      */
-    public function throttle($userId)
+    public function isThrottled($email)
     {
+        // Not throttling? Get outta here!
+        if (! config_item('auth.allow_throttling'))
+        {
+            return false;
+        }
 
+        // If this user was found to possibly be under a brute
+        // force attack, their account would have been banned
+        // for 15 minutes.
+        if ($time = $this->ci->session->userdata('bruteBan'))
+        {
+            if ($time > time())
+            {
+                // The user is banned still...
+                $this->error = "Your account has had excessive login attempts. To protect the account you must wait 15 minutes before another attempt can be made.";
+                return true;
+            }
+
+            // Still here? The the ban time is over...
+            $this->ci->session->unset_userdata('bruteBan');
+        }
+
+        // Have any attempts been made?
+        $attempts = $this->ci->db->where('email', $email)
+                                 ->count_all_results();
+
+        $allowed = config_item('auth.allowed_login_attempts');
+
+        // We're not throttling if there are 0 attempts or
+        // the number is less than or equal to the allowed free attempts
+        if ($attempts === 0 || $attempts <= $attempts)
+        {
+            return false;
+        }
+
+        // If the number of attempts is excessive (above 100) we need
+        // to check the elapsed time of all of these attacks. If they are
+        // less than 1 minute it's obvious this is a brute force attack,
+        // so we'll set a session flag and block that user for 15 minutes.
+        if ($attempts > 100 && $this->isBruteForced($email))
+        {
+            $this->error = "Your account has had excessive login attempts. To protect the account you must wait 15 minutes before another attempt can be made.";
+
+            $ban_time = 60 * 15;    // 15 minutes
+            $this->ci->session->set_userdata('bruteBan', time() + $ban_time);
+            return $ban_time;
+        }
+
+        // Check the time of last attempt and
+        // determine if we're throttled by amount of time passed.
+        $query = $this->ci->db->where('email', $email)
+                              ->order_by('datetime', 'desc')
+                              ->limit(1)
+                              ->get('auth_login_attempts');
+
+        // Get a timestamp of the last attempt
+        $last_time = strtotime($query->row()->datetime);
+
+        // Get our allowed attempts out of the picture.
+        $attempts = $attempts - $allowed;
+
+        $dbrute_time = $this->distributedBruteForceTime();
+
+        $max_time = config_item('auth.max_throttle_time');
+
+        $add_time = pow(2, $attempts);
+
+        if ($add_time > $max_time)
+        {
+            $add_time = $max_time;
+        }
+
+        $next_time = $last_time + $add_time + $dbrute_time;
+
+        $current = time();
+
+        // We are NOT throttled if we are already
+        // past the allowed time.
+        if ($current > $next_time)
+        {
+            return false;
+        }
+
+        return $next_time - $current;
     }
 
     //--------------------------------------------------------------------
@@ -526,6 +619,75 @@ class LocalAuthentication implements AuthenticateInterface {
     //--------------------------------------------------------------------
 
     /**
+     * Checks to see if how many login attempts have been attempted in the
+     * last 60 seconds. If over 100, it is considered to be under a
+     * brute force attempt.
+     *
+     * @param $email
+     * @return bool
+     */
+    protected function isBruteForced($email)
+    {
+        $start_time = date('Y-m-d H:i:s', time() - 60);
+
+        $attempts = $this->ci->db->where('email', $email)
+                                 ->where('datetime >=', $start_time)
+                                 ->count_all_results('auth_login_attempts');
+
+        return $attempts > 100;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Attempts to determine if the system is under a distributed
+     * brute force attack.
+     *
+     * To determine if we are in under a brute force attack, we first
+     * find the average number of bad logins per day that never converted to
+     * successful logins over the last 3 months. Then we compare
+     * that to the the average number of logins in the past 24 hours.
+     *
+     * If the number of attempts in the last 24 hours is more than X (see config)
+     * times the average, then institute additional throttling.
+     *
+     * @return int  The time to add to any throttling.
+     */
+    protected function distributedBruteForceTime()
+    {
+        if (! $time = $this->ci->cache->get('dbrutetime'))
+        {
+            $time = 0;
+
+            // Compute our daily average over the last 3 months.
+            $avg_start_time = date('Y-m-d 00:00:00', strtotime('-3 months'));
+
+            $average = $this->ci->db->where('datetime >=', $avg_start_time)
+                                    ->count_all_results('auth_login_attempts');
+            $average = $average == 0 ? $average : $average / 90;
+
+            // Get the total in the last 24 hours
+            $today_start_time = date('Y-m-d H:i:s', strtotime('-24 hours'));
+
+            $attempts = $this->ci->db->where('datetime >=', $today_start_time)
+                                     ->count_all_results('auth_login_attempts');
+
+            if ($attempts > (config_item('auth.dbrute_multiplier') * $average) ) {
+                $time = config_item('auth.distributed_brute_add_time');
+            }
+
+            // Cache it for 3 hours.
+            $this->ci->cache->set('dbrutetime', $time, 60*60*3);
+        }
+
+        return $time;
+    }
+
+    //--------------------------------------------------------------------
+
+
+
+    /**
      * Records a successful login. This stores in a table so that a
      * history can be pulled up later if needed for security analyses.
      *
@@ -542,5 +704,4 @@ class LocalAuthentication implements AuthenticateInterface {
     }
 
     //--------------------------------------------------------------------
-
 }
