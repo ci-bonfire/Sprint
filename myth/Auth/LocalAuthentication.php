@@ -334,6 +334,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // Get our allowed attempts out of the picture.
         $attempts = $attempts - $allowed;
 
+        // todo: make the dbrute time affect anyone with any failed logins anywhere.
         $dbrute_time = $this->ci->login_model->distributedBruteForceTime();
 
         $max_time = config_item('auth.max_throttle_time');
