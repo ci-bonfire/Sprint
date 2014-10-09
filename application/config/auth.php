@@ -96,3 +96,30 @@
 // attempts that are being throttled.
 //
     $config['auth.distributed_brute_add_time'] = 45;
+
+
+//--------------------------------------------------------------------
+// PASSWORDS
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+// Minimum Entropy (password strength)
+//--------------------------------------------------------------------
+// The minimum password strength that a password must meet to be
+// considered a strong-enough value. While the formula is a bit complex
+// you can use the following guidelines:
+//      - 18 bits of entropy = minimum for ANY website.
+//      - 25 bits of entropy = minimum for a general purpose web service used relatively widely (e.g. Hotmail).
+//      - 30 bits of entropy = minimum for a web service with business critical applications (e.g. SAAS).
+//      - 40 bits of entropy = minimum for a bank or other financial service.
+//
+    $config['auth.min_password_strength'] = 18;
+
+//--------------------------------------------------------------------
+// Use Dictionary
+//--------------------------------------------------------------------
+// Should the passwords be compared against an English-language
+// dictionary to eliminate common words and their variations that would
+// be pretty simply for a hacking attempt to guess?
+//
+    $config['auth.use_dictionary'] = true;
