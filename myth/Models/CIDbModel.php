@@ -1332,6 +1332,7 @@ class CIDbModel
         }
 
         if (!empty($this->validation_rules)) {
+            // @todo: modify to not hack with POST and use new Form_validation::set_data() method.
             foreach ($data as $key => $val) {
                 $_POST[$key] = $val;
             }
