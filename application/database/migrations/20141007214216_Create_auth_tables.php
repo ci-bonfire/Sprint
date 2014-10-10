@@ -44,6 +44,10 @@ class Migration_create_auth_tables extends CI_Migration {
                 'type' => 'int',
                 'constraint' => 11,
             ],
+            'ip_address' => [
+                'type'  => 'varchar',
+                'constraint'    => 40
+            ],
             'datetime' => [
                 'type' => 'datetime',
             ]

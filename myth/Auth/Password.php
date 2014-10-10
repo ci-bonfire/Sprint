@@ -23,6 +23,17 @@ define('DICTIONARY_PATH', dirname(__FILE__) .'/dictionary.txt');
  */
 class Password {
 
+    /**
+     * A standardized method for hasing a password before storing
+     * in the database.
+     *
+     * @param $password
+     * @return bool|mixed|string
+     */
+    public static function hashPassword($password)
+    {
+        return password_hash($password, PASSWORD_BCRYPT);
+    }
 
     //--------------------------------------------------------------------
 

@@ -13,9 +13,13 @@ if (! function_exists('isStrongPassword'))
         $min_strength = config_item('auth.min_password_strength');
         $use_dict = config_item('auth.use_dictionary');
 
-        if (! \Myth\Auth\Password::isStrongPassword($password, $min_strength, $use_dict))
+        $strong = \Myth\Auth\Password::isStrongPassword($password, $min_strength, $use_dict);
+
+        if (! $strong)
         {
-            get_instance()->form_validation->set_message('password', '{Field} must be a stronger password.');
+            if (isset(get_instance()->form_validation)) {
+                get_instance()->form_validation->set_message('password', '{Field} must be a stronger password.');
+            }
             return false;
         }
 
