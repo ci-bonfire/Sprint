@@ -703,34 +703,27 @@ These are each arrays that should have the name of the methods to call, in order
     protected $before_insert = array(‘set_created_on’, ‘another_callback’);
 
 
-To observe an event and have your methods called you simply add the method name to the definition array and create a new function.
+To observe an event and have your methods called you simply add the method name to the definition array and create a new function. The first parameter will be an array of data passed from the calling method. It will contain the following variables: 
+
+* **id** Will be present if an `insert` type method. Will be the primary key of the row that was just inserted. 
+* **method** Will be the name of the method that called. Like `insert`, `update`, `update_batch`, etc.
+* **fields** The data provided by the method. For inserts and updates it is the data that was just inserted/updated. When using the insert/update_batch methods, it will be an array of all of the row data that you can loop over. 
 
 
-    protected function set_created_on($row)
+    protected function set_created_on($data)
     {
-        if (!array_key_exists($this->created_field, $row))
+    	if ($data['method'] == 'insert_batch' || $data['method'] ==  'update_batch')
+    	{
+    		return $data;
+    	}
+    
+        if (!array_key_exists($this->created_field, $data['fields']))
         {
             $row[$this->created_field] = $this->set_date();
         }
 
         return $row;
     }
-
-Each observing method must accept a single parameter. Depending on the event triggered, this might be a single INT, or an array of values, etc. Check the function to verify what the payload being passed along is for the event you’re observing.
-
-The following table lists what data should be expected during each observer. Note that the *_batch or *_many may exhibit slightly different behaviour. You should familiarize yourself with code for each if you need special triggers for these situations.
-
-Trigger                 | Type          | Description
-------------------------|---------------|-------------------------------------------------
-before_insert           | array         | The values to be inserted in the new record
-after_insert            | mixed         | The primary_key of the row just inserted.
-before_update           | array         | The values to be updated. Does NOT include the primary key.
-after_update            | array         | The data that was inserted (including any modifications made in before_udpate).
-before_find             | mixed         | The primary_key of the row to find.
-after_find              | array/object  | The found object/array (depends on the specified return type for that model)
-before_delete           | mixed         | The primary_key of the row to be deleted.
-after_delete            | mixed         | The primary_key of the row that was just deleted.
-empty_validation_rules  | array         | An array of temporary validation rules.
 
 
 ## Validating Data

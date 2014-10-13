@@ -17,6 +17,8 @@ use Myth\Interfaces\AuthenticateInterface;
  *  - http://stackoverflow.com/questions/549/the-definitive-guide-to-form-based-website-authentication
  *  - https://www.owasp.org/index.php/Guide_to_Authentication
  *
+ * todo: Set the error string for all error states here.
+ *
  * @package Myth\Auth
  */
 class LocalAuthentication implements AuthenticateInterface {
