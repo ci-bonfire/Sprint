@@ -42,7 +42,7 @@ class CI_Form_validation {
 	 *
 	 * @var object
 	 */
-	protected $CI;
+	public $CI;
 
 	/**
 	 * Validation data for the current form submission
@@ -1119,6 +1119,11 @@ class CI_Form_validation {
 	public function is_unique($str, $field)
 	{
 		sscanf($field, '%[^.].%[^.]', $table, $field);
+
+        var_dump($field);
+        var_dump($str);
+        var_dump(isset($this->CI->db));
+
 		return isset($this->CI->db)
 			? ($this->CI->db->limit(1)->get_where($table, array($field => $str))->num_rows() === 0)
 			: FALSE;

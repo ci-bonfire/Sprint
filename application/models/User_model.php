@@ -6,6 +6,10 @@ class User_model extends \Myth\Models\CIDbModel {
 
     protected $soft_deletes = true;
 
+    protected $set_created = true;
+
+    protected $set_modified = false;
+
     protected $protected_attributes = ['id', 'submit'];
 
     protected $validation_rules = [
@@ -37,7 +41,7 @@ class User_model extends \Myth\Models\CIDbModel {
         [
             'field' => 'pass_confirm',
             'label' => 'Password (Again)',
-            'rules' => 'trim|alpha|matches[password]'
+            'rules' => 'trim|matches[password]'
         ],
     ];
 
@@ -56,13 +60,15 @@ class User_model extends \Myth\Models\CIDbModel {
     // The columns in the 'users_meta' table - for auto updating of profile information.
     protected $meta_fields = ['first_name', 'last_name'];
 
+    protected $fields = ['id', 'role_id', 'email', 'username', 'password_hash', 'reset_hash', 'activate_hash', 'created_on', 'status', 'status_message', 'timezone', 'language', 'active', 'deleted', 'force_pass_reset'];
+
     //--------------------------------------------------------------------
 
     public function __construct()
     {
         parent::__construct();
 
-        $this->load->helper('auth/password_helper');
+        $this->load->helper('auth/password');
     }
 
     //--------------------------------------------------------------------
@@ -115,12 +121,14 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     public function updateMeta($data)
     {
+
         // If no 'id' is in the $data array, then
         // we don't have successful insert, get out of here
-        if (empty($data['id']) || ($data['method'] != 'insert' || $data['method'] != 'update'))
+        if (empty($data['id']) || ($data['method'] != 'insert' && $data['method'] != 'update'))
         {
             return $data;
         }
+
 
         // Collect any meta fields
         foreach ($data['fields'] as $key => $value)

@@ -291,9 +291,16 @@ class CIDbModel
         }
 
         // Do we have a form_validation library?
-        if (!is_null($form_validation)) {
+        if (! is_null($form_validation)) {
             $this->form_validation = $form_validation;
         }
+        else {
+            $this->load->library('form_validation');
+        }
+
+        // Now, make sure that the form validaiton library functions
+        // properly with HMVC.
+        $this->form_validation->CI =& $this;
 
         log_message('debug', 'CIDbModel Class Initialized');
     }
@@ -494,12 +501,12 @@ class CIDbModel
         if ($data !== FALSE) {
             $data = $this->trigger('before_insert', $data);
 
-            $this->db->insert($this->table_name, $data);
+            $this->db->insert($this->table_name, $this->prep_data($data) );
 
             if ($this->return_insert_id) {
                 $id = $this->db->insert_id();
 
-                $this->trigger('after_insert', $id);
+                $this->trigger('after_insert', ['id' => $id, 'fields' => $data, 'method' => 'insert']);
 
                 return $id;
             }
@@ -570,12 +577,12 @@ class CIDbModel
         }
 
         if ($data !== FALSE) {
-            $this->db->replace($this->table_name, $data);
+            $this->db->replace($this->table_name, $this->prep_data($data));
 
             if ($this->return_insert_id) {
                 $id = $this->db->insert_id();
 
-                $this->trigger('after_insert', $id);
+                $this->trigger('after_insert', ['id' => $id, 'fields' => $data, 'method'=>'replace']);
 
                 return $id;
             }
@@ -610,10 +617,10 @@ class CIDbModel
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
             $this->db->where($this->primary_key, $id);
-            $this->db->set($data);
+            $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', array($data, $result));
+            $this->trigger('after_update', ['id' => $id, 'fields' => $data, 'result'=>$result, 'method' => 'update']);
 
             return $result;
         } else {
@@ -655,7 +662,7 @@ class CIDbModel
         $result = $this->db->update_batch($this->table_name, $data, $where_key);
 
         foreach ($data as &$row) {
-            $this->trigger('after_update', array($row, $result));
+            $this->trigger('after_update', ['fields' => $data, 'result'=>$result, 'method' => 'update_batch']);
         }
 
         return $result;
@@ -699,7 +706,7 @@ class CIDbModel
             $this->db->set($data);
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', array($data, $result));
+            $this->trigger('after_update', ['id' => $ids, 'fields' => $data, 'result'=>$result, 'method' => 'update_many']);
 
             return $result;
         } else {
@@ -737,7 +744,7 @@ class CIDbModel
 
         // Will be false if it didn't validate.
         if ($this->validate($data) !== FALSE) {
-            $this->db->set($data);
+            $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
 
             $this->trigger('after_update', array($data, $result));
@@ -769,7 +776,7 @@ class CIDbModel
 
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
-            $this->db->set($data);
+            $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
 
             $this->trigger('after_update', array($data, $result));
@@ -1114,25 +1121,21 @@ class CIDbModel
     //--------------------------------------------------------------------
 
     /**
-     * Get the metadata for the model's database fields
+     * Get the field names for this model's table.
      *
-     * Returns the model's database field metadata stored in $this->field_info
-     * if set, else it tries to retrieve the metadata from
-     * $this->db->field_data($this->table_name);
+     * Returns the model's database fields stored in $this->fields
+     * if set, else it tries to retrieve the field list from
+     * $this->db->list_fields($this->table_name);
      *
-     * @todo The MongoDB driver is the only one that doesn't appear to support
-     * $this->db->field_data, though it's possible other drivers don't support
-     * more extensive metadata (such as type/max_length) supported by MySQL
-     *
-     * @return array    Returns the database field metadata for this model
+     * @return array    Returns the database fields for this model
      */
-    public function get_field_info()
+    public function get_fields()
     {
-        if (empty($this->field_info)) {
-            $this->field_info = $this->db->field_data($this->table_name);
+        if (empty($this->fields)) {
+            $this->fields = $this->db->list_fields($this->table_name);
         }
 
-        return $this->field_info;
+        return $this->fields;
     }
 
     //--------------------------------------------------------------------
@@ -1149,27 +1152,26 @@ class CIDbModel
     {
         $data = array();
         $skippedFields = array();
-        $skippedFields[] = $this->created_field;
-        $skippedFields[] = $this->created_by_field;
-        $skippedFields[] = $this->deleted_by_field;
-        $skippedFields[] = $this->modified_field;
-        $skippedFields[] = $this->modified_by_field;
 
         // Though the model doesn't support multiple keys well, $this->key
         // could be an array or a string...
-        $skippedFields = array_merge($skippedFields, (array)$this->key);
+        $skippedFields = array_merge($skippedFields, (array)$this->primary_key);
+
+        // Remove any protected attributes
+        $skippedFields = array_merge($skippedFields, $this->protected_attributes);
+
+        $fields = $this->get_fields();
 
         // If the field is the primary key, one of the created/modified/deleted
         // fields, or has not been set in the $post_data, skip it
-        foreach ($this->get_field_info() as $field) {
-            if (isset($field->primary_key) && $field->primary_key
-                || in_array($field->name, $skippedFields)
-                || ! isset($post_data[$field->name])
-            ) {
+        foreach ($post_data as $field => $value) {
+            if (in_array($field, $skippedFields) ||
+                ! in_array($field, $fields))
+            {
                 continue;
             }
 
-            $data[$field->name] = $post_data[$field->name];
+            $data[$field] = $value;
         }
 
         return $data;
@@ -1331,15 +1333,15 @@ class CIDbModel
             return $data;
         }
 
-        if (!empty($this->validation_rules)) {
-            // @todo: modify to not hack with POST and use new Form_validation::set_data() method.
-            foreach ($data as $key => $val) {
-                $_POST[$key] = $val;
-            }
+        // We need the database to be loaded up at this point in case
+        // we want to use callbacks that hit the database.
+        if (empty($this->db))
+        {
+            $this->load->database();
+        }
 
-            if (empty($this->form_validation)) {
-                $this->load->library('form_validation');
-            }
+        if (!empty($this->validation_rules)) {
+            $this->form_validation->set_data($data);
 
             if (is_array($this->validation_rules)) {
                 // Any insert additions?

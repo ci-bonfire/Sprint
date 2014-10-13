@@ -122,4 +122,18 @@
 // dictionary to eliminate common words and their variations that would
 // be pretty simply for a hacking attempt to guess?
 //
-    $config['auth.use_dictionary'] = true;
+    $config['auth.use_dictionary'] = false;
+
+
+
+
+//--------------------------------------------------------------------
+// Roles
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+// Default Role ID
+//--------------------------------------------------------------------
+// Sets the Default role id to use when creating new users.
+//
+    $config['auth.default_role_id'] = 1;

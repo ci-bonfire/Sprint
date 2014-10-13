@@ -114,7 +114,7 @@ class ThemedController extends BaseController
         $this->themer->setTheme($theme);
 
         // Determine the correct layout to use
-        $layout = !empty($this->layout) ? $this->layout : 'index';
+        $layout = !empty($this->layout) ? $this->layout : null;
         $this->themer->setLayout($layout);
 
         // Merge any saved vars into the data

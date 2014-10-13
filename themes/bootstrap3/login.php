@@ -1,3 +1,7 @@
+<?php
+    if (empty($navbar_style)) $themer->set('navbar_style', 'navbar-static');
+    if (empty($containerClass)) $themer->set('containerClass', 'container');
+?>
 <?= $themer->display('bootstrap:fragments/head') ?>
 
 <?= $themer->display('bootstrap:fragments/topbar') ?>
@@ -32,38 +36,38 @@
     .form-signin .form-control:focus {
         z-index: 2;
     }
-    .form-signin input[type="email"] {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-    .form-signin input[type="password"] {
+    .form-signin input {
         margin-bottom: 10px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
+    }
+    .pass-strength {
+        min-height: 1.5em;
     }
 
 </style>
 
 <div class="container">
 
-    <form class="form-signin" role="form">
+    <div class="form-signin">
+        <?= $view_content ?>
+    </div>
 
-        <h2 class="form-signin-heading">Please sign in</h2>
-
-        <?= $notice ?>
-
-        <input type="email" class="form-control" placeholder="Email address" required="" autofocus="">
-
-        <input type="password" class="form-control" placeholder="Password" required="">
-
-        <label class="checkbox">
-            <input type="checkbox" value="remember-me"> Remember me
-        </label>
-
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-
-    </form>
+<!--    <form class="form-signin" role="form">-->
+<!---->
+<!--        <h2 class="form-signin-heading">Please sign in</h2>-->
+<!---->
+<!--        --><?//= $notice ?>
+<!---->
+<!--        <input type="email" class="form-control" placeholder="Email address" required="" autofocus="">-->
+<!---->
+<!--        <input type="password" class="form-control" placeholder="Password" required="">-->
+<!---->
+<!--        <label class="checkbox">-->
+<!--            <input type="checkbox" value="remember-me"> Remember me-->
+<!--        </label>-->
+<!---->
+<!--        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>-->
+<!---->
+<!--    </form>-->
 
 </div><!-- /.container -->
 

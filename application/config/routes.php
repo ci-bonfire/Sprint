@@ -82,6 +82,16 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 
+//--------------------------------------------------------------------
+// Auth-Related Routes
+//--------------------------------------------------------------------
+
+$routes->any('join', 'auth/register', ['as' => 'register']);
+$routes->any('login', 'auth/login', ['as' => 'login']);
+$routes->get('password_check/(:any)', 'auth/password_check/$1');
+
+$routes->block('auth/(:any)');
+
 
 //--------------------------------------------------------------------
 

@@ -283,6 +283,8 @@ class ViewThemer implements ThemerInterface
      */
     public function setLayout($file)
     {
+        if (empty($file)) return;
+
         $this->layout = $file;
     }
 
