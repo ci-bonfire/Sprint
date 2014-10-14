@@ -88,6 +88,7 @@ $route['translate_uri_dashes'] = FALSE;
 
 $routes->any('join', 'auth/register', ['as' => 'register']);
 $routes->any('login', 'auth/login', ['as' => 'login']);
+$routes->get('logout', 'auth/logout', ['as' => 'logout']);
 $routes->get('password_check/(:any)', 'auth/password_check/$1');
 
 $routes->block('auth/(:any)');

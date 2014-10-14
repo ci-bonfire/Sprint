@@ -57,6 +57,18 @@ class Auth extends \Myth\Controllers\ThemedController
 
     //--------------------------------------------------------------------
 
+    public function logout()
+    {
+        $auth = new LocalAuthentication();
+        $auth->logout();
+
+        $this->setMessage('You have been logged out. Come back soon!', 'success');
+
+        redirect('/');
+    }
+
+    //--------------------------------------------------------------------
+
     public function register()
     {
         $this->load->helper('form');
