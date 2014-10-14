@@ -76,12 +76,12 @@ class ViewThemer implements ThemerInterface
         foreach (Modules::$locations as $key => $offset) {
 
             if (stripos($dir, 'module') !== false) {
-                $dir = str_replace($offset, '', $dir);
+//                $dir = str_replace($offset, '', $dir);
                 $dir = str_replace('controllers/', '', $dir);
             }
         }
 
-        if ($dir == $this->ci->router->fetch_module() . '/') {
+        if (substr($dir, -strlen($this->ci->router->fetch_module() .'/')) == $this->ci->router->fetch_module() . '/') {
             $dir = '';
         }
 

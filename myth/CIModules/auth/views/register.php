@@ -22,6 +22,6 @@
     <div class="pass-strength"></div>
 
 
-    <button class="btn btn-lg btn-primary btn-block" id="submit" name="submit" disabled type="submit">Sign in</button>
+    <button class="btn btn-lg btn-primary btn-block" id="submit" name="submit" disabled type="submit">Sign Up</button>
 
 <?= form_close() ?>

@@ -58,6 +58,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $this->ci->config->load('auth');
         $this->ci->load->model('auth/login_model');
+        $this->ci->load->model('user_model', '', true);
     }
 
     //--------------------------------------------------------------------
@@ -116,9 +117,9 @@ class LocalAuthentication implements AuthenticateInterface {
         unset($credentials['password']);
 
         // Can we find a user with those credentials?
-        $user = $this->user_model->asArray()
-                                 ->where($credentials)
-                                 ->first();
+        $user = $this->ci->user_model->as_array()
+                                     ->where($credentials)
+                                     ->first();
 
         if (! $user)
         {
@@ -130,6 +131,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $result)
         {
+            $this->error = 'Unable to find a valid login with that password.';
             return false;
         }
 
@@ -167,9 +169,9 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function isLoggedIn()
     {
-        $uuid = $this->ci->session->userdata('logged_in');
+        $id = $this->ci->session->userdata('logged_in');
 
-        if (! $uuid)
+        if (! $id)
         {
             return false;
         }
@@ -179,7 +181,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // to determine whether a user is logged in or not.
         if (! $this->user)
         {
-            $this->user = $this->user_model->find_by('uuid', $uuid);
+            $this->user = $this->user_model->find_by('id', (int)$id);
 
             if (empty($this->user))
             {
@@ -220,7 +222,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // Grab the user
         $email = $query->row()->email;
 
-        $user = $this->user_model->asArray()
+        $user = $this->user_model->as_array()
                                  ->find_by('email', $email);
 
         $this->loginUser($user);
@@ -418,7 +420,7 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function useModel($model)
     {
-        if (get_parent_class($model) != 'CIDbModel')
+        if (get_parent_class($model) != 'Myth\Models\CIDbModel')
         {
             throw new \RuntimeException('Models passed into LocalAuthenticate MUST extend Myth\Models\CIDbModel');
         }
@@ -429,6 +431,20 @@ class LocalAuthentication implements AuthenticateInterface {
     }
 
     //--------------------------------------------------------------------
+
+    public function error()
+    {
+        if (validation_errors())
+        {
+            return validation_errors();
+        }
+
+        return $this->error;
+    }
+
+    //--------------------------------------------------------------------
+
+
 
     //--------------------------------------------------------------------
     // Protected Methods
@@ -530,7 +546,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->user = $user;
 
         // Let the session know that we're logged in.
-        $this->ci->session->set_userdata('logged_in', $user['uuid']);
+        $this->ci->session->set_userdata('logged_in', $user['id']);
 
         // Clear our login attempts
         $this->ci->login_model->purgeLoginAttempts($user['email']);

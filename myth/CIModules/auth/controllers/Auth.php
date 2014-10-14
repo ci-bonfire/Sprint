@@ -1,6 +1,7 @@
 <?php
 
-use Myth\Route as Route;
+use \Myth\Route as Route;
+use \Myth\Auth\LocalAuthentication as LocalAuthentication;
 
 class Auth extends \Myth\Controllers\ThemedController
 {
@@ -10,6 +11,7 @@ class Auth extends \Myth\Controllers\ThemedController
         parent::__construct();
 
         $this->config->load('auth');
+        $this->load->driver('session');
     }
 
     //--------------------------------------------------------------------
@@ -17,7 +19,40 @@ class Auth extends \Myth\Controllers\ThemedController
 
     public function login()
     {
-        die('login');
+        $this->load->helper('form');
+        $auth = new LocalAuthentication();
+        $this->load->model('user_model');
+        $auth->useModel($this->user_model);
+
+        $redirect_url = $this->session->userdata('redirect_url');
+
+        // No need to login again if they are already logged in...
+        if ($auth->isLoggedIn())
+        {
+            $this->session->unset_userdata('redirect_url');
+            redirect($redirect_url);
+        }
+
+        if ($this->input->post()) {
+
+            $post_data = [
+                'email'     => $this->input->post('email'),
+                'password'  => $this->input->post('password')
+            ];
+
+            $remember = (bool)$this->input->post('remember');
+
+            if ($auth->login($post_data, $remember))
+            {
+                $this->session->unset_userdata('redirect_url');
+                redirect($redirect_url);
+            }
+
+            $this->setMessage($auth->error(), 'danger');
+        }
+
+        $this->themer->setLayout('login');
+        $this->render();
     }
 
     //--------------------------------------------------------------------
@@ -28,7 +63,7 @@ class Auth extends \Myth\Controllers\ThemedController
 
         if ($this->input->post()) {
 
-            $this->load->model('user_model', '', true);
+            $this->load->model('user_model');
 
             $post_data = [
                 'first_name'   => $this->input->post('first_name'),

@@ -145,7 +145,7 @@ class Login_model extends \Myth\Models\CIDbModel {
             'datetime'  => date('Y-m-d H:i:s')
         ];
 
-        return $this->ci->db->insert('auth_logins', $data);
+        return $this->db->insert('auth_logins', $data);
     }
 
     //--------------------------------------------------------------------
@@ -167,7 +167,7 @@ class Login_model extends \Myth\Models\CIDbModel {
      */
     public function generateRememberToken($user)
     {
-        $this->ci->load->helper('string');
+        $this->load->helper('string');
 
         return str_replace('@', '.', $user['email']) .'|' . random_string('alnum', 128);
     }

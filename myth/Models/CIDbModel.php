@@ -289,6 +289,10 @@ class CIDbModel
         if (!is_null($db)) {
             $this->db = $db;
         }
+        else {
+            // Auto Init the damn database....
+            $this->load->database();
+        }
 
         // Do we have a form_validation library?
         if (! is_null($form_validation)) {
@@ -297,10 +301,6 @@ class CIDbModel
         else {
             $this->load->library('form_validation');
         }
-
-        // Now, make sure that the form validaiton library functions
-        // properly with HMVC.
-        $this->form_validation->CI =& $this;
 
         log_message('debug', 'CIDbModel Class Initialized');
     }
