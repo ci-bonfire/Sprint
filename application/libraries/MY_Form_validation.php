@@ -35,11 +35,11 @@ class MY_Form_validation extends CI_Form_validation
      *
      * @return bool Success or Failure
      */
-    public function run($module = '', $group = '')
-    {
-        is_object($module) && $this->CI =& $module;
-        return parent::run($group);
-    }
+//    public function run($module = '', $group = '')
+//    {
+//        is_object($module) && $this->CI =& $module;
+//        return parent::run($group);
+//    }
 
     //--------------------------------------------------------------------
 

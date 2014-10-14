@@ -1,8 +1,8 @@
 <?php
 
-require_once APPPATH .'third_party/MX/Loader.php';
+require_once APPPATH .'third_party/HMVC/Loader.php';
 
-class MY_Loader extends MX_Loader {
+class MY_Loader extends HMVC_Loader {
 
     /**
      * Does the same thing that load->view does except ensures that the
