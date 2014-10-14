@@ -201,7 +201,7 @@ class Login_model extends \Myth\Models\CIDbModel {
             'hash'  => $this->hashRememberToken($token)
         ];
 
-        return $this->db->delete('auth_tokens', $where);
+        $this->db->delete('auth_tokens', $where);
     }
 
     //--------------------------------------------------------------------

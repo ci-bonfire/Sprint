@@ -59,6 +59,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->ci->config->load('auth');
         $this->ci->load->model('auth/login_model');
         $this->ci->load->model('user_model', '', true);
+        $this->ci->lang->load('auth');
     }
 
     //--------------------------------------------------------------------
@@ -123,6 +124,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $user)
         {
+            $this->error = lang('auth.invalid_user');
             return false;
         }
 
@@ -131,7 +133,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $result)
         {
-            $this->error = 'Unable to find a valid login with that password.';
+            $this->error = lang('auth.invalid_password');
             return false;
         }
 
@@ -156,7 +158,10 @@ class LocalAuthentication implements AuthenticateInterface {
         if (config_item('auth.allow_remembering')) {
             $token = get_cookie('remember');
 
-            $this->invalidateRememberCookie($this->user['email'], $token);
+            // Strip the email from our token
+//            $token = str_ireplace(str_replace('@', '.', $this->user->email) .'|', '', $token);
+
+            $this->invalidateRememberCookie($this->user->email, $token);
         }
     }
 
@@ -290,7 +295,7 @@ class LocalAuthentication implements AuthenticateInterface {
             if ($time > time())
             {
                 // The user is banned still...
-                $this->error = "Your account has had excessive login attempts. To protect the account you must wait 15 minutes before another attempt can be made.";
+                $this->error = lang('auth.bruteBan_notice');
                 return true;
             }
 
@@ -317,7 +322,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // so we'll set a session flag and block that user for 15 minutes.
         if ($attempts > 100 && $this->isBruteForced($email))
         {
-            $this->error = "Your account has had excessive login attempts. To protect the account you must wait 15 minutes before another attempt can be made.";
+            $this->error = lang('auth.bruteBan_notice');
 
             $ban_time = 60 * 15;    // 15 minutes
             $this->ci->session->set_userdata('bruteBan', time() + $ban_time);

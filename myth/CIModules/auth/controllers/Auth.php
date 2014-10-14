@@ -11,6 +11,7 @@ class Auth extends \Myth\Controllers\ThemedController
         parent::__construct();
 
         $this->config->load('auth');
+        $this->lang->load('auth');
         $this->load->driver('session');
     }
 
@@ -45,6 +46,7 @@ class Auth extends \Myth\Controllers\ThemedController
             if ($auth->login($post_data, $remember))
             {
                 $this->session->unset_userdata('redirect_url');
+                $this->setMessage(lang('auth.did_login'), 'success');
                 redirect($redirect_url);
             }
 
@@ -60,9 +62,15 @@ class Auth extends \Myth\Controllers\ThemedController
     public function logout()
     {
         $auth = new LocalAuthentication();
-        $auth->logout();
+        $this->load->model('user_model');
+        $auth->useModel($this->user_model);
 
-        $this->setMessage('You have been logged out. Come back soon!', 'success');
+        if ($auth->isLoggedIn())
+        {
+            $auth->logout();
+
+            $this->setMessage(lang('auth.did_logout'), 'success');
+        }
 
         redirect('/');
     }
@@ -88,13 +96,13 @@ class Auth extends \Myth\Controllers\ThemedController
             ];
 
             if ($id = $this->user_model->insert($post_data)) {
-                $this->setMessage('Account created. Please login.');
-                redirect(Route::named('login'));
+                $this->setMessage(lang('auth.did_register'), 'success');
+                redirect( Route::named('login') );
             } else {
                 if (validation_errors()) {
                     $this->setMessage(validation_errors(), 'danger');
                 } else {
-                    $this->setMessage('Unable to create user currently. Please try again later.', 'warning');
+                    $this->setMessage(lang('auth.unknown_register_error'), 'warning');
                     log_message('error', 'User Creation Error: ' . $this->user_model->error());
                 }
             }
