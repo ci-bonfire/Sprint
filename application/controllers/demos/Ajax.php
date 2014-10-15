@@ -36,6 +36,8 @@ class Ajax extends \Myth\Controllers\ThemedController {
 
         $this->setVar('navbar_style', 'navbar-static');
         $this->setVar('containerClass', 'container');
+
+        $this->themer->setView('demos/ajax/index');
         $this->render();
     }
 
@@ -138,7 +140,7 @@ class Ajax extends \Myth\Controllers\ThemedController {
 
         if (! empty($this->tasks)) {
             foreach ($this->tasks as $task) {
-                $list .= "<li><a href='" . site_url('tests/ajax/complete_task/'. $task['id']) . "' class='ajax'>{$task['task']}</a></li>";
+                $list .= "<li><a href='" . site_url('demos/ajax/complete_task/'. $task['id']) . "' class='ajax'>{$task['task']}</a></li>";
             }
         }
 
@@ -155,7 +157,7 @@ class Ajax extends \Myth\Controllers\ThemedController {
 
         if (! empty($this->done_tasks)) {
             foreach ($this->done_tasks as $task) {
-                $list .= "<li><a href='" . site_url('tests/ajax/restore_task/'. $task['id']) . "' class='ajax'>{$task['task']}</a></li>";
+                $list .= "<li><a href='" . site_url('demos/ajax/restore_task/'. $task['id']) . "' class='ajax'>{$task['task']}</a></li>";
             }
         }
 

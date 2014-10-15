@@ -40,6 +40,7 @@ class Layouts extends \Myth\Controllers\ThemedController {
         $this->setVar('layout_desc', $this->describe($layout));
         $this->setVar('theme', $theme);
         $this->setVar('layout', $layout);
+        $this->themer->setView('demos/layouts/index');
         $this->render();
     }
 

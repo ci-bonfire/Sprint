@@ -27,7 +27,7 @@ that is integrated into SprintPHP.</p>
     <div class="col-md-5">
         <h3>Current Tasks</h3>
 
-        <form action="<?= site_url('tests/ajax/new_task') ?>" method="post" class="ajax" role="form">
+        <form action="<?= site_url('demos/ajax/new_task') ?>" method="post" class="ajax" role="form">
 
             <div class="form-group">
                 <input type="text" name="task" class="form-control" placeholder="New Task..." style="display: inline-block; width: 80%;" />
