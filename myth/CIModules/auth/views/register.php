@@ -19,7 +19,7 @@
     <input type="password" name="pass_confirm" id="pass-confirm" class="form-control" placeholder="Password (again)" required="">
 
 
-    <div class="pass-strength"></div>
+    <?= $uikit->notice('Password Strength', 'default', false, ['class' => 'pass-strength']); ?>
 
 
     <button class="btn btn-lg btn-primary btn-block" id="submit" name="submit" disabled type="submit">Sign Up</button>

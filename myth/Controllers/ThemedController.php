@@ -95,6 +95,14 @@ class ThemedController extends BaseController
         }
 
         $this->detectVariant();
+
+        // Ensure that our UIKit is loaded up if we're using one.
+        $uikit = config_item('theme.uikit');
+
+        if ($uikit)
+        {
+            $this->uikit = new $uikit();
+        }
     }
 
     //--------------------------------------------------------------------

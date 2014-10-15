@@ -1,3 +1,5 @@
+<?= $themer->display('foundation:fragments/_vars') ?>
+
 <?= $themer->display('foundation:fragments/head') ?>
 
 <div class="fixed">

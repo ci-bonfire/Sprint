@@ -102,6 +102,14 @@
     $config['theme.default_theme'] = 'bootstrap';
 
 //--------------------------------------------------------------------
+// Use A UIKit?
+//--------------------------------------------------------------------
+// If defined, this should be the full name (with namespaces) of
+// the UIKit to use within your views.
+//
+    $config['theme.uikit'] = '\Myth\UIKits\Bootstrap';
+
+//--------------------------------------------------------------------
 // Use Eldarion AJAX?
 //--------------------------------------------------------------------
 // If TRUE, the eldarion ajax library will be integrated into the
