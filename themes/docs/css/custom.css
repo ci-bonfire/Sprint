@@ -66,6 +66,12 @@ a:visited {
     font-size: 12px;
     padding-left: 30px;
 }
+.doc-map .nav > li > ul {
+    display: none;
+}
+.doc-map .nav > li:hover > ul {
+    display: block;
+}
 
 /*
     TOC
@@ -308,3 +314,9 @@ pre code {
     pre { padding: 5px; }
 }
 
+
+.affix {
+    top: 15px;
+    overflow: hidden;
+    overflow-y: auto;
+}

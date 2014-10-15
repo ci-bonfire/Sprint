@@ -80,9 +80,11 @@
             </div>
 
             <div class="col-md-3 sidebar">
+                <div data-spy="affix" data-offset-top="120" data-offset-bottom="120">
                 <?php if (isset($sidebar)) : ?>
                     <?= $sidebar; ?>
                 <?php endif; ?>
+                </div>
             </div>
 
         </div>
