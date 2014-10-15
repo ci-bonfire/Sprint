@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Bonfire Admin</title>
+    <title>SprintPHP UIKits Demo</title>
 
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <link href="<?= $stylesheet ?>" rel="stylesheet">

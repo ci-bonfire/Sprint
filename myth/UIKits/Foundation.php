@@ -131,10 +131,7 @@ class Foundation extends BaseUIKit {
     {
         $output = '';
 
-        /*
-         * Open the navbar
-         */
-        $classes = "top-bar ";
+        list($classes, $id, $attributes) = $this->parseStandardOptions($options, 'top-bar ', true);
 
         foreach ($options as $option)
         {
@@ -148,12 +145,6 @@ class Foundation extends BaseUIKit {
                     break;
             }
         }
-
-        $classes = $this->buildClassString($classes, $options, true);
-
-        $id = $this->buildIdFromOptions($options);
-
-        $attributes = $this->buildAttributesFromOptions($options);
 
         $output .= "<nav {$classes} {$id} {$attributes} data-topbar>";
 
