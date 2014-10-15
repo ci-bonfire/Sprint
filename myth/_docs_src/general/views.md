@@ -1,6 +1,6 @@
 # Views
 
-Sprint uses CodeIgniter's standard views to form the basis of its Template system. The documentation in here only applies when using the default `ViewThemer` engine. See [Custom Template Engines](template_engines.md) for more information about using other template systems with Bonfire.
+Sprint uses CodeIgniter's standard views to form the basis of its Template system. The documentation in here only applies when using the default `ViewThemer` engine. See [Custom Template Engines](template_engines.md) for more information about using other template systems with Sprint.
 
 ## Using the Template System
 In order to use the view and template methods in this document, your controller must extend `Myth\Controllers\ThemedController` or one of its children, like the `FrontController`.
@@ -80,7 +80,7 @@ If you would like to add additional variants for the system to recognize, you ca
 	];
 
 ### Auto-Detecting Variant
-If you would like Bonfire to attempt to automatically determine which variant to use (between desktop, phone or tablet only) modify the `autodetect_variant` config setting in the same file.
+If you would like Sprint to attempt to automatically determine which variant to use (between desktop, phone or tablet only) modify the `autodetect_variant` config setting in the same file.
 
 	$config['autodetect_variant'] = true;
  

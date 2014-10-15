@@ -27,7 +27,7 @@ The __application__ folder is where you will do most of your work. This contains
 
 As much as possible, Sprint stays away from this folder. However, there are a few files that we cannot move out of the application folder due to restrictions in either CodeIgniter or the HMVC solution that we use. In most cases, those files are just fine for you to edit, anyway. These are files like *MY_Controller*, etc. In these cases, though, we do try to extend a class with our namespace to keep the actual working code away from yours.
 
-Most of the folders with the application folder are the standard CodeIgniter folders you would expect. There are a few new ones that Bonfire adds.
+Most of the folders with the application folder are the standard CodeIgniter folders you would expect. There are a few new ones that Sprint adds.
 
 
 #### DB folder

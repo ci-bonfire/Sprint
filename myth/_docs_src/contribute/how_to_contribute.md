@@ -105,7 +105,7 @@ Now get busy and add or edit code. You're on your branch now, so you can write w
 <a name="follow-conventions"></a>
 ### Follow the Coding Conventions
 
-Bonfire follows a simple set of [Coding Conventions](contribute/coding_conventions) which are summarized here, but are given a more complete treatment in their own guide.
+Sprint follows a simple set of [Coding Conventions](contribute/coding_conventions) which are summarized here, but are given a more complete treatment in their own guide.
 
 * Spaces, not tabs, are preferred.
 * No trailing whitespace. Blank lines should not have any space.

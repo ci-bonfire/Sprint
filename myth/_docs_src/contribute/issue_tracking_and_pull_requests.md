@@ -13,8 +13,7 @@ The GitHub issue tracker should only be used for one of the following:
 
 + **Bugs** - when a feature of the project has been _identified as
   broken_.
-+ **Feature requests** -when you ask for a _new feature_ to be added to a
-  Bonfire.
++ **Feature requests** -when you ask for a _new feature_ to be added to Sprint.
 + **Contribution enquiries** - when you want to discuss whether a _new
   feature_ or _change_ would be accepted in Sprint before you begin
 development work on it.

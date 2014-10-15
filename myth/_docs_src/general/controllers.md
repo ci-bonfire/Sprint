@@ -22,7 +22,7 @@ Aside from this, the following controllers can be found in `application/librarie
 
 All of the custom controllers extend from `Myth\Controllers\BaseController`.  This class extends the CI_Controller. It intentionally does NOT extend from our HMVC solution since that has caused too many problems and encourages a design pattern that is better  based around libraries that are much more testable.
 
-This controller provides common functionality to all of the other controllers and should be the minimal class you extend if you want to take advantage of Bonfire's capabilities.
+This controller provides common functionality to all of the other controllers and should be the minimal class you extend if you want to take advantage of Sprint's capabilities.
 
 ### Properties
 

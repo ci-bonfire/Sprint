@@ -62,7 +62,7 @@ You can specify any of the available docs groups to be the default group display
 	$config['docs.default_group'] = 'developer';
 
 ### File Extension
-The docs system requires that your files be in Markdown formatting, but you can use any file extension that you choose. Note, though, that it only recognizes a single extension, so if you change it, you must change the file extension for all of the files within `bonfire/docs` also.
+The docs system requires that your files be in Markdown formatting, but you can use any file extension that you choose. Note, though, that it only recognizes a single extension, so if you change it, you must change the file extension for all of the files within `myth/_docs_src` also.
 
 	$config['docs.extension']    = '.md';
 
