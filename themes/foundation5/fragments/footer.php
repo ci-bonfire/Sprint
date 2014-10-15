@@ -3,6 +3,7 @@
 
         <div style="text-align: right">
             <p><small>Page rendered in {elapsed_time} seconds using {memory_usage}.</small></p>
+            <p><small>PHP <?= phpversion() ?>. CodeIgniter <?= CI_VERSION ?>. SprintPHP <?= SPRINT_VERSION ?></small></p>
         </div>
 
     </div>

@@ -25,7 +25,7 @@ class Layouts extends \Myth\Controllers\ThemedController {
 
         if ($theme == 'foundation')
         {
-            $this->addStyle( site_url('themes/foundation5/css/theme.css') );
+            $this->addStyle( site_url('themes/foundation/css/theme.css') );
         }
 
         // Any variant specified
@@ -49,7 +49,7 @@ class Layouts extends \Myth\Controllers\ThemedController {
     {
         $this->session->set_userdata('layout', $layout);
 
-        redirect('tests/layouts');
+        redirect('demos/layouts');
     }
 
     //--------------------------------------------------------------------
@@ -58,7 +58,7 @@ class Layouts extends \Myth\Controllers\ThemedController {
     {
         $this->session->set_userdata('theme', $theme);
 
-        redirect('tests/layouts');
+        redirect('demos/layouts');
     }
 
     //--------------------------------------------------------------------
