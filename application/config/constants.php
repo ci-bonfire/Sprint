@@ -26,6 +26,8 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+define('SPRINT_VERSION', '1.0-dev');
+
 /*
 |--------------------------------------------------------------------------
 | File and Directory Modes
