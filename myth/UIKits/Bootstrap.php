@@ -142,7 +142,7 @@ class Bootstrap extends BaseUIKit {
 
         list($class, $id, $attributes) = $this->parseStandardOptions($options, $classes, true);
 
-        $output .= "<nav {$class} {$id} {$attributes} role='navigation>
+        $output .= "<nav {$class} {$id} {$attributes} role='navigation'>
   <div class='container-fluid'>";
 
         /*
