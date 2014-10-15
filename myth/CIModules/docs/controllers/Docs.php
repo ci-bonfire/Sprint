@@ -107,6 +107,7 @@ class Docs extends \Myth\Controllers\ThemedController
 
         $data['search_time']  = $this->benchmark->elapsed_time('search_start', 'search_end');
         $data['search_terms'] = $terms;
+        $data['page_title'] = 'Search Results';
 
         $this->render($data);
     }
