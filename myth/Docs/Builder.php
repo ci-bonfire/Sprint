@@ -52,6 +52,8 @@ class Builder implements DocBuilderInterface
 
     protected $formatters = [];
 
+    protected $page_title = null;
+
     //--------------------------------------------------------------------
 
     public function __construct($config = array())
@@ -60,6 +62,14 @@ class Builder implements DocBuilderInterface
     }
 
     //--------------------------------------------------------------------
+
+    public function pageTitle()
+    {
+        return $this->page_title;
+    }
+
+    //--------------------------------------------------------------------
+
 
 
     /**
@@ -632,6 +642,13 @@ class Builder implements DocBuilderInterface
 
         foreach ($xml->children() as $childType => $line) {
             $currentChild++;
+
+            // If it's an h1 - take the first and make it
+            // our page title.
+            if ($childType == 'h1' && empty($this->page_title))
+            {
+                $this->page_title = (string)$line;
+            }
 
             // Make sure that our current object is
             // stored and reset.

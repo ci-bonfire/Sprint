@@ -71,6 +71,7 @@ class Docs extends \Myth\Controllers\ThemedController
             $data['sidebar'] = $this->buildSidebar($content);
             $data['toc']     = $this->buildTOC();
             $data['content'] = $content;
+            $data['page_title'] = $this->docbuilder->pageTitle();
         } catch (Exception $e) {
             $this->setMessage($e->getMessage(), 'warning');
         }
