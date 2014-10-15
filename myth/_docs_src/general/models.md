@@ -47,6 +47,8 @@ To get started with a new model, you can use the following skeleton file:
         protected $insert_validation_rules  = array();
         protected $skip_validation          = false;
         protected $empty_validation_rules   = array();
+        
+        protected $fields = array();
     }
 
 
@@ -142,25 +144,12 @@ This is simply a list of keys that will always be removed from the data arrays p
 
     protected $protected_attributes = array( 'submit', 'id' );
 
-### $field_info
+### $fields
+The fields array contains a list of all fields within the database table. For performance reasons, this should be filled out, otherwise the first insert or update call will hit the database to retrieve the field names. This is used by the `prep_data()` to ensure that any insert or update calls only contain existing fields, saving your from errant database errors. 
 
-This is an array of field definitions which may be used (in combination with `prep_data()`) to define the model's interaction with the database. If `field_info` is empty, the model will query the database to fill this array when using `get_field_info()`. The `field_info` array could also be used by a controller to help map post data to the fields in the model. See CodeIgniter's `$this->db->field_data()` [http://ellislab.com/codeigniter/user-guide/database/fields.html](http://ellislab.com/codeigniter/user-guide/database/fields.html)
+This is primarily in place to allow you to provide more data than you need within the table to the model, and have the extra data processed by one of the observers.
 
-The field definition should be as follows:
-
-    $field_info = array(
-        array(
-            'name'          => 'id',
-            'type'          => 'int',
-            'primary_key'   => 1,
-        ),
-        array(
-            'name'          => 'field_1_name',
-            'type'          => 'varchar',
-            'default'       => '',
-            'max_length'    => 255,
-        ),
-    );
+	protected $fields = array('id', 'first_name', 'last_name');
 
 ## Provided Methods
 
