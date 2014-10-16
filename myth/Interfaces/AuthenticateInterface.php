@@ -114,7 +114,7 @@ interface AuthenticateInterface {
      * @param $credentials
      * @return mixed
      */
-    public function resetPassword($credentials);
+    public function resetPassword($credentials, $password, $passConfirm);
 
     //--------------------------------------------------------------------
 

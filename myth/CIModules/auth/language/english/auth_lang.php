@@ -23,3 +23,9 @@ $lang['auth.forgot_pass']           = '<a href="'. site_url( \Myth\Route::named(
 $lang['auth.first_name']            = 'First Name';
 $lang['auth.last_name']             = 'Last Name';
 $lang['auth.username']              = 'Username';
+
+$lang['auth.forgot']                = 'Reset Password';
+$lang['auth.forgot_note']           = 'No problem. Enter your email and we will send instructions.';
+$lang['auth.send']                  = 'Send';
+$lang['auth.pass_code']             = 'Reset Code';
+$lang['auth.new_password']          = 'Choose a New Password';

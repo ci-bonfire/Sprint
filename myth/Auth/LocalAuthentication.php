@@ -3,6 +3,7 @@
 namespace Myth\Auth;
 
 use Myth\Interfaces\AuthenticateInterface;
+use Myth\Route;
 
 /**
  * Class LocalAuthentication
@@ -372,7 +373,7 @@ class LocalAuthentication implements AuthenticateInterface {
     //--------------------------------------------------------------------
 
     /**
-     * Sends a password reminder email to the user associated with
+     * Sends a password reset link email to the user associated with
      * the passed in $email.
      *
      * @param $email
@@ -380,7 +381,48 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function remindUser($email)
     {
+        // Is it a valid user?
+        $user = $this->user_model->select('id, email')
+                                 ->find_by('email', $email);
 
+        if (! $user)
+        {
+            $this->error = 'Unable to find a user with that email address.';
+            return false;
+        }
+
+        // Generate/store our codes
+        $this->ci->load->helper('string');
+        $token = random_string('alnum', 24);
+        $hash = hash('sha1', config_item('auth.salt') .$token);
+
+        $result = $this->user_model->update($user->id, ['reset_hash' => $hash]);
+
+        if (! $result)
+        {
+            $this->error = $this->user_model->error();
+            return false;
+        }
+
+        // Send the email
+        $this->ci->load->library('email');
+
+        $this->ci->email->to($email);
+        $this->ci->email->from(config_item('site.auth_email'), config_item('site.name'));
+        $this->ci->email->subject("Here's how to reset your password...");
+
+        $data = [
+            'email' => $email,
+            'code'  => $token,
+            'link'  => site_url( Route::named('reset_pass') ),
+            'site_name' => config_item('site.name')
+        ];
+
+        $this->ci->email->message( $this->ci->load->view('emails/forgot_password', $data, true) );
+
+        $this->ci->email->send();
+
+        return true;
     }
 
     //--------------------------------------------------------------------
@@ -388,12 +430,65 @@ class LocalAuthentication implements AuthenticateInterface {
     /**
      * Validates the credentials provided and, if valid, resets the password.
      *
+     * The $credentials array MUST contain a 'code' key with the string to
+     * hash and check against the reset_hash.
+     *
      * @param $credentials
      * @return mixed
      */
-    public function resetPassword($credentials)
+    public function resetPassword($credentials, $password, $passConfirm)
     {
+        if (empty($credentials['code']))
+        {
+            $this->error = 'You must provide the Reset Code.';
+            return false;
+        }
 
+        // Generate a hash to match against the table.
+        $credentials['reset_hash'] = hash('sha1', config_item('auth.salt') .$credentials['code']);
+        unset($credentials['code']);
+
+        // Is there a matching user?
+        $user = $this->user_model->select('id, email, reset_hash')
+                                 ->find_by($credentials);
+
+        if (! $user)
+        {
+            $this->error = 'Unable to find an account with that email and reset code. Please try again.';
+            return false;
+        }
+
+        // Update their password and reset their reset_hash
+        $data = [
+            'password'      => $password,
+            'pass_confirm'  => $passConfirm,
+            'reset_hash'    => null
+        ];
+
+        if (! $this->user_model->update($user->id, $data))
+        {
+            $this->error = $this->user_model->error();
+            return false;
+        }
+
+        // Send a transactional email
+        $this->ci->load->library('email');
+
+        $this->ci->email->to($user->email);
+        $this->ci->email->from(config_item('site.auth_email'), config_item('site.name'));
+        $this->ci->email->subject("Your password has been reset.");
+
+        $data = [
+            'email' => $user->email,
+            'link'  => site_url( Route::named('forgot_pass') ),
+            'site_name' => config_item('site.name')
+        ];
+
+        $this->ci->email->message( $this->ci->load->view('emails/password_reset', $data, true) );
+
+        $this->ci->email->send();
+
+        return true;
     }
 
     //--------------------------------------------------------------------

@@ -1442,9 +1442,29 @@ class CIDbModel
      *
      * @return mixed
      */
-    public function error()
+    public function error($db_array_only=false)
     {
-        return $this->db->error();
+        // Send any validation errors if we have any.
+        if (function_exists('validation_errors') && validation_errors() && ! $db_array_only)
+        {
+            return validation_errors();
+        }
+
+        // No validation errors? Return the db error.
+        $error = $this->db->error();
+
+        if ($db_array_only)
+        {
+            return $error;
+        }
+
+        if (! empty($error['code']))
+        {
+            return "Database Error {$error['code']}: {$error['message']}.";
+        }
+
+        // No errors found.
+        return '';
     }
 
     //--------------------------------------------------------------------

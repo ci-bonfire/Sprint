@@ -14,7 +14,8 @@
 // Site Information
 //--------------------------------------------------------------------
 //
-    $config['site.name'] = 'Sprint PHP';
+    $config['site.name']        = 'Sprint PHP';
+    $config['site.auth_email']  = 'test@example.com';
 
 //--------------------------------------------------------------------
 // Authentication

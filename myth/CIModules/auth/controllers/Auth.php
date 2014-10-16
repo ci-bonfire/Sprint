@@ -115,6 +115,80 @@ class Auth extends \Myth\Controllers\ThemedController
 
     //--------------------------------------------------------------------
 
+    public function forgot_password()
+    {
+        $this->load->helper('form');
+
+        if ($this->input->post())
+        {
+            $auth = new LocalAuthentication();
+            $this->load->model('user_model');
+            $auth->useModel($this->user_model);
+
+            if ($auth->remindUser( $this->input->post('email') ))
+            {
+                $this->setMessage('The email is on its way!', 'success');
+                redirect( Route::named('reset_pass') );
+            }
+            else
+            {
+                $this->setMessage($auth->error(), 'danger');
+            }
+        }
+
+        $this->themer->setLayout('login');
+        $this->render();
+    }
+
+    //--------------------------------------------------------------------
+
+    public function reset_password()
+    {
+        $this->load->helper('form');
+
+        if ($this->input->post())
+        {
+            $auth = new LocalAuthentication();
+            $this->load->model('user_model');
+            $auth->useModel($this->user_model);
+
+            $credentials = [
+                'email'         => $this->input->post('email'),
+                'code'          => $this->input->post('code')
+            ];
+            $password = $this->input->post('password');
+            $pass_confirm = $this->input->post('pass_confirm');
+
+            if ($auth->resetPassword($credentials, $password, $pass_confirm))
+            {
+                $this->setMessage('Your password has been changed. Please sign in.', 'success');
+                redirect( Route::named('login') );
+            }
+            else
+            {
+                $this->setMessage($auth->error(), 'danger');
+            }
+        }
+
+        $data = [
+            'email' =>  $this->input->get('e'),
+            'code'  => $this->input->get('code')
+        ];
+
+        $this->addScript('register.js');
+        $this->themer->setLayout('login');
+        $this->render($data);
+    }
+
+    //--------------------------------------------------------------------
+
+
+
+
+    //--------------------------------------------------------------------
+    // AJAX Methods
+    //--------------------------------------------------------------------
+
     /**
      * Checks the password strength and returns pass/fail.
      *
