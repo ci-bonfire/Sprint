@@ -4,7 +4,7 @@ use Myth\Models\CIDbModel as CIDbModel;
 use Myth\Auth\LocalAuthentication as Authenticate;
 use \Mockery as m;
 
-//include FCPATH .'myth/CIModules/auth/models/Login_model.php';
+include APPPATH .'models/User_model.php';
 
 
 class LocalAuthenticationTest extends CodeIgniterTestCase {
@@ -28,6 +28,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
             'id' => 15,
             'email' => 'darth@theempire.com',
             'password_hash' => password_hash('father', PASSWORD_BCRYPT),
+            'active' => 1
         ];
     }
 
@@ -36,7 +37,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     public function _before()
     {
-        $this->user_model = m::mock('CIDbModel');
+        $this->user_model = m::mock('User_model');
         $session = m::mock('CI_Session');
 
         $this->ci = get_instance();
@@ -47,7 +48,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model = m::mock('Login_model');
 
         $this->auth = new Authenticate( $this->ci );
-        $this->auth->useModel($this->user_model);
+        $this->auth->useModel($this->user_model, true);
 
     }
 
@@ -85,7 +86,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         ];
 
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
-        $this->auth->user_model->shouldReceive('asArray')->andReturn( $this->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn(false);
 
         $result = $this->auth->validate($data);
@@ -103,7 +104,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         ];
 
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
-        $this->auth->user_model->shouldReceive('asArray')->andReturn( $this->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
 
         $result = $this->auth->validate($data);
@@ -151,7 +152,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         );
 
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
-        $this->auth->user_model->shouldReceive('asArray')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( false );
 
         $result = $this->auth->login($creds);
@@ -169,7 +170,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         );
 
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
-        $this->auth->user_model->shouldReceive('asArray')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
 
         $result = $this->auth->login($creds);
@@ -187,7 +188,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         );
 
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
-        $this->auth->user_model->shouldReceive('asArray')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
         $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
@@ -209,7 +210,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         );
 
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
-        $this->auth->user_model->shouldReceive('asArray')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
         $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
@@ -231,7 +232,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         );
 
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
-        $this->auth->user_model->shouldReceive('asArray')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
         $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');

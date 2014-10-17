@@ -60,7 +60,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->ci->config->load('auth');
         $this->ci->load->model('auth/login_model');
         $this->ci->load->model('user_model', '', true);
-        $this->ci->lang->load('auth');
+        $this->ci->load->language('auth/auth');
     }
 
     //--------------------------------------------------------------------
@@ -119,9 +119,9 @@ class LocalAuthentication implements AuthenticateInterface {
         unset($credentials['password']);
 
         // Can we find a user with those credentials?
-        $user = $this->ci->user_model->as_array()
-                                     ->where($credentials)
-                                     ->first();
+        $user = $this->user_model->as_array()
+                                 ->where($credentials)
+                                 ->first();
 
         if (! $user)
         {
@@ -166,10 +166,7 @@ class LocalAuthentication implements AuthenticateInterface {
         if (config_item('auth.allow_remembering')) {
             $token = get_cookie('remember');
 
-            // Strip the email from our token
-//            $token = str_ireplace(str_replace('@', '.', $this->user->email) .'|', '', $token);
-
-            $this->invalidateRememberCookie($this->user->email, $token);
+            $this->invalidateRememberCookie($this->user['email'], $token);
         }
     }
 
@@ -194,7 +191,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // to determine whether a user is logged in or not.
         if (! $this->user)
         {
-            $this->user = $this->user_model->find_by('id', (int)$id);
+            $this->user = $this->user_model->as_array()->find_by('id', (int)$id);
 
             if (empty($this->user))
             {
@@ -605,11 +602,12 @@ class LocalAuthentication implements AuthenticateInterface {
      * The model MUST extend Myth\Models\CIDbModel.
      *
      * @param $model
+     * @param $allow_any_parent
      * @return mixed
      */
-    public function useModel($model)
+    public function useModel($model, $allow_any_parent=false)
     {
-        if (get_parent_class($model) != 'Myth\Models\CIDbModel')
+        if (! $allow_any_parent && get_parent_class($model) != 'Myth\Models\CIDbModel')
         {
             throw new \RuntimeException('Models passed into LocalAuthenticate MUST extend Myth\Models\CIDbModel');
         }
