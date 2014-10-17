@@ -78,17 +78,20 @@ class Migration_create_user_tables extends CI_Migration {
             'active'  => [
                 'type'          => 'tinyint',
                 'constraint'    => 1,
-                'null'          => 0
+                'null'          => 0,
+                'default'       => 0
             ],
             'deleted'  => [
                 'type'          => 'tinyint',
                 'constraint'    => 1,
-                'null'          => 0
+                'null'          => 0,
+                'default'       => 0
             ],
             'force_pass_reset'  => [
                 'type'          => 'tinyint',
                 'constraint'    => 1,
-                'null'          => 0
+                'null'          => 0,
+                'default'       => 0
             ],
         ];
 
@@ -127,7 +130,7 @@ class Migration_create_user_tables extends CI_Migration {
     public function down ()
     {
         $this->dbforge->drop_table('users');
-        $this->dbforge->drop_table('users_meta');
+        $this->dbforge->drop_table('user_meta');
     }
 
     //--------------------------------------------------------------------
