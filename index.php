@@ -49,8 +49,16 @@ include "vendor/autoload.php";
     /**
      * A simple method to automatically determine the environment that
      * the script is running on. Modify to support your needs.
+     *
+     * To handle Travis-ci testing, we check for an environment
+     * variable called TRAVIS which is set in the .travis.yml file.
+     * This allows a database-specific setup for Travis testing.
      */
-    if (strpos($domain, '.dev') !== false || $domain == 'cli')
+    if (! empty($ENV['TRAVIS']))
+    {
+        define('ENVIRONMENT', 'travis');
+    }
+    else if (strpos($domain, '.dev') !== false || $domain == 'cli')
     {
         define('ENVIRONMENT', 'development');
     }
@@ -69,6 +77,7 @@ include "vendor/autoload.php";
 switch (ENVIRONMENT)
 {
 	case 'development':
+    case 'travis':
 		error_reporting(-1);
 		ini_set('display_errors', 1);
 	break;
