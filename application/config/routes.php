@@ -91,6 +91,7 @@ $routes->any('login', 'auth/login', ['as' => 'login']);
 $routes->get('logout', 'auth/logout', ['as' => 'logout']);
 $routes->any('forgot_password', 'auth/forgot_password', ['as' => 'forgot_pass']);
 $routes->any('reset_password', 'auth/reset_password', ['as' => 'reset_pass']);
+$routes->any('activate_user', 'auth/activate_user', ['as' => 'activate_user']);
 $routes->get('password_check/(:any)', 'auth/password_check/$1');
 
 $routes->block('auth/(:any)');

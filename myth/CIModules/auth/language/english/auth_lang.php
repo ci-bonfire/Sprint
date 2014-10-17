@@ -29,3 +29,6 @@ $lang['auth.forgot_note']           = 'No problem. Enter your email and we will 
 $lang['auth.send']                  = 'Send';
 $lang['auth.pass_code']             = 'Reset Code';
 $lang['auth.new_password']          = 'Choose a New Password';
+
+$lang['auth.activate_account']      = 'Activate Account';
+$lang['auth.activate']              = 'Activate';

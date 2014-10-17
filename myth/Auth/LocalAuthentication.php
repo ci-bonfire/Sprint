@@ -138,6 +138,13 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
+        // Is the user active?
+        if (! $user['active'])
+        {
+            $this->error = 'This account has not been activated.';
+            return false;
+        }
+
         return $return_user ? $user : true;
     }
 
@@ -241,6 +248,82 @@ class LocalAuthentication implements AuthenticateInterface {
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Registers a new user and handles activation method.
+     *
+     * @param $user_data
+     * @return bool
+     */
+    public function registerUser($user_data)
+    {
+        // Anything special needed for Activation?
+        $method = config_item('auth.activation_method');
+
+        $user_data['active'] = $method == 'auto' ? 1 : 0;
+
+        // If via email, we need to generate a hash
+        $this->ci->load->helper('string');
+        $token = random_string('alnum', 24);
+        $user_data['activate_hash'] = hash('sha1', config_item('auth.salt') .$token);
+
+        // Save the user
+        if (! $id = $this->user_model->insert($user_data))
+        {
+            $this->error = $this->user_model->error();
+            return false;
+        }
+
+        // If method is 'email', we need to fire off the email...
+        $this->ci->load->library('email');
+
+        $this->ci->email->to($user_data['email']);
+        $this->ci->email->from(config_item('site.auth_email'), config_item('site.name'));
+        $this->ci->email->subject("Open to activate your account at ". config_item('site.name'));
+
+        $data = [
+            'user_id'   => $id,
+            'email'     => $user_data['email'],
+            'link'      => site_url( Route::named('activate_user') ),
+            'token'     => $token,
+            'site_name' => config_item('site.name')
+        ];
+
+        $this->ci->email->message( $this->ci->load->view('emails/activation', $data, true) );
+
+        if (! $this->ci->email->send(false))
+        {
+            log_message('error', $this->email->print_debugger(array('headers')) );
+        }
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------
+
+    public function activateUser($data)
+    {
+        $post = [
+            'email' => $data['email'],
+            'activate_hash' => hash('sha1', config_item('auth.salt') . $data['code'])
+        ];
+
+        $user = $this->user_model->where($post)->first();
+
+        if (! $user)
+        {
+            $this->error = $this->user_model->error() ? $this->user_model->error() : 'Unable to find a user with those credentials.';
+            return false;
+        }
+
+        $this->user_model->update($user->id, ['active' => 1, 'activate_hash' => null]);
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------
+
+
 
     /**
      * Grabs the current user object. Returns NULL if nothing found.
@@ -420,7 +503,10 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $this->ci->email->message( $this->ci->load->view('emails/forgot_password', $data, true) );
 
-        $this->ci->email->send();
+        if (! $this->ci->email->send(false))
+        {
+            log_message('error', $this->email->print_debugger(array('headers')) );
+        }
 
         return true;
     }
@@ -486,7 +572,10 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $this->ci->email->message( $this->ci->load->view('emails/password_reset', $data, true) );
 
-        $this->ci->email->send();
+        if (! $this->ci->email->send(false))
+        {
+            log_message('error', $this->email->print_debugger(array('headers')) );
+        }
 
         return true;
     }

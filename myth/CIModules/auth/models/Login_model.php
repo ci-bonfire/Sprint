@@ -142,7 +142,8 @@ class Login_model extends \Myth\Models\CIDbModel {
     {
         $data = [
             'user_id'   => (int)$user['id'],
-            'datetime'  => date('Y-m-d H:i:s')
+            'datetime'  => date('Y-m-d H:i:s'),
+            'ip_address'=> $this->input->ip_address()
         ];
 
         return $this->db->insert('auth_logins', $data);

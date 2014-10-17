@@ -83,7 +83,9 @@ class Auth extends \Myth\Controllers\ThemedController
 
         if ($this->input->post()) {
 
+            $auth = new LocalAuthentication();
             $this->load->model('user_model');
+            $auth->useModel($this->user_model);
 
             $post_data = [
                 'first_name'   => $this->input->post('first_name'),
@@ -95,16 +97,11 @@ class Auth extends \Myth\Controllers\ThemedController
                 'role_id'      => config_item('auth.default_role_id')
             ];
 
-            if ($id = $this->user_model->insert($post_data)) {
+            if ($auth->registerUser($post_data)) {
                 $this->setMessage(lang('auth.did_register'), 'success');
                 redirect( Route::named('login') );
             } else {
-                if (validation_errors()) {
-                    $this->setMessage(validation_errors(), 'danger');
-                } else {
-                    $this->setMessage(lang('auth.unknown_register_error'), 'warning');
-                    log_message('error', 'User Creation Error: ' . $this->user_model->error());
-                }
+                $this->setMessage( $auth->error(), 'danger' );
             }
         }
 
@@ -114,6 +111,44 @@ class Auth extends \Myth\Controllers\ThemedController
     }
 
     //--------------------------------------------------------------------
+
+    public function activate_user()
+    {
+        $this->load->helper('form');
+
+        if ($this->input->post())
+        {
+            $auth = new LocalAuthentication();
+            $this->load->model('user_model');
+            $auth->useModel($this->user_model);
+
+            $post_data = [
+                  'email'   => $this->input->post('email'),
+                  'code'   => $this->input->post('code')
+            ];
+
+            if ($auth->activateUser($post_data))
+            {
+                $this->setMessage(lang('auth.did_activate'), 'success');
+                redirect( Route::named('login') );
+            }
+            else
+            {
+                $this->setMessage( $auth->error(), 'danger');
+            }
+        }
+
+        $data = [
+            'email' =>  $this->input->get('e'),
+            'code'  => $this->input->get('code')
+        ];
+
+        $this->themer->setLayout('login');
+        $this->render($data);
+    }
+
+    //--------------------------------------------------------------------
+
 
     public function forgot_password()
     {

@@ -124,7 +124,15 @@
 //
     $config['auth.use_dictionary'] = false;
 
-
+//--------------------------------------------------------------------
+// Activation Method
+//--------------------------------------------------------------------
+// The site supports 3 methods of activating a user:
+//      - 'auto'    No extra protection, they are allowed in site after signup.
+//      - 'email'   The are sent an email with an activation link/code
+//      - 'manual'  Requires manual approval by a site administrator.
+//
+    $config['auth.activation_method'] = 'email';
 
 
 //--------------------------------------------------------------------
