@@ -32,3 +32,11 @@ $lang['auth.new_password']          = 'Choose a New Password';
 
 $lang['auth.activate_account']      = 'Activate Account';
 $lang['auth.activate']              = 'Activate';
+$lang['auth.inactive_account']      = 'Your account is not active.';
+
+$lang['auth.register_subject']      = "Open to activate your account at ". config_item('site.name');
+$lang['auth.activate_no_user']      = 'Unable to find a user with those credentials.';
+$lang['auth.remind_subject']        = "Here's how to reset your password...";
+$lang['auth.need_reset_code']       = 'You must provide the Reset Code.';
+$lang['auth.reset_no_user']         = 'Unable to find an account with that email and reset code. Please try again.';
+$lang['auth.reset_subject']         = "Your password has been reset.";

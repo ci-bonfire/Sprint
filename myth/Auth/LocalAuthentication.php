@@ -141,7 +141,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // Is the user active?
         if (! $user['active'])
         {
-            $this->error = 'This account has not been activated.';
+            $this->error = lang('auth.inactive_account');
             return false;
         }
 
@@ -279,7 +279,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $this->ci->email->to($user_data['email']);
         $this->ci->email->from(config_item('site.auth_email'), config_item('site.name'));
-        $this->ci->email->subject("Open to activate your account at ". config_item('site.name'));
+        $this->ci->email->subject( lang('auth.register_subject') );
 
         $data = [
             'user_id'   => $id,
@@ -312,7 +312,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $user)
         {
-            $this->error = $this->user_model->error() ? $this->user_model->error() : 'Unable to find a user with those credentials.';
+            $this->error = $this->user_model->error() ? $this->user_model->error() : lang('auth.activate_no_user');
             return false;
         }
 
@@ -492,7 +492,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $this->ci->email->to($email);
         $this->ci->email->from(config_item('site.auth_email'), config_item('site.name'));
-        $this->ci->email->subject("Here's how to reset your password...");
+        $this->ci->email->subject( lang('auth.remind_subject') );
 
         $data = [
             'email' => $email,
@@ -526,7 +526,7 @@ class LocalAuthentication implements AuthenticateInterface {
     {
         if (empty($credentials['code']))
         {
-            $this->error = 'You must provide the Reset Code.';
+            $this->error = lang('auth.need_reset_code');
             return false;
         }
 
@@ -540,7 +540,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $user)
         {
-            $this->error = 'Unable to find an account with that email and reset code. Please try again.';
+            $this->error = lang('auth.reset_no_user');
             return false;
         }
 
@@ -562,7 +562,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $this->ci->email->to($user->email);
         $this->ci->email->from(config_item('site.auth_email'), config_item('site.name'));
-        $this->ci->email->subject("Your password has been reset.");
+        $this->ci->email->subject( lang('auth.reset_subject') );
 
         $data = [
             'email' => $user->email,
