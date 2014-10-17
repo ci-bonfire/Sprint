@@ -24,6 +24,7 @@ before_script:
   - mysql -e 'create database IF NOT EXISTS sprint;' -uroot
 
 script:
+  - php index.php database quietMigrate app
   - php codecept.phar run
 
 after_failure:
