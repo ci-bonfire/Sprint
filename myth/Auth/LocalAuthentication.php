@@ -665,7 +665,39 @@ class LocalAuthentication implements AuthenticateInterface {
 
     //--------------------------------------------------------------------
 
+    //--------------------------------------------------------------------
+    // Login Records
+    //--------------------------------------------------------------------
 
+    /**
+     * Purges all login attempt records from the database.
+     *
+     * @param $email
+     */
+    public function purgeLoginAttempts($email)
+    {
+        $this->ci->login_model->purgeLoginAttempts($email);
+
+        // @todo record activity of login attempts purge.
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Purges all remember tokens for a single user. Effectively logs
+     * a user out of all devices. Intended to allow users to log themselves
+     * out of all devices as a security measure.
+     *
+     * @param $email
+     */
+    public function purgeRememberTokens($email)
+    {
+        $this->ci->login_model->purgeRememberTokens($email);
+
+        // todo record activity of remember me purges.
+    }
+
+    //--------------------------------------------------------------------
 
     //--------------------------------------------------------------------
     // Protected Methods
@@ -785,38 +817,6 @@ class LocalAuthentication implements AuthenticateInterface {
     }
 
     //--------------------------------------------------------------------
-
-    //--------------------------------------------------------------------
-    // Login Records
-    //--------------------------------------------------------------------
-
-    /**
-     * Purges all login attempt records from the database.
-     *
-     * @param $email
-     */
-    public function purgeLoginAttempts($email)
-    {
-        $this->ci->login_model->purgeLoginAttempts($email);
-
-        // @todo record activity of login attempts purge.
-    }
-
-    //--------------------------------------------------------------------
-
-    public function purgeRememberTokens($email)
-    {
-        $this->ci->login_model->purgeRememberTokens($email);
-
-        // todo record activity of remember me purges.
-    }
-
-    //--------------------------------------------------------------------
-
-
-
-
-
 
 
 }

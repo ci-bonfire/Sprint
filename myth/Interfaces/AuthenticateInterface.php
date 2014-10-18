@@ -69,6 +69,37 @@ interface AuthenticateInterface {
     //--------------------------------------------------------------------
 
     /**
+     * Registers a new user and handles activation method.
+     *
+     * @param $user_data
+     * @return bool
+     */
+    public function registerUser($user_data);
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Used to verify the user values and activate a user so they can
+     * visit the site.
+     *
+     * @param $data
+     * @return bool
+     */
+    public function activateUser($data);
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Used to allow manual activation of a user with a known ID.
+     *
+     * @param $id
+     * @return bool
+     */
+    public function activateUserById($id);
+
+    //--------------------------------------------------------------------
+
+    /**
      * Grabs the current user object. Returns NULL if nothing found.
      *
      * @return object|null
@@ -141,6 +172,35 @@ interface AuthenticateInterface {
      * @return mixed
      */
     public function useModel($model);
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Returns the current error string.
+     *
+     * @return mixed
+     */
+    public function error();
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Purges all login attempt records from the database.
+     *
+     * @param $email
+     */
+    public function purgeLoginAttempts($email);
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Purges all remember tokens for a single user. Effectively logs
+     * a user out of all devices. Intended to allow users to log themselves
+     * out of all devices as a security measure.
+     *
+     * @param $email
+     */
+    public function purgeRememberTokens($email);
 
     //--------------------------------------------------------------------
 
