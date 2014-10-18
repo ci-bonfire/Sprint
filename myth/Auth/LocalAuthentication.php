@@ -368,12 +368,19 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
+        // Grab the amount of time to add if the system thinks we're
+        // under a distributed brute force attack.
+        $dbrute_time = $this->ci->login_model->distributedBruteForceTime();
+
         // If this user was found to possibly be under a brute
         // force attack, their account would have been banned
         // for 15 minutes.
         if ($time = $this->ci->session->userdata('bruteBan'))
         {
-            if ($time > time())
+            // If the current time is less than the
+            // the ban expiration, plus any distributed time
+            // then the user can't login just yet.
+            if ($time + $dbrute_time > time())
             {
                 // The user is banned still...
                 $this->error = lang('auth.bruteBan_notice');
@@ -383,6 +390,10 @@ class LocalAuthentication implements AuthenticateInterface {
             // Still here? The the ban time is over...
             $this->ci->session->unset_userdata('bruteBan');
         }
+
+        // Grab the time of last attempt and
+        // determine if we're throttled by amount of time passed.
+        $last_time = $this->login_model->lastLoginAttemptTime($email);
 
         // Have any attempts been made?
         $attempts = $this->ci->db->where('email', $email)
@@ -394,6 +405,15 @@ class LocalAuthentication implements AuthenticateInterface {
         // the number is less than or equal to the allowed free attempts
         if ($attempts === 0 || $attempts <= $attempts)
         {
+            // Before we can say there's nothing up here,
+            // we need to check dbrute time.
+            $time_left = $last_time + $dbrute_time - time();
+
+            if ($time_left > 0)
+            {
+                return $time_left;
+            }
+
             return false;
         }
 
@@ -410,15 +430,8 @@ class LocalAuthentication implements AuthenticateInterface {
             return $ban_time;
         }
 
-        // Check the time of last attempt and
-        // determine if we're throttled by amount of time passed.
-        $last_time = $this->login_model->lastLoginAttemptTime($email);
-
         // Get our allowed attempts out of the picture.
         $attempts = $attempts - $allowed;
-
-        // todo: make the dbrute time affect anyone with any failed logins anywhere.
-        $dbrute_time = $this->ci->login_model->distributedBruteForceTime();
 
         $max_time = config_item('auth.max_throttle_time');
 
