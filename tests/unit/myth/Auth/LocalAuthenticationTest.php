@@ -261,6 +261,218 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     //--------------------------------------------------------------------
 
     //--------------------------------------------------------------------
+    // Throttling
+    //--------------------------------------------------------------------
+
+    public function testThrottlingReturnsFalseIfNotThrottledWithFirstFailedAttempt()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(0);
+
+        $this->assertFalse($this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingReturnsFalseIfNotThrottledWithAllowedFailedAttempts()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(3);
+
+        $this->assertFalse($this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingReturnsTimeWhenThrottled()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(6);
+
+        $this->assertEquals(2, $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingReturnsTimeWhenThrottled2()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(7);
+
+        $this->assertEquals(4, $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingReturnsTimeWhenThrottled3()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(8);
+
+        $this->assertEquals(8, $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingReturnsTimeWhenThrottled4()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(9);
+
+        $this->assertEquals(16, $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingReturnsTimeWhenThrottled5()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(10);
+
+        $this->assertEquals(32, $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingReturnsTimeWhenThrottled6AndIsAboveMaxLimit()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(11);
+
+        $this->assertEquals(45, $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingUnderBruteForceFirstTime()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(101);
+        $this->ci->login_model->shouldReceive('isBruteForced')->with($email)->once()->andReturn(true);
+
+        // Should store current time+15 minutes in the session
+        $this->ci->session->shouldReceive('set_userdata')->with('bruteBan', time() + (60*15))->once();
+
+        $this->assertEquals(60*15, $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingUnderPreviousBruteForce()
+    {
+        $email = 'darth@theempire.com';
+
+        $bruteTime = (60*14) + time();
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn( $bruteTime );
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->never();
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->never();
+        $this->ci->login_model->shouldReceive('isBruteForced')->with($email)->never();
+
+        // Should store current time+15 minutes in the session
+        $this->ci->session->shouldReceive('set_userdata')->with('bruteBan', time() + (60*15))->never();
+
+        $this->assertEquals($bruteTime - time(), $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingUnderPreviousBruteForceWithDBrute()
+    {
+        $email = 'darth@theempire.com';
+
+        $bruteTime = (60*14) + time();
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(45);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn( $bruteTime );
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->never();
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->never();
+        $this->ci->login_model->shouldReceive('isBruteForced')->with($email)->never();
+
+        // Should store current time+15 minutes in the session
+        $this->ci->session->shouldReceive('set_userdata')->with('bruteBan', time() + (60*15))->never();
+
+        $this->assertEquals($bruteTime - time() + 45, $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testThrottlingWithAllowedAttemptsUnderDBrute()
+    {
+        $email = 'darth@theempire.com';
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(45);
+        // Not under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( strtotime('-10 seconds') );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(3);
+
+        $this->assertEquals(35, $this->auth->isThrottled($email));
+    }
+
+    //--------------------------------------------------------------------
+
+    //--------------------------------------------------------------------
     // Utility Methods
     //--------------------------------------------------------------------
 

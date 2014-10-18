@@ -251,7 +251,7 @@ class Login_model extends \Myth\Models\CIDbModel {
      */
     public function lastLoginAttemptTime($email)
     {
-        $query = $this->ci->db->where('email', $email)
+        $query = $this->db->where('email', $email)
                               ->order_by('datetime', 'desc')
                               ->limit(1)
                               ->get('auth_login_attempts');
@@ -262,6 +262,20 @@ class Login_model extends \Myth\Models\CIDbModel {
         }
 
         return strtotime($query->row()->datetime);
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Returns the number of failed login attempts for a single email.
+     *
+     * @param $email
+     * @return int
+     */
+    public function countLoginAttempts($email)
+    {
+        return $this->db->where('email', $email)
+                        ->count_all_results();
     }
 
     //--------------------------------------------------------------------

@@ -384,7 +384,7 @@ class LocalAuthentication implements AuthenticateInterface {
             {
                 // The user is banned still...
                 $this->error = lang('auth.bruteBan_notice');
-                return true;
+                return ($time + $dbrute_time) - time();
             }
 
             // Still here? The the ban time is over...
@@ -393,17 +393,16 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Grab the time of last attempt and
         // determine if we're throttled by amount of time passed.
-        $last_time = $this->login_model->lastLoginAttemptTime($email);
+        $last_time = $this->ci->login_model->lastLoginAttemptTime($email);
 
         // Have any attempts been made?
-        $attempts = $this->ci->db->where('email', $email)
-                                 ->count_all_results();
+        $attempts = $this->ci->login_model->countLoginAttempts($email);
 
         $allowed = config_item('auth.allowed_login_attempts');
 
         // We're not throttling if there are 0 attempts or
         // the number is less than or equal to the allowed free attempts
-        if ($attempts === 0 || $attempts <= $attempts)
+        if ($attempts === 0 || $attempts <= $allowed)
         {
             // Before we can say there's nothing up here,
             // we need to check dbrute time.
@@ -421,7 +420,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // to check the elapsed time of all of these attacks. If they are
         // less than 1 minute it's obvious this is a brute force attack,
         // so we'll set a session flag and block that user for 15 minutes.
-        if ($attempts > 100 && $this->isBruteForced($email))
+        if ($attempts > 100 && $this->ci->login_model->isBruteForced($email))
         {
             $this->error = lang('auth.bruteBan_notice');
 
