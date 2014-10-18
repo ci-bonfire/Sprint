@@ -242,4 +242,29 @@ class Login_model extends \Myth\Models\CIDbModel {
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Gets the timestamp of the last attempted login for this user.
+     *
+     * @param $email
+     * @return int|null
+     */
+    public function lastLoginAttemptTime($email)
+    {
+        $query = $this->ci->db->where('email', $email)
+                              ->order_by('datetime', 'desc')
+                              ->limit(1)
+                              ->get('auth_login_attempts');
+
+        if (! $query->num_rows())
+        {
+            return 0;
+        }
+
+        return strtotime($query->row()->datetime);
+    }
+
+    //--------------------------------------------------------------------
+
+
 }

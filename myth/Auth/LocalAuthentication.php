@@ -412,14 +412,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Check the time of last attempt and
         // determine if we're throttled by amount of time passed.
-        // @todo: add this query to login_model
-        $query = $this->ci->db->where('email', $email)
-                              ->order_by('datetime', 'desc')
-                              ->limit(1)
-                              ->get('auth_login_attempts');
-
-        // Get a timestamp of the last attempt
-        $last_time = strtotime($query->row()->datetime);
+        $last_time = $this->login_model->lastLoginAttemptTime($email);
 
         // Get our allowed attempts out of the picture.
         $attempts = $attempts - $allowed;
