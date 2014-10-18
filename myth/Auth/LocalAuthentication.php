@@ -298,29 +298,58 @@ class LocalAuthentication implements AuthenticateInterface {
 
     //--------------------------------------------------------------------
 
+    /**
+     * Used to verify the user values and activate a user so they can
+     * visit the site.
+     *
+     * @param $data
+     * @return bool
+     */
     public function activateUser($data)
     {
         $post = [
-            'email' => $data['email'],
+            'email'         => $data['email'],
             'activate_hash' => hash('sha1', config_item('auth.salt') . $data['code'])
         ];
 
-        $user = $this->user_model->where($post)->first();
+        $user = $this->user_model->where($post)
+                                 ->first();
 
-        if (! $user)
-        {
+        if (! $user) {
             $this->error = $this->user_model->error() ? $this->user_model->error() : lang('auth.activate_no_user');
-            return false;
+
+            return FALSE;
         }
 
-        $this->user_model->update($user->id, ['active' => 1, 'activate_hash' => null]);
+        if (! $this->user_model->update($user->id, ['active' => 1, 'activate_hash' => null]) )
+        {
+            $this->error = $this->user_model->error();
+            return false;
+        }
 
         return true;
     }
 
     //--------------------------------------------------------------------
 
+    /**
+     * Used to allow manual activation of a user with a known ID.
+     *
+     * @param $id
+     * @return bool
+     */
+    public function activateUserById($id)
+    {
+        if (! $this->user_model->update($id, ['active' => 1, 'activate_hash' => null]))
+        {
+            $this->error = $this->user_model->error();
+            return false;
+        }
 
+        return true;
+    }
+
+    //--------------------------------------------------------------------
 
     /**
      * Grabs the current user object. Returns NULL if nothing found.
