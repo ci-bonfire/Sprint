@@ -4,6 +4,7 @@ namespace Myth\Auth;
 
 use Myth\Interfaces\AuthenticateInterface;
 use Myth\Route;
+use Myth\Events as Events;
 
 /**
  * Class LocalAuthentication
@@ -93,6 +94,8 @@ class LocalAuthentication implements AuthenticateInterface {
             $this->rememberUser($user);
         }
 
+        Events::trigger('didLogin', $user);
+
         return true;
     }
 
@@ -158,6 +161,11 @@ class LocalAuthentication implements AuthenticateInterface {
     public function logout()
     {
         $this->ci->load->helper('cookie');
+
+        if (! Events::trigger('beforeLogout', $this->user))
+        {
+            return false;
+        }
 
         // Destroy the session
         $this->ci->session->sess_destroy();
@@ -271,27 +279,14 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        // If method is 'email', we need to fire off the email...
-        $this->ci->load->library('email');
-
-        $this->ci->email->to($user_data['email']);
-        $this->ci->email->from(config_item('site.auth_email'), config_item('site.name'));
-        $this->ci->email->subject( lang('auth.register_subject') );
-
         $data = [
             'user_id'   => $id,
             'email'     => $user_data['email'],
-            'link'      => site_url( Route::named('activate_user') ),
             'token'     => $token,
-            'site_name' => config_item('site.name')
+            'method'    => $method
         ];
 
-        $this->ci->email->message( $this->ci->load->view('emails/activation', $data, true) );
-
-        if (! $this->ci->email->send(false))
-        {
-            log_message('error', $this->email->print_debugger(array('headers')) );
-        }
+        Events::trigger('didRegisterUser', [$data]);
 
         return true;
     }
@@ -327,6 +322,8 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
+        Events::trigger('didActivate', [$user]);
+
         return true;
     }
 
@@ -345,6 +342,8 @@ class LocalAuthentication implements AuthenticateInterface {
             $this->error = $this->user_model->error();
             return false;
         }
+
+        Events::trigger('didActivate', [$this->user_model->as_array()->find($id)]);
 
         return true;
     }
@@ -496,8 +495,7 @@ class LocalAuthentication implements AuthenticateInterface {
     public function remindUser($email)
     {
         // Is it a valid user?
-        $user = $this->user_model->select('id, email')
-                                 ->find_by('email', $email);
+        $user = $this->user_model->find_by('email', $email);
 
         if (! $user)
         {
@@ -518,26 +516,7 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        // Send the email
-        $this->ci->load->library('email');
-
-        $this->ci->email->to($email);
-        $this->ci->email->from(config_item('site.auth_email'), config_item('site.name'));
-        $this->ci->email->subject( lang('auth.remind_subject') );
-
-        $data = [
-            'email' => $email,
-            'code'  => $token,
-            'link'  => site_url( Route::named('reset_pass') ),
-            'site_name' => config_item('site.name')
-        ];
-
-        $this->ci->email->message( $this->ci->load->view('emails/forgot_password', $data, true) );
-
-        if (! $this->ci->email->send(false))
-        {
-            log_message('error', $this->email->print_debugger(array('headers')) );
-        }
+        Events::trigger('didRemindUser', [(array)$user, $token]);
 
         return true;
     }
@@ -566,8 +545,7 @@ class LocalAuthentication implements AuthenticateInterface {
         unset($credentials['code']);
 
         // Is there a matching user?
-        $user = $this->user_model->select('id, email, reset_hash')
-                                 ->find_by($credentials);
+        $user = $this->user_model->find_by($credentials);
 
         if (! $user)
         {
@@ -588,25 +566,7 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        // Send a transactional email
-        $this->ci->load->library('email');
-
-        $this->ci->email->to($user->email);
-        $this->ci->email->from(config_item('site.auth_email'), config_item('site.name'));
-        $this->ci->email->subject( lang('auth.reset_subject') );
-
-        $data = [
-            'email' => $user->email,
-            'link'  => site_url( Route::named('forgot_pass') ),
-            'site_name' => config_item('site.name')
-        ];
-
-        $this->ci->email->message( $this->ci->load->view('emails/password_reset', $data, true) );
-
-        if (! $this->ci->email->send(false))
-        {
-            log_message('error', $this->email->print_debugger(array('headers')) );
-        }
+        Events::trigger('didResetPassword', [$user]);
 
         return true;
     }
@@ -679,6 +639,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->ci->login_model->purgeLoginAttempts($email);
 
         // @todo record activity of login attempts purge.
+        Events::trigger('didPurgeLoginAttempts', [$email]);
     }
 
     //--------------------------------------------------------------------
@@ -695,6 +656,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->ci->login_model->purgeRememberTokens($email);
 
         // todo record activity of remember me purges.
+        Events::trigger('didPurgeRememberTokens', [$email]);
     }
 
     //--------------------------------------------------------------------

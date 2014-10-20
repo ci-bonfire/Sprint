@@ -38,7 +38,7 @@ class Events {
      * @param callable $callback
      * @param int $priority
      */
-    public function on($event_name, callable $callback, $priority=EVENTS_PRIORITY_NORMAL)
+    public static function on($event_name, callable $callback, $priority=EVENTS_PRIORITY_NORMAL)
     {
         if (! isset(self::$listeners[$event_name]))
         {
