@@ -4,7 +4,7 @@ namespace Myth;
 
 define('EVENTS_PRIORITY_LOW', 200);
 define('EVENTS_PRIORITY_NORMAL', 100);
-define('EVENTS_PRIORITY_HIGH', 1);
+define('EVENTS_PRIORITY_HIGH', 10);
 
 class Events {
 

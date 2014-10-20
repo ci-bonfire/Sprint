@@ -94,7 +94,7 @@ class LocalAuthentication implements AuthenticateInterface {
             $this->rememberUser($user);
         }
 
-        Events::trigger('didLogin', $user);
+        Events::trigger('didLogin', [$user]);
 
         return true;
     }
