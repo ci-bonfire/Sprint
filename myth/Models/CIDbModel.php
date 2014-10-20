@@ -69,7 +69,6 @@ namespace Myth\Models;
  * @property \CI_Profiler            $profiler
  * @property \CI_Router              $router
  * @property \CI_Session             $session
- * @property \CI_Sha1                $sha1
  * @property \CI_Table               $table
  * @property \CI_Trackback           $trackback
  * @property \CI_Typography          $typography

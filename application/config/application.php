@@ -119,4 +119,27 @@
 //
     $config['use_eldarion'] = true;
 
+//--------------------------------------------------------------------
+// Settings Stores
+//--------------------------------------------------------------------
+// Lists the Settings stores to use. Must include full namespace to
+// the class, if applicable. List the stores in order of descending
+// priority. If a value is not found in one store, it will continue
+// running through the stores until it is found.
+//
+// The 'key' is the alias the store can be referenced by later.
+// The 'value' is the fully namespaced class name for the store.
+//
+    $config['settings.stores'] = [
+        'db'        => '\Myth\Settings\DatabaseStore',
+        'config'    => '\Myth\Settings\ConfigStore'
+    ];
+
+//--------------------------------------------------------------------
+// Default Settigns Store
+//--------------------------------------------------------------------
+// The default datastore to use if none is specified. This primarily
+// is used for saving items and findBy, but does apply to all.
+//
+    $config['settings.default_store'] = 'db';
 
