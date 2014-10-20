@@ -162,7 +162,7 @@ class LocalAuthentication implements AuthenticateInterface {
     {
         $this->ci->load->helper('cookie');
 
-        if (! Events::trigger('beforeLogout', $this->user))
+        if (! Events::trigger('beforeLogout', [$this->user]))
         {
             return false;
         }

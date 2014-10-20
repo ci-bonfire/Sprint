@@ -4,7 +4,7 @@ namespace Myth;
 
 use \Myth\Events as Events;
 
-class RouteTest extends \CodeIgniterTestCase
+class EventTest extends \CodeIgniterTestCase
 {
     /**
      * @var \UnitTester
