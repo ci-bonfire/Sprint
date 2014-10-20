@@ -21,8 +21,7 @@
     },
 	"require": {
 		"php": ">=5.4",
-        "mobiledetect/mobiledetectlib": "dev-master",
-        "sabre/event": "~2.0.1"
+        "mobiledetect/mobiledetectlib": "dev-master"
 	},
     "require-dev": {
         "mockery/mockery": "dev-master"
