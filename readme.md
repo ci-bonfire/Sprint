@@ -30,9 +30,11 @@ The following is being built for the initial release:
 * (Done) Better Database Migrations, with CLI tool for building and running
 * (Done) Database Seeding with CLI tool
 * (Done) Markdown-based documentation system.
-* Simple, but expandable, Auth system 
+* (Done) Flexible Events system with priotized publish/subscribe methodology.
+* (Authentication Done) Simple, but expandable, Auth system 
 * Code Builder with simple generators in place, but fully customizable and easy to add your own.
 * Simple, GUI-less cron controller that can be used either through standard crontab, or from the web (for use with third-party cron runners)
+* Settings library for maintaining system-wide settings, either in the database, config files, or a combination.
 
 
 ## What's NOT included?
