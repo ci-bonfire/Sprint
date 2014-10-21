@@ -10,7 +10,7 @@ namespace Myth\Interfaces;
  * Class SettingsInterface
  * @package Myth\Interfaces
  */
-interface SettingsInterface {
+interface SettingsStoreInterface {
 
     /**
      * Inserts/Replaces a single setting item.
@@ -62,7 +62,7 @@ interface SettingsInterface {
      * @param string $group
      * @return mixed
      */
-    public function all($group);
+    public function all($group=null);
 
     //--------------------------------------------------------------------
 
