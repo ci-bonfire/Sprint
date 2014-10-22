@@ -499,7 +499,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $user)
         {
-            $this->error = 'Unable to find a user with that email address.';
+            $this->error = lang('auth.invalid_email');
             return false;
         }
 
