@@ -1,7 +1,7 @@
 <?= form_open(); ?>
     <h2 class="form-signin-heading"><?= ucwords( lang('auth.forgot') ) ?></h2>
 
-<?= $notice ?>
+    <?= $notice ?>
 
     <p><?= lang('auth.reset_note') ?></p>
 
