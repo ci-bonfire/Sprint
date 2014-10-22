@@ -162,7 +162,7 @@ class Auth extends \Myth\Controllers\ThemedController
 
             if ($auth->remindUser( $this->input->post('email') ))
             {
-                $this->setMessage('The email is on its way!', 'success');
+                $this->setMessage(lang('auth.send.success'), 'success');
                 redirect( Route::named('reset_pass') );
             }
             else
@@ -196,7 +196,7 @@ class Auth extends \Myth\Controllers\ThemedController
 
             if ($auth->resetPassword($credentials, $password, $pass_confirm))
             {
-                $this->setMessage('Your password has been changed. Please sign in.', 'success');
+                $this->setMessage(lang('auth.new_password_success'), 'success');
                 redirect( Route::named('login') );
             }
             else

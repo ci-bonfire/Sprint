@@ -28,8 +28,10 @@ $lang['auth.username']              = 'Username';
 $lang['auth.forgot']                = 'Reset Password';
 $lang['auth.forgot_note']           = 'No problem. Enter your email and we will send instructions.';
 $lang['auth.send']                  = 'Send';
+$lang['auth.send_success']          = 'The email is on its way!';
 $lang['auth.pass_code']             = 'Reset Code';
 $lang['auth.new_password']          = 'Choose a New Password';
+$lang['auth.new_password_success']  = 'Your password has been changed. Please sign in.';
 
 $lang['auth.activate_account']      = 'Activate Account';
 $lang['auth.activate']              = 'Activate';
