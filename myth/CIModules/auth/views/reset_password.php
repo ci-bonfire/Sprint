@@ -19,7 +19,7 @@
     <input type="password" name="pass_confirm" id="pass-confirm" class="form-control" placeholder="<?= lang('auth.pass_confirm') ?>" required="">
 
 
-    <?= $uikit->notice('Password Strength', 'default', false, ['class' => 'pass-strength']); ?>
+    <?= $uikit->notice(lang('auth.password_strength'), 'default', false, ['class' => 'pass-strength']); ?>
 
     <button class="btn btn-lg btn-primary btn-block" id="submit" name="submit" type="submit"><?= lang('auth.send') ?></button>
 <?= form_close(); ?>

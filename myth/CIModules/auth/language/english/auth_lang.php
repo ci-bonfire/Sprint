@@ -14,6 +14,7 @@ $lang['auth.remember_label']        = 'Remember me on this device';
 $lang['auth.email']                 = 'Email Address';
 $lang['auth.password']              = 'Password';
 $lang['auth.pass_confirm']          = 'Password (Again)';
+$lang['auth.password_strength']     = 'Password Strength';
 $lang['auth.signin']                = 'Sign In';
 $lang['auth.register']              = 'Join Us!';
 
