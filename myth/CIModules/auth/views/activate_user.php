@@ -1,6 +1,6 @@
 <?= form_open(); ?>
  
-    <h2 class="form-signin-heading"><?= ucwords( lang('auth.activate_account') ) ?></h2>
+    <h2 class="form-signin-heading"><?= lang('auth.activate_account') ?></h2>
 
     <?= $notice ?>
 
