@@ -18,7 +18,7 @@ $lang['auth.signin']                = 'Sign In';
 $lang['auth.register']              = 'Join Us!';
 
 $lang['auth.password_strength']     = 'Password Strength';
-$lang['auth.pass_not_strong']       = '{Field} must be a stronger password.';
+$lang['auth.pass_not_strong']       = 'The Password must be stronger.';
 
 $lang['auth.have_account']          = 'Already a member? <a href="'. site_url( \Myth\Route::named('login') ) .'">Sign In</a>';
 $lang['auth.need_account']          = 'Need an Account? <a href="'. site_url( \Myth\Route::named('register') ) .'">Sign Up</a>';
