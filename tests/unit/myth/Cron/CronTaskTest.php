@@ -514,6 +514,55 @@ class CronTaskTest extends CodeIgniterTestCase {
     //--------------------------------------------------------------------
 
     //--------------------------------------------------------------------
+    // Various Schedule String Tests
+    //--------------------------------------------------------------------
+
+    public function testScheduleStringWithTimeOfDay()
+    {
+        $schedule = 'Monday 5am';
+        $myTask   = 'library:method';
+
+        $task = new CronTask($schedule, $myTask);
+
+        $current_time = strtotime('October 27 2014 4am');
+
+        $this->assertEquals(strtotime('October 27 2014 5am'), $task->nextRunDate($current_time));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testScheduleStringWithTimeOfWeekDay()
+    {
+        $schedule = 'weekdays 5am';
+        $myTask   = 'library:method';
+
+        $task = new CronTask($schedule, $myTask);
+
+        $current_time = strtotime('October 27 2014 4am');
+
+        $this->assertEquals(strtotime('October 27 2014 5am'), $task->nextRunDate($current_time));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testScheduleStringWithBackOfHour()
+    {
+        $schedule = 'back of 5am';
+        $myTask   = 'library:method';
+
+        $task = new CronTask($schedule, $myTask);
+
+        $current_time = strtotime('October 27 2014 4am');
+
+        $this->assertEquals(strtotime('October 27 2014 5:15am'), $task->nextRunDate($current_time));
+    }
+
+    //--------------------------------------------------------------------
+
+
+    //--------------------------------------------------------------------
+
+    //--------------------------------------------------------------------
     // Private Methods
     //--------------------------------------------------------------------
 
