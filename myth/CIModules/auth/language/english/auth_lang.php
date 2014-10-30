@@ -6,6 +6,7 @@ $lang['auth.did_register']          = 'Account created. Please login.';
 $lang['auth.unkown_register_error'] = 'Unable to create user currently. Please try again later.';
 
 $lang['auth.invalid_user']          = 'Invalid credentials. Please try again.';
+$lang['auth.invalid_email']         = 'Unable to find a user with that email address.';
 $lang['auth.invalid_password']      = 'Unable to find a valid login with that password.';
 $lang['auth.bruteBan_notice']       = "Your account has had excessive login attempts. To protect the account you must wait 15 minutes before another attempt can be made.";
 
@@ -13,6 +14,7 @@ $lang['auth.remember_label']        = 'Remember me on this device';
 $lang['auth.email']                 = 'Email Address';
 $lang['auth.password']              = 'Password';
 $lang['auth.pass_confirm']          = 'Password (Again)';
+$lang['auth.password_strength']     = 'Password Strength';
 $lang['auth.signin']                = 'Sign In';
 $lang['auth.register']              = 'Join Us!';
 
@@ -27,8 +29,10 @@ $lang['auth.username']              = 'Username';
 $lang['auth.forgot']                = 'Reset Password';
 $lang['auth.forgot_note']           = 'No problem. Enter your email and we will send instructions.';
 $lang['auth.send']                  = 'Send';
+$lang['auth.send_success']          = 'The email is on its way!';
 $lang['auth.pass_code']             = 'Reset Code';
 $lang['auth.new_password']          = 'Choose a New Password';
+$lang['auth.new_password_success']  = 'Your password has been changed. Please sign in.';
 
 $lang['auth.activate_account']      = 'Activate Account';
 $lang['auth.activate']              = 'Activate';
