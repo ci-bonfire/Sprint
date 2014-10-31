@@ -46,6 +46,11 @@ class DatabaseModel implements SettingsInterface {
         ];
         $this->ci->db->delete('settings', $where);
 
+        if (is_array($value) || is_object($value))
+        {
+            $value = serialize($value);
+        }
+
         $data = [
             'name'  => $key,
             'value' => $value,
@@ -83,7 +88,18 @@ class DatabaseModel implements SettingsInterface {
             return false;
         }
 
-        return $query->row()->{$key};
+        $value = $query->row()->value;
+
+        // Check to see if it needs to be unserialized
+        $data = @unserialize($value);   // We don't need to issue an E_NOTICE here...
+
+        // Check for a value of false or
+        if ($value === 'b:0;' || $data !== false)
+        {
+            $value = $data;
+        }
+
+        return $value;
     }
 
     //--------------------------------------------------------------------
