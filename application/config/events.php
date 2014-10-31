@@ -119,7 +119,7 @@ Events::on('didResetPassword', function($user) {
 Events::on('afterCron', function($output) {
 
     // Comment out to enable the email to be sent.
-    return true;
+//    return true;
 
     if (empty($output))
     {
@@ -135,7 +135,7 @@ Events::on('afterCron', function($output) {
     $ci->email->from(config_item('site.auth_email'), config_item('site.name'));
     $ci->email->subject( 'Cron Job Results' );
 
-    $ci->email->message( $ci->load->view('emails/activation', ['output' => $output], true) );
+    $ci->email->message( $output );
 
     if (! $ci->email->send(false))
     {
