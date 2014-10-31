@@ -2,9 +2,9 @@
 
 namespace Myth\Settings;
 
-use Myth\Interfaces\SettingsInterface;
+use Myth\Interfaces\SettingsStoreInterface;
 
-class DatabaseModel implements SettingsInterface {
+class DatabaseStore implements SettingsStoreInterface {
 
     protected $ci;
 
@@ -20,6 +20,12 @@ class DatabaseModel implements SettingsInterface {
         }
         else {
             $this->ci =& get_instance();
+        }
+
+        // Ensure that the database is loaded.
+        if (empty($this->ci->db))
+        {
+            $this->ci->load->database();
         }
     }
 

@@ -8,7 +8,7 @@ You need to know two items: 1) the CLI command to have the cronjob run and 2) th
 
 The script that will need to run is your webroot folder followed by the index file and cron controller. It would look something like the following, though you'll have to verify for your exact setup. 
 
-	/home/www/mysite/index.php cron
+	/home/www/mysite/index.php cron run
 
 The interval should be equal to the smallest frequency of any tasks that need to be run. This is often either every minute or every 5 minutes, depending on the types of tasks being run. This does not mean that all of the cron tasks will be ran every 5 minutes. Instead, it calls the cron controller which determines which tasks should be run. Some may run every 5 minutes, like sending out emails, while some may happen once a day, like cleaning out old login attempts.
 
@@ -19,6 +19,16 @@ The interval should be equal to the smallest frequency of any tasks that need to
 - [RedHat](https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/5/html/Deployment_Guide/ch-autotasks.html)
 - [Windows](https://www.drupal.org/node/31506)
 - [Mac OS X](http://rossb.biz/blog/2011/os-x-cron-jobs-a-simple-tutorial/)
+
+## Running the Tasks
+In order to tell the system to process all of the tasks and run the ones that are scheduled, you use the `run` command. 
+
+	$ php index.php cron run
+	
+### Event: afterCron
+Once the cronjob has been run, it will fire an [Event](general/events) to allow other parties to take an action. By default, and action is provided (but disabled) to send an email with the output of the cron job to the email listed in `application/config/application.php` as `site.auth_email`. This is best used for debugging, though doesn't hurt for monitoring purposes, but can clog up inboxes depending on the frequency of the cron job.
+
+	\Myth\Events::trigger('afterCron', [$output]);
 
 ## Specifying Tasks To Run
 
@@ -61,6 +71,7 @@ weekday				| Midnight every weekday
 monday 3am			| every Monday at 3:00am
 weekdays 5am		| every weekday at 3:00am
 back of 3am			| every day at 3:15am
+front of 3am			| every day at 2:45am
 
 Please note that some combinations will not work. If it isn't shown on this table, it hasn't been tested. If you require other schedule strings to be supported, please post an issue (and a pull request would be even better!).
 
@@ -94,3 +105,24 @@ $ php index.php cron show task1
 	Task				Next Run				Previous Run
 	--------------------------------------------------------------------------
 	task1				Thu 2014-10-30 20:45	Thu 2014-10-30 20:50
+	
+### Suspend A Task
+You can suspend a task from running temporarily with the `suspend` command. This does not edit your config file, so the task is still there, and normal execution can be resumed later. This is handy for when you need to do some debugging on a live server, or need to do some other maintenance. You can suspend the task, do your maintenance, and then resume it when it's safe to run. Also keeps the database safe during potential upgrades. 
+
+The only parameter is the name of the task. 
+
+	$ php index.php cron suspend task1 
+
+### Resume A Task
+Resuming a task that has been suspended is a simple process with the `resume`. 
+
+	$ php index.php cron resumeTask task1
+
+### Stop Cron From Running
+You can suspend the cronjobs from running completely with the `disable` command. This will stop the cron system from running any tasks until you enable it again. The value is stored in the [Settings](general/settings) system. 
+
+	$ php index.php cron disable
+	
+This can be restarted again with the `enable` command. 
+
+	$ php index.php cron enable

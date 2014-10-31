@@ -170,6 +170,10 @@ class CronManager {
 
                 $count++;
             }
+            else
+            {
+                $output .= "'{$alias}' Not scheduled to run until {$task->nextRunDate()}.";
+            }
         }
 
         if (! $count)

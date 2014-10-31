@@ -2,7 +2,7 @@
 
 namespace Myth\Settings;
 
-use Myth\Interfaces\SettingsInterface;
+use Myth\Interfaces\SettingsStoreInterface;
 
 /**
  * Class ConfigStore
@@ -21,7 +21,7 @@ use Myth\Interfaces\SettingsInterface;
  *
  * @package Myth\Settings
  */
-class ConfigStore implements SettingsInterface {
+class ConfigStore implements SettingsStoreInterface {
 
     protected $ci;
 
