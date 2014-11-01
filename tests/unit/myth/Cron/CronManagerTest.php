@@ -273,7 +273,7 @@ class CronManagerTest extends CodeIgniterTestCase {
         $result = CronManager::run(null, $current_time);
 
         $this->assertTrue( strpos($result, 'task1') !== false );
-        $this->assertFalse( strpos($result, 'task2') );
+        $this->assertFalse( strpos($result, 'Running task: task2') );
     }
 
     //--------------------------------------------------------------------
