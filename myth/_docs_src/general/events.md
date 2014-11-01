@@ -102,3 +102,9 @@ didRemindUser	| (array)$user, (str)$token	| After a user has had their password 
 didResetPassword	| (array)$user	| After a user has reset their password. 
 didPurgeLoginAttempts	| (str)$email	| Called after a user's LoginAttempts have been purged. 
 didPurgeRememberTokens	| (str)$email	| After a user's RememberMe Tokens have been purged.
+
+### Cron Jobs
+
+Event Name | Parameters | Description
+------------------|-----------------|----------------
+afterCron	   | (string) $output	| The resulting output from running the cron jobs. 
