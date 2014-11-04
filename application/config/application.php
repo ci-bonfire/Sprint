@@ -66,7 +66,8 @@
     $config['theme.paths'] = array(
         'bootstrap'  => FCPATH .'themes/bootstrap3',
         'foundation' => FCPATH .'themes/foundation5',
-        'docs'       => FCPATH .'themes/docs'
+        'docs'       => FCPATH .'themes/docs',
+        'email'      => FCPATH .'themes/email'
     );
 
 //--------------------------------------------------------------------
@@ -81,7 +82,7 @@
 //
     $config['theme.variants'] = array(
         'phone'  => '+phone',
-        'tablet' => '+tablet'
+        'tablet' => '+tablet',
     );
 
 //--------------------------------------------------------------------
@@ -143,3 +144,11 @@
 //
     $config['settings.default_store'] = 'db';
 
+
+//--------------------------------------------------------------------
+// Default MailService
+//--------------------------------------------------------------------
+// The default MailService to use when sending any emails through
+// Myth\Mail\Mail commands. Must include the full namespace of the class.
+//
+    $config['mail.default_service'] = '\Myth\Mail\LogMailService';

@@ -1,6 +1,7 @@
 <?php
 
 use \Myth\Events as Events;
+use Myth\Mail\Mail as Mail;
 
 //--------------------------------------------------------------------
 // EVENTS
@@ -118,28 +119,6 @@ Events::on('didResetPassword', function($user) {
 // Send Cron Job Summary Email
 Events::on('afterCron', function($output) {
 
-    // Comment out to enable the email to be sent.
-//    return true;
-
-    if (empty($output))
-    {
-        return true;
-    }
-
-    $ci =& get_instance();
-
-    // If method is 'email', we need to fire off the email...
-    $ci->load->library('email');
-
-    $ci->email->to(config_item('site.auth_email'));
-    $ci->email->from(config_item('site.auth_email'), config_item('site.name'));
-    $ci->email->subject( 'Cron Job Results' );
-
-    $ci->email->message( $output );
-
-    if (! $ci->email->send(false))
-    {
-        log_message('error', $ci->email->print_debugger(array('headers')) );
-    }
+    return Mail::deliver('CronMailer:results', [$output]);
 
 }, EVENTS_PRIORITY_NORMAL);
