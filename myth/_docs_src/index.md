@@ -31,6 +31,7 @@ Sprint also uses the following software packages:
 * [jQuery Javascript Framework](http://jquery.com/)
 * [Eldarion AJAX Framework](https://github.com/eldarion/eldarion-ajax)
 * [MobileDetect](http://mobiledetect.net/)
+* [PHP Error](http://phperror.net/)
 
 For development and testing, Sprint uses:
 

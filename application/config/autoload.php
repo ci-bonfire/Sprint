@@ -26,6 +26,17 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+/**
+ * Load PHPError
+ */
+if (ENVIRONMENT == 'development') {
+    require(__DIR__ . '/../php_error.php');
+    \php_error\reportErrors(array(
+        'application_folders' => 'application',
+        'ignore_folders'      => 'system'
+    ));
+}
+
 /*
 | -------------------------------------------------------------------
 | AUTO-LOADER
