@@ -52,6 +52,8 @@ class Cron extends \Myth\Controllers\CLIController {
             return CLI::error('The cron system has been disabled. No tasks were run.');
         }
 
+        $force_run = false;
+
         // Run one task or all?
         if (! empty($alias))
         {
@@ -63,6 +65,7 @@ class Cron extends \Myth\Controllers\CLIController {
             }
 
             $tasks = [ $alias => $tasks];
+            $force_run = true;
         }
         else
         {
@@ -101,7 +104,7 @@ class Cron extends \Myth\Controllers\CLIController {
             }
 
             echo CLI::write("\tRunning task: {$alias}...");
-            $output .= \Myth\Cron\CronManager::run($alias);
+            $output .= \Myth\Cron\CronManager::run($alias, $force_run);
         }
 
         // Give other people a chance to respond.
