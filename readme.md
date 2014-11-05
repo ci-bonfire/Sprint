@@ -34,7 +34,7 @@ The following is being built for the initial release:
 * (Done) Simple, GUI-less cron controller that can be used through standard crontab or scheduled tasks.
 * (Done) Settings library for maintaining system-wide settings, either in the database, config files, or a combination.
 * (Authentication Done) Simple, but expandable, Auth system 
-* Email Queue system allows for very flexible email generations and sending. 
+* (Done) Email Queue system allows for very flexible email generations and sending. 
 * Code Builder with simple generators in place, but fully customizable and easy to add your own.
 
 
