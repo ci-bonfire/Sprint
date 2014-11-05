@@ -152,3 +152,12 @@
 // Myth\Mail\Mail commands. Must include the full namespace of the class.
 //
     $config['mail.default_service'] = '\Myth\Mail\LogMailService';
+
+//--------------------------------------------------------------------
+// Mail: Pretend to send
+//--------------------------------------------------------------------
+// When set to TRUE, this setting tells Sprint to pretend to send
+// emails and simply return a successful send. Useful during
+// certain stages of testing.
+//
+    $config['mail.pretend'] = FALSE;

@@ -81,6 +81,12 @@ class BaseMailer {
      */
     public function send($to, $subject, $data=[], $view=null)
     {
+        // Are we pretending to send?
+        if (config_item('mail.pretend') === true)
+        {
+            return true;
+        }
+
         $this->startMailService($this->service_name);
 
         $this->service->to($to);

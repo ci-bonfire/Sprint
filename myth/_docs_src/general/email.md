@@ -170,11 +170,16 @@ If you want to provide a text-only alternative, you could also have `didregister
 If both files exist, then they will both be sent along, providing an alternative for mail apps that don't support HTML emails.
 
 ## Configuration
-The only configuration option available outside of the Mailers is the option to set the Mail Service to use. This can be set in the `application/config/application.php` config file.  
+The first configuration option available outside of the Mailers is the option to set the Mail Service to use. This can be set in the `application/config/application.php` config file.  
 
 	$config['mail.default_service'] = '\Myth\Mail\CIMailService';
 	
 The value must be a fully-namespaced class name that will be instantiated and used by the all Mailers.
+
+### Pretend To Send Mail
+You can tell the system to simply pretend to send emails by setting the `mail.pretend` config setting to true. This happens in the BaseMailer during the send method. It doesn't affect the the queue method at all.
+
+	$config['mail.pretend'] = false;
 
 ## Mail Services
 Mail Services take the constructed email and send them across the internet. Sprint ships with two Mail Services, but it should be fairly easy to create your own if you need to use third-party services like [Mandrill](http://mandrill.com/) or [PostMark](https://postmarkapp.com/) for mail delivery.
