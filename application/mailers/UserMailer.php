@@ -30,7 +30,8 @@ class UserMailer extends \Myth\Mail\BaseMailer {
             'email'     => $params['email'],
             'link'      => site_url( \Myth\Route::named('activate_user') ),
             'token'     => $params['token'],
-            'site_name' => config_item('site.name')
+            'site_name' => config_item('site.name'),
+            'site_link' => site_url()
         ];
 
         // Send it immediately - don't queue.
@@ -52,7 +53,8 @@ class UserMailer extends \Myth\Mail\BaseMailer {
             'email' => $user['email'],
             'code'  => $token,
             'link'  => site_url( \Myth\Route::named('reset_pass') ),
-            'site_name' => config_item('site.name')
+            'site_name' => config_item('site.name'),
+            'site_link' => site_url()
         ];
 
         // Send it immediately - don't queue.
@@ -72,7 +74,8 @@ class UserMailer extends \Myth\Mail\BaseMailer {
         $data = [
             'email' => $user['email'],
             'link'  => site_url( \Myth\Route::named('forgot_pass') ),
-            'site_name' => config_item('site.name')
+            'site_name' => config_item('site.name'),
+            'site_link' => site_url()
         ];
 
         // Send it immediately - don't queue.

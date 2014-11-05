@@ -103,13 +103,15 @@ class BaseMailer {
         // the debug_backtrace, though, to make it all function in the background.
         list(, $method) = debug_backtrace(false);
 
+        $view = 'emails/'. strtolower( get_class($this) ) .'/'. $method['function'];
+
         // Get our message's text and html versions based on which files exist...
-        $basepath = APPPATH .'views/emails/'. strtolower( get_class($this) ) .'/'. $method['function'];
+        $basepath = APPPATH .'views/'. $view;
 
         // Is a text version available?
         if (file_exists($basepath .'.text.php'))
         {
-            $text = get_instance()->load->view('emails/'.strtolower( get_class($this) ) .'/'. $method['function'] .'.text.php', $data, true);
+            $text = get_instance()->load->view($view .'.text.php', $data, true);
             $this->service->text_message($text);
         }
 
@@ -126,8 +128,7 @@ class BaseMailer {
             $this->themer->set($data);
 
             // Render the view into a var we can pass to the layout.
-            $view = ! empty($view) ? $view : $this->view;
-            $content = $this->themer->display($view);
+            $content = $this->themer->display($view .'.html.php');
 
             $this->themer->set('content', $content);
 

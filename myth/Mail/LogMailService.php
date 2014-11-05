@@ -45,6 +45,7 @@ class LogMailService implements MailServiceInterface {
      */
     public function send($clear_after=true)
     {
+
         // Ensure we have enough data
         if (empty($this->to) || empty($this->subject) ||
             (empty($this->html_message) && empty($this->text_message))
