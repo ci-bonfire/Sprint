@@ -429,7 +429,7 @@ class CronTaskTest extends CodeIgniterTestCase {
         $current_time = strtotime('last tuesday');
         $result = $task->previousRunDate($current_time);
 
-        $this->assertEquals(strtotime('last monday'), $result);
+        $this->assertEquals(date('D Y-m-d H:i', strtotime('last monday')), date('D Y-m-d H:i', $result));
         $this->assertTrue($result < $current_time);
     }
 
