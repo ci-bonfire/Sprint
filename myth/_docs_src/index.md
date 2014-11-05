@@ -32,6 +32,7 @@ Sprint also uses the following software packages:
 * [Eldarion AJAX Framework](https://github.com/eldarion/eldarion-ajax)
 * [MobileDetect](http://mobiledetect.net/)
 * [PHP Error](http://phperror.net/)
+* [Ink: Responsive Email Framework](http://zurb.com/ink/)
 
 For development and testing, Sprint uses:
 
