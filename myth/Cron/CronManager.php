@@ -136,10 +136,11 @@ class CronManager {
      * emailing to users on completion
      *
      * @param null $alias
+     * @param bool $force_run
      * @param string $current_time
      * @return string
      */
-    public static function run($alias=null, $current_time='now')
+    public static function run($alias=null, $force_run=false, $current_time='now')
     {
         $tasks = static::$tasks;
 
@@ -154,14 +155,21 @@ class CronManager {
 
         foreach ($tasks as $alias => $task)
         {
-            if ($task->isDue($current_time))
+            if ($task->isDue($current_time) || $force_run === true)
             {
                 $output .= "Running task: {$alias}...";
 
                 try {
                     $result = self::runTask($alias);
 
-                    $output .= $result === true ? "Done\n" : "Failed\n";
+                    if (is_bool($result))
+                    {
+                        $output .= $result === true ? "Done\n" : "Failed\n";
+                    }
+                    else if (is_string($result))
+                    {
+                        $output .= "Done with message:\n{$result}\n";
+                    }
                 }
                 catch (\Exception $e)
                 {

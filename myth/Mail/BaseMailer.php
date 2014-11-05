@@ -153,23 +153,6 @@ class BaseMailer {
     //--------------------------------------------------------------------
 
     /**
-     * Adds the email to the queue to be sent later. Uses Myth\Mail\Mail:queue.
-     *
-     * @param string $to        // Who the email is being sent to.
-     * @param string $subject   // The subject line for the email
-     * @param array  $data      // The key/value pairs to send to the view.
-     * @param string $view      // You can override the view used for the email here.
-     *                          // You can change themes by prepending theme name
-     *                          // like: 'newtheme:newview'
-     */
-    public function queue($to, $subject, $data=[], $view=null)
-    {
-
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
      * Allows you to customize the headers sent with the email. You can
      * do them one at a time by passing $field and $value, or pass an array
      * of $field => $value pairs as the first parameter.

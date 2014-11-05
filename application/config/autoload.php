@@ -29,7 +29,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 /**
  * Load PHPError
  */
-if (ENVIRONMENT == 'development') {
+if (ENVIRONMENT == 'development' && ! is_cli()) {
     require(__DIR__ . '/../php_error.php');
     \php_error\reportErrors(array(
         'application_folders' => 'application',

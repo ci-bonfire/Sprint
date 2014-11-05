@@ -56,19 +56,69 @@ class Mail {
     /**
      * Adds an item to the email queue to be sent out next time.
      */
-    public function queue()
+    public static function queue($mailer_name, $params=[], $options=[])
     {
+        $data = [
+            'mailer'    => $mailer_name,
+            'params'    => serialize($params),
+            'options'   => serialize($options)
+        ];
 
+        $queue = new \Myth\Mail\Queue();
+
+        return $queue->insert($data);
     }
 
     //--------------------------------------------------------------------
 
     /**
      * Processes the Email queue sending out emails in chunks.
+     * Typically used in a cronjob to send out all queued emails.
+     *
+     * @param int $chunk_size   // How many emails to send per batch.
+     * @return string           // The output of the cronjob...
      */
-    public function process($chunk_size=50)
+    public static function process($chunk_size=50)
     {
+        $db = new \Myth\Mail\Queue();
 
+        // Grab our batch of emails to process
+        $queue = $db->find_many_by('sent', 0);
+
+        if (! $queue)
+        {
+            // We didn't have an error, we simply
+            // didn't have anything to do.
+            return true;
+        }
+
+        $output = 'Started processing email Queue at '. date('Y-m-d H:i:s') .".\n\n";
+
+        foreach ($queue as $item)
+        {
+            try {
+                if (! Mail::deliver($item->mailer, unserialize($item->params), unserialize($item->options))) {
+                    $output .= '[FAILED] ';
+                } else {
+                    $data = [
+                        'sent'    => 1,
+                        'sent_on' => date('Y-m-d H:i:s')
+                    ];
+
+                    $db->update($item->id, $data);
+                }
+
+                $output .= "ID: {$item->id}, Mailer: {$item->mailer}. \n";
+            }
+            catch (\Exception $e)
+            {
+                $output .= "[EXCEPTION] ". $e->getMessage() ."\n";
+            }
+        }
+
+        $output .= "Done processing email Queue at ". date('H:i:s') .".\n";
+
+        return $output;
     }
 
     //--------------------------------------------------------------------

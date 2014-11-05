@@ -14,7 +14,7 @@ It is not required to use this system to deliver emails. You can still use CodeI
 ## Mail
 This is the face of the mail system, though possibly provides the fewest actual capabilities. It is primarily concerned with launching [Mailers](#mailers) to send the appropriate email and processing the queue during a cronjob. 
 
-### Sending EMails
+### Sending Emails
 Sending mail is done using the `deliver()` method. This method simply ensures that the correct mailer is called to handle the actual email. The first parameter is the name of the mailer class and the name of the method, joined by a colon. 
 
 	use Myth\Mail;
@@ -58,11 +58,16 @@ If you need to override the default options of the Mailer class (things like def
             }
         }
 	}
-	
+
+### Queuing Emails
+You can place emails in a queue to be sent at a later time, typically via a cron job, with the `queue` method. All of the parameters are the same as the `deliver` method. It simply stores the values you pass to it in the database until the queue is processed. Then, it runs each email in the queue through the `deliver` method so the email runs just like you called it originally.
+
+	Mail::queue('UserMailer:didRegister', $params, $options);
+
 ## Mailers
 Mailers are like controllers, but for emails. They compile the information needed to create the email, decide the email format, theme, attach any files, etc. You will create mailers for each email. You don't need to create one _class_ for each email, but one _method_. You can separate the mailers into as many or as few files as you'd like. They are typically used to organize by topic, though, like UserMailer or CronMailer.
 
-Mailers must extend from `Myth\Mail\BaseMailer` in order to have the needed functionality to actually send or queue emails. 
+Mailers must extend from `Myth\Mail\BaseMailer` in order to have the needed functionality to actually send emails. 
 
 ### Default Options
 Each Mailer class can have a set of default options that will be used when sending emails. For the most part, they make up the basics of the email itself, like who it's from, any one that needs to be cc'd, etc. These can all be overridden per email.
@@ -102,10 +107,10 @@ Each method within a Mailer class represents one specific email. It is resonsibl
 		. . . 
 	}
 
-From within your method, you will need to call either the `send()` method or the `queue()` method at the end of your method. This allows you to keep everything about this email in a single location including how it's built, how it's sent, etc. These methods are described in detail below. 
+From within your method, you will need to call either the `send()`  method at the end of your method. This allows you to keep everything about this email in a single location including how it's built, how it's sent, etc. These methods are described in detail below. 
 
 ### send()
-This method sends the email immediately and will not put it in the queue. The first parameter is the email address it should be sent to. The second parameter is the subject line of the email. The third parameter is an array of key/value pairs to be made available to the view when rendering it, just like with data passed to a standard CodeIgniter view.
+This method sends the email immediately. The first parameter is the email address it should be sent to. The second parameter is the subject line of the email. The third parameter is an array of key/value pairs to be made available to the view when rendering it, just like with data passed to a standard CodeIgniter view.
 
 	public function didRegister( $user, $token ) {
 		$data = [
@@ -122,10 +127,6 @@ If you need to specify a different view to be used than what would be chosen aut
 
 	$this->send($user->email, 'Welcome to My Site!', $data, 'a_different_view');
 
-### queue()
-This method functions identically, except it stores the email to be sent at a later time. All of the parameters are identical.
-
-	$this->queue($user->email, 'Welcome to My Site!', $data, 'a_different_view');
 
 ### headers()
 Allows you to set custom headers that need to be sent with this email.  The first parameter is the name of the header to set. The second parameter is the value.

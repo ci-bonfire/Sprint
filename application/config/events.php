@@ -56,6 +56,6 @@ Events::on('didResetPassword', function($user) {
 // Send Cron Job Summary Email
 Events::on('afterCron', function($output) {
 
-    return Mail::deliver('CronMailer:results', [$output]);
+    return Mail::queue('CronMailer:results', [$output]);
 
 }, EVENTS_PRIORITY_NORMAL);
