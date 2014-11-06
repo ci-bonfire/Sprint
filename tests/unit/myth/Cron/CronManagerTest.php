@@ -253,9 +253,9 @@ class CronManagerTest extends CodeIgniterTestCase {
     {
         CronManager::schedule('task1', '5 minutes', function () { return true; });
 
-        $current_time = strtotime('10:45:05');
+        $current_time = strtotime('10:45:05am');
 
-        $result = CronManager::run(null, $current_time);
+        $result = CronManager::run('task1', false,  $current_time);
 
         $this->assertTrue( strpos($result, 'task1') !== false );
         $this->assertTrue( strpos($result, 'Done') !== false );
@@ -270,7 +270,7 @@ class CronManagerTest extends CodeIgniterTestCase {
 
         $current_time = strtotime('10:45:05');
 
-        $result = CronManager::run(null, $current_time);
+        $result = CronManager::run(null, false, $current_time);
 
         $this->assertTrue( strpos($result, 'task1') !== false );
         $this->assertFalse( strpos($result, 'Running task: task2') );
@@ -285,7 +285,7 @@ class CronManagerTest extends CodeIgniterTestCase {
 
         $current_time = strtotime('10:45:05');
 
-        $result = CronManager::run(null, $current_time);
+        $result = CronManager::run(null, false, $current_time);
 
         $this->assertTrue( strpos($result, 'task1') !== false );
         $this->assertTrue( strpos($result, 'Done') !== false );
@@ -301,7 +301,7 @@ class CronManagerTest extends CodeIgniterTestCase {
 
         $current_time = strtotime('10:45:05');
 
-        $result = CronManager::run('task1', $current_time);
+        $result = CronManager::run('task1', false, $current_time);
 
         $this->assertTrue( strpos($result, 'task1') !== false );
         $this->assertTrue( strpos($result, 'Done') !== false );
