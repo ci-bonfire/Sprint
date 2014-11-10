@@ -12,6 +12,21 @@ use Myth\CLI;
  */
 class CLIController extends \CI_Controller {
 
+    /**
+     * Holds short descriptions for the public functions in this class.
+     * Each 'key' in the array should match the function name.
+     *
+     * @var array
+     */
+    protected $descriptions = [];
+
+    /**
+     * Holds long descriptions for the public functions in this class.
+     * Each 'key' in the array should match the function name.
+     * @var array
+     */
+    protected $long_descriptions = [];
+
     //--------------------------------------------------------------------
 
     /**
@@ -35,6 +50,100 @@ class CLIController extends \CI_Controller {
 
     //--------------------------------------------------------------------
 
+    /**
+     * A default index method that all CLI Controllers can share. Will
+     * list all of the methods and their short descriptions, if available.
+     */
+    public function index()
+    {
+        $names      = array_keys($this->descriptions);
+        $syntaxes   = array_column($this->descriptions, 0);
+        $descs      = array_column($this->descriptions, 1);
+
+        // Pad each item to the same length
+        $names      = $this->padArray($names);
+        $syntaxes   = $this->padArray($syntaxes);
+
+        CLI::write("Available commands:");
+
+        for ($i=0; $i < count($names); $i++)
+        {
+            $out = CLI::color($names[$i], 'yellow');
+
+            // The rest of the items stay default color.
+            if (isset($syntaxes[$i]))
+            {
+                $out .= $syntaxes[$i];
+            }
+
+            if (isset($descs[$i]))
+            {
+                $out .= $descs[$i];
+            }
+
+            CLI::write($out);
+        }
+
+        CLI::new_line();
+    }
+
+    //--------------------------------------------------------------------
+
+
+    /**
+     * Grabs the short description of a command, if it exists.
+     *
+     * @param null $method
+     */
+    public function describeMethod($method=null)
+    {
+        if (empty($this->descriptions[$method]))
+        {
+            return CLI::error('Unable to locate method description.');
+        }
+
+        CLI::write("\t{$this->descriptions[$method]}", 'yellow');
+    }
+
+    //--------------------------------------------------------------------
+
+    public function longDescribeMethod($method=null)
+    {
+        if (empty($this->long_descriptions[$method]))
+        {
+            return CLI::error('No help available for that command.');
+        }
+
+        CLI::write("\t{$this->long_descriptions[$method]}", 'yellow');
+    }
+
+    //--------------------------------------------------------------------
+
+    //--------------------------------------------------------------------
+    // Private Methods
+    //--------------------------------------------------------------------
+
+    /**
+     * Returns a new array where all of the string elements have
+     * been padding with trailling spaces to be the same length.
+     *
+     * @param array $array
+     * @param int $extra // How many extra spaces to add at the end
+     * @return array
+     */
+    private function padArray($array, $extra=2)
+    {
+        $max = max(array_map('strlen', $array)) + $extra;
+
+        foreach ($array as &$item)
+        {
+            $item = str_pad($item, $max);
+        }
+
+        return $array;
+    }
+
+    //--------------------------------------------------------------------
 
 
 }

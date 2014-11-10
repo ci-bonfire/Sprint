@@ -5,25 +5,23 @@ use \Myth\CLI as CLI;
 class Database extends \Myth\Controllers\CLIController
 {
 
+    protected $descriptions = [
+        'migrate'       => ['migrate [$to]',        'Runs the migrations up or down until schema at version \$to'],
+        'quietMigrate'  => ['quiteMigrate [$to]',   'Same as migrate but without any feedback.'],
+        'refresh'       => ['refresh',              'Runs migrations back to version 0 (uninstall) and then back to the most recent migration.'],
+        'newMigration'  => ['newMigration [$name]', 'Creates a new migration file.'],
+        'seed'          => ['seed [$name]',         'Runs the named database seeder.']
+    ];
+
+    protected $long_descriptions = [
+        'migrate'       => '',
+        'quietMigrate'  => '',
+        'refresh'       => '',
+        'newMigration'  => '',
+        'seed'          => ''
+    ];
+
     //-------------------------------------------------------------------
-
-    /**
-     * Lists the available commands in this controller.
-     */
-    public function index()
-    {
-        echo CLI::write("\nThe database tools provides the following commands:");
-        echo CLI::write(CLI::color("migrate", 'yellow') . "\t\tmigrate [\$to] \t\tRuns the migrations up or down until schema at version \$to");
-        echo CLI::write(CLI::color("quietMigrate", 'yellow') . "\tquiteMigrate [\$to] \tSame as migrate, but without any feedback.");
-        echo CLI::write(CLI::color("refresh", 'yellow') . "\t\trefresh\t\t\tRuns migrations to version 0 (uninstall), and then back to the latest migration.");
-        echo CLI::write(CLI::color('newMigration', 'yellow') . "\tnewMigration [\$name]\tCreates a new migration file.");
-        echo CLI::write(CLI::color('seed', 'yellow') . "\t\tseed [\$name]\t\tRuns the named database seeder.");
-
-        echo CLI::new_line();
-    }
-
-    //--------------------------------------------------------------------
-
 
     //--------------------------------------------------------------------
     // Migration Methods

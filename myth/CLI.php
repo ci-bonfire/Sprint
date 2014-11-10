@@ -32,7 +32,9 @@ class CLI {
 
     public static $wait_msg = 'Press any key to continue...';
 
-    protected static $args = array();
+    public static $args = [];
+
+    public static $segments = [];
 
     protected static $foreground_colors = array(
         'black'			=> '0;30',
@@ -77,11 +79,21 @@ class CLI {
             throw new \Exception('Cli class cannot be used outside of the command line.');
         }
 
+        $options_found = false;
+
         for ($i = 1; $i < $_SERVER['argc']; $i++)
         {
-            $arg = explode('=', $_SERVER['argv'][$i]);
+            // If there's no '-' at the beginning of the argument
+            // then add it to our segments.
+            if (! $options_found && strpos($_SERVER['argv'][$i], '-') === false)
+            {
+                static::$segments[] = $_SERVER['argv'][$i];
+                continue;
+            }
 
-            static::$args[$i] = $arg[0];
+            $options_found = true;
+
+            $arg = explode('=', $_SERVER['argv'][$i]);
 
             if (count($arg) > 1 || strncmp($arg[0], '-', 1) === 0)
             {
@@ -95,6 +107,63 @@ class CLI {
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Returns the option with the given name.	You can also give the option
+     * number.
+     *
+     * Named options must be in the following formats:
+     * php index.php user -v --v -name=John --name=John
+     *
+     * @param   string|int  $name     the name of the option (int if unnamed)
+     * @param   mixed       $default  value to return if the option is not defined
+     * @return  mixed
+     */
+    public static function option($name, $default = null)
+    {
+        if ( ! isset(static::$args[$name]))
+        {
+            return $default;
+        }
+
+        return static::$args[$name];
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Grabs an individual
+     *
+     * @param $index
+     * @return null
+     */
+    public static function segment($index)
+    {
+        if (! isset(static::$segments[$index - 1]))
+        {
+            return null;
+        }
+
+        return static::$segments[$index - 1];
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Returns the command string portion of the arguments. Used
+     * by the 'sprint' CLI script to grab the portion of the arguments
+     * that is used to call the CodeIgniter application.
+     *
+     * @return string
+     */
+    public static function cli_string()
+    {
+        return implode(' ', static::$segments);
+    }
+
+    //--------------------------------------------------------------------
+
+
 
     /**
      * Get input from the shell, using readline or the standard STDIN
@@ -423,4 +492,27 @@ class CLI {
 
     //--------------------------------------------------------------------
 
+    public function getWidth($default=80)
+    {
+        if (static::is_windows())
+        {
+            return $default;
+        }
+
+        return (int)shell_exec('tput cols');
+    }
+    
+    //--------------------------------------------------------------------
+
+    public function getHeight($default=32)
+    {
+        if (static::is_windows())
+        {
+            return $default;
+        }
+
+        return (int)shell_exec('tput lines');
+    }
+
+    //--------------------------------------------------------------------
 }
