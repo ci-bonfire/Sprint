@@ -120,6 +120,16 @@ switch (ENVIRONMENT)
  */
 	$application_folder = 'application';
 
+/*---------------------------------------------------------------
+ * MYTH FOLDER NAME
+ *---------------------------------------------------------------
+ *
+ * This variable must contain the name of your "myth" folder.
+ * Include the path if the folder is not in the same directory
+ * as this file.
+ */
+    $myth_folder = 'myth';
+
 /*
  *---------------------------------------------------------------
  * VIEW FOLDER NAME
@@ -234,6 +244,9 @@ switch (ENVIRONMENT)
 
 	// Name of the "system folder"
 	define('SYSDIR', trim(strrchr(trim(BASEPATH, '/'), '/'), '/'));
+
+    // Path to the myth folder
+    define('MYTHPATH', rtrim( str_replace('\\', '/', $myth_folder), '/ ') .'/' );
 
 	// The path to the "application" folder
 	if (is_dir($application_folder))
