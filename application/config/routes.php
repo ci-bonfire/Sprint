@@ -99,6 +99,10 @@ $routes->block('auth/(:any)');
 
 //--------------------------------------------------------------------
 
+// Auto-generated routes go here
+
+//--------------------------------------------------------------------
+
 // Make sure CI's Router gets the array they expect.
 $route = $routes->map($route);
 
