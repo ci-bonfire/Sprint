@@ -8,12 +8,14 @@ use Myth\CLI as CLI;
 CLI::_init();
 
 $status = 0;
+$extra = '';
 
 /**
  * Relative location to the application's
  * index.php from this file.
  */
-$apppath = 'index.php';
+$fcpath = 'index.php';
+$apppath = 'application/';
 
 /**
  * Refuse to run oil when called from php-cgi !
@@ -38,14 +40,53 @@ ini_set('display_errors', 1);
 // Default to a simple passthru of the basic command, less arguments.
 $command = CLI::cli_string();
 
+// Check all arguments that we're interested in here
+$options = getopt('vh', ['help', 'version', 'env:']);
+
+//--------------------------------------------------------------------
+// Help Command
+//--------------------------------------------------------------------
 // If -h or --help or -help are present, then we'll return the command's
 // Long description, if available.
-if (CLI::option('h') || CLI::option('hello')) {
+//
+if ( isset($options['h']) || isset($options['help'])) {
     $command = CLI::segment(1) . ' longDescribeMethod ' . CLI::segment(2);
 }
 
+//--------------------------------------------------------------------
+// Show Version
+//--------------------------------------------------------------------
+// If -v or --version is present, then we'll return Sprint's current
+// version.
+//
+if ( isset($options['v']) || isset($options['version']) )
+{
+    define('BASEPATH', true);
+
+    require $apppath .'config/constants.php';
+
+    $output = '';
+
+    if (defined('SPRINT_VERSION'))
+    {
+        $output .= 'Running Sprint v'. CLI::color(SPRINT_VERSION, 'yellow');
+    }
+
+    if (defined('BONFIRE_VERSION'))
+    {
+        $output .= ' and Bonfire v'. CLI::color(BONFIRE_VERSION, 'yellow');
+    }
+
+    CLI::write($output);
+
+    exit(0);
+}
+
+//--------------------------------------------------------------------
 // Standard Method call to CodeIgniter
-passthru("php {$apppath} {$command}", $status);
+//--------------------------------------------------------------------
+//
+passthru("php {$fcpath} {$command} ", $status);
 
 exit($status);
 

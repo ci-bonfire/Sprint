@@ -1,27 +1,7 @@
-# CLI Controllers
-You can create controllers intended for use only on the command line by extending the `Myth\Controllers\CLIController`. This will restrict the controller to being called from anywher other than the command line, and load up the CLI library, which provides several tools to make working with the command prompt a pleasant experience. 
+# The CLI Library
+The CLI library has been borrowed from the [FuelPHP Framework](http://fuelphp.com/) and tweaked a bit and given some features, and provides a number of tools for working with the command line, including getting user input and colored text.
 
-CLI Controllers can be used for creating tools that can be called from third-party scripts on your server. You can create tools that handle redundant chores for yourself, or add new features to your code, like the `database tools` that have been provided with Sprint. 
-
-	class myTools extends Myth\Controllers\CLIController {
-		. . .
-	}
-
-## Calling A CLI Controller
-Calling a CLIController-based tool uses the standard CodeIgniter CLI approach. This maps the arguments on the command line to the same that you would enter in a web browser. If you would reach your module/controller at 
-
-	http://mysite.com/database/seed
-	
-then the relevant command line would be 
-
-	php index.php database seed
-	
-You can access any of your controllers this way, though the output won't be pretty in most cases. 
-
-This does pose one restriction, though. When creating your command line tools you cannot use typical `options` and `longoption` like you would otherwise. Instead, you will need to handle this through the routes system.
-
-## The CLI Library
-The CLI library has been borrowed from the [FuelPHP Framework](http://fuelphp.com/) and provides a number of tools for working with the command line, including getting user input and colored text.
+## Basic Methods
 
 ### beep()
 Um, beeps at the user. The only parameter is the number of beeps that you want it to make. Please use sparingly. Please. 
@@ -63,6 +43,7 @@ When the second parameter is an array, it will only accept answers that are with
 
 	$ready = CLI::prompt('Are you ready?', array('y', 'n'));
 
+
 ### wait()
 Force the command line to wait a number of seconds. The first parameter is the number of seconds to wait. The second parameter can be set to TRUE to provide a running countdown during the wait. 
 
@@ -80,5 +61,41 @@ You should consider using newline and tab characters in your strings to create a
 
 You can also use the [color](#color) command within the `write` command to good effect, if used sparingly.
 
-	
+## Utility Methods
+### segment()
+This method works much like the `segment` method of the URI library. It breaks the command you called on the CLI down into segments and makes each available in a 1-indexed array. This method only includes the portion of the command line prior to any arguments. Returns NULL if no segment exists.
 
+	// The command: 
+	$ sprint database migrate -help app
+	
+	CLI::segment(1) = 'database'
+	CLI::segment(2) = 'migrate'
+	CLI::segment(3) = null
+
+### cli_string()
+Much like it's URI counterpart, `uri_string` this simply returns the relevant portions of the CLI command as a string. This only includes information up until the first argument. 
+
+	// The command: 
+	$ sprint database migrate -help app
+	
+	CLI::cli_string() = 'database migrate'
+
+### getWidth()
+### getHeight()
+These commands return the current size of the terminal window. On Windows, where this information is not available, default values of width=80 and height=32 are returned.  This may be useful in your scripts but is used by the CLIController to provide elegant wrapping of descriptions.
+
+### showProgress()
+Allows your scripts to show a progress bar when you're performing a long action. The first parameter is the current step. The second parameter is the total number of steps. You must call this each time you need to update the progress. 
+
+	for ($i=1; $i < 100; $i += 5)
+	{
+   	 	CLI::showProgress($i, 100);
+    	usleep(100000);
+	}
+	
+	// Creates: 
+	[####......] 42% Complete
+	
+Once the progress reaches 100% it will dissappear from the screen automatically. You can force it to end prematurely by passing in `false` as the only parameter.
+	
+	CLI::showProgress(false);

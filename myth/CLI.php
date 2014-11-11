@@ -32,9 +32,10 @@ class CLI {
 
     public static $wait_msg = 'Press any key to continue...';
 
-    public static $args = [];
-
     public static $segments = [];
+
+    // Used by progress bar
+    protected static $inProgress = false;
 
     protected static $foreground_colors = array(
         'black'			=> '0;30',
@@ -92,41 +93,11 @@ class CLI {
             }
 
             $options_found = true;
-
-            $arg = explode('=', $_SERVER['argv'][$i]);
-
-            if (count($arg) > 1 || strncmp($arg[0], '-', 1) === 0)
-            {
-                static::$args[ltrim($arg[0], '-')] = isset($arg[1]) ? $arg[1] : true;
-            }
         }
 
         // Readline is an extension for PHP that makes interactive with PHP much more bash-like
         // http://www.php.net/manual/en/readline.installation.php
         static::$readline_support = extension_loaded('readline');
-    }
-
-    //--------------------------------------------------------------------
-
-    /**
-     * Returns the option with the given name.	You can also give the option
-     * number.
-     *
-     * Named options must be in the following formats:
-     * php index.php user -v --v -name=John --name=John
-     *
-     * @param   string|int  $name     the name of the option (int if unnamed)
-     * @param   mixed       $default  value to return if the option is not defined
-     * @return  mixed
-     */
-    public static function option($name, $default = null)
-    {
-        if ( ! isset(static::$args[$name]))
-        {
-            return $default;
-        }
-
-        return static::$args[$name];
     }
 
     //--------------------------------------------------------------------
@@ -492,7 +463,7 @@ class CLI {
 
     //--------------------------------------------------------------------
 
-    public function getWidth($default=80)
+    public static function getWidth($default=80)
     {
         if (static::is_windows())
         {
@@ -504,7 +475,7 @@ class CLI {
     
     //--------------------------------------------------------------------
 
-    public function getHeight($default=32)
+    public static function getHeight($default=32)
     {
         if (static::is_windows())
         {
@@ -515,4 +486,50 @@ class CLI {
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Displays a progress bar on the CLI. You must call it repeatedly
+     * to update it. Set $thisStep = false to erase the progress bar.
+     *
+     * @param int $thisStep
+     * @param int $totalSteps
+     */
+    public static function showProgress($thisStep=1, $totalSteps=10)
+    {
+        // The first time through, save
+        // our position so the script knows where to go
+        // back to when writing the bar, and
+        // at the end of the script.
+        if (! static::$inProgress) {
+            fwrite(STDOUT, "\0337");
+            static::$inProgress = true;
+        }
+
+        // Restore position
+        fwrite(STDERR, "\0338");
+
+        if ($thisStep !== false) {
+            // Don't allow div by zero or negative numbers....
+            $thisStep = abs($thisStep);
+            $totalSteps = $totalSteps < 1 ? 1 : $totalSteps;
+
+            $percent = intval( ($thisStep / $totalSteps) * 100 );
+            $step = (int)round($percent / 10);
+
+            // Write the progress bar
+            fwrite(STDOUT, "[\033[32m" . str_repeat('#', $step) . str_repeat('.', 10 - $step) . "\033[0m]");
+            // Textual representation...
+            fwrite(STDOUT, " {$percent}% Complete" . PHP_EOL);
+            // Move up, undo the PHP_EOL
+            fwrite(STDOUT, "\033[1A");
+        }
+        else
+        {
+            fwrite(STDERR, "\007");
+        }
+    }
+
+    //--------------------------------------------------------------------
+
+
 }
