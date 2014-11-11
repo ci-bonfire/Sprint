@@ -5,35 +5,32 @@ use Myth\Settings\Settings;
 
 class Cron extends \Myth\Controllers\CLIController {
 
+    protected $descriptions = [
+        'show'  => ['show [all/<task>]', 'Lists the names one or more tasks, with run times.'],
+        'run'   => ['run [<task>]', 'Runs all scheduled tasks. If <task> is present only runs that task.'],
+        'disable'   => ['disable', 'Disables the cron system and will not run any tasks.'],
+        'enable'    => ['enable', 'Enables the cron system and will run tasks again.'],
+        'suspend'   => ['suspend <task>', 'Stops a single task from running until resumed.'],
+        'resume'    => ['resume <task>', 'Resumes execution of a single suspended task.']
+    ];
+
+    protected $long_descriptions = [
+        'show'  => '',
+        'run'   => '',
+        'disable'   => '',
+        'enable'    => '',
+        'suspend'   => '',
+        'resume'    => ''
+    ];
+
+    //--------------------------------------------------------------------
+
     public function __construct()
     {
         parent::__construct();
 
         // Load our tasks into the sytem.
         require APPPATH .'config/cron.php';
-    }
-
-    //--------------------------------------------------------------------
-
-
-    /**
-     * Lists All available CLI functions
-     */
-    public function index()
-    {
-        echo CLI::write("Cron cli commands:");
-        echo CLI::write("\t". CLI::color("show", "yellow") ."\t\tLists the names of all tasks.");
-        echo CLI::write("\t". CLI::color("show all", "yellow") ."\tLists all jobs with next and previous run times.");
-        echo CLI::write("\t". CLI::color("show {task}", "yellow") ."\tLists next and previous run times for a single {task}");
-
-        echo CLI::write("\t". CLI::color("run", "yellow") ."\t\tRuns all currently scheduled tasks.");
-
-
-        echo CLI::write("\t". CLI::color("disable", "yellow") ."\t\tDisables the cron system and will not run any tasks.");
-        echo CLI::write("\t". CLI::color("enable", "yellow") ."\t\tEnables the cron system and will run tasks again.");
-
-        echo CLI::write("\t". CLI::color("suspend {task}", "yellow") ."\tStops a single task from running until resumed.");
-        echo CLI::write("\t". CLI::color("resume {task}", "yellow") ."\tResumes execution of a single suspended task.");
     }
 
     //--------------------------------------------------------------------
