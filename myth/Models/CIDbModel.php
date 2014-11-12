@@ -317,7 +317,7 @@ class CIDbModel
     {
         $rows = $this->limit(1)->find_all();
 
-        if (is_array($rows)) {
+        if (is_array($rows) && count($rows)) {
             return $rows[0];
         }
 
