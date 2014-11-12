@@ -28,12 +28,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Load PHPError
+ * todo Look into enabling save file feautre because that would be bad ass
  */
 if (ENVIRONMENT == 'development' && ! is_cli()) {
     require(__DIR__ . '/../php_error.php');
     \php_error\reportErrors(array(
         'application_folders' => 'application',
-        'ignore_folders'      => 'system'
+        'ignore_folders'      => 'system',
+        'enable_saving'       => false
     ));
 }
 
