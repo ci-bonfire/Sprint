@@ -552,6 +552,57 @@ class CLI {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Takes a string and writes it to the command line, wrapping to a maximum
+	 * width. If no maximum width is specified, will wrap to the window's max
+	 * width.
+	 *
+	 * If an int is passed into $pad_left, then all strings after the first
+	 * will padded with that many spaces to the left. Useful when printing
+	 * short descriptions that need to start on an existing line.
+	 *
+	 * @param null $string
+	 * @param int $max
+	 * @param int $pad_left
+	 */
+	public static function wrap($string=null, $max=0, $pad_left=0)
+	{
+		if (empty($string))
+		{
+			return '';
+		}
+
+		if (CLI::getWidth() < $max)
+		{
+			$max = CLI::getWidth();
+		}
+
+		$max = $max - $pad_left;
+
+		$lines = wordwrap($string, $max);
+
+		if ($pad_left > 0) {
+			$lines = explode( "\n", $lines );
+
+			$first = true;
+
+			array_walk( $lines, function ( &$line, $index ) use($max, $pad_left, &$first) {
+				if (! $first) {
+					$line = str_repeat( " ", $pad_left ) . $line;
+				}
+				else
+				{
+					$first = false;
+				}
+			} );
+
+			$lines = implode("\n", $lines);
+		}
+
+		return $lines;
+	}
+
+	//--------------------------------------------------------------------
 
 	/**
 	 * Parses the command line it was called from and collects all

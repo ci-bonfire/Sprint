@@ -110,7 +110,6 @@ class CLIController extends \CI_Controller {
         $names      = $this->padArray($names);
         $syntaxes   = $this->padArray($syntaxes);
 
-        // todo Implement nice wrapping of descriptions based on window width
         for ($i=0; $i < count($names); $i++)
         {
             $out = CLI::color($names[$i], 'yellow');
@@ -123,7 +122,7 @@ class CLIController extends \CI_Controller {
 
             if (isset($descs[$i]))
             {
-                $out .= $descs[$i];
+                $out .= CLI::wrap($descs[$i], 125, strlen($names[$i]) + strlen($syntaxes[$i]));
             }
 
             CLI::write($out);
