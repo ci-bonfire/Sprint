@@ -34,6 +34,8 @@ class CLI {
 
     public static $segments = [];
 
+	protected static $options = [];
+
     // Used by progress bar
     protected static $inProgress = false;
 
@@ -80,20 +82,7 @@ class CLI {
             throw new \Exception('Cli class cannot be used outside of the command line.');
         }
 
-        $options_found = false;
-
-        for ($i = 1; $i < $_SERVER['argc']; $i++)
-        {
-            // If there's no '-' at the beginning of the argument
-            // then add it to our segments.
-            if (! $options_found && strpos($_SERVER['argv'][$i], '-') === false)
-            {
-                static::$segments[] = $_SERVER['argv'][$i];
-                continue;
-            }
-
-            $options_found = true;
-        }
+	    self::parseCommand();
 
         // Readline is an extension for PHP that makes interactive with PHP much more bash-like
         // http://www.php.net/manual/en/readline.installation.php
@@ -531,5 +520,82 @@ class CLI {
 
     //--------------------------------------------------------------------
 
+	/**
+	 * Checks to see if an option was passed to us on the CLI and returns
+	 * the value if so. Otherwise, returns null.
+	 *
+	 * @param $name
+	 *
+	 * @return null
+	 */
+	public function option($name)
+	{
+	    if (! isset(static::$options[$name]))
+	    {
+		    return static::$options[$name];
+	    }
+
+		return null;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Gets all of the options set and returns that array.
+	 *
+	 * @return array
+	 */
+	public static function getOptions()
+	{
+	    return static::$options;
+	}
+
+	//--------------------------------------------------------------------
+
+
+	/**
+	 * Parses the command line it was called from and collects all
+	 * options and valid segments.
+	 *
+	 * I tried to use getopt but had it fail occasionally to find any
+	 * but argc has always had our back. We don't have all of the "power"
+	 * of getopt but this does us just fine.
+	 */
+	protected static function parseCommand()
+	{
+		$options_found = false;
+
+		for ($i = 1; $i < $_SERVER['argc']; $i++)
+		{
+			// If there's no '-' at the beginning of the argument
+			// then add it to our segments.
+			if (! $options_found && strpos($_SERVER['argv'][$i], '-') === false)
+			{
+				static::$segments[] = $_SERVER['argv'][$i];
+				continue;
+			}
+
+			$options_found = true;
+
+			if (substr($_SERVER['argv'][$i], 0, 1) != '-')
+			{
+				continue;
+			}
+
+			$arg = str_replace('-', '', $_SERVER['argv'][$i]);
+			$value = null;
+
+			// If the next item starts with a dash it's a value
+			if (substr($_SERVER['argv'][$i + 1], 0, 1) != '-' )
+			{
+				$value = $_SERVER['argv'][$i + 1];
+				$i++;
+			}
+
+			static::$options[$arg] = $value;
+		}
+	}
+
+	//--------------------------------------------------------------------
 
 }

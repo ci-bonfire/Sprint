@@ -41,7 +41,7 @@ ini_set('display_errors', 1);
 $command = CLI::cli_string();
 
 // Check all arguments that we're interested in here
-$options = getopt('vh', ['help', 'version', 'env:']);
+$options = CLI::getOptions();
 
 //--------------------------------------------------------------------
 // Help Command
@@ -49,7 +49,7 @@ $options = getopt('vh', ['help', 'version', 'env:']);
 // If -h or --help or -help are present, then we'll return the command's
 // Long description, if available.
 //
-if ( isset($options['h']) || isset($options['help'])) {
+if ( array_key_exists('h', $options) || array_key_exists('help', $options)) {
     $command = CLI::segment(1) . ' longDescribeMethod ' . CLI::segment(2);
 }
 
@@ -59,7 +59,7 @@ if ( isset($options['h']) || isset($options['help'])) {
 // If -v or --version is present, then we'll return Sprint's current
 // version.
 //
-if ( isset($options['v']) || isset($options['version']) )
+if ( array_key_exists('v', $options) || array_key_exists('version', $options) )
 {
     define('BASEPATH', true);
 
@@ -86,7 +86,16 @@ if ( isset($options['v']) || isset($options['version']) )
 // Standard Method call to CodeIgniter
 //--------------------------------------------------------------------
 //
-passthru("php {$fcpath} {$command} ", $status);
+
+if (! $command)
+{
+	CLI::new_line();
+	CLI::write('You must pass a valid command to sprint.', 'yellow');
+	CLI::new_line();
+}
+else {
+	passthru( "php {$fcpath} {$command} ", $status );
+}
 
 exit($status);
 

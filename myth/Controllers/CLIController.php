@@ -56,33 +56,10 @@ class CLIController extends \CI_Controller {
      */
     public function index()
     {
-        $names      = array_keys($this->descriptions);
-        $syntaxes   = array_column($this->descriptions, 0);
-        $descs      = array_column($this->descriptions, 1);
-
-        // Pad each item to the same length
-        $names      = $this->padArray($names);
-        $syntaxes   = $this->padArray($syntaxes);
-
+        CLI::new_line();
         CLI::write("Available commands:");
 
-        for ($i=0; $i < count($names); $i++)
-        {
-            $out = CLI::color($names[$i], 'yellow');
-
-            // The rest of the items stay default color.
-            if (isset($syntaxes[$i]))
-            {
-                $out .= $syntaxes[$i];
-            }
-
-            if (isset($descs[$i]))
-            {
-                $out .= $descs[$i];
-            }
-
-            CLI::write($out);
-        }
+        $this->sayDescriptions($this->descriptions);
 
         CLI::new_line();
     }
@@ -123,6 +100,38 @@ class CLIController extends \CI_Controller {
     // Private Methods
     //--------------------------------------------------------------------
 
+    protected function sayDescriptions($descriptions)
+    {
+        $names      = array_keys($descriptions);
+        $syntaxes   = array_column($descriptions, 0);
+        $descs      = array_column($descriptions, 1);
+
+        // Pad each item to the same length
+        $names      = $this->padArray($names);
+        $syntaxes   = $this->padArray($syntaxes);
+
+        // todo Implement nice wrapping of descriptions based on window width
+        for ($i=0; $i < count($names); $i++)
+        {
+            $out = CLI::color($names[$i], 'yellow');
+
+            // The rest of the items stay default color.
+            if (isset($syntaxes[$i]))
+            {
+                $out .= $syntaxes[$i];
+            }
+
+            if (isset($descs[$i]))
+            {
+                $out .= $descs[$i];
+            }
+
+            CLI::write($out);
+        }
+    }
+
+    //--------------------------------------------------------------------
+
     /**
      * Returns a new array where all of the string elements have
      * been padding with trailling spaces to be the same length.
@@ -131,7 +140,7 @@ class CLIController extends \CI_Controller {
      * @param int $extra // How many extra spaces to add at the end
      * @return array
      */
-    private function padArray($array, $extra=2)
+    protected function padArray($array, $extra=2)
     {
         $max = max(array_map('strlen', $array)) + $extra;
 

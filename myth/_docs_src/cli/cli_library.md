@@ -84,6 +84,22 @@ Much like it's URI counterpart, `uri_string` this simply returns the relevant po
 ### getHeight()
 These commands return the current size of the terminal window. On Windows, where this information is not available, default values of width=80 and height=32 are returned.  This may be useful in your scripts but is used by the CLIController to provide elegant wrapping of descriptions.
 
+### getOptions()
+Will return an array of any options that were passed on the command line. The key of each element contains the option name (without any dashes), while the value will have the value. If no value was set for the option the value will be null. This method takes no parameters.
+
+	$ php sprint database migrate --help
+	CLI::getOptions();
+	[
+		['help'] => null
+	]
+
+### option()
+Checks to see if an option matching the request was set on the command line and returns the value, if so. The only parameter is the name of the key to look for. 
+
+	$ php sprint database newMigration test_things_out --module "my great module"
+	CLI::option('module');
+	// returns "my great module"
+
 ### showProgress()
 Allows your scripts to show a progress bar when you're performing a long action. The first parameter is the current step. The second parameter is the total number of steps. You must call this each time you need to update the progress. 
 
