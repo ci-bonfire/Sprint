@@ -105,7 +105,11 @@ class ViewThemer implements ThemerInterface
      * If a variant has been specified, it will be added to the end
      * of the view name before looking for the file.
      *
-     * @param $view
+     * If $parse is TRUE, the output will be ran through the parser
+     *
+     * @param string $view
+     * @param array  $data
+     * @param bool   $parse
      * @return mixed
      */
     public function display($view, $data = array())

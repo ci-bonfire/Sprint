@@ -20,12 +20,7 @@ abstract class BaseGenerator extends CLIController {
      */
     protected $themer = null;
 
-    /**
-     * The name of the generator.
-     * Must match the folder name it's stored in.
-     * @var null
-     */
-    protected $generator_name = null;
+    protected $gen_path = null;
 
     //--------------------------------------------------------------------
 
@@ -45,7 +40,7 @@ abstract class BaseGenerator extends CLIController {
      *
      * @return mixed
      */
-    abstract function run();
+    abstract function run($segments=[]);
 
     //--------------------------------------------------------------------
 
@@ -61,9 +56,13 @@ abstract class BaseGenerator extends CLIController {
     public function createFile($path, $contents=null, $overwrite=false, $perms=0644)
     {
         // Does file already exist?
-        if (! $overwrite && is_file($path))
+        if (is_file($path))
         {
-            throw new \RuntimeException('Cannot createFile. File already exists: '. $path);
+	        if (! $overwrite) {
+		        throw new \RuntimeException( 'Cannot createFile. File already exists: ' . $path );
+	        }
+
+	        unlink($path);
         }
 
         get_instance()->load->helper('file');
@@ -268,22 +267,26 @@ abstract class BaseGenerator extends CLIController {
 
         $output = null;
 
-        // Default to a folder of the same name as the template.
-        $folder = empty($folder) ? $this->generator_name : $folder;
+	    $view = $template_name .'.tpl';
 
-        $groups = config_item('forge.template_groups');
+        $groups = config_item('forge.collections');
+
+	    $name = str_replace('Generator', '', get_class($this) );
+
         foreach ($groups as $group => $path)
         {
-            $path = rtrim($path, '/ '). '/';
+	        $path = rtrim($path, '/ ') .'/';
+	        $folders = scandir($path);
 
-            $view = $folder .'/'. $template_name .'.tpl';
+	        if (! $i = array_search(ucfirst($name), $folders))
+	        {
+		        continue;
+	        }
 
-            // Each generator should be in it's own folder
-            $path .= $view;
+	        $view = $folders[$i] . '/'. $view;
 
-            if (realpath($path .'.php'))
+            if (realpath($path . $view .'.php'))
             {
-
                 $output = $this->themer->display($group .':'. $view, $data);
                 break;
             }
@@ -299,9 +302,9 @@ abstract class BaseGenerator extends CLIController {
     // Private Methods
     //--------------------------------------------------------------------
 
-    private function setupThemer()
+    protected function setupThemer()
     {
-        $themer_name = new config_item('forge.themer');
+        $themer_name = config_item('forge.themer');
 
         if (! $themer_name)
         {
@@ -320,4 +323,56 @@ abstract class BaseGenerator extends CLIController {
 
     //--------------------------------------------------------------------
 
+	protected function determineOutputPath($folder='')
+	{
+		// todo check for global module name...
+		$path = APPPATH . $folder;
+
+		$this->gen_path = $path;
+
+		return rtrim($path, '/ ') .'/';
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Scans through the collections for the folder for this generator.
+	 *
+	 * @param $name
+	 *
+	 * @return null|string
+	 */
+	protected function locateGenerator($name)
+	{
+//		if (! empty($this->gen_path))
+//		{
+//			return $this->gen_path;
+//		}
+
+		$collections = config_item('forge.collections');
+
+		if (! is_array($collections) || ! count($collections) )
+		{
+			return CLI::error('No generator collections found.');
+		}
+
+		foreach ($collections as $alias => $path)
+		{
+			$path = rtrim($path, '/ ') .'/';
+			$folders = scandir($path);
+
+			if (! $i = array_search(ucfirst($name), $folders))
+			{
+				continue;
+			}
+
+			$this->gen_path = $path . $folders[$i] .'/';
+
+			return $this->gen_path;
+		}
+
+		return null;
+	}
+
+	//--------------------------------------------------------------------
 }

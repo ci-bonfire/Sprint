@@ -22,6 +22,8 @@ class Forge extends \Myth\Controllers\CLIController {
         }
         else
         {
+	        $params = array_merge([CLI::cli_string()], $params);
+
             call_user_func_array( [$this, 'run'], $params);
         }
     }
@@ -84,9 +86,36 @@ class Forge extends \Myth\Controllers\CLIController {
      * The primary method that calls the correct generator and
      * makes it run.
      */
-    public function run()
+    public function run($command)
     {
+	    $segments = explode(" ", $command);
 
+	    // Get rid of the 'forge' command
+	    if ($segments[0] == 'forge') {
+		    array_shift( $segments );
+	    }
+
+	    $command = trim(str_ireplace("forge", '', array_shift($segments)));
+
+		$dir = $this->locateGenerator($command);
+
+		$class_name = ucfirst($command) .'Generator';
+
+	    if (! file_exists($dir . $class_name .'.php'))
+	    {
+		    return CLI::error("Generator file not found for: {$class}");
+	    }
+
+		require_once $dir . $class_name .'.php';
+
+	    if (! class_exists($class_name, false))
+	    {
+		    return CLI::error("No class `{$class_name}` found in generator file.");
+	    }
+
+		$class = new $class_name();
+
+	    $class->run( $segments );
     }
 
     //--------------------------------------------------------------------
@@ -153,4 +182,37 @@ class Forge extends \Myth\Controllers\CLIController {
 
     //--------------------------------------------------------------------
 
+	/**
+	 * Scans through the collections for the folder for this generator.
+	 *
+	 * @param $name
+	 *
+	 * @return null|string
+	 */
+	protected function locateGenerator($name)
+	{
+		$collections = config_item('forge.collections');
+
+		if (! is_array($collections) || ! count($collections) )
+		{
+			return CLI::error('No generator collections found.');
+		}
+
+		foreach ($collections as $alias => $path)
+		{
+			$path = rtrim($path, '/ ') .'/';
+			$folders = scandir($path);
+
+			if (! $i = array_search(ucfirst($name), $folders))
+			{
+				continue;
+			}
+
+			return $path . $folders[$i] .'/';
+		}
+
+		return null;
+	}
+
+	//--------------------------------------------------------------------
 }

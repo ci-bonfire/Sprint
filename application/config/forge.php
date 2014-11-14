@@ -3,7 +3,7 @@
 //--------------------------------------------------------------------
 // Allowed Environments
 //--------------------------------------------------------------------
-// Before any generators are run, the current environment will be
+// Before any _generators are run, the current environment will be
 // tested to verify it's an allowed environment.
 //
     $config['forge.allowed_environments'] = [
@@ -30,5 +30,5 @@
 // The 'keys' are aliases that can be used to reference the view from.
 //
     $config['forge.collections'] = [
-        'sprint'    => MYTHPATH .'generators/'
+        'sprint'    => MYTHPATH .'_generators/'
     ];
