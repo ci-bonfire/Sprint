@@ -34,6 +34,7 @@ $lang['auth.send']                  = 'Send';
 $lang['auth.send_success']          = 'The email is on its way!';
 
 $lang['auth.reset']                 = 'Reset Password';
+$lang['auth.reset_note']            = 'Please follow the instructions in the email to reset your password.';
 $lang['auth.pass_code']             = 'Reset Code';
 $lang['auth.new_password']          = 'Choose a New Password';
 $lang['auth.new_password_success']  = 'Your password has been changed. Please sign in.';
