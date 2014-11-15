@@ -275,7 +275,7 @@ class Login_model extends \Myth\Models\CIDbModel {
     public function countLoginAttempts($email)
     {
         return $this->db->where('email', $email)
-                        ->count_all_results();
+                        ->count_all_results('auth_login_attempts');
     }
 
     //--------------------------------------------------------------------
