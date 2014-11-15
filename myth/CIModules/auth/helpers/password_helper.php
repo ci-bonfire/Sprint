@@ -17,9 +17,11 @@ if (! function_exists('isStrongPassword'))
 
         if (! $strong)
         {
-            if (isset(get_instance()->form_validation)) {
+            if (isset(get_instance()->form_validation))
+            {
                 get_instance()->form_validation->set_message('isStrongPassword', lang('auth.pass_not_strong'));
             }
+
             return false;
         }
 

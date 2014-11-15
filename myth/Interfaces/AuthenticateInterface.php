@@ -20,8 +20,8 @@ interface AuthenticateInterface {
      * $credentials is an array of key/value pairs needed to log the user in.
      * This is often email/password, or username/password.
      *
-     * @param array $credentials
-     * @param bool  $remember
+     * @param $credentials
+     * @param bool $remember
      */
     public function login($credentials, $remember=false);
 
@@ -33,8 +33,8 @@ interface AuthenticateInterface {
      * $credentials is an array of key/value pairs needed to log the user in.
      * This is often email/password, or username/password.
      *
-     * @param array $credentials
-     * @param bool  $return_user
+     * @param $credentials
+     * @param bool $return_user
      * @return mixed
      */
     public function validate($credentials, $return_user=false);
@@ -102,7 +102,7 @@ interface AuthenticateInterface {
     /**
      * Grabs the current user object. Returns NULL if nothing found.
      *
-     * @return object|null
+     * @return array|null
      */
     public function user();
 
@@ -143,6 +143,8 @@ interface AuthenticateInterface {
      * Validates the credentials provided and, if valid, resets the password.
      *
      * @param $credentials
+     * @param $password
+     * @param $passConfirm
      * @return mixed
      */
     public function resetPassword($credentials, $password, $passConfirm);
