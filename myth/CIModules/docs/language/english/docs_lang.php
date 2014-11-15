@@ -5,6 +5,7 @@ $lang['docs_search_for']        = 'Search for...';
 $lang['docs_title_application'] = 'Application';
 $lang['docs_title_bonfire']     = 'Developer';
 $lang['docs_title_modules']     = 'Modules';
+$lang['docs_in_this_chapter']   = 'In This Chapter';
 
 $lang['docs_env_disabled']    = 'The requested document is not available.';
 $lang['docs_not_allowed']     = 'Unable to load the docs you requested.';
