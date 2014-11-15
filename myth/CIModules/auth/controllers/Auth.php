@@ -162,7 +162,7 @@ class Auth extends \Myth\Controllers\ThemedController
 
             if ($auth->remindUser( $this->input->post('email') ))
             {
-                $this->setMessage(lang('auth.send.success'), 'success');
+                $this->setMessage(lang('auth.send_success'), 'success');
                 redirect( Route::named('reset_pass') );
             }
             else
