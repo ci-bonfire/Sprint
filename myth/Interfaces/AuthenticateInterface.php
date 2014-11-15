@@ -35,9 +35,10 @@ interface AuthenticateInterface {
      * This is often email/password, or username/password.
      *
      * @param array $credentials
+     * @param bool  $return_user
      * @return mixed
      */
-    public function validate($credentials);
+    public function validate($credentials, $return_user=false);
 
     //--------------------------------------------------------------------
 
