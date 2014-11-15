@@ -385,7 +385,7 @@ class LocalAuthentication implements AuthenticateInterface {
      *  -If they are NOT, will return FALSE.
      *  - If they ARE, will return the number of seconds until they can try again.
      *
-     * @param $userId
+     * @param $email
      * @return mixed
      */
     public function isThrottled($email)

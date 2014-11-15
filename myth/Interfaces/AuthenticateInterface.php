@@ -121,10 +121,10 @@ interface AuthenticateInterface {
      * Tells the system to start throttling a user. This may vary by implementation,
      * but will often add additional time before another login is allowed.
      *
-     * @param $userId
+     * @param $email
      * @return mixed
      */
-    public function isThrottled($userId);
+    public function isThrottled($email);
 
     //--------------------------------------------------------------------
 
