@@ -73,11 +73,10 @@ class LocalAuthentication implements AuthenticateInterface {
      * This is often email/password, or username/password.
      *
      * @param array $credentials
-     * @param bool $remember
-     * @param null $redirect
+     * @param bool  $remember
      * @return bool|mixed
      */
-    public function login($credentials, $remember=false, $redirect=null)
+    public function login($credentials, $remember=false)
     {
         $user = $this->validate($credentials, true);
 
@@ -107,8 +106,8 @@ class LocalAuthentication implements AuthenticateInterface {
      * $credentials is an array of key/value pairs needed to log the user in.
      * This is often email/password, or username/password.
      *
-     * @param array $credentials
-     * @param bool  $return_user
+     * @param $credentials
+     * @param bool $return_user
      * @return mixed
      */
     public function validate($credentials, $return_user=false)
@@ -118,6 +117,7 @@ class LocalAuthentication implements AuthenticateInterface {
         {
             return null;
         }
+
         $password = $credentials['password'];
         unset($credentials['password']);
 
@@ -171,7 +171,8 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->ci->session->sess_destroy();
 
         // Take care of any rememberme functionality.
-        if (config_item('auth.allow_remembering')) {
+        if (config_item('auth.allow_remembering'))
+        {
             $token = get_cookie('remember');
 
             $this->invalidateRememberCookie($this->user['email'], $token);
@@ -270,7 +271,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // If via email, we need to generate a hash
         $this->ci->load->helper('string');
         $token = random_string('alnum', 24);
-        $user_data['activate_hash'] = hash('sha1', config_item('auth.salt') .$token);
+        $user_data['activate_hash'] = hash('sha1', config_item('auth.salt') . $token);
 
         // Save the user
         if (! $id = $this->user_model->insert($user_data))
@@ -280,10 +281,10 @@ class LocalAuthentication implements AuthenticateInterface {
         }
 
         $data = [
-            'user_id'   => $id,
-            'email'     => $user_data['email'],
-            'token'     => $token,
-            'method'    => $method
+            'user_id' => $id,
+            'email'   => $user_data['email'],
+            'token'   => $token,
+            'method'  => $method
         ];
 
         Events::trigger('didRegisterUser', [$data]);
@@ -313,16 +314,16 @@ class LocalAuthentication implements AuthenticateInterface {
         if (! $user) {
             $this->error = $this->user_model->error() ? $this->user_model->error() : lang('auth.activate_no_user');
 
-            return FALSE;
+            return false;
         }
 
-        if (! $this->user_model->update($user->id, ['active' => 1, 'activate_hash' => null]) )
+        if (! $this->user_model->update($user->id, ['active' => 1, 'activate_hash' => null]))
         {
             $this->error = $this->user_model->error();
             return false;
         }
 
-        Events::trigger('didActivate', [$user]);
+        Events::trigger('didActivate', [(array)$user]);
 
         return true;
     }
@@ -353,7 +354,7 @@ class LocalAuthentication implements AuthenticateInterface {
     /**
      * Grabs the current user object. Returns NULL if nothing found.
      *
-     * @return object|null
+     * @return array|null
      */
     public function user()
     {
@@ -382,10 +383,10 @@ class LocalAuthentication implements AuthenticateInterface {
     /**
      * Checks to see if the user is currently being throttled.
      *
-     *  -If they are NOT, will return FALSE.
+     *  - If they are NOT, will return FALSE.
      *  - If they ARE, will return the number of seconds until they can try again.
      *
-     * @param $userId
+     * @param $email
      * @return mixed
      */
     public function isThrottled($email)
@@ -530,6 +531,8 @@ class LocalAuthentication implements AuthenticateInterface {
      * hash and check against the reset_hash.
      *
      * @param $credentials
+     * @param $password
+     * @param $passConfirm
      * @return mixed
      */
     public function resetPassword($credentials, $password, $passConfirm)
@@ -555,9 +558,9 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Update their password and reset their reset_hash
         $data = [
-            'password'      => $password,
-            'pass_confirm'  => $passConfirm,
-            'reset_hash'    => null
+            'password'     => $password,
+            'pass_confirm' => $passConfirm,
+            'reset_hash'   => null
         ];
 
         if (! $this->user_model->update($user->id, $data))
@@ -566,7 +569,7 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        Events::trigger('didResetPassword', [$user]);
+        Events::trigger('didResetPassword', [(array)$user]);
 
         return true;
     }
@@ -596,7 +599,7 @@ class LocalAuthentication implements AuthenticateInterface {
      * The model MUST extend Myth\Models\CIDbModel.
      *
      * @param $model
-     * @param $allow_any_parent
+     * @param bool $allow_any_parent
      * @return mixed
      */
     public function useModel($model, $allow_any_parent=false)
@@ -665,6 +668,11 @@ class LocalAuthentication implements AuthenticateInterface {
     // Protected Methods
     //--------------------------------------------------------------------
 
+    /**
+     * Check if Allow Persistent Login Cookies is enable
+     *
+     * @param $user
+     */
     protected function rememberUser($user)
     {
         if (! config_item('auth.allow_remembering'))
@@ -682,7 +690,7 @@ class LocalAuthentication implements AuthenticateInterface {
      * Invalidates the current rememberme cookie/database entry, creates
      * a new one, stores it and returns the new value.
      *
-     * @param array $user
+     * @param $user
      * @param null $token
      * @return mixed
      */

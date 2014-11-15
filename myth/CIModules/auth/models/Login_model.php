@@ -50,7 +50,7 @@ class Login_model extends \Myth\Models\CIDbModel {
     public function purgeLoginAttempts($email)
     {
         return $this->db->where('email', $email)
-                    ->delete('auth_login_attempts');
+                        ->delete('auth_login_attempts');
     }
 
     //--------------------------------------------------------------------
@@ -88,7 +88,7 @@ class Login_model extends \Myth\Models\CIDbModel {
      * If the number of attempts in the last 24 hours is more than X (see config)
      * times the average, then institute additional throttling.
      *
-     * @return int  The time to add to any throttling.
+     * @return int The time to add to any throttling.
      */
     public function distributedBruteForceTime()
     {
@@ -100,6 +100,7 @@ class Login_model extends \Myth\Models\CIDbModel {
             $avg_start_time = date('Y-m-d 00:00:00', strtotime('-3 months'));
 
             $query = $this->db->query("SELECT COUNT(*) / COUNT(DISTINCT DATE(`datetime`)) as num_rows FROM `auth_login_attempts` WHERE `datetime` >= ?", $avg_start_time);
+
             if (! $query->num_rows())
             {
                 $average = 0;
@@ -115,12 +116,13 @@ class Login_model extends \Myth\Models\CIDbModel {
             $attempts = $this->db->where('datetime >=', $today_start_time)
                                  ->count_all_results('auth_login_attempts');
 
-            if ($attempts > (config_item('auth.dbrute_multiplier') * $average) ) {
+            if ($attempts > (config_item('auth.dbrute_multiplier') * $average))
+            {
                 $time = config_item('auth.distributed_brute_add_time');
             }
 
             // Cache it for 3 hours.
-            $this->cache->set('dbrutetime', $time, 60*60*3);
+            $this->cache->save('dbrutetime', $time, 60*60*3);
         }
 
         return $time;
@@ -141,16 +143,15 @@ class Login_model extends \Myth\Models\CIDbModel {
     public function recordLogin($user)
     {
         $data = [
-            'user_id'   => (int)$user['id'],
-            'datetime'  => date('Y-m-d H:i:s'),
-            'ip_address'=> $this->input->ip_address()
+            'user_id'    => (int)$user['id'],
+            'datetime'   => date('Y-m-d H:i:s'),
+            'ip_address' => $this->input->ip_address()
         ];
 
         return $this->db->insert('auth_logins', $data);
     }
 
     //--------------------------------------------------------------------
-
 
     //--------------------------------------------------------------------
     // Tokens
@@ -252,9 +253,9 @@ class Login_model extends \Myth\Models\CIDbModel {
     public function lastLoginAttemptTime($email)
     {
         $query = $this->db->where('email', $email)
-                              ->order_by('datetime', 'desc')
-                              ->limit(1)
-                              ->get('auth_login_attempts');
+                          ->order_by('datetime', 'desc')
+                          ->limit(1)
+                          ->get('auth_login_attempts');
 
         if (! $query->num_rows())
         {
@@ -275,7 +276,7 @@ class Login_model extends \Myth\Models\CIDbModel {
     public function countLoginAttempts($email)
     {
         return $this->db->where('email', $email)
-                        ->count_all_results();
+                        ->count_all_results('auth_login_attempts');
     }
 
     //--------------------------------------------------------------------

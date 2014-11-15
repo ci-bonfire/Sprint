@@ -17,10 +17,10 @@ class Auth extends \Myth\Controllers\ThemedController
 
     //--------------------------------------------------------------------
 
-
     public function login()
     {
         $this->load->helper('form');
+
         $auth = new LocalAuthentication();
         $this->load->model('user_model');
         $auth->useModel($this->user_model);
@@ -34,11 +34,11 @@ class Auth extends \Myth\Controllers\ThemedController
             redirect($redirect_url);
         }
 
-        if ($this->input->post()) {
-
+        if ($this->input->post())
+        {
             $post_data = [
-                'email'     => $this->input->post('email'),
-                'password'  => $this->input->post('password')
+                'email'    => $this->input->post('email'),
+                'password' => $this->input->post('password')
             ];
 
             $remember = (bool)$this->input->post('remember');
@@ -81,8 +81,8 @@ class Auth extends \Myth\Controllers\ThemedController
     {
         $this->load->helper('form');
 
-        if ($this->input->post()) {
-
+        if ($this->input->post())
+        {
             $auth = new LocalAuthentication();
             $this->load->model('user_model');
             $auth->useModel($this->user_model);
@@ -97,11 +97,14 @@ class Auth extends \Myth\Controllers\ThemedController
                 'role_id'      => config_item('auth.default_role_id')
             ];
 
-            if ($auth->registerUser($post_data)) {
+            if ($auth->registerUser($post_data))
+            {
                 $this->setMessage(lang('auth.did_register'), 'success');
                 redirect( Route::named('login') );
-            } else {
-                $this->setMessage( $auth->error(), 'danger' );
+            }
+            else
+            {
+                $this->setMessage($auth->error(), 'danger');
             }
         }
 
@@ -123,8 +126,8 @@ class Auth extends \Myth\Controllers\ThemedController
             $auth->useModel($this->user_model);
 
             $post_data = [
-                  'email'   => $this->input->post('email'),
-                  'code'   => $this->input->post('code')
+                  'email' => $this->input->post('email'),
+                  'code'  => $this->input->post('code')
             ];
 
             if ($auth->activateUser($post_data))
@@ -134,12 +137,12 @@ class Auth extends \Myth\Controllers\ThemedController
             }
             else
             {
-                $this->setMessage( $auth->error(), 'danger');
+                $this->setMessage($auth->error(), 'danger');
             }
         }
 
         $data = [
-            'email' =>  $this->input->get('e'),
+            'email' => $this->input->get('e'),
             'code'  => $this->input->get('code')
         ];
 
@@ -160,9 +163,9 @@ class Auth extends \Myth\Controllers\ThemedController
             $this->load->model('user_model');
             $auth->useModel($this->user_model);
 
-            if ($auth->remindUser( $this->input->post('email') ))
+            if ($auth->remindUser($this->input->post('email')))
             {
-                $this->setMessage(lang('auth.send.success'), 'success');
+                $this->setMessage(lang('auth.send_success'), 'success');
                 redirect( Route::named('reset_pass') );
             }
             else
@@ -188,10 +191,11 @@ class Auth extends \Myth\Controllers\ThemedController
             $auth->useModel($this->user_model);
 
             $credentials = [
-                'email'         => $this->input->post('email'),
-                'code'          => $this->input->post('code')
+                'email' => $this->input->post('email'),
+                'code'  => $this->input->post('code')
             ];
-            $password = $this->input->post('password');
+
+            $password     = $this->input->post('password');
             $pass_confirm = $this->input->post('pass_confirm');
 
             if ($auth->resetPassword($credentials, $password, $pass_confirm))
@@ -206,7 +210,7 @@ class Auth extends \Myth\Controllers\ThemedController
         }
 
         $data = [
-            'email' =>  $this->input->get('e'),
+            'email' => $this->input->get('e'),
             'code'  => $this->input->get('code')
         ];
 
@@ -227,7 +231,7 @@ class Auth extends \Myth\Controllers\ThemedController
     /**
      * Checks the password strength and returns pass/fail.
      *
-     * @param null $str
+     * @param $str
      */
     public function password_check($str)
     {
