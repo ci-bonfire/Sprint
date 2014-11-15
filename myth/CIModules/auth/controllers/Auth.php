@@ -17,7 +17,6 @@ class Auth extends \Myth\Controllers\ThemedController
 
     //--------------------------------------------------------------------
 
-
     public function login()
     {
         $this->load->helper('form');
