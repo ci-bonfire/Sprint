@@ -38,9 +38,11 @@ abstract class BaseGenerator extends CLIController {
      * The method called by the main generator script. This must be
      * overridden by child classes to implement the actual logic used.
      *
+     * @param array $segments
+     * @param bool  $quiet      If true, models should accept default values.
      * @return mixed
      */
-    abstract function run($segments=[]);
+    abstract function run($segments=[], $quiet=false);
 
     //--------------------------------------------------------------------
 
@@ -241,9 +243,13 @@ abstract class BaseGenerator extends CLIController {
     /**
      * Outputs the contents of the file in the template's source path.
      */
-    public function readme($file='readme.md')
+    public function readme($file='readme.txt')
     {
+	    $name = str_replace('Generator', '', get_class($this));
 
+	    $path = $this->locateGenerator($name);
+
+	    die($path);
     }
 
     //--------------------------------------------------------------------

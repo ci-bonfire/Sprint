@@ -528,9 +528,9 @@ class CLI {
 	 *
 	 * @return null
 	 */
-	public function option($name)
+	public static function option($name)
 	{
-	    if (! isset(static::$options[$name]))
+	    if (isset(static::$options[$name]))
 	    {
 		    return static::$options[$name];
 	    }

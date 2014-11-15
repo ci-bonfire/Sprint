@@ -86,7 +86,7 @@ class Forge extends \Myth\Controllers\CLIController {
      * The primary method that calls the correct generator and
      * makes it run.
      */
-    public function run($command)
+    public function run($command, $quiet=null)
     {
 	    $segments = explode(" ", $command);
 
@@ -113,12 +113,61 @@ class Forge extends \Myth\Controllers\CLIController {
 		    return CLI::error("No class `{$class_name}` found in generator file.");
 	    }
 
+	    // Should we run the process quietly?
+	    if ( (CLI::option('q') || CLI::option('quiet')) && $quiet !== false)
+	    {
+		    $quiet = true;
+	    }
+
 		$class = new $class_name();
 
-	    $class->run( $segments );
+	    $class->run( $segments, $quiet );
     }
 
     //--------------------------------------------------------------------
+
+	/**
+	 * Displays the readme file for a generator if it exists.
+	 *
+	 * @param $command
+	 */
+	public function readme($command)
+	{
+		$dir = $this->locateGenerator($command);
+
+		if (! is_file($dir .'readme.txt'))
+		{
+			return CLI::error('Unable to locate the readme.txt file.');
+		}
+
+		$lines = file($dir .'readme.txt');
+
+		if (! is_array($lines) || ! count($lines))
+		{
+			return CLI::error('The readme file does not have anything to display.');
+		}
+
+		$line_count = 0; // Total we're currently viewing.
+		$max_rows   = CLI::getHeight() -3;
+
+		foreach ($lines as $line)
+		{
+			$line_count++;
+
+			if ($line_count >= $max_rows)
+			{
+				CLI::prompt("\nContinue...");
+				$line_count = 0;
+			}
+
+			echo CLI::wrap($line, 125);
+		}
+
+		CLI::new_line(2);
+	}
+
+	//--------------------------------------------------------------------
+
 
     /**
      * Overrides CLIController's version to support searching our
