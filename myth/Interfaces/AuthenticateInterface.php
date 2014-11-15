@@ -22,9 +22,8 @@ interface AuthenticateInterface {
      *
      * @param array $credentials
      * @param bool  $remember
-     * @param null  $redirect
      */
-    public function login($credentials, $remember=false, $redirect=null);
+    public function login($credentials, $remember=false);
 
     //--------------------------------------------------------------------
 

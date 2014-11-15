@@ -74,10 +74,9 @@ class LocalAuthentication implements AuthenticateInterface {
      *
      * @param array $credentials
      * @param bool $remember
-     * @param null $redirect
      * @return bool|mixed
      */
-    public function login($credentials, $remember=false, $redirect=null)
+    public function login($credentials, $remember=false)
     {
         $user = $this->validate($credentials, true);
 
