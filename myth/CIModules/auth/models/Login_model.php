@@ -120,7 +120,7 @@ class Login_model extends \Myth\Models\CIDbModel {
             }
 
             // Cache it for 3 hours.
-            $this->cache->set('dbrutetime', $time, 60*60*3);
+            $this->cache->save('dbrutetime', $time, 60*60*3);
         }
 
         return $time;
