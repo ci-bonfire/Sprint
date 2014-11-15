@@ -322,7 +322,7 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        Events::trigger('didActivate', [$user]);
+        Events::trigger('didActivate', [(array)$user]);
 
         return true;
     }
@@ -566,7 +566,7 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        Events::trigger('didResetPassword', [$user]);
+        Events::trigger('didResetPassword', [(array)$user]);
 
         return true;
     }
