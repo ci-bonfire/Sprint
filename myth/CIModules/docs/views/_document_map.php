@@ -1,6 +1,6 @@
 <?php if (isset($docMap)) : ?>
     <div class="doc-map">
-        <h3>In This Chapter</h3>
+        <h3><?php echo lang('docs_in_this_chapter') ?></h3>
 
         <ul class="nav">
         <?php foreach ($docMap as $row) : ?>
