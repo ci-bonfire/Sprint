@@ -500,7 +500,7 @@ class CIDbModel
         if ($data !== FALSE) {
             $data = $this->trigger('before_insert', $data);
 
-            $this->db->insert($this->table_name, $this->prep_data($data) );
+            $this->db->insert($this->table_name, $data );
 
             if ($this->return_insert_id) {
                 $id = $this->db->insert_id();
@@ -576,7 +576,7 @@ class CIDbModel
         }
 
         if ($data !== FALSE) {
-            $this->db->replace($this->table_name, $this->prep_data($data));
+            $this->db->replace($this->table_name, $data);
 
             if ($this->return_insert_id) {
                 $id = $this->db->insert_id();
@@ -616,7 +616,7 @@ class CIDbModel
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
             $this->db->where($this->primary_key, $id);
-            $this->db->set( $this->prep_data($data) );
+            $this->db->set( $data );
             $result = $this->db->update($this->table_name);
 
             $this->trigger('after_update', ['id' => $id, 'fields' => $data, 'result'=>$result, 'method' => 'update']);
@@ -743,7 +743,7 @@ class CIDbModel
 
         // Will be false if it didn't validate.
         if ($this->validate($data) !== FALSE) {
-            $this->db->set( $this->prep_data($data) );
+            $this->db->set( $data );
             $result = $this->db->update($this->table_name);
 
             $this->trigger('after_update', array($data, $result));
@@ -775,7 +775,7 @@ class CIDbModel
 
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
-            $this->db->set( $this->prep_data($data) );
+            $this->db->set( $data );
             $result = $this->db->update($this->table_name);
 
             $this->trigger('after_update', array($data, $result));
