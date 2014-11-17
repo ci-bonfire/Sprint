@@ -46,10 +46,10 @@ class User_model extends \Myth\Models\CIDbModel {
     ];
 
     protected $insert_validate_rules = [
-        'email'         => 'required|is_unique[users.email]',
-        'username'      => 'required|is_unique[users.username]',
-        'password'      => 'required',
-        'pass_confirm'  => 'required'
+        'email'        => 'required|is_unique[users.email]',
+        'username'     => 'required|is_unique[users.username]',
+        'password'     => 'required',
+        'pass_confirm' => 'required'
     ];
 
     protected $before_insert = ['hashPassword'];
@@ -87,14 +87,12 @@ class User_model extends \Myth\Models\CIDbModel {
 
     //--------------------------------------------------------------------
 
-
-
     /**
      * If exists, will take our password out of the data array, and
      * create a new hash for it, which is inserted back into the
      * data array to be saved to the database.
      *
-     * @param $data
+     * @param array $data
      */
     protected function hashPassword($data)
     {
@@ -116,19 +114,17 @@ class User_model extends \Myth\Models\CIDbModel {
      *
      * NOTE: Will only work for insert and update methods.
      *
-     * @param $data
+     * @param array $data
      * @return mixed
      */
     public function updateMeta($data)
     {
-
         // If no 'id' is in the $data array, then
         // we don't have successful insert, get out of here
         if (empty($data['id']) || ($data['method'] != 'insert' && $data['method'] != 'update'))
         {
             return $data;
         }
-
 
         // Collect any meta fields
         foreach ($data['fields'] as $key => $value)
@@ -140,16 +136,17 @@ class User_model extends \Myth\Models\CIDbModel {
                 $query = $this->db->get('user_meta');
 
                 $obj = [
-                    'user_id'       => $data['id'],
-                    'meta_key'      => $key,
-                    'meta_value'    => $value
+                    'user_id'    => $data['id'],
+                    'meta_key'   => $key,
+                    'meta_value' => $value
                 ];
 
                 if ($query->num_rows() == 0)
                 {
                     $this->db->insert('user_meta', $obj);
                 }
-                else if ($query->num_rows() > 0) {
+                else if ($query->num_rows() > 0)
+                {
                     $this->db->where('user_id', $data['id'])
                              ->where('meta_key', $key)
                              ->set('meta_value', $value)

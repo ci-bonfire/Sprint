@@ -20,11 +20,10 @@ interface AuthenticateInterface {
      * $credentials is an array of key/value pairs needed to log the user in.
      * This is often email/password, or username/password.
      *
-     * @param array $credentials
-     * @param bool  $remember
-     * @param null  $redirect
+     * @param $credentials
+     * @param bool $remember
      */
-    public function login($credentials, $remember=false, $redirect=null);
+    public function login($credentials, $remember=false);
 
     //--------------------------------------------------------------------
 
@@ -34,10 +33,11 @@ interface AuthenticateInterface {
      * $credentials is an array of key/value pairs needed to log the user in.
      * This is often email/password, or username/password.
      *
-     * @param array $credentials
+     * @param $credentials
+     * @param bool $return_user
      * @return mixed
      */
-    public function validate($credentials);
+    public function validate($credentials, $return_user=false);
 
     //--------------------------------------------------------------------
 
@@ -102,7 +102,7 @@ interface AuthenticateInterface {
     /**
      * Grabs the current user object. Returns NULL if nothing found.
      *
-     * @return object|null
+     * @return array|null
      */
     public function user();
 
@@ -121,10 +121,10 @@ interface AuthenticateInterface {
      * Tells the system to start throttling a user. This may vary by implementation,
      * but will often add additional time before another login is allowed.
      *
-     * @param $userId
+     * @param $email
      * @return mixed
      */
-    public function isThrottled($userId);
+    public function isThrottled($email);
 
     //--------------------------------------------------------------------
 
@@ -143,6 +143,8 @@ interface AuthenticateInterface {
      * Validates the credentials provided and, if valid, resets the password.
      *
      * @param $credentials
+     * @param $password
+     * @param $passConfirm
      * @return mixed
      */
     public function resetPassword($credentials, $password, $passConfirm);
