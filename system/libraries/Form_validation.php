@@ -1120,10 +1120,6 @@ class CI_Form_validation {
 	{
 		sscanf($field, '%[^.].%[^.]', $table, $field);
 
-        var_dump($field);
-        var_dump($str);
-        var_dump(isset($this->CI->db));
-
 		return isset($this->CI->db)
 			? ($this->CI->db->limit(1)->get_where($table, array($field => $str))->num_rows() === 0)
 			: FALSE;
