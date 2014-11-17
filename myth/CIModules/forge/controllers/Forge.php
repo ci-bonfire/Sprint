@@ -86,8 +86,10 @@ class Forge extends \Myth\Controllers\CLIController {
      * The primary method that calls the correct generator and
      * makes it run.
      */
-    public function run($command, $quiet=null)
+    public function run($command)
     {
+	    $quiet = false;
+
 	    $segments = explode(" ", $command);
 
 	    // Get rid of the 'forge' command
@@ -114,7 +116,7 @@ class Forge extends \Myth\Controllers\CLIController {
 	    }
 
 	    // Should we run the process quietly?
-	    if ( (CLI::option('q') || CLI::option('quiet')) && $quiet !== false)
+	    if ( (CLI::option('q') || CLI::option('quiet')))
 	    {
 		    $quiet = true;
 	    }

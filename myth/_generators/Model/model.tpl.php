@@ -7,15 +7,15 @@
 $log_user_string            = isset($log_user) && $log_user ? 'true' : 'false';
 $set_created_string         = isset($set_created) && $set_created ? 'true' : 'false';
 $set_modified_string        = isset($set_modified) && $set_modified ? 'true' : 'false';
-$use_soft_deletes_string    = isset($use_soft_deletes) && $use_soft_deletes ? 'true' : 'false';
+$use_soft_deletes_string    = isset($soft_delete) && $soft_delete ? 'true' : 'false';
 $return_insert_id_string    = isset($return_insert_id) && $return_insert_id ? 'true' : 'false';
 
 //--------------------------------------------------------------------
 // Build our Fields
 //--------------------------------------------------------------------
 
-$fields = "protected \$table_name = '{$table_name}';
-	protected \$primary_key = '{$primary_key}';
+$fields = "protected \$table_name      = '{$table_name}';
+	protected \$primary_key     = '{$primary_key}';
 
 	/* Auto-Date support */
 	protected \$set_created     = {$set_created_string};
@@ -29,10 +29,10 @@ $fields = "protected \$table_name = '{$table_name}';
 	protected \$soft_delete_key = '{$soft_delete_key}';
 
 	/* User Logging */
-	protected \$log_user = FALSE;
-	protected \$created_by_field = 'created_by';
-	protected \$modified_by_field = 'modified_by';
-	protected \$deleted_by_field = 'deleted_by';
+	protected \$log_user            = FALSE;
+	protected \$created_by_field    = 'created_by';
+	protected \$modified_by_field   = 'modified_by';
+	protected \$deleted_by_field    = 'deleted_by';
 ";
 
 $protect = "'". implode("', '", $protected) . "'";
@@ -88,21 +88,12 @@ class {$model_name} extends CIDbModel {
 	protected \$return_insert_id = true;
 
 	/**
-	 * @var Array Metadata for the model's database fields
+	 * @var Array List of fields in the table.
 	 *
 	 * This can be set to avoid a database call if using \$this->prep_data()
 	 * and/or \$this->get_field_info().
 	 *
-	 * @see http://ellislab.com/codeigniter/user-guide/database/fields.html
-	 *
-	 * Each field's definition should be as follows:
-	 *  array(
-	 *      'name'            => \$field_name,
-	 *      'type'            => \$field_data_type,
-	 *      'default'         => \$field_default_value,
-	 *      'max_length'      => \$field_max_length,
-     *      'primary_key'     => (1 if the column is a primary key),
-	 *  ),
+	 * Should be in the format: ['field1', 'field2', ...]
 	 */
 	protected \$field_info = [];
 
@@ -110,11 +101,11 @@ class {$model_name} extends CIDbModel {
 	 * An array of validation rules. This needs to be the same format
 	 * as validation rules passed to the Form_validation library.
 	 */
-	protected \$validation_rules = [];
+	protected \$validation_rules = {$rules};
 
 	/**
 	 * An array of extra rules to add to validation rules during inserts only.
-	 * Often used for adding 'required' rules to fields on insert, but not udpates.
+	 * Often used for adding 'required' rules to fields on insert, but not updates.
 	 *
 	 *   array( 'username' => 'required|strip_tags' );
 	 * @var array
