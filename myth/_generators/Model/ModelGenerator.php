@@ -28,7 +28,6 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 
 	public function run( $segments = [ ], $quiet = false )
 	{
-		die(print_r($segments));
 		$name = array_shift( $segments );
 
 		$this->options['table_name'] = array_shift( $segments );
