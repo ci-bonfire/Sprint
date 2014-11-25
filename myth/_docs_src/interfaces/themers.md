@@ -1,6 +1,6 @@
 # ThemerInterface
 
-You can incorporate third part theme engines into the system very easily by extending `Myth\Interfaces\ThemerInterface` and filling in the required methods. This should allows you to fairly easily incorporate [Plates](http://platesphp.com/), [Twig](http://twig.sensiolabs.org/) or the template engine of your choice, and not have to change much, if anything, in your controllers. Views might still need some tweaking to work with the new system. 
+You can incorporate third part theme engines into the system very easily by extending `Myth\Themers\ThemerInterface` and filling in the required methods. This should allows you to fairly easily incorporate [Plates](http://platesphp.com/), [Twig](http://twig.sensiolabs.org/) or the template engine of your choice, and not have to change much, if anything, in your controllers. Views might still need some tweaking to work with the new system. 
 
 In order to get up to speed as fast as possible, you should examine `myth/Controllers/ThemedController.php` and `myth/Themers/ViewThemer.php`. This will show you how the pieces fit together. This guide simply provides details about the interface and the role of each method.
 
