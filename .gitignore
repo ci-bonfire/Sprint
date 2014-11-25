@@ -3,6 +3,7 @@
 
 # IDE Files
 .idea/*
+*.sublime-workspace
 *.sublime-project
 
 # Development Settings
