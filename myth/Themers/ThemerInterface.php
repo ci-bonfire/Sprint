@@ -16,7 +16,7 @@
 
 // ------------------------------------------------------------------------
 
-namespace Myth\Interfaces;
+namespace Myth\Themers;
 
 /**
  * ThemerInterface

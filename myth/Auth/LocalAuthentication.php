@@ -2,7 +2,7 @@
 
 namespace Myth\Auth;
 
-use Myth\Interfaces\AuthenticateInterface;
+use Myth\Auth\AuthenticateInterface;
 use Myth\Route;
 use Myth\Events as Events;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Myth\Interfaces;
+namespace Myth\Docs;
 
 /**
  * Provides the required structure for a Settings

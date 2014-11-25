@@ -19,7 +19,7 @@ namespace Myth\Docs;
  * @filesource
  */
 
-use Myth\Interfaces\DocBuilderInterface;
+use Myth\Docs\DocBuilderInterface;
 
 /**
  * Class DocBuilder

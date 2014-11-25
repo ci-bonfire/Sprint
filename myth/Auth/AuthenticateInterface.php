@@ -1,6 +1,6 @@
 <?php
 
-namespace Myth\Interfaces;
+namespace Myth\Auth;
 
 /**
  * Class AuthenticateInterface

@@ -5,7 +5,7 @@
  * Date: 9/21/14
  * Time: 11:31 PM
  */
-namespace Myth\Interfaces;
+namespace Myth\Docs;
 
 
 /**

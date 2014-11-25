@@ -2,7 +2,7 @@
 
 namespace Myth\Settings;
 
-use Myth\Interfaces\SettingsStoreInterface;
+use Myth\Docs\SettingsStoreInterface;
 
 class DatabaseStore implements SettingsStoreInterface {
 

@@ -3,7 +3,7 @@
 namespace Myth\Themers;
 
 use Myth\Modules as Modules;
-use Myth\Interfaces\ThemerInterface;
+use Myth\Themers\ThemerInterface;
 
 class ViewThemer implements ThemerInterface
 {
