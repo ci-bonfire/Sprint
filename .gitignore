@@ -1,5 +1,9 @@
+# Mac Stuff
 .DS_Store
+
+# IDE Files
 .idea/*
+*.sublime-project
 
 # Development Settings
 application/config/development/*
