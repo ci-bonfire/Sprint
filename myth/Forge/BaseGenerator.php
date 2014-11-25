@@ -38,11 +38,14 @@ abstract class BaseGenerator extends CLIController {
      * The method called by the main generator script. This must be
      * overridden by child classes to implement the actual logic used.
      *
+     * todo Return a 'Done' when the generator has ran
+     * todo Spit out running script of actions ('Invoked ControllerGenerator', 'created /path/to/file.php')
+     *
      * @param array $segments
      * @param bool  $quiet      If true, models should accept default values.
      * @return mixed
      */
-    abstract function run($segments=[], $quiet=false);
+    abstract function run($segments=[]);
 
     //--------------------------------------------------------------------
 
