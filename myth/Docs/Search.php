@@ -2,7 +2,7 @@
 
 namespace Myth\Docs;
 
-use Myth\Interfaces\DocSearchInterface;
+use Myth\Docs\DocSearchInterface;
 
 /**
  * Class docSearch
