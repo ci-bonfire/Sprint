@@ -12,6 +12,8 @@
 
 /**
  * Modified to work with CodeIgniter by Lonnie Ezell.
+ * And provided additional features and tools, like the progress bar
+ * and different option handling.
  */
 
 namespace Myth;
@@ -35,6 +37,8 @@ class CLI {
     public static $segments = [];
 
 	protected static $options = [];
+
+	protected static $initialized = false;
 
     // Used by progress bar
     protected static $inProgress = false;
@@ -77,6 +81,11 @@ class CLI {
      */
     public static function _init()
     {
+	    if (static::$initialized == true)
+	    {
+		    return;
+	    }
+
         if ( ! (PHP_SAPI === 'cli' || defined('STDIN')) )
         {
             throw new \Exception('Cli class cannot be used outside of the command line.');
@@ -87,6 +96,8 @@ class CLI {
         // Readline is an extension for PHP that makes interactive with PHP much more bash-like
         // http://www.php.net/manual/en/readline.installation.php
         static::$readline_support = extension_loaded('readline');
+
+	    static::$initialized = true;
     }
 
     //--------------------------------------------------------------------
@@ -530,9 +541,9 @@ class CLI {
 	 */
 	public static function option($name)
 	{
-	    if (isset(static::$options[$name]))
+	    if (array_key_exists($name, self::$options))
 	    {
-		    return static::$options[$name];
+		    return self::$options[$name];
 	    }
 
 		return null;
@@ -547,10 +558,41 @@ class CLI {
 	 */
 	public static function getOptions()
 	{
-	    return static::$options;
+	    return self::$options;
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Returns the options as a string, suitable for passing along on
+	 * the CLI to other commands.
+	 */
+	public static function optionString()
+	{
+		if (! count(static::$options))
+		{
+			return '';
+		}
+
+		$out = '';
+
+		foreach (static::$options as $name => $value)
+		{
+			// If there's a space, we need to group
+			// so it will pass correctly.
+			if (strpos($value, ' ') !== false)
+			{
+				$value = '"'. $value .'"';
+			}
+			$out .= "-{$name} $value ";
+		}
+
+		return $out;
+	}
+
+	//--------------------------------------------------------------------
+
+
 
 	/**
 	 * Takes a string and writes it to the command line, wrapping to a maximum
@@ -622,7 +664,7 @@ class CLI {
 			// then add it to our segments.
 			if (! $options_found && strpos($_SERVER['argv'][$i], '-') === false)
 			{
-				static::$segments[] = $_SERVER['argv'][$i];
+				self::$segments[] = $_SERVER['argv'][$i];
 				continue;
 			}
 
@@ -643,10 +685,12 @@ class CLI {
 				$i++;
 			}
 
-			static::$options[$arg] = $value;
+			self::$options[$arg] = $value;
 		}
 	}
 
 	//--------------------------------------------------------------------
 
 }
+
+CLI::_init();
