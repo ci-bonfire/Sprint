@@ -1,7 +1,7 @@
 <?php
 
 namespace Myth\Controllers;
-use Myth\CLI;
+use Myth\CLI as CLI;
 
 /**
  * Class CLIInterface
@@ -44,8 +44,7 @@ class CLIController extends \CI_Controller {
         }
 
         // Make sure the CLI library is loaded and ready.
-        $cli = new CLI();
-        $cli::_init();
+//        CLI::_init();
     }
 
     //--------------------------------------------------------------------

@@ -1,6 +1,6 @@
 <?php
 
-use Myth\CLI;
+use Myth\CLI as CLI;
 
 class Forge extends \Myth\Controllers\CLIController {
 

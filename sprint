@@ -5,7 +5,7 @@ include 'vendor/autoload.php';
 
 use Myth\CLI as CLI;
 
-CLI::_init();
+//CLI::_init();
 
 $status = 0;
 $extra = '';
@@ -87,6 +87,7 @@ if ( array_key_exists('v', $options) || array_key_exists('version', $options) )
 //--------------------------------------------------------------------
 //
 
+
 if (! $command)
 {
 	CLI::new_line();
@@ -94,7 +95,9 @@ if (! $command)
 	CLI::new_line();
 }
 else {
-	passthru( "php {$fcpath} {$command} ", $status );
+	$options = CLI::optionString();
+
+	passthru( "php {$fcpath} {$command} {$options}", $status );
 }
 
 exit($status);
