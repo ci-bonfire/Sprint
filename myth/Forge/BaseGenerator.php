@@ -70,6 +70,16 @@ abstract class BaseGenerator extends CLIController {
 	        unlink($path);
         }
 
+	    // Do we need to create the directory?
+	    $segments = explode('/', $path);
+		array_pop($segments);
+		$folder = implode('/', $segments);
+
+	    if (! is_dir($folder))
+	    {
+		    $this->createDirectory($folder);
+	    }
+
         get_instance()->load->helper('file');
 
         if (! write_file($path, $contents))

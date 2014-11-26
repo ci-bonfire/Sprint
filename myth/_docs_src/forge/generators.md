@@ -31,3 +31,14 @@ Creates a simple controller that extends `Myth\Controllers\BaseController` and p
 	$ php sprint forge controller
 
 This command has very few options that are asked of you, just a model name to autoload, and whether you want to use templating in this controller. If you provide a model name, it assumes that you want to use templating for standard CRUD operations and fills in the CRUD methods with code to handle basic display, creation, etc. This does NOT create the views needed for display, it simply fills in the controller methods.
+
+## View
+Creates a simple view in `APPPATH .'views'` that contains a single string as a placholder. 
+
+	$php sprint forge view test
+	// Creates: APPPATH/views/test.php
+
+You can pass in subfolders with the name and they will be created automatically.
+
+	$ php sprint forge view tests/test
+	// Creates: APPPATH/views/tests/test.php
