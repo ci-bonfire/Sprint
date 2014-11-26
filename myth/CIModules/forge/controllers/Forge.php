@@ -121,6 +121,8 @@ class Forge extends \Myth\Controllers\CLIController {
 		    $quiet = true;
 	    }
 
+	    CLI::write('Invoked '. CLI::color($class_name, 'yellow'));
+
 		$class = new $class_name();
 
 	    $class->run( $segments, $quiet );
@@ -173,7 +175,7 @@ class Forge extends \Myth\Controllers\CLIController {
 
     /**
      * Overrides CLIController's version to support searching our
-     * collections for the help desription.
+     * collections for the help description.
      *
      * @param null $method
      */
