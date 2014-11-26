@@ -42,3 +42,10 @@ You can pass in subfolders with the name and they will be created automatically.
 
 	$ php sprint forge view tests/test
 	// Creates: APPPATH/views/tests/test.php
+
+## Seed
+Creates an empty [Seeder](database/seeding) ready for your use.
+
+	$ php sprint forge seed user
+	// Creates APPPATH/database/seeds/UserSeeder.php
+
