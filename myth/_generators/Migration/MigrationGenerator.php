@@ -16,8 +16,6 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 	// The field name to be used as a primary key
 	protected $primary_key  = null;
 
-	protected $use_exist_table = false;
-
 	protected $defaultSizes = [
 		'tinyint'   => 1,
 		'int'       => 9,
@@ -161,9 +159,9 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 		$options = CLI::getOptions();
 
 		// Use existing db table?
-		if (! empty($options['dbtable']) )
+		if (array_key_exists('fromdb', $options) )
 		{
-			$this->readTable($options['dbtable']);
+			$this->readTable($this->table);
 		}
 		// Otherwise try to use any fields from the CLI
 		else
@@ -254,6 +252,69 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 		}
 
 		return $fields;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Reads the fields from an existing table and fills out our
+	 * $fields array and $primary key information.
+	 *
+	 * @param $table
+	 */
+	protected function readTable($table)
+	{
+		// Database loaded?
+		if (empty($this->db))
+		{
+			$this->load->database();
+		}
+
+		// Table exists?
+		if (! $this->db->table_exists($table))
+		{
+			return false;
+		}
+
+		$fields = $this->db->field_data($table);
+
+		// Any fields?
+		if (! is_array($fields) || ! count($fields))
+		{
+			return false;
+		}
+
+		$new_fields = [];
+
+		foreach ($fields as $field)
+		{
+			$f = [ 'type' => $field->type ];
+
+			// Constraint
+			if (! empty($field->max_length))
+			{
+				$f['constraint'] = $field->max_length;
+			}
+			else if (array_key_exists($field->type, $this->defaultSizes))
+			{
+				$f['constraint'] = $this->defaultSizes[ $field->type ];
+			}
+
+			// Default
+			if (! empty($field->default)) $f['default'] = $field->default;
+
+			// Primary Key?
+			if (! empty($field->primary_key) && $field->primary_key == 1)
+			{
+				$this->primary_key = $field->name;
+				$f['auto_increment'] = true;
+				$f['unsigned'] = true;
+			}
+
+			$new_fields[ $field->name ] = $f;
+		}
+
+		$this->fields = $new_fields;
 	}
 
 	//--------------------------------------------------------------------

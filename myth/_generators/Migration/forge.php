@@ -30,7 +30,7 @@ DESCRIPTION
 OPTIONS
 	-fields     A quoted string with the names and types of fields to use when creating a table.
 
-	-dbtable    If present, will override -fields values and attempt to pull the values from an existing database table.
+	-fromdb     If present, will override -fields values and attempt to pull the values from an existing database table. This has no value, the table is discovered from the migration name.
 
 
 EOT;

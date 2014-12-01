@@ -679,7 +679,7 @@ class CLI {
 			$value = null;
 
 			// If the next item starts with a dash it's a value
-			if (substr($_SERVER['argv'][$i + 1], 0, 1) != '-' )
+			if (isset($_SERVER['argv'][$i + 1]) && substr($_SERVER['argv'][$i + 1], 0, 1) != '-' )
 			{
 				$value = $_SERVER['argv'][$i + 1];
 				$i++;
