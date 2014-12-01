@@ -394,4 +394,62 @@ abstract class BaseGenerator extends CLIController {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Converts an array to a string representation.
+	 *
+	 * todo Allow digits to be cast as INTS
+	 *
+	 * @param $array
+	 */
+	protected function stringify($array, $depth=0)
+	{
+		if (! is_array($array))
+		{
+			return '';
+		}
+
+
+
+		$str = '';
+
+		if ($depth > 1)
+		{
+			$str .= str_repeat("\t", $depth);
+		}
+
+		$depth++;
+
+		$str .= "[\n";
+
+		foreach ($array as $key => $value)
+		{
+			$str .= str_repeat("\t", $depth +1);
+
+			if (! is_numeric($key))
+			{
+				$str .= "'{$key}' => ";
+			}
+
+			if (is_array($value))
+			{
+				$str .= $this->stringify($value, $depth);
+			}
+			else if (is_bool($value))
+			{
+				$b = $value === true ? 'true' : 'false';
+				$str .= "{$b},\n";
+			}
+			else
+			{
+				$str .= "'{$value}',\n";
+			}
+		}
+
+		$str .= str_repeat("\t", $depth) ."],";
+
+		return $str;
+	}
+
+	//--------------------------------------------------------------------
 }
