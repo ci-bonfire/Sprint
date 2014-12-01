@@ -32,10 +32,24 @@ if ($action == 'create')
 /*
  * Add
  */
+if ($action == 'add' && ! empty($column))
+{
+	$up = "\$field = {$column_string};
+		\$this->dbforge->add_column('{$table}', \$field);";
+
+	$down = "\$this->dbforge->drop_column('{$table}', '{$column}');";
+}
 
 /*
  * Remove
  */
+if ($action == 'remove' && ! empty($column))
+{
+	$up = "\$this->dbforge->drop_column('{$table}', '{$column}');";
+
+	$down = "\$field = {$column_string};
+		\$this->dbforge->add_column('{$table}', \$field);";
+}
 
 //--------------------------------------------------------------------
 // The Template

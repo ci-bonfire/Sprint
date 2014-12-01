@@ -10,6 +10,9 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 	// The table we're using, if any
 	protected $table = null;
 
+	// The column we're using, if any
+	protected $column = null;
+
 	// The fields to create for making new tables.
 	protected $fields = [];
 
@@ -87,10 +90,17 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 			'clean_name'        => ucwords(str_replace('_', ' ', $name)),
 			'today'             => date( 'Y-m-d H:ia' ),
 			'fields'            => trim( $this->stringify( $this->fields ), ', '),
+			'raw_fields'        => $this->fields,
 			'action'            => $this->action,
 			'table'             => $this->table,
-			'primary_key'       => $this->primary_key
+			'primary_key'       => $this->primary_key,
+			'column'            => $this->column
 		];
+
+		if (! empty($this->column) && array_key_exists($this->column, $this->fields))
+		{
+			$data['column_string'] = trim( $this->stringify($this->fields[$this->column]), ', ');
+		}
 
 		$this->load->library('migration');
 
@@ -142,14 +152,18 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 		$this->action = $action;
 
 		// Are we referencing a table?
-		if (! $index = array_search('table', $segments))
+		if ($index = array_search('table', $segments))
 		{
-			return;
+			// The name of the table is assumed to be the one
+			// prior to the $index found.
+			$this->table = $segments[$index - 1];
 		}
 
-		// The name of the table is assumed to be the one
-		// prior to the $index found.
-		$this->table = $segments[$index - 1];
+		// Are we referencing a column?
+		if ($index = array_search('column', $segments))
+		{
+			$this->column = $segments[$index - 1];
+		}
 	}
 
 	//--------------------------------------------------------------------

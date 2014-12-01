@@ -16,6 +16,19 @@ DESCRIPTION
 	The system scans <name> for common words to help describe the action the migration should take, like creating a table,
 	adding a column, or dropping a table or column.
 
+	The migration name will must have words separated by underscores (_) as per the CodeIgniter requirements. This also allows the
+	generator to attempt to determine the correct action that should be taken, like creating a table, or adding/dropping a column.
+	When a table name is specified it must be followed by '_table'. When a column name is specified, it must be followed by '_column'.
+
+	Example migration names:
+		create_user_table               // Creates a new table called 'user'
+		make_role_table                 // Creates a new table called 'role'
+		add_name_column_to_log_table    // Adds a new column called 'name' to the 'log' table
+		insert_age_column_log_table     // Adds a new column called 'age' to the 'log' table
+		remove_age_column_from_log_table // Removes the 'age' column from the 'log' table
+		drop_age_column_log_table       // Removes the 'age' column from the 'log' table
+		delete_age_column_log_table     // Removes the 'age' column from the 'log' table
+
 	Fields must adhere to the following rule when being passed in via the -fields option:
 		- Each field is described with column_name:field_type
 		- A third segment can be present that determines the field length, joined with a colon.
