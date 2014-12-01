@@ -1,6 +1,15 @@
 <?php
 
 //--------------------------------------------------------------------
+// AUTHENTICATION FIELDS
+//--------------------------------------------------------------------
+// The names of the fields in the user table that is allowed to
+// test credentials against. This is, by default, only 'email' and
+// 'username'
+//
+	$config['auth.valid_fields'] = ['email', 'username'];
+
+//--------------------------------------------------------------------
 // PERSISTENT LOGINS
 //--------------------------------------------------------------------
 

@@ -121,6 +121,20 @@ class LocalAuthentication implements AuthenticateInterface {
         $password = $credentials['password'];
         unset($credentials['password']);
 
+	    // We should only be allowed 1 single other credential to
+	    // test against.
+	    if (count($credentials) > 1)
+	    {
+		    $this->error = lang('auth.too_many_credentials');
+		    return false;
+	    }
+
+	    if (! in_array(key($credentials), config_item('auth.valid_fields')) )
+	    {
+		    $this->error = lang('auth.invalid_credentials');
+		    return false;
+	    }
+
         // Can we find a user with those credentials?
         $user = $this->user_model->as_array()
                                  ->where($credentials)

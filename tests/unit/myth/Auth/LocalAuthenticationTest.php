@@ -114,6 +114,20 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+	public function testValidateReturnsFalseWithInvalidField()
+	{
+		$data = [
+			'display_name' => 'darth@theempire.com',
+			'password' => 'father'
+		];
+
+		$result = $this->auth->validate($data);
+
+		$this->assertFalse($result);
+	}
+
+	//--------------------------------------------------------------------
+
     //--------------------------------------------------------------------
     // Login
     //--------------------------------------------------------------------
