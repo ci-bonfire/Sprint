@@ -1,6 +1,7 @@
 <?php namespace Myth\Forge;
 
 use Myth\Controllers\CLIController;
+use Myth\CLI;
 
 /**
  * Class BaseGenerator
@@ -60,8 +61,10 @@ abstract class BaseGenerator extends CLIController {
      */
     public function createFile($path, $contents=null, $overwrite=false, $perms=0644)
     {
+	    $file_exists = is_file($path);
+
         // Does file already exist?
-        if (is_file($path))
+        if ($file_exists)
         {
 	        if (! $overwrite) {
 		        throw new \RuntimeException( 'Cannot createFile. File already exists: ' . $path );
@@ -88,6 +91,15 @@ abstract class BaseGenerator extends CLIController {
         }
 
         chmod($path, $perms);
+
+	    if ($overwrite && $file_exists)
+	    {
+		    CLI::write( CLI::color("\toverwrote ", 'orange') . str_replace(APPPATH, '', $path ) );
+	    }
+	    else
+	    {
+		    CLI::write( CLI::color("\tcreated ", 'yellow') . str_replace(APPPATH, '', $path ) );
+	    }
 
         return $this;
     }
@@ -130,7 +142,9 @@ abstract class BaseGenerator extends CLIController {
      */
     public function copyFile($source, $destination, $overwrite=false)
     {
+	    $content = file_get_contents($source);
 
+	    return $this->createFile($destination, $content, $overwrite);
     }
 
     //--------------------------------------------------------------------
