@@ -398,9 +398,9 @@ abstract class BaseGenerator extends CLIController {
 	/**
 	 * Converts an array to a string representation.
 	 *
-	 * todo Allow digits to be cast as INTS
-	 *
 	 * @param $array
+	 *
+	 * @return string
 	 */
 	protected function stringify($array, $depth=0)
 	{
@@ -439,6 +439,10 @@ abstract class BaseGenerator extends CLIController {
 			{
 				$b = $value === true ? 'true' : 'false';
 				$str .= "{$b},\n";
+			}
+			else if (is_numeric($value))
+			{
+				$str .= "{$value},\n";
 			}
 			else
 			{
