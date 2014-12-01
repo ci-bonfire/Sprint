@@ -61,6 +61,8 @@ abstract class BaseGenerator extends CLIController {
      */
     public function createFile($path, $contents=null, $overwrite=false, $perms=0644)
     {
+	    $path = $this->sandbox($path);
+
 	    $file_exists = is_file($path);
 
         // Does file already exist?
@@ -116,6 +118,8 @@ abstract class BaseGenerator extends CLIController {
      */
     public function createDirectory($path, $perms=0755)
     {
+	    $path = $this->sandbox($path);
+
         if (is_dir($path))
         {
             return $this;
@@ -142,6 +146,13 @@ abstract class BaseGenerator extends CLIController {
      */
     public function copyFile($source, $destination, $overwrite=false)
     {
+	    $source = $this->sandbox($source);
+
+	    if (! file_exists($source))
+	    {
+		    return null;
+	    }
+
 	    $content = file_get_contents($source);
 
 	    return $this->createFile($destination, $content, $overwrite);
@@ -329,6 +340,43 @@ abstract class BaseGenerator extends CLIController {
     }
 
     //--------------------------------------------------------------------
+
+	/**
+	 * Forces a path to exist within the current application's folder.
+	 * This means it must be in APPPATH,  or FCPATH. If it's not
+	 * the path will be forced within the APPPATH, possibly creating a
+	 * ugly set of folders, but keeping the user from accidentally running
+	 * an evil generator that might have done bad things to their system.
+	 *
+	 * @param $path
+	 *
+	 * @return string
+	 */
+	public function sandbox($path)
+	{
+		// If it's writing to BASEPATH - FIX IT
+		if (strpos($path, BASEPATH) === 0)
+		{
+			return APPPATH . $path;
+		}
+
+		// Exact match for FCPATH?
+		if (strpos($path, FCPATH) === 0)
+		{
+			return $path;
+		}
+
+		// Exact match for APPPATH?
+		if (strpos($path, APPPATH) === 0)
+		{
+			return $path;
+		}
+
+	    return APPPATH . $path;
+	}
+
+	//--------------------------------------------------------------------
+
 
 
     //--------------------------------------------------------------------
