@@ -301,7 +301,7 @@ class Modules {
 	 */
 	public static function path( $module = NULL, $folder = NULL )
 	{
-		foreach ( self::$locations as $module_folder => $offset )
+		foreach ( self::$locations as $module_folder )
 		{
 			if ( is_dir( $module_folder . $module ) )
 			{
