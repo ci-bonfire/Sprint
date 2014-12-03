@@ -32,6 +32,8 @@ abstract class BaseGenerator extends CLIController {
 
 	protected $quiet = false;
 
+	protected $overwrite = false;
+
     //--------------------------------------------------------------------
 
     public function __construct()
@@ -53,6 +55,11 @@ abstract class BaseGenerator extends CLIController {
 		    }
 		}
 
+	    // Should we overwrite files?
+	    if (CLI::option('overwrite'))
+	    {
+		    $this->overwrite = true;
+	    }
     }
 
     //--------------------------------------------------------------------
@@ -91,7 +98,8 @@ abstract class BaseGenerator extends CLIController {
         if ($file_exists)
         {
 	        if (! $overwrite) {
-		        throw new \RuntimeException( 'Cannot createFile. File already exists: ' . $path );
+		        CLI::write( CLI::color("\texists: ", 'blue') . str_replace(APPPATH, '', $path ) );
+		        return true;
 	        }
 
 	        unlink($path);
@@ -284,6 +292,11 @@ abstract class BaseGenerator extends CLIController {
 	    if ($quiet === true)
 	    {
 		    $options .= ' -quiet';
+	    }
+
+	    if ($this->overwrite === true)
+	    {
+		    $options .= ' -overwrite';
 	    }
 
 	    passthru( "php sprint forge {$command} {$options}" );

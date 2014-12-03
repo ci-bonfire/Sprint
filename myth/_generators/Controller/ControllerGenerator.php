@@ -52,7 +52,7 @@ class ControllerGenerator extends \Myth\Forge\BaseGenerator {
 
 		$destination = $this->determineOutputPath( 'controllers' ) . $name . '.php';
 
-		if ( ! $this->copyTemplate( 'controller', $destination, $data, TRUE ) )
+		if ( ! $this->copyTemplate( 'controller', $destination, $data, $this->overwrite ) )
 		{
 			CLI::error( 'Error creating new files' );
 		}
@@ -146,19 +146,19 @@ class ControllerGenerator extends \Myth\Forge\BaseGenerator {
 
 		// Index
 		$destination = $this->determineOutputPath( 'views' . $subfolder ) . 'index.php';
-		$this->copyTemplate( 'view_index', $destination, $data, TRUE );
+		$this->copyTemplate( 'view_index', $destination, $data, $this->overwrite );
 
 		// Create
 		$destination = $this->determineOutputPath( 'views' . $subfolder ) . 'create.php';
-		$this->copyTemplate( 'view_create', $destination, $data, TRUE );
+		$this->copyTemplate( 'view_create', $destination, $data, $this->overwrite );
 
 		// Show
 		$destination = $this->determineOutputPath( 'views' . $subfolder ) . 'show.php';
-		$this->copyTemplate( 'view_show', $destination, $data, TRUE );
+		$this->copyTemplate( 'view_show', $destination, $data, $this->overwrite );
 
 		// Index
 		$destination = $this->determineOutputPath( 'views' . $subfolder ) . 'update.php';
-		$this->copyTemplate( 'view_update', $destination, $data, TRUE );
+		$this->copyTemplate( 'view_update', $destination, $data, $this->overwrite );
 	}
 
 	//--------------------------------------------------------------------

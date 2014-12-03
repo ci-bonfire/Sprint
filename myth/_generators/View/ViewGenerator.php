@@ -18,7 +18,7 @@ class ViewGenerator extends \Myth\Forge\BaseGenerator {
 
 		$destination = $this->determineOutputPath( 'views' ) . $name . '.php';
 
-		if (! $this->createFile($destination, "The {$name}.php view file.") )
+		if (! $this->createFile($destination, "The {$name}.php view file.", $this->overwrite) )
 		{
 			CLI::error('Error creating view file.');
 		}

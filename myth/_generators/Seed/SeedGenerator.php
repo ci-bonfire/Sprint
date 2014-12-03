@@ -33,7 +33,7 @@ class SeedGenerator extends \Myth\Forge\BaseGenerator {
 			$destination = str_replace('database/', '', $destination);
 		}
 
-		if (! $this->copyTemplate( 'seed', $destination, $data, true) )
+		if (! $this->copyTemplate( 'seed', $destination, $data, $this->overwrite) )
 		{
 			CLI::error('Error creating seed file.');
 		}

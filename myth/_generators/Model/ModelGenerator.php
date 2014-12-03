@@ -62,7 +62,7 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 
 		$destination = $this->determineOutputPath( 'models' ) . $name . '.php';
 
-		if ( ! $this->copyTemplate( 'model', $destination, $data, true ) )
+		if ( ! $this->copyTemplate( 'model', $destination, $data, $this->overwrite ) )
 		{
 			CLI::error( 'Error creating new files' );
 		}
