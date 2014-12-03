@@ -111,6 +111,9 @@ if (! empty($model))
 			\$this->setMessage('Error updating item. '. \$this->{$lower_model}->error(), 'error');
 		}
 
+		\$item = \$this->{$lower_model}->find(\$id);
+		\$this->setVar('item', \$item);
+
 \t\t
 EOD;
 }
@@ -123,17 +126,14 @@ $delete_method = '';
 if (! empty($model))
 {
 	$delete_method = <<<EOD
-if (\$this->input->method() == 'post')
+if (\$this->{$lower_model}->delete(\$id))
 		{
-			if (\$this->{$lower_model}->delete(\$id))
-			{
-				\$this->setMessage('Successfully deleted item.', 'success');
-				redirect( site_url('{$lower_controller}') );
-			}
-
-			\$this->setMessage('Error deleting item. '. \$this->{$lower_model}->error(), 'error');
+			\$this->setMessage('Successfully deleted item.', 'success');
+			redirect( site_url('{$lower_controller}') );
 		}
 
+		\$this->setMessage('Error deleting item. '. \$this->{$lower_model}->error(), 'error');
+		redirect( site_url('tweet') );
 \t\t
 EOD;
 }
@@ -149,7 +149,6 @@ if ($themed)
 	$create_method  .= "\$this->render();";
 	$show_method    .= "\$this->render();";
 	$update_method  .= "\$this->render();";
-	$delete_method  .= "\$this->render();";
 
 	$fields = "
 	/**

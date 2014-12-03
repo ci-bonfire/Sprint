@@ -362,7 +362,7 @@ class Bootstrap extends BaseUIKit {
      */
     public function buttonLink($title, $url='#', $style='default', $size='default', $options=[])
     {
-        $tag = "<a {classes} {id} {attributes} role='button'>{$title}</a>";
+        $tag = "<a href='{$url}' {classes} {id} {attributes} role='button'>{$title}</a>";
 
         return $this->renderButtonElement($title, $style, $size, $options, $tag);
     }
