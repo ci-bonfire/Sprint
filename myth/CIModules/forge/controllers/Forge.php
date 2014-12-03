@@ -74,6 +74,8 @@ class Forge extends \Myth\Controllers\CLIController {
                 $_descriptions = array_merge($descriptions, $_descriptions);
             }
 
+	        ksort($_descriptions);
+
             CLI::new_line();
             CLI::write(ucwords( str_replace('_', ' ', $alias)) .' Collection');
             $this->sayDescriptions($_descriptions);
