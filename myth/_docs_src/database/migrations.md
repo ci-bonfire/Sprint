@@ -43,6 +43,8 @@ The `{migration_name}` will be used as part of the filename. The  filename is pr
 
 This file will be created in the `app` migration folder be default. You can change by passing in the alias of the folder you want it created in after the migration name. You cannot have it automatically placed within a module's folder currently.
 
+The [Forge CLI command](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/generators.md) can build migrations from an existing database table if you prefer to get things working first, and write the migration later, or if you're porting an existing application.
+
 ### File Structure
 The file is a standard PHP class, that must follow three simple rules:
 
