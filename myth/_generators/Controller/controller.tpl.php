@@ -169,6 +169,12 @@ if ($themed)
      * @var string
      */
     protected \$uikit = '';
+
+    /**
+     * The number of rows to show when paginating results.
+     * @var int
+     */
+	protected \$limit = 25;
 ";
 }
 
@@ -204,7 +210,7 @@ class {$controller_name} extends {$base_class} {
     protected \$language_file   = {$lang_file};
 
     // If set, this model file will automatically be loaded.
-    protected \$model_file      = {$model_string};
+    protected \$model_file      = '{$lower_model}';
 
     {$fields}
 

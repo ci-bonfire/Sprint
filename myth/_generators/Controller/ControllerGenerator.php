@@ -45,6 +45,11 @@ class ControllerGenerator extends \Myth\Forge\BaseGenerator {
 
 		$data = array_merge( $data, $this->options );
 
+		if ($data['themed'] == 'y' || $data['themed'] == true)
+		{
+			$data['base_class'] = 'ThemedController';
+		}
+
 		$destination = $this->determineOutputPath( 'controllers' ) . $name . '.php';
 
 		if ( ! $this->copyTemplate( 'controller', $destination, $data, TRUE ) )

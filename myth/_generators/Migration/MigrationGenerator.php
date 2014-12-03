@@ -34,19 +34,15 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 		'bigint'    => 0,
 		'float'     => 0.0,
 		'double'    => 0.0,
-		'char'      => 'NULL',
-		'varchar'   => 'NULL',
-		'text'      => 'NULL',
-		'date'      => 'NULL',
-		'datetime'  => 'NULL'
+		'char'      => NULL,
+		'varchar'   => NULL,
+		'text'      => NULL,
 	];
 
 	protected $defaultNulls = [
 		'char'      => true,
 		'varchar'   => true,
 		'text'      => true,
-		'date'      => true,
-		'datetime'  => true
 	];
 
 	protected $map = [
@@ -158,9 +154,11 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 		// Are we referencing a table?
 		if ($index = array_search('table', $segments))
 		{
+			$this->load->helper('inflector');
+
 			// The name of the table is assumed to be the one
 			// prior to the $index found.
-			$this->table = $segments[$index - 1];
+			$this->table = plural( $segments[$index - 1] );
 		}
 
 		// Are we referencing a column?
