@@ -5,8 +5,6 @@ include 'vendor/autoload.php';
 
 use Myth\CLI as CLI;
 
-//CLI::_init();
-
 $status = 0;
 $extra = '';
 
