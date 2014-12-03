@@ -23,6 +23,15 @@ abstract class BaseGenerator extends CLIController {
 
     protected $gen_path = null;
 
+	/**
+	 * The name of the module being used, if any.
+	 * @var null
+	 */
+	protected $module = null;
+	protected $module_path = null;
+
+	protected $quiet = false;
+
     //--------------------------------------------------------------------
 
     public function __construct()
@@ -30,6 +39,20 @@ abstract class BaseGenerator extends CLIController {
         parent::__construct();
 
         $this->load->config('forge');
+
+	    // Detect if we're genning in a module
+	    if ($module = CLI::option('module'))
+	    {
+		    $this->module = $module;
+
+		    $folders = config_item('modules_locations');
+
+		    if (is_array($folders))
+		    {
+			    $this->module_path = $folders[0] . strtolower($module) .'/';
+		    }
+		}
+
     }
 
     //--------------------------------------------------------------------
@@ -40,13 +63,12 @@ abstract class BaseGenerator extends CLIController {
      * overridden by child classes to implement the actual logic used.
      *
      * todo Return a 'Done' when the generator has ran
-     * todo Spit out running script of actions ('Invoked ControllerGenerator', 'created /path/to/file.php')
      *
      * @param array $segments
      * @param bool  $quiet      If true, models should accept default values.
      * @return mixed
      */
-    abstract function run($segments=[]);
+    abstract function run($segments=[], $quiet=false);
 
     //--------------------------------------------------------------------
 
@@ -96,7 +118,7 @@ abstract class BaseGenerator extends CLIController {
 
 	    if ($overwrite && $file_exists)
 	    {
-		    CLI::write( CLI::color("\toverwrote ", 'orange') . str_replace(APPPATH, '', $path ) );
+		    CLI::write( CLI::color("\toverwrote ", 'light_red') . str_replace(APPPATH, '', $path ) );
 	    }
 	    else
 	    {
@@ -173,6 +195,11 @@ abstract class BaseGenerator extends CLIController {
      */
     public function copyTemplate($template, $destination, $data=[], $overwrite=false)
     {
+	    if (! is_array($data))
+	    {
+		    $data = array($data);
+	    }
+
         $content = $this->render($template, $data);
 
         return $this->createFile($destination, $content, $overwrite);
@@ -240,14 +267,26 @@ abstract class BaseGenerator extends CLIController {
     
     //--------------------------------------------------------------------
 
-    /**
-     * Runs another generator. The first parameter is the name of the
-     * generator to run. All remaining arguments will be passed directly
-     * to the generator.
-     */
-    public function generate()
+	/**
+	 * Runs another generator. The first parameter is the name of the
+	 * generator to run. The $options parameter is added to the existing
+	 * options passed to this command, and then they are passed along to
+	 * the next command.
+	 *
+	 * @param $command
+	 * @param null $options
+	 */
+    public function generate($command, $options = '', $quiet=false)
     {
+		$orig_options = CLI::optionString();
+	    $options = $orig_options .' '. $options;
 
+	    if ($quiet === true)
+	    {
+		    $options .= ' -quiet';
+	    }
+
+	    passthru( "php sprint forge {$command} {$options}" );
     }
 
     //--------------------------------------------------------------------
@@ -309,6 +348,8 @@ abstract class BaseGenerator extends CLIController {
             $this->setupThemer();
         }
 
+	    $data['uikit'] = $this->loadUIKit();
+
         $output = null;
 
 	    $view = $template_name .'.tpl';
@@ -335,6 +376,11 @@ abstract class BaseGenerator extends CLIController {
                 break;
             }
         }
+
+	    // To allow for including any PHP code in the templates,
+	    // replace any '@php' and '@=' tags with their correct PHP syntax.
+	    $output = str_replace('@php', '<?php', $output);
+	    $output = str_replace('@=', '<?=', $output);
 
         return $output;
     }
@@ -404,12 +450,31 @@ abstract class BaseGenerator extends CLIController {
 
     //--------------------------------------------------------------------
 
+	public function loadUIKit()
+	{
+		$kit_name = config_item('theme.uikit');
+
+		if (! $kit_name)
+		{
+			throw new \RuntimeException('No uikit chosen in application config file.');
+		}
+
+		$uikit = new $kit_name();
+
+	    return $uikit;
+	}
+
+	//--------------------------------------------------------------------
+
+
 	protected function determineOutputPath($folder='')
 	{
-		// todo check for global module name...
 		$path = APPPATH . $folder;
 
-		$this->gen_path = $path;
+		if (! empty($this->module_path))
+		{
+			$path = $this->module_path . $folder;
+		}
 
 		return rtrim($path, '/ ') .'/';
 	}
@@ -425,11 +490,6 @@ abstract class BaseGenerator extends CLIController {
 	 */
 	protected function locateGenerator($name)
 	{
-//		if (! empty($this->gen_path))
-//		{
-//			return $this->gen_path;
-//		}
-
 		$collections = config_item('forge.collections');
 
 		if (! is_array($collections) || ! count($collections) )

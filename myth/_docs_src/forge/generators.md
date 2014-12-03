@@ -32,6 +32,8 @@ Creates a simple controller that extends `Myth\Controllers\BaseController` and p
 
 This command has very few options that are asked of you, just a model name to autoload, and whether you want to use templating in this controller. If you provide a model name, it assumes that you want to use templating for standard CRUD operations and fills in the CRUD methods with code to handle basic display, creation, etc. This does NOT create the views needed for display, it simply fills in the controller methods.
 
+Note that you can pass the option `-create_views` to the command and it will create your view files for the standard CRUD options.
+
 ## View
 Creates a simple view in `APPPATH .'views'` that contains a single string as a placholder. 
 

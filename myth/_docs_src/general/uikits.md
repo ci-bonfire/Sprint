@@ -231,5 +231,14 @@ The first parameter is the content to go within the notice. The second parameter
 
 	<?= $uikit->notice('Item successfully updated.', 'success', true, $options); ?>
 
+## Forms
+UIKits don't provide code for every item in a form, only the most common uses. 
+
+### inputWrap()
+Creates the wrapping code around a form input element. This is intended for full-width controls. The first parameter is the text for the Label. The second parameter is the $options array. The third parameter is a closure to allow you to place your input in it. 
+
+	<?= $uikit->inputWrap('Email Address', $options, function() use($uikit) { ?>
+		<input type="text" name="email" placeholder="Email Address" />
+	<?php }); ?> 
 
 

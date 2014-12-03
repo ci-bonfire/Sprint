@@ -44,7 +44,7 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 		}
 		$name = ucfirst( $name );
 
-		if ( $quiet !== false )
+		if ( $quiet === false )
 		{
 			$this->collectOptions( $name );
 		}
@@ -159,7 +159,11 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 			$this->options['table_name'] = plural( strtolower( str_replace( '_model', '', $model_name ) ) );
 		}
 
+		// Try to set it from the database first,
+		// otherwise, try to pull from fields
 		$this->options['fields'] = $this->table_info( $this->options['table_name'] );
+
+
 
 		$this->options['primary_key'] = ! empty( $this->options['primary_key'] ) ? $this->options['primary_key'] : 'id';
 		$this->options['protected']   = [ $this->options['primary_key'] ];

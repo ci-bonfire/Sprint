@@ -24,9 +24,12 @@ $index_method = '';
 if (! empty($model) )
 {
 	$index_method = <<<EOD
-\$offset = \$this->uri->segment( \$this->uri->total_segments() );
+\$this->load->library('table');
+
+		\$offset = \$this->uri->segment( \$this->uri->total_segments() );
 
         \$rows = \$this->{$lower_model}->limit(\$this->limit, \$offset)
+	                 ->as_array()
 	                 ->find_all();
         \$this->setVar('rows', \$rows);
 
@@ -42,7 +45,10 @@ $create_method = '';
 if (! empty($model))
 {
 	$create_method = <<<EOD
-if (\$this->input->method() == 'post')
+\$this->load->helper('form');
+		\$this->load->helper('inflector');
+
+		if (\$this->input->method() == 'post')
 		{
 			\$post_data = \$this->{$lower_model}->prep_data( \$this->input->post() );
 
@@ -89,7 +95,10 @@ $update_method = '';
 if (! empty($model))
 {
 	$update_method = <<<EOD
-if (\$this->input->method() == 'post')
+\$this->load->helper('form');
+		\$this->load->helper('inflector');
+
+		if (\$this->input->method() == 'post')
 		{
 			\$post_data = \$this->{$lower_model}->prep_data( \$this->input->post() );
 

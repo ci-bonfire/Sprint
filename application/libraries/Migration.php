@@ -455,13 +455,15 @@ class CI_Migration {
     //--------------------------------------------------------------------
 
 
-    /**
-     * Based on the 'type', determines the correct migration path.
-     *
-     * @param $type
-     * @return null|string
-     */
-    public function determine_migration_path($type)
+	/**
+	 * Based on the 'type', determines the correct migration path.
+	 *
+	 * @param $type
+	 * @param bool $create
+	 *
+	 * @return null|string
+	 */
+    public function determine_migration_path($type, $create=false)
     {
         $type = strtolower($type);
 
@@ -471,6 +473,18 @@ class CI_Migration {
             $module = str_replace('mod:', '', $type);
 
             $path = \Myth\Modules::path($module, 'migrations');
+
+	        // Should we return a 'created' module?
+	        // Use the first module path.
+	        if (empty($path) && $create === true)
+	        {
+				$folders = config_item('modules_locations');
+
+		        if (is_array($folders) && count($folders))
+		        {
+			        $path = $folders[0] . $module .'/migrations';
+		        }
+	        }
 
             return rtrim($path, '/') .'/';
         }

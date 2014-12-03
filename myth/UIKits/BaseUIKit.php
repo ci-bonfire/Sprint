@@ -233,6 +233,23 @@ abstract class BaseUIKit {
      */
     abstract public function notice($content, $style='success', $closable=true);
 
+	//--------------------------------------------------------------------
+	// Forms
+	//--------------------------------------------------------------------
+
+	/**
+	 * Creates the wrapping code around a form input. Will generate the
+	 * label for you, but you will still need to supply the input itself
+	 * since those are fairly standard HTML.
+	 *
+	 * @param $label_text
+	 * @param array $options
+	 * @param callable $c
+	 *
+	 * @return mixed
+	 */
+	abstract public function inputWrap($label_text, $options=[], \Closure $c);
+
     //--------------------------------------------------------------------
     // Utility Methods
     //--------------------------------------------------------------------

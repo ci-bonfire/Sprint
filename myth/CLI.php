@@ -543,7 +543,8 @@ class CLI {
 	{
 	    if (array_key_exists($name, self::$options))
 	    {
-		    return self::$options[$name];
+		    $val = self::$options[$name] === null ? true : self::$options[$name];
+		    return $val;
 	    }
 
 		return null;

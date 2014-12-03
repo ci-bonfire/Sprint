@@ -36,6 +36,11 @@ If you're creating a generator named `my_model` you would need to create somethi
 
 You can include other template files within the folder that can be included with the `render()` method of the generator. You might use these for organizing larger class files, or when multiple files will need to be generated. They must all have the `.tpl.php` file names. 
 
+If you need to include code that will be PHP code once the template has been rendered, but you don't want it to execute during the rendering process, you can use one of two different placeholders: 
+
+	@php  		// becomes <?php
+	@=				// becomes <?=
+
 ## Function Reference
 The following methods are included in the BaseGenerator class for you to use while running your generator.
 

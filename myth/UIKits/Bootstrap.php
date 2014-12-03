@@ -569,4 +569,36 @@ class Bootstrap extends BaseUIKit {
     }
 
     //--------------------------------------------------------------------
+
+	//--------------------------------------------------------------------
+	// Forms
+	//--------------------------------------------------------------------
+
+	/**
+	 * Creates the wrapping code around a form input. Will generate the
+	 * label for you, but you will still need to supply the input itself
+	 * since those are fairly standard HTML.
+	 *
+	 * @param $label_text
+	 * @param array $options
+	 * @param callable $c
+	 *
+	 * @return mixed
+	 */
+	public function inputWrap($label_text, $options=[], \Closure $c)
+	{
+		list($classes, $id, $attributes) = $this->parseStandardOptions($options, 'form-group', true);
+
+		$output = "<div {$classes} {$id} {$attributes}>
+		<label for=''>{$label_text}</label>\n";
+
+		$output .= $this->runClosure($c);
+
+		$output .= "\t\t</div>\n";
+
+		return $output;
+	}
+
+	//--------------------------------------------------------------------
+
 }

@@ -29,6 +29,7 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 
 	protected $defaultValues = [
 		'tinyint'   => 0,
+		'mediumint' => 0,
 		'int'       => 0,
 		'bigint'    => 0,
 		'float'     => 0.0,
@@ -80,10 +81,7 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 
 		$this->detectAction($name);
 
-		if ( $quiet === false )
-		{
-			$this->collectOptions( $name );
-		}
+		$this->collectOptions( $name, $quiet );
 
 		$data = [
 			'name'              => $name,
@@ -105,7 +103,13 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 		$this->load->library('migration');
 
 		// todo Allow different migration "types"
-		$destination = $this->migration->determine_migration_path('app');
+		$type = 'app';
+
+		if (! empty($this->module))
+		{
+			$type = 'mod:'. $this->module;
+		}
+		$destination = $this->migration->determine_migration_path($type, true);
 
 		$file = $this->migration->make_name($name);
 
@@ -168,7 +172,7 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
-	public function collectOptions($name)
+	public function collectOptions($name, $quiet=false)
 	{
 		$options = CLI::getOptions();
 
@@ -180,14 +184,17 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 		// Otherwise try to use any fields from the CLI
 		else
 		{
-			$fields = empty( $options['fields'] ) ?
+			$fields = $options['fields'];
+			if (empty($fields) && $quiet)
+			{
+				return;
+			}
+
+			$fields = empty( $fields ) ?
 				CLI::prompt( 'Fields? (name:type)' ) :
 				$options['fields'];
 			$this->fields = $this->parseFields( $fields );
 		}
-
-		// Use existing db table?
-//		die(var_dump($this->fields));
 	}
 
 	//--------------------------------------------------------------------

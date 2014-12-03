@@ -28,6 +28,11 @@ class SeedGenerator extends \Myth\Forge\BaseGenerator {
 
 		$destination = $this->determineOutputPath( 'database/seeds' ) . $name . '.php';
 
+		if (strpos($destination, 'modules') !== false)
+		{
+			$destination = str_replace('database/', '', $destination);
+		}
+
 		if (! $this->copyTemplate( 'seed', $destination, $data, true) )
 		{
 			CLI::error('Error creating seed file.');
