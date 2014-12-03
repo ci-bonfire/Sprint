@@ -105,7 +105,7 @@ class Forge extends \Myth\Controllers\CLIController {
 
 	    if (! file_exists($dir . $class_name .'.php'))
 	    {
-		    return CLI::error("Generator file not found for: {$class}");
+		    return CLI::error("Generator file not found for: {$class_name}");
 	    }
 
 		require_once $dir . $class_name .'.php';
