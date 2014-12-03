@@ -1,7 +1,7 @@
 <?php
 
 $descriptions = [
-	'migration' => ['model <name>', 'Creates a new migration file.']
+	'migration' => ['migration <name>', 'Creates a new migration file.']
 ];
 
 $long_description = <<<EOT
