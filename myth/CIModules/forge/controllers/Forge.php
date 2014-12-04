@@ -215,20 +215,20 @@ class Forge extends \Myth\Controllers\CLIController {
 		    include $dir .'/forge.php';
 
 		    // Don't have valid arrays to work with? Move along...
-		    if (! isset($long_descriptions))
+		    if (! isset($long_description))
 		    {
 			    log_message('debug', '[Forge] Invalid forge.php file at: '. $dir .'/forge.php');
 			    continue;
 		    }
 
-		    if (empty($long_descriptions[$method]))
+		    if (empty($long_description))
 		    {
 			    return CLI::error("The {$method} command does not have an cli help available.");
 		    }
 
 		    CLI::new_line();
 		    CLI::write( CLI::color(ucfirst($method) .' Help', 'yellow') );
-		    return CLI::write( CLI::wrap($long_descriptions[$method], 75) );
+		    return CLI::write( CLI::wrap($long_description, CLI::getWidth()) );
 	    }
 
 	    // Still here?
