@@ -23,10 +23,10 @@ To obtain a list of avialable generators use the `forge` command by itself.
 	
 	// Displays something like: 
 	Sprint Collection
-	controller        controller <name> [<base>]        Creates a new controller file that extends from <base> or BaseController.
-	scaffold          scaffold <name>                   Creates an MVC triad based around a single data type.
-	model             model <name>                      Creates a new model file that extends from CIDbModel.
-	migration         model <name>                      Creates a new migration file.
+	controller        controller <name> Creates a new controller file that extends from BaseController.
+	scaffold          scaffold <name>   Creates an MVC triad based around a single data type.
+	model             model <name>      Creates a new model file that extends from CIDbModel.
+	migration         model <name>      Creates a new migration file.
 
 
 Click through for a list of [provided generators](forge/generators).
@@ -54,5 +54,5 @@ Next you need to edit the `application/config/forge.php` config file to let the 
 
 	$config['forge.collections'] = [
 		'personal' => '/full/path/to/new/generators/',
-        'sprint'    => MYTHPATH .'generators/'
+        'sprint'   => MYTHPATH .'_generators/'
     ];
