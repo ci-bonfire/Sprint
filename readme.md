@@ -35,7 +35,7 @@ The following is being built for the initial release:
 * (Done) [Settings library](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/settings.md) for maintaining system-wide settings, either in the database, config files, or a combination.
 * (Authentication Done) Simple, but expandable, [Authentication](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/security/authentication.md) and Authorization system with flexible [Password strength checking](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/security/passwords.md)
 * (Done) [Email Queue system](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/email.md) allows for very flexible email generations and sending. 
-* [The Forge](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/overview.md) - a code builder with simple [generators](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/generators.md) in place, but fully customizable and easy to add your own.
+* (Done) [The Forge](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/overview.md) - a code builder with simple [generators](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/generators.md) in place, but fully customizable and easy to add your own.
 
 
 ## What's NOT included?
