@@ -31,6 +31,13 @@ To obtain a list of avialable generators use the `forge` command by itself.
 
 Click through for a list of [provided generators](forge/generators).
 
+## Command Help
+When you need to get additional help about how to use a command you can type add the option `-h` or `-help` after the command name.
+
+	$ php sprint forge controller -help
+
+This will print out  a long man-page-like description of how to use the command.
+
 ## Global Options
 The following options are available to all generators and can impact the way they work. 
 
