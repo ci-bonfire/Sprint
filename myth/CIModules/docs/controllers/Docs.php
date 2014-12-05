@@ -76,7 +76,7 @@ class Docs extends \Myth\Controllers\ThemedController
             $this->setMessage($e->getMessage(), 'warning');
         }
 
-        $this->render($data);
+        $this->render($data, config_item('docs.cache_time'));
     }
 
     //--------------------------------------------------------------------

@@ -2,6 +2,16 @@
 
 /*
 |--------------------------------------------------------------------
+| Docs Cache Time
+|--------------------------------------------------------------------
+| The number of minutes that a full-page cache of the docs should
+| last for. This only takes effect if the application has caching
+| with an engine other than 'dummy'.
+*/
+$config['docs.cache_time'] = 0;
+
+/*
+|--------------------------------------------------------------------
 | Docs Folders
 |--------------------------------------------------------------------
 | Lists the folders that docs should be searched for in. The expected
