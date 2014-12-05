@@ -114,9 +114,15 @@ class ThemedController extends BaseController
      * and includes the status messages into the data.
      *
      * @param array $data
+     * @param int   $cache_time
      */
-    public function render($data = array())
+    public function render($data = array(), $cache_time=0)
     {
+	    if ($cache_time > 0)
+	    {
+		    $this->output->cache( (int)$cache_time );
+	    }
+
         // Determine the correct theme to use
         $theme = ! empty($this->theme) ? $this->theme : config_item('theme.default_theme');
         $this->themer->setTheme($theme);

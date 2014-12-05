@@ -180,10 +180,12 @@ interface ThemerInterface
      * "admin:header" would try to display the "header.php" file within
      * the "admin" theme.
      *
-     * @param $view
+     * @param string    $view
+     * @param array     $data
+     * @param int       $cache_time  The number of MINUTES to cache the output
      * @return mixed
      */
-    public function display($view);
+    public function display($view, $data = array(), $cache_time = 0);
 
     //--------------------------------------------------------------------
 

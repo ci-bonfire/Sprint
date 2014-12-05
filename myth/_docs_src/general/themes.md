@@ -32,7 +32,17 @@ The `render()` method is the primary means of interacting with the system. Use i
 
 	$this->render();
 
-You can pass an array of key/value pairs as the only parameter. Those variables will be available in the views, just like a standard Codeigniter view. More information about the views and view data can be found under the [Views](general/views) guide.
+You can pass in an array of data to be sent to the view as the first parameter.
+
+	$data = [‘user’, $user];
+	$this->render($data);
+
+If you want to cache the output of the rendered file, you can pass in the number of **minutes** to cache it for as the second parameter.
+
+	// Cache for 5 minutes
+	$this->render($data, 5);
+
+This will perform a standard CodeIgniter [full page cache](http://www.codeigniter.com/userguide3/general/caching.html).
 
 ### Flash Messages
 ThemedController also provides an extended version of the CodeIgniter's flash messages that allow it to work in the current page view, and not require the page to be refreshed for the session data to be available.
@@ -60,6 +70,10 @@ If you need to pass in a specific set of data, then you can pass in an array of 
 To display view fragments from within your theme itself, you will prefix the name of the theme, followed by a colon, to the view name. 
 
 	<?= $themer->display('admin:parts/header'); ?>
+
+If you want to cache that particular view, perhaps due to it containing some callbacks that might be intensive, you can pass the number of **minutes** to cache the output for as the second parameter.
+
+	<?= $themer->display('admin:parts/header’, [], 300); ?>
 
 ## Callbacks
 Callbacks allow you to call other code from within your theme file. They allow you to easily include formatted modules, or simply to collect pieces of commonly used code from across your application into one place so that you don't have to keep coding that information. 

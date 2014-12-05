@@ -39,7 +39,8 @@ class ViewThemer implements ThemerInterface
      * The main entryway into rendering a view. This is called from the
      * controller and is generally the last method called.
      *
-     * @param string $layout If provided, will override the default layout.
+     * @param string $layout        If provided, will override the default layout.
+     * @param int    $cache_time    The number of seconds to cache the output for.
      * @return mixed
      */
     public function render($layout = null)
@@ -64,10 +65,14 @@ class ViewThemer implements ThemerInterface
 
     //--------------------------------------------------------------------
 
-    /**
-     * Used within the template layout file to render the current content.
-     * This content is typically used to display the current view.
-     */
+	/**
+	 * Used within the template layout file to render the current content.
+	 * This content is typically used to display the current view.
+	 *
+	 * @param int $cache_time
+	 *
+	 * @return mixed
+	 */
     public function content()
     {
         // Calc our view name based on current method/controller
@@ -109,45 +114,71 @@ class ViewThemer implements ThemerInterface
      *
      * @param string $view
      * @param array  $data
-     * @param bool   $parse
+     * @param int    $cache_time Number of seconds to cache the page for
      * @return mixed
      */
-    public function display($view, $data = array())
+    public function display($view, $data = array(), $cache_time = 0)
     {
-        $theme = null;
-        $variant_view = null;
+	    $cache_name = 'theme_view_'. $view .'_'. $this->ci->router->fetch_class() .'_'. $this->ci->router->fetch_method();
+		$cache_name = str_replace('/', '_', $cache_name);
 
-        // Pull out the theme from the view, if given.
-        if (strpos($view, ':') !== false) {
-            list($theme, $view) = explode(':', $view);
-        }
+	    if (! $output = $this->ci->cache->get($cache_name))
+	    {
+		    $theme        = NULL;
+		    $variant_view = NULL;
 
-        if (! empty($theme) && isset($this->folders[$theme])) {
-            $view = rtrim($this->folders[$theme], '/') . '/' . $view;
-        }
+		    // Pull out the theme from the view, if given.
+		    if ( strpos( $view, ':' ) !== FALSE )
+		    {
+			    list( $theme, $view ) = explode( ':', $view );
+		    }
 
-        $data = array_merge($this->vars, $data);
+		    if ( ! empty( $theme ) && isset( $this->folders[ $theme ] ) )
+		    {
+			    $view = rtrim( $this->folders[ $theme ], '/' ) . '/' . $view;
+		    }
 
-        // if using a variant, add it to the view name.
-        if (! empty($this->current_variant)) {
-            $variant_view = $view . $this->variants[$this->current_variant];
+		    if (! is_array($data))
+		    {
+			    $data = [];
+		    }
 
-            if (realpath($variant_view .'.php')) {
-                $output = $this->ci->load->view_path($variant_view, $data, true);
-            }
-            else {
-                $output = $this->ci->load->view($variant_view, $data, true, true);
-            }
-        }
+		    $data = array_merge( $this->vars, $data );
 
-        // If that didn't find anything, then try it without a variant
-        if (empty($output)) {
-            if (realpath($view .'.php')) {
-                $output = $this->ci->load->view_path($view, $data, true);
-            } else {
-                $output = $this->ci->load->view($view, $data, true);
-            }
-        }
+		    // if using a variant, add it to the view name.
+		    if ( ! empty( $this->current_variant ) )
+		    {
+			    $variant_view = $view . $this->variants[ $this->current_variant ];
+
+			    if ( realpath( $variant_view . '.php' ) )
+			    {
+				    $output = $this->ci->load->view_path( $variant_view, $data, TRUE );
+			    }
+			    else
+			    {
+				    $output = $this->ci->load->view( $variant_view, $data, TRUE, TRUE );
+			    }
+		    }
+
+		    // If that didn't find anything, then try it without a variant
+		    if ( empty( $output ) )
+		    {
+			    if ( realpath( $view . '.php' ) )
+			    {
+				    $output = $this->ci->load->view_path( $view, $data, TRUE );
+			    }
+			    else
+			    {
+				    $output = $this->ci->load->view( $view, $data, TRUE );
+			    }
+		    }
+
+		    // Cache it
+		    if ((int)$cache_time > 0)
+		    {
+			    $this->ci->cache->save($cache_name, $output, (int)$cache_time * 60);
+		    }
+	    }
 
         return $output;
     }

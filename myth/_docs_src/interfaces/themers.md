@@ -59,8 +59,10 @@ Used from within layout and view files to display other, theme or non-theme, vie
 
 Often used for displaying view partials. 
 
+The second parameter is an int value that represents the number of seconds that the output should be cached for.
+
 ### setVariant()
-Sets the variatn used when creating view names. Variants can be anything, but by default, are used to render specific templates for desktop, tablet, and phone. The name of the variant is added to the view name.
+Sets the variant used when creating view names. Variants can be anything, but by default, are used to render specific templates for desktop, tablet, and phone. The name of the variant is added to the view name.
 
 	$this->setVariant('phone');
 	$this->display('header');
