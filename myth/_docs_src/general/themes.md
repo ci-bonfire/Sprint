@@ -75,6 +75,10 @@ If you want to cache that particular view, perhaps due to it containing some cal
 
 	<?= $themer->display('admin:parts/header’, [], 300); ?>
 
+You can specify a custom name for the cache key by passing it in as the fourth parameter.
+
+	<?= $themer->display('admin:parts/header’, [], 300, ‘anon-admin_header’); ?>
+
 ## Callbacks
 Callbacks allow you to call other code from within your theme file. They allow you to easily include formatted modules, or simply to collect pieces of commonly used code from across your application into one place so that you don't have to keep coding that information. 
 
@@ -92,6 +96,10 @@ You can tell the system to simply cache the results for a period of time, instea
 
 	// Cache it for 1 hour
 	 <?= $themer->call('posts:recent show=10 order=title dir=asc', 60); ?>
+
+You can specify a custom name for the cache key by passing it in as the third parameter.
+
+	<?= $themer->call('posts:recent show=10 order=title dir=asc', 60, ‘anon-recent_posts’); ?>
 
 ### Creating Callbacks
 Callbacks are simple classes. The system will attempt to locate them through Composer's autoload and, if that doesn't work, will try to load them as CodeIgniter libraries.

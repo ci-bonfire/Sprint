@@ -114,13 +114,17 @@ class ViewThemer implements ThemerInterface
      *
      * @param string $view
      * @param array  $data
-     * @param int    $cache_time Number of seconds to cache the page for
+     * @param int    $cache_time Number of minutes to cache the page for
+     * @param string $cache_name A custom name for the cached file.
      * @return mixed
      */
-    public function display($view, $data = array(), $cache_time = 0)
+    public function display($view, $data = array(), $cache_time = 0, $cache_name=null)
     {
-	    $cache_name = 'theme_view_'. $view .'_'. $this->ci->router->fetch_class() .'_'. $this->ci->router->fetch_method();
-		$cache_name = str_replace('/', '_', $cache_name);
+	    if (empty($cache_name))
+	    {
+		    $cache_name = 'theme_view_' . $view . '_' . $this->ci->router->fetch_class() . '_' . $this->ci->router->fetch_method();
+		    $cache_name = str_replace( '/', '_', $cache_name );
+	    }
 
 	    if (! $output = $this->ci->cache->get($cache_name))
 	    {
@@ -190,11 +194,15 @@ class ViewThemer implements ThemerInterface
      *
      * @param $command
      * @param int $cache_time
+     * @param string $cache_name
      * @return mixed|void
      */
-    public function call($command, $cache_time=0)
+    public function call($command, $cache_time=0, $cache_name=null)
     {
-        $cache_name = 'theme_call_'. md5($command);
+	    if (empty($cache_name))
+	    {
+		    $cache_name = 'theme_call_' . md5( $command );
+	    }
 
         if (! $output = $this->ci->cache->get($cache_name)) {
             $parts = explode(' ', $command);
@@ -236,7 +244,7 @@ class ViewThemer implements ThemerInterface
             // Cache it
             if ((int)$cache_time > 0)
             {
-                $this->ci->cache->save($cache_name, $output, (int)$cache_time);
+                $this->ci->cache->save($cache_name, $output, (int)$cache_time * 60);
             }
         }
 

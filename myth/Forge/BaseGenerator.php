@@ -9,8 +9,6 @@ use Myth\CLI;
  * Builds on top of the features of the CLIController to provide
  * handy methods used for generating boilerplate code.
  *
- * todo Enforce a sandbox around the app that restricts where files are written or modified.
- *
  * @package Myth\Forge
  */
 abstract class BaseGenerator extends CLIController {
