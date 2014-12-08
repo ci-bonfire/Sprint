@@ -1,8 +1,8 @@
 # Caching Strategies
 
-This section discusses ways to get the most performance out of your application via View Caching and the specifics of using it within Sprint. 
+This section provides some things to think about regarding getting the most performance out of your application via View Caching and the specifics of using it within Sprint. 
 
-None of these items are unique to Sprint, but I felt it would be helpful to go over some of them since they will affect how you would structure your application.
+None of these items are unique to Sprint, but I felt it would be helpful to go over some of them since they will affect how you would structure your application. This also doesn’t cover proxy-caching or anything outside of Sprint and CodeIgniter, though those techniques can definitely give your application an even further burst of speed and reduce your server’s resource usage.
 
 ## Full Page Caching
 CodeIgniter provides a very simple way to handle [full page caching](http://www.codeigniter.com/userguide3/libraries/output.html#CI_Output.cache) in your applications. 
@@ -53,4 +53,24 @@ You should also can take advantage of the full-page caching that CodeIgniter pro
 
 You can now set the `data-refresh-url` attribute of an element that would need to grab those recent posts to point at the route you just created for it. Whenever it was refreshed, it would grab the cached version, if available, without ever hitting the main portion of the app. 
 
+## Russian Doll Caching
+You can combine the different types of view caching to create a form of “[Russian Doll](https://signalvnoise.com/posts/3112-how-basecamp-next-got-to-be-so-damn-fast-without-using-much-client-side-ui)” caching system. 
 
+This is  where you do a full-page cache where possible. Inside of that, you might cache a large block of content. Inside that content, you might cache a number of smaller blocks of data. When your entire page cache expires, it will be able to pull only the largest block from the cache which can be especially fast when using in-memory caching systems. 
+
+The biggest things to be concerned about here are your cache times and cache invalidation times. If you need your inner content to refresh faster than your outer content, you will need to do one of 2 things: 
+
+1) Keep your outer content cache time to the shortest time that you would need to update some inner content. 
+2) Server up full-page caches with a long cache life, but then immediately hit the server via AJAX for a fragment, which you could use the custom routes above and enable the use of full-page caching for those smaller chunks, also. While this still requires one or more AJAX calls back to the server to get content, the amount of content being sent back is very small, since all of the fragments are stored via full-page caching that doesn’t need the majority of the application to run, keeping it lightweight. 
+
+## Cache Naming
+The parts of the ViewThemer and ThemedController that allow caching will provide a generic name for your cache fragments. However, they don’t know enough about your application to create truly effective cache names. They do, however, allow you to pass in your own cache names so you can customize it to your application. 
+
+How you name your cache ids is very specific to your application but, in all cases, they should be crafted to allow for the largest levels of re-usability as possible. 
+
+In some cases, this might include prefixing the cache-name with a user role, such as when the UI shows different bits for the admin then for general users. You don’t want to show the admin tools to the user. You might also have different elements to show to logged in users, versus anonymous users, so prefixing with ‘anon’ could be helpful.
+
+Basically, you want to consider how you’re *what* you’re going to cache, as well as *who* you’re caching it for. For example, you might include the user’s role as well as detailed page information: `role:page:fragment:id`. 
+
+## Conclusion
+In the end, no matter what exact strategies you end up using, you need to consider organizing your application so you can reuse your views as much as possible and cache those views for the best performance possible. 
