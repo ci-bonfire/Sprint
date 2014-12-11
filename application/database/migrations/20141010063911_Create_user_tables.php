@@ -18,11 +18,6 @@ class Migration_create_user_tables extends CI_Migration {
                 'unsigned'  => true,
                 'auto_increment' => true
             ],
-            'role_id' => [
-                'type' => 'int',
-                'constraint' => 11,
-                'default'   => 0
-            ],
             'email' => [
                 'type' => 'varchar',
                 'constraint' => 255
