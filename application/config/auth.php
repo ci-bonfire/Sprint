@@ -1,6 +1,26 @@
 <?php
 
 //--------------------------------------------------------------------
+// AUTHORIZATION ENGINE
+//--------------------------------------------------------------------
+// Specifies which library should be used to provide the Authorization
+// capabilities of the Auth Trait. This must include the fully
+// namespaced path of the class and it must be able to be found
+// by Composer.
+//
+	$config['auth.authorize_lib'] = '\Myth\Auth\FlatAuthorization';
+
+//--------------------------------------------------------------------
+// AUTHENTICATION ENGINE
+//--------------------------------------------------------------------
+// Specifies which library should be used to provide the Authentication
+// capabilities of the Auth Trait. This must include the fully
+// namespace path of the class and it must be able to be found by
+// Composer.
+//
+	$config['auth.authenticate_lib'] = '\Myth\Auth\LocalAuthentication';
+
+//--------------------------------------------------------------------
 // AUTHENTICATION FIELDS
 //--------------------------------------------------------------------
 // The names of the fields in the user table that is allowed to
@@ -8,6 +28,10 @@
 // 'username'
 //
 	$config['auth.valid_fields'] = ['email', 'username'];
+
+
+
+
 
 //--------------------------------------------------------------------
 // PERSISTENT LOGINS
@@ -54,6 +78,7 @@
 //      1 year   - 29030400
 //
     $config['auth.remember_length'] = 1209600;
+
 
 
 

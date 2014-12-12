@@ -244,7 +244,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $token = get_cookie('remember');
 
         // Attempt to match the token against our auth_tokens table.
-        $query = $this->db->where('hash', $this->ci->login_model->hashRememberToken($token))
+        $query = $this->ci->db->where('hash', $this->ci->login_model->hashRememberToken($token))
                           ->get('auth_tokens');
 
         if (! $query->num_rows())

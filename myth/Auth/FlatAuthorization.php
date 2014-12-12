@@ -53,6 +53,7 @@ class FlatAuthorization implements AuthorizeInterface {
 			$groups = [ $groups ];
 		}
 
+		// todo Allow inGroup to accept group names also.
 		$user_groups = $this->groupModel->getGroupsForUser( (int)$user_id);
 
 		if (! $user_groups)
@@ -426,7 +427,7 @@ class FlatAuthorization implements AuthorizeInterface {
 			return $this->permissionModel->find( (int)$permission );
 		}
 
-		return $this->permissionModel->find_by('name', $permission);
+		return $this->permissionModel->find_by('LOWER(name)', strtolower($permission) );
 	}
 
 	//--------------------------------------------------------------------
