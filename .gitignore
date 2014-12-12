@@ -17,3 +17,6 @@ application/logs/*
 application/cache/*
 tests/_output/*
 o
+application/controllers/Test.php
+application/views/test/baytwo.php
+application/views/test/index.php
