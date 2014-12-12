@@ -93,8 +93,7 @@ class Auth extends \Myth\Controllers\ThemedController
                 'email'        => $this->input->post('email'),
                 'username'     => $this->input->post('username'),
                 'password'     => $this->input->post('password'),
-                'pass_confirm' => $this->input->post('pass_confirm'),
-                'role_id'      => config_item('auth.default_role_id')
+                'pass_confirm' => $this->input->post('pass_confirm')
             ];
 
             if ($auth->registerUser($post_data))
