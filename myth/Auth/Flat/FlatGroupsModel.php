@@ -112,6 +112,7 @@ class FlatGroupsModel extends CIDbModel {
 	    return $this->select('auth_groups_users.*, auth_groups.name, auth_groups.description')
 		            ->join('auth_groups', 'auth_groups.group_id = groups.id', 'left')
 		            ->where('user_id', $user_id)
+		            ->as_array()
 		            ->find_all();
 
 	}
