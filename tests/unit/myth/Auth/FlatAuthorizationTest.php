@@ -13,7 +13,7 @@ class FlatAuthorizationTest extends CodeIgniterTestCase {
 
 	public function _before()
 	{
-		$this->groupModel = m::mock('\Myth\Auth\Flat\FlatGroupsModel');
+		$this->groupModel = m::mock('\Myth\Auth\FlatGroupModel');
 		$this->permModel  = m::mock('\Myth\Auth\FlatPermissionModel');
 
 	    $this->auth = new \Myth\Auth\FlatAuthorization($this->groupModel, $this->permModel);
