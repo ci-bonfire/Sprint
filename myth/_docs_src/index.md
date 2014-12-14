@@ -15,7 +15,7 @@ Sprint requires the following server setup, at minimum:
 Multiple licenses apply to this application. 
 
 * All **Sprint-specific code** is licensed under the [MIT license](http://opensource.org/licenses/MIT), which means you can do pretty much anything you want to with it, though hopefully ethics will still win the day here. 
-* All **CodeIgniter-specific code** (anything within the `system` folder) is licensed by Ellis Labs under the [Open Software License 3.0](http://opensource.org/licenses/OSL-3.0). Basically means that any CodeIgniter code that you change must be made publicly available. Does not apply to your own code, just if you change their files. More details from their [blog](http://ellislab.com/blog/entry/software-license-wrap-up-and-osl-3.0).
+* All **CodeIgniter-specific code** (anything within the `system` folder) is licensed by the British Columbia Institute of Technology under the [MIT license](http://opensource.org/licenses/MIT). 
 
 ## Credits
 Obviously, [CodeIgniter](http://codeigniter.com) and [EllisLab](http://www.ellislab.com/) are the heroes that brought this engine to the web so many years ago and inspired us with it's simplicity and elegance. True, it's got it's rough edges and might be aging a bit, but it works great and is solid code. 

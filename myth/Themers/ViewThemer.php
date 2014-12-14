@@ -1,9 +1,37 @@
-<?php
-
-namespace Myth\Themers;
+<?php namespace Myth\Themers;
+/**
+ * Sprint
+ *
+ * A set of power tools to enhance the CodeIgniter framework and provide consistent workflow.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package     Sprint
+ * @author      Lonnie Ezell
+ * @copyright   Copyright 2014-2015, New Myth Media, LLC (http://newmythmedia.com)
+ * @license     http://opensource.org/licenses/MIT  (MIT)
+ * @link        http://sprintphp.com
+ * @since       Version 1.0
+ */
 
 use Myth\Modules as Modules;
-use Myth\Interfaces\ThemerInterface;
+use Myth\Themers\ThemerInterface;
 
 class ViewThemer implements ThemerInterface
 {
@@ -39,7 +67,8 @@ class ViewThemer implements ThemerInterface
      * The main entryway into rendering a view. This is called from the
      * controller and is generally the last method called.
      *
-     * @param string $layout If provided, will override the default layout.
+     * @param string $layout        If provided, will override the default layout.
+     * @param int    $cache_time    The number of seconds to cache the output for.
      * @return mixed
      */
     public function render($layout = null)
@@ -64,10 +93,14 @@ class ViewThemer implements ThemerInterface
 
     //--------------------------------------------------------------------
 
-    /**
-     * Used within the template layout file to render the current content.
-     * This content is typically used to display the current view.
-     */
+	/**
+	 * Used within the template layout file to render the current content.
+	 * This content is typically used to display the current view.
+	 *
+	 * @param int $cache_time
+	 *
+	 * @return mixed
+	 */
     public function content()
     {
         // Calc our view name based on current method/controller
@@ -109,45 +142,75 @@ class ViewThemer implements ThemerInterface
      *
      * @param string $view
      * @param array  $data
-     * @param bool   $parse
+     * @param int    $cache_time Number of minutes to cache the page for
+     * @param string $cache_name A custom name for the cached file.
      * @return mixed
      */
-    public function display($view, $data = array())
+    public function display($view, $data = array(), $cache_time = 0, $cache_name=null)
     {
-        $theme = null;
-        $variant_view = null;
+	    if (empty($cache_name))
+	    {
+		    $cache_name = 'theme_view_' . $view . '_' . $this->ci->router->fetch_class() . '_' . $this->ci->router->fetch_method();
+		    $cache_name = str_replace( '/', '_', $cache_name );
+	    }
 
-        // Pull out the theme from the view, if given.
-        if (strpos($view, ':') !== false) {
-            list($theme, $view) = explode(':', $view);
-        }
+	    if (! $output = $this->ci->cache->get($cache_name))
+	    {
+		    $theme        = NULL;
+		    $variant_view = NULL;
 
-        if (! empty($theme) && isset($this->folders[$theme])) {
-            $view = rtrim($this->folders[$theme], '/') . '/' . $view;
-        }
+		    // Pull out the theme from the view, if given.
+		    if ( strpos( $view, ':' ) !== FALSE )
+		    {
+			    list( $theme, $view ) = explode( ':', $view );
+		    }
 
-        $data = array_merge($this->vars, $data);
+		    if ( ! empty( $theme ) && isset( $this->folders[ $theme ] ) )
+		    {
+			    $view = rtrim( $this->folders[ $theme ], '/' ) . '/' . $view;
+		    }
 
-        // if using a variant, add it to the view name.
-        if (! empty($this->current_variant)) {
-            $variant_view = $view . $this->variants[$this->current_variant];
+		    if (! is_array($data))
+		    {
+			    $data = [];
+		    }
 
-            if (realpath($variant_view .'.php')) {
-                $output = $this->ci->load->view_path($variant_view, $data, true);
-            }
-            else {
-                $output = $this->ci->load->view($variant_view, $data, true, true);
-            }
-        }
+		    $data = array_merge( $this->vars, $data );
 
-        // If that didn't find anything, then try it without a variant
-        if (empty($output)) {
-            if (realpath($view .'.php')) {
-                $output = $this->ci->load->view_path($view, $data, true);
-            } else {
-                $output = $this->ci->load->view($view, $data, true);
-            }
-        }
+		    // if using a variant, add it to the view name.
+		    if ( ! empty( $this->current_variant ) )
+		    {
+			    $variant_view = $view . $this->variants[ $this->current_variant ];
+
+			    if ( realpath( $variant_view . '.php' ) )
+			    {
+				    $output = $this->ci->load->view_path( $variant_view, $data, TRUE );
+			    }
+			    else
+			    {
+				    $output = $this->ci->load->view( $variant_view, $data, TRUE, TRUE );
+			    }
+		    }
+
+		    // If that didn't find anything, then try it without a variant
+		    if ( empty( $output ) )
+		    {
+			    if ( realpath( $view . '.php' ) )
+			    {
+				    $output = $this->ci->load->view_path( $view, $data, TRUE );
+			    }
+			    else
+			    {
+				    $output = $this->ci->load->view( $view, $data, TRUE );
+			    }
+		    }
+
+		    // Cache it
+		    if ((int)$cache_time > 0)
+		    {
+			    $this->ci->cache->save($cache_name, $output, (int)$cache_time * 60);
+		    }
+	    }
 
         return $output;
     }
@@ -159,11 +222,15 @@ class ViewThemer implements ThemerInterface
      *
      * @param $command
      * @param int $cache_time
+     * @param string $cache_name
      * @return mixed|void
      */
-    public function call($command, $cache_time=0)
+    public function call($command, $cache_time=0, $cache_name=null)
     {
-        $cache_name = 'theme_call_'. md5($command);
+	    if (empty($cache_name))
+	    {
+		    $cache_name = 'theme_call_' . md5( $command );
+	    }
 
         if (! $output = $this->ci->cache->get($cache_name)) {
             $parts = explode(' ', $command);
@@ -205,7 +272,7 @@ class ViewThemer implements ThemerInterface
             // Cache it
             if ((int)$cache_time > 0)
             {
-                $this->ci->cache->save($cache_name, $output, (int)$cache_time);
+                $this->ci->cache->save($cache_name, $output, (int)$cache_time * 60);
             }
         }
 

@@ -1,5 +1,5 @@
 # SettingsStoreInterface
-Sprint comes with two SettingsStores -- one uses the database and the other config files -- but you could easily extend it to create a memcache store for faster storage if your site needed it. Each new Store must extends `Myth\Interfaces\SettingsStoreInterface` and implementing the five required methods.
+Sprint comes with two SettingsStores -- one uses the database and the other config files -- but you could easily extend it to create a memcache store for faster storage if your site needed it. Each new Store must extends `Myth\Settings\SettingsStoreInterface` and implementing the five required methods.
 
 ## Groups
 Settings can be organized into groups of items. Typically, these will be module names, but could be for any use. The default group is `app` which is the generic group used by much of the site's settings. The Interface must find a way to support working with groups of items. 

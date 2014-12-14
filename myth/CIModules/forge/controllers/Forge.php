@@ -1,6 +1,36 @@
 <?php
+/**
+ * Sprint
+ *
+ * A set of power tools to enhance the CodeIgniter framework and provide consistent workflow.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package     Sprint
+ * @author      Lonnie Ezell
+ * @copyright   Copyright 2014-2015, New Myth Media, LLC (http://newmythmedia.com)
+ * @license     http://opensource.org/licenses/MIT  (MIT)
+ * @link        http://sprintphp.com
+ * @since       Version 1.0
+ */
 
-use Myth\CLI;
+use Myth\CLI as CLI;
 
 class Forge extends \Myth\Controllers\CLIController {
 
@@ -74,6 +104,8 @@ class Forge extends \Myth\Controllers\CLIController {
                 $_descriptions = array_merge($descriptions, $_descriptions);
             }
 
+	        ksort($_descriptions);
+
             CLI::new_line();
             CLI::write(ucwords( str_replace('_', ' ', $alias)) .' Collection');
             $this->sayDescriptions($_descriptions);
@@ -86,8 +118,10 @@ class Forge extends \Myth\Controllers\CLIController {
      * The primary method that calls the correct generator and
      * makes it run.
      */
-    public function run($command, $quiet=null)
+    public function run($command)
     {
+	    $quiet = false;
+
 	    $segments = explode(" ", $command);
 
 	    // Get rid of the 'forge' command
@@ -103,7 +137,7 @@ class Forge extends \Myth\Controllers\CLIController {
 
 	    if (! file_exists($dir . $class_name .'.php'))
 	    {
-		    return CLI::error("Generator file not found for: {$class}");
+		    return CLI::error("Generator file not found for: {$class_name}");
 	    }
 
 		require_once $dir . $class_name .'.php';
@@ -114,10 +148,12 @@ class Forge extends \Myth\Controllers\CLIController {
 	    }
 
 	    // Should we run the process quietly?
-	    if ( (CLI::option('q') || CLI::option('quiet')) && $quiet !== false)
+	    if ( (CLI::option('q') || CLI::option('quiet')))
 	    {
 		    $quiet = true;
 	    }
+
+	    CLI::write('Invoked '. CLI::color($class_name, 'yellow'));
 
 		$class = new $class_name();
 
@@ -171,7 +207,7 @@ class Forge extends \Myth\Controllers\CLIController {
 
     /**
      * Overrides CLIController's version to support searching our
-     * collections for the help desription.
+     * collections for the help description.
      *
      * @param null $method
      */
@@ -209,20 +245,20 @@ class Forge extends \Myth\Controllers\CLIController {
 		    include $dir .'/forge.php';
 
 		    // Don't have valid arrays to work with? Move along...
-		    if (! isset($long_descriptions))
+		    if (! isset($long_description))
 		    {
 			    log_message('debug', '[Forge] Invalid forge.php file at: '. $dir .'/forge.php');
 			    continue;
 		    }
 
-		    if (empty($long_descriptions[$method]))
+		    if (empty($long_description))
 		    {
 			    return CLI::error("The {$method} command does not have an cli help available.");
 		    }
 
 		    CLI::new_line();
 		    CLI::write( CLI::color(ucfirst($method) .' Help', 'yellow') );
-		    return CLI::write( CLI::wrap($long_descriptions[$method], 75) );
+		    return CLI::write( CLI::wrap($long_description, CLI::getWidth()) );
 	    }
 
 	    // Still here?

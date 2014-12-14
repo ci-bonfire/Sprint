@@ -6,6 +6,8 @@ $lang['auth.did_register']          = 'Account created. Please login.';
 $lang['auth.unkown_register_error'] = 'Unable to create user currently. Please try again later.';
 
 $lang['auth.invalid_user']          = 'Invalid credentials. Please try again.';
+$lang['auth.invalid_credentials']   = 'Credentials used are not allowed.';
+$lang['auth.too_many_credentials']  = 'Too many credentials were passed in. Must be limited to one besides password.';
 $lang['auth.invalid_email']         = 'Unable to find a user with that email address.';
 $lang['auth.invalid_password']      = 'Unable to find a valid login with that password.';
 $lang['auth.bruteBan_notice']       = "Your account has had excessive login attempts. To protect the account you must wait 15 minutes before another attempt can be made.";
@@ -28,10 +30,13 @@ $lang['auth.first_name']            = 'First Name';
 $lang['auth.last_name']             = 'Last Name';
 $lang['auth.username']              = 'Username';
 
-$lang['auth.forgot']                = 'Reset Password';
+$lang['auth.forgot']                = 'Forgot Password';
 $lang['auth.forgot_note']           = 'No problem. Enter your email and we will send instructions.';
 $lang['auth.send']                  = 'Send';
 $lang['auth.send_success']          = 'The email is on its way!';
+
+$lang['auth.reset']                 = 'Reset Password';
+$lang['auth.reset_note']            = 'Please follow the instructions in the email to reset your password.';
 $lang['auth.pass_code']             = 'Reset Code';
 $lang['auth.new_password']          = 'Choose a New Password';
 $lang['auth.new_password_success']  = 'Your password has been changed. Please sign in.';

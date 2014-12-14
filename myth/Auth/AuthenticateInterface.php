@@ -1,6 +1,35 @@
-<?php
+<?php namespace Myth\Auth;
 
-namespace Myth\Interfaces;
+/**
+ * Sprint
+ *
+ * A set of power tools to enhance the CodeIgniter framework and provide consistent workflow.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package     Sprint
+ * @author      Lonnie Ezell
+ * @copyright   Copyright 2014-2015, New Myth Media, LLC (http://newmythmedia.com)
+ * @license     http://opensource.org/licenses/MIT  (MIT)
+ * @link        http://sprintphp.com
+ * @since       Version 1.0
+ */
 
 /**
  * Class AuthenticateInterface
@@ -20,11 +49,10 @@ interface AuthenticateInterface {
      * $credentials is an array of key/value pairs needed to log the user in.
      * This is often email/password, or username/password.
      *
-     * @param array $credentials
-     * @param bool  $remember
-     * @param null  $redirect
+     * @param $credentials
+     * @param bool $remember
      */
-    public function login($credentials, $remember=false, $redirect=null);
+    public function login($credentials, $remember=false);
 
     //--------------------------------------------------------------------
 
@@ -34,10 +62,11 @@ interface AuthenticateInterface {
      * $credentials is an array of key/value pairs needed to log the user in.
      * This is often email/password, or username/password.
      *
-     * @param array $credentials
+     * @param $credentials
+     * @param bool $return_user
      * @return mixed
      */
-    public function validate($credentials);
+    public function validate($credentials, $return_user=false);
 
     //--------------------------------------------------------------------
 
@@ -102,7 +131,7 @@ interface AuthenticateInterface {
     /**
      * Grabs the current user object. Returns NULL if nothing found.
      *
-     * @return object|null
+     * @return array|null
      */
     public function user();
 
@@ -121,10 +150,10 @@ interface AuthenticateInterface {
      * Tells the system to start throttling a user. This may vary by implementation,
      * but will often add additional time before another login is allowed.
      *
-     * @param $userId
+     * @param $email
      * @return mixed
      */
-    public function isThrottled($userId);
+    public function isThrottled($email);
 
     //--------------------------------------------------------------------
 
@@ -143,6 +172,8 @@ interface AuthenticateInterface {
      * Validates the credentials provided and, if valid, resets the password.
      *
      * @param $credentials
+     * @param $password
+     * @param $passConfirm
      * @return mixed
      */
     public function resetPassword($credentials, $password, $passConfirm);

@@ -1,4 +1,34 @@
 <?php
+/**
+ * Sprint
+ *
+ * A set of power tools to enhance the CodeIgniter framework and provide consistent workflow.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package     Sprint
+ * @author      Lonnie Ezell
+ * @copyright   Copyright 2014-2015, New Myth Media, LLC (http://newmythmedia.com)
+ * @license     http://opensource.org/licenses/MIT  (MIT)
+ * @link        http://sprintphp.com
+ * @since       Version 1.0
+ */
 
 /**
  * Class Login_model
@@ -50,7 +80,7 @@ class Login_model extends \Myth\Models\CIDbModel {
     public function purgeLoginAttempts($email)
     {
         return $this->db->where('email', $email)
-                    ->delete('auth_login_attempts');
+                        ->delete('auth_login_attempts');
     }
 
     //--------------------------------------------------------------------
@@ -88,7 +118,7 @@ class Login_model extends \Myth\Models\CIDbModel {
      * If the number of attempts in the last 24 hours is more than X (see config)
      * times the average, then institute additional throttling.
      *
-     * @return int  The time to add to any throttling.
+     * @return int The time to add to any throttling.
      */
     public function distributedBruteForceTime()
     {
@@ -100,6 +130,7 @@ class Login_model extends \Myth\Models\CIDbModel {
             $avg_start_time = date('Y-m-d 00:00:00', strtotime('-3 months'));
 
             $query = $this->db->query("SELECT COUNT(*) / COUNT(DISTINCT DATE(`datetime`)) as num_rows FROM `auth_login_attempts` WHERE `datetime` >= ?", $avg_start_time);
+
             if (! $query->num_rows())
             {
                 $average = 0;
@@ -115,12 +146,13 @@ class Login_model extends \Myth\Models\CIDbModel {
             $attempts = $this->db->where('datetime >=', $today_start_time)
                                  ->count_all_results('auth_login_attempts');
 
-            if ($attempts > (config_item('auth.dbrute_multiplier') * $average) ) {
+            if ($attempts > (config_item('auth.dbrute_multiplier') * $average))
+            {
                 $time = config_item('auth.distributed_brute_add_time');
             }
 
             // Cache it for 3 hours.
-            $this->cache->set('dbrutetime', $time, 60*60*3);
+            $this->cache->save('dbrutetime', $time, 60*60*3);
         }
 
         return $time;
@@ -141,16 +173,15 @@ class Login_model extends \Myth\Models\CIDbModel {
     public function recordLogin($user)
     {
         $data = [
-            'user_id'   => (int)$user['id'],
-            'datetime'  => date('Y-m-d H:i:s'),
-            'ip_address'=> $this->input->ip_address()
+            'user_id'    => (int)$user['id'],
+            'datetime'   => date('Y-m-d H:i:s'),
+            'ip_address' => $this->input->ip_address()
         ];
 
         return $this->db->insert('auth_logins', $data);
     }
 
     //--------------------------------------------------------------------
-
 
     //--------------------------------------------------------------------
     // Tokens
@@ -252,9 +283,9 @@ class Login_model extends \Myth\Models\CIDbModel {
     public function lastLoginAttemptTime($email)
     {
         $query = $this->db->where('email', $email)
-                              ->order_by('datetime', 'desc')
-                              ->limit(1)
-                              ->get('auth_login_attempts');
+                          ->order_by('datetime', 'desc')
+                          ->limit(1)
+                          ->get('auth_login_attempts');
 
         if (! $query->num_rows())
         {
@@ -275,7 +306,7 @@ class Login_model extends \Myth\Models\CIDbModel {
     public function countLoginAttempts($email)
     {
         return $this->db->where('email', $email)
-                        ->count_all_results();
+                        ->count_all_results('auth_login_attempts');
     }
 
     //--------------------------------------------------------------------

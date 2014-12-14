@@ -1,6 +1,6 @@
 # ThemerInterface
 
-You can incorporate third part theme engines into the system very easily by extending `Myth\Interfaces\ThemerInterface` and filling in the required methods. This should allows you to fairly easily incorporate [Plates](http://platesphp.com/), [Twig](http://twig.sensiolabs.org/) or the template engine of your choice, and not have to change much, if anything, in your controllers. Views might still need some tweaking to work with the new system. 
+You can incorporate third part theme engines into the system very easily by extending `Myth\Themers\ThemerInterface` and filling in the required methods. This should allows you to fairly easily incorporate [Plates](http://platesphp.com/), [Twig](http://twig.sensiolabs.org/) or the template engine of your choice, and not have to change much, if anything, in your controllers. Views might still need some tweaking to work with the new system. 
 
 In order to get up to speed as fast as possible, you should examine `myth/Controllers/ThemedController.php` and `myth/Themers/ViewThemer.php`. This will show you how the pieces fit together. This guide simply provides details about the interface and the role of each method.
 
@@ -59,8 +59,10 @@ Used from within layout and view files to display other, theme or non-theme, vie
 
 Often used for displaying view partials. 
 
+The second parameter is an int value that represents the number of seconds that the output should be cached for.
+
 ### setVariant()
-Sets the variatn used when creating view names. Variants can be anything, but by default, are used to render specific templates for desktop, tablet, and phone. The name of the variant is added to the view name.
+Sets the variant used when creating view names. Variants can be anything, but by default, are used to render specific templates for desktop, tablet, and phone. The name of the variant is added to the view name.
 
 	$this->setVariant('phone');
 	$this->display('header');

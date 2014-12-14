@@ -13,29 +13,32 @@ While working on Bonfire Next and an in-progress book on modernizing CodeIgniter
 
 Where Sprint has a very simple, view-based approach to themes, Bonfire will add the option of the current robust templating solution. Where Sprint will have a super simple role-based auth system that is intended to hard code into the controllers, Bonfire will continue to use a version of the current RBAC with fully assignable roles/permissions. Bonfire will also ship with more modules for extra functionality, along with the admin area already up and running, where Sprint requires you to build out your own. 
 
-So Sprint is basically CodeIgniter, but nicer.
+So Sprint is basically CodeIgniter, but with more cowbell.
 
-NOTE: THIS IS UNDER HEAVY DEVELOPMENT AT THE MOMENT AND IS NOT INTENDED FOR PUBLIC CONSUMPTION AT THE MOMENT. (That said - it's got some great stuff coming, so keep an eye on it, or take the parts you like at the moment.)
+NOTE: This is currently in an **Alpha-release** state. What's that mean? It means that all of the features that I intend on having in the first release are in place, but they may have bugs, documentation errors, etc. Before the Beta release I will be adding additional tests to the system, additional docs, and trying to verify that docs are correct, and possibly streamlining some code or implementing some todos in the code I missed. If you use the project and find changes to the code or docs, pull requests are accepted :) Preferably with tests in place, though I won't be enforcing that at this point.
+
+## How To Install?
+Installation instructions can be found in the docs source here on [GitHub](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/installation.md).
 
 ## What's In The Box?
 
 The following is being built for the initial release:
 
-* (Done) Powerful MY_Model with standard CRUD, db wrappers, observer methods and in-model validation
-* (Done) MY_Controller with simple theming, rendering methods for other data types (like json) and more
-* (Done) Extended Router to include module support, named routes, HTTP verb-based routing, Restful resources and scoped routes/areas.
-* (Done) Simple, but flexible, Template system
-* (Done) Module Support, without being able to call other controllers. That simply gets too complex and causes too many problems. Instead, it's simply the ability to keep MVC triads in modules that can still be called from the URI.
-* (Done) Ready-to-roll AJAX system using [Eldarion AJAX](https://github.com/eldarion/eldarion-ajax)
-* (Done) Better Database Migrations, with CLI tool for building and running
-* (Done) Database Seeding with CLI tool
-* (Done) Markdown-based documentation system.
-* (Done) Flexible Events system with priotized publish/subscribe methodology.
-* (Done) Simple, GUI-less cron controller that can be used through standard crontab or scheduled tasks.
-* (Done) Settings library for maintaining system-wide settings, either in the database, config files, or a combination.
-* (Authentication Done) Simple, but expandable, Auth system 
-* (Done) Email Queue system allows for very flexible email generations and sending. 
-* Code Builder with simple generators in place, but fully customizable and easy to add your own.
+* Powerful [MY_Model](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/models.md) with standard CRUD, db wrappers, observer methods and in-model validation
+* [MY_Controller](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/controllers.md) with simple theming, rendering methods for other data types (like json) and more
+* [Extended Router](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/routes.md) to include module support, named routes, HTTP verb-based routing, Restful resources and scoped routes/areas.
+* Simple, but flexible, [Template](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/themes.md) system
+* Module Support, without being able to call other controllers. That simply gets too complex and causes too many problems. Instead, it's simply the ability to keep MVC triads in modules that can still be called from the URI.
+* Ready-to-roll [AJAX system](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/ajax.md) using [Eldarion AJAX](https://github.com/eldarion/eldarion-ajax)
+* Better [Database Migrations](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/database/migrations.md), with CLI tool for building and running
+* Database [Seeding](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/database/seeding.md) with CLI tool
+* Markdown-based [documentation system](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/writing_docs.md).
+* Flexible [Events system](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/events.md) with priotized publish/subscribe methodology.
+* Simple, GUI-less [cron controller](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/cronjobs.md) that can be used through standard crontab or scheduled tasks.
+* [Settings library](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/settings.md) for maintaining system-wide settings, either in the database, config files, or a combination.
+* Simple, but expandable, [Authentication](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/security/authentication.md) and Authorization system with flexible [Password strength checking](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/security/passwords.md)
+* [Email Queue system](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/email.md) allows for very flexible email generations and sending. 
+* [The Forge](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/overview.md) - a code builder with simple [generators](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/generators.md) in place, but fully customizable and easy to add your own.
 
 
 ## What's NOT included?

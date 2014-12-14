@@ -1,5 +1,10 @@
+# Mac Stuff
 .DS_Store
+
+# IDE Files
 .idea/*
+*.sublime-workspace
+*.sublime-project
 
 # Development Settings
 application/config/development/*
@@ -11,3 +16,7 @@ oldstuff/*
 application/logs/*
 application/cache/*
 tests/_output/*
+o
+application/controllers/Test.php
+application/views/test/baytwo.php
+application/views/test/index.php

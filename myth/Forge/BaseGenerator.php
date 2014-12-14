@@ -1,14 +1,43 @@
 <?php namespace Myth\Forge;
+/**
+ * Sprint
+ *
+ * A set of power tools to enhance the CodeIgniter framework and provide consistent workflow.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package     Sprint
+ * @author      Lonnie Ezell
+ * @copyright   Copyright 2014-2015, New Myth Media, LLC (http://newmythmedia.com)
+ * @license     http://opensource.org/licenses/MIT  (MIT)
+ * @link        http://sprintphp.com
+ * @since       Version 1.0
+ */
 
 use Myth\Controllers\CLIController;
+use Myth\CLI;
 
 /**
  * Class BaseGenerator
  * 
  * Builds on top of the features of the CLIController to provide
  * handy methods used for generating boilerplate code.
- *
- * todo Enforce a sandbox around the app that restricts where files are written or modified.
  *
  * @package Myth\Forge
  */
@@ -22,6 +51,17 @@ abstract class BaseGenerator extends CLIController {
 
     protected $gen_path = null;
 
+	/**
+	 * The name of the module being used, if any.
+	 * @var null
+	 */
+	protected $module = null;
+	protected $module_path = null;
+
+	protected $quiet = false;
+
+	protected $overwrite = false;
+
     //--------------------------------------------------------------------
 
     public function __construct()
@@ -29,6 +69,25 @@ abstract class BaseGenerator extends CLIController {
         parent::__construct();
 
         $this->load->config('forge');
+
+	    // Detect if we're genning in a module
+	    if ($module = CLI::option('module'))
+	    {
+		    $this->module = $module;
+
+		    $folders = config_item('modules_locations');
+
+		    if (is_array($folders))
+		    {
+			    $this->module_path = $folders[0] . strtolower($module) .'/';
+		    }
+		}
+
+	    // Should we overwrite files?
+	    if (CLI::option('overwrite'))
+	    {
+		    $this->overwrite = true;
+	    }
     }
 
     //--------------------------------------------------------------------
@@ -37,6 +96,8 @@ abstract class BaseGenerator extends CLIController {
     /**
      * The method called by the main generator script. This must be
      * overridden by child classes to implement the actual logic used.
+     *
+     * todo Return a 'Done' when the generator has ran
      *
      * @param array $segments
      * @param bool  $quiet      If true, models should accept default values.
@@ -57,15 +118,30 @@ abstract class BaseGenerator extends CLIController {
      */
     public function createFile($path, $contents=null, $overwrite=false, $perms=0644)
     {
+	    $path = $this->sandbox($path);
+
+	    $file_exists = is_file($path);
+
         // Does file already exist?
-        if (is_file($path))
+        if ($file_exists)
         {
 	        if (! $overwrite) {
-		        throw new \RuntimeException( 'Cannot createFile. File already exists: ' . $path );
+		        CLI::write( CLI::color("\texists: ", 'blue') . str_replace(APPPATH, '', $path ) );
+		        return true;
 	        }
 
 	        unlink($path);
         }
+
+	    // Do we need to create the directory?
+	    $segments = explode('/', $path);
+		array_pop($segments);
+		$folder = implode('/', $segments);
+
+	    if (! is_dir($folder))
+	    {
+		    $this->createDirectory($folder);
+	    }
 
         get_instance()->load->helper('file');
 
@@ -75,6 +151,15 @@ abstract class BaseGenerator extends CLIController {
         }
 
         chmod($path, $perms);
+
+	    if ($overwrite && $file_exists)
+	    {
+		    CLI::write( CLI::color("\toverwrote ", 'light_red') . str_replace(APPPATH, '', $path ) );
+	    }
+	    else
+	    {
+		    CLI::write( CLI::color("\tcreated ", 'yellow') . str_replace(APPPATH, '', $path ) );
+	    }
 
         return $this;
     }
@@ -91,6 +176,8 @@ abstract class BaseGenerator extends CLIController {
      */
     public function createDirectory($path, $perms=0755)
     {
+	    $path = $this->sandbox($path);
+
         if (is_dir($path))
         {
             return $this;
@@ -117,7 +204,16 @@ abstract class BaseGenerator extends CLIController {
      */
     public function copyFile($source, $destination, $overwrite=false)
     {
+	    $source = $this->sandbox($source);
 
+	    if (! file_exists($source))
+	    {
+		    return null;
+	    }
+
+	    $content = file_get_contents($source);
+
+	    return $this->createFile($destination, $content, $overwrite);
     }
 
     //--------------------------------------------------------------------
@@ -135,6 +231,11 @@ abstract class BaseGenerator extends CLIController {
      */
     public function copyTemplate($template, $destination, $data=[], $overwrite=false)
     {
+	    if (! is_array($data))
+	    {
+		    $data = array($data);
+	    }
+
         $content = $this->render($template, $data);
 
         return $this->createFile($destination, $content, $overwrite);
@@ -202,14 +303,31 @@ abstract class BaseGenerator extends CLIController {
     
     //--------------------------------------------------------------------
 
-    /**
-     * Runs another generator. The first parameter is the name of the
-     * generator to run. All remaining arguments will be passed directly
-     * to the generator.
-     */
-    public function generate()
+	/**
+	 * Runs another generator. The first parameter is the name of the
+	 * generator to run. The $options parameter is added to the existing
+	 * options passed to this command, and then they are passed along to
+	 * the next command.
+	 *
+	 * @param $command
+	 * @param null $options
+	 */
+    public function generate($command, $options = '', $quiet=false)
     {
+		$orig_options = CLI::optionString();
+	    $options = $orig_options .' '. $options;
 
+	    if ($quiet === true)
+	    {
+		    $options .= ' -quiet';
+	    }
+
+	    if ($this->overwrite === true)
+	    {
+		    $options .= ' -overwrite';
+	    }
+
+	    passthru( "php sprint forge {$command} {$options}" );
     }
 
     //--------------------------------------------------------------------
@@ -271,6 +389,8 @@ abstract class BaseGenerator extends CLIController {
             $this->setupThemer();
         }
 
+	    $data['uikit'] = $this->loadUIKit();
+
         $output = null;
 
 	    $view = $template_name .'.tpl';
@@ -298,10 +418,52 @@ abstract class BaseGenerator extends CLIController {
             }
         }
 
+	    // To allow for including any PHP code in the templates,
+	    // replace any '@php' and '@=' tags with their correct PHP syntax.
+	    $output = str_replace('@php', '<?php', $output);
+	    $output = str_replace('@=', '<?=', $output);
+
         return $output;
     }
 
     //--------------------------------------------------------------------
+
+	/**
+	 * Forces a path to exist within the current application's folder.
+	 * This means it must be in APPPATH,  or FCPATH. If it's not
+	 * the path will be forced within the APPPATH, possibly creating a
+	 * ugly set of folders, but keeping the user from accidentally running
+	 * an evil generator that might have done bad things to their system.
+	 *
+	 * @param $path
+	 *
+	 * @return string
+	 */
+	public function sandbox($path)
+	{
+		// If it's writing to BASEPATH - FIX IT
+		if (strpos($path, BASEPATH) === 0)
+		{
+			return APPPATH . $path;
+		}
+
+		// Exact match for FCPATH?
+		if (strpos($path, FCPATH) === 0)
+		{
+			return $path;
+		}
+
+		// Exact match for APPPATH?
+		if (strpos($path, APPPATH) === 0)
+		{
+			return $path;
+		}
+
+	    return APPPATH . $path;
+	}
+
+	//--------------------------------------------------------------------
+
 
 
     //--------------------------------------------------------------------
@@ -329,12 +491,31 @@ abstract class BaseGenerator extends CLIController {
 
     //--------------------------------------------------------------------
 
+	public function loadUIKit()
+	{
+		$kit_name = config_item('theme.uikit');
+
+		if (! $kit_name)
+		{
+			throw new \RuntimeException('No uikit chosen in application config file.');
+		}
+
+		$uikit = new $kit_name();
+
+	    return $uikit;
+	}
+
+	//--------------------------------------------------------------------
+
+
 	protected function determineOutputPath($folder='')
 	{
-		// todo check for global module name...
 		$path = APPPATH . $folder;
 
-		$this->gen_path = $path;
+		if (! empty($this->module_path))
+		{
+			$path = $this->module_path . $folder;
+		}
 
 		return rtrim($path, '/ ') .'/';
 	}
@@ -350,11 +531,6 @@ abstract class BaseGenerator extends CLIController {
 	 */
 	protected function locateGenerator($name)
 	{
-//		if (! empty($this->gen_path))
-//		{
-//			return $this->gen_path;
-//		}
-
 		$collections = config_item('forge.collections');
 
 		if (! is_array($collections) || ! count($collections) )
@@ -378,6 +554,68 @@ abstract class BaseGenerator extends CLIController {
 		}
 
 		return null;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Converts an array to a string representation.
+	 *
+	 * @param $array
+	 *
+	 * @return string
+	 */
+	protected function stringify($array, $depth=0)
+	{
+		if (! is_array($array))
+		{
+			return '';
+		}
+
+
+
+		$str = '';
+
+		if ($depth > 1)
+		{
+			$str .= str_repeat("\t", $depth);
+		}
+
+		$depth++;
+
+		$str .= "[\n";
+
+		foreach ($array as $key => $value)
+		{
+			$str .= str_repeat("\t", $depth +1);
+
+			if (! is_numeric($key))
+			{
+				$str .= "'{$key}' => ";
+			}
+
+			if (is_array($value))
+			{
+				$str .= $this->stringify($value, $depth);
+			}
+			else if (is_bool($value))
+			{
+				$b = $value === true ? 'true' : 'false';
+				$str .= "{$b},\n";
+			}
+			else if (is_numeric($value))
+			{
+				$str .= "{$value},\n";
+			}
+			else
+			{
+				$str .= "'{$value}',\n";
+			}
+		}
+
+		$str .= str_repeat("\t", $depth) ."],";
+
+		return $str;
 	}
 
 	//--------------------------------------------------------------------

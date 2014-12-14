@@ -56,6 +56,7 @@ This is the bare minimum needed to take advantage of CIDbModel's built-in functi
 
 CIDbModel supports quite a few ways to customize how your class works with the database.
 
+You can easily create a new skeleton model by using the [Forge CLI command](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/generators.md).
 
 ### $table_name
 

@@ -43,6 +43,11 @@ You can optionally pass in custom data to display, like with the traditional met
 	$data = ['user' => $user];
 	$this->render($data);
 
+If you want this view to be cached, but not to use the full page caching that CodeIgniter provides for some reason, you can pass in the number of seconds to cache the rendered view by as the second parameter. 
+
+	// Cache for 5 minutes
+	$this->render($data, 300);
+
 ### View Data
 While you can collect data into a single variable to pass into the render method, it is often convenient to prepare data for the view from different methods. You can do this with the `setVar()` method.
 

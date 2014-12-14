@@ -1,22 +1,34 @@
-<?php
-
+<?php namespace Myth\Themers;
 /**
- * Bonfire
+ * Sprint
  *
- * An open source project to allow developers get a jumpstart their development of CodeIgniter applications
+ * A set of power tools to enhance the CodeIgniter framework and provide consistent workflow.
  *
- * @package   Bonfire
- * @author    Bonfire Dev Team
- * @copyright Copyright (c) 2011 - 2013, Bonfire Dev Team
- * @license   http://guides.cibonfire.com/license.html
- * @link      http://cibonfire.com
- * @since     Version 1.0
- * @filesource
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package     Sprint
+ * @author      Lonnie Ezell
+ * @copyright   Copyright 2014-2015, New Myth Media, LLC (http://newmythmedia.com)
+ * @license     http://opensource.org/licenses/MIT  (MIT)
+ * @link        http://sprintphp.com
+ * @since       Version 1.0
  */
-
-// ------------------------------------------------------------------------
-
-namespace Myth\Interfaces;
 
 /**
  * ThemerInterface
@@ -180,10 +192,12 @@ interface ThemerInterface
      * "admin:header" would try to display the "header.php" file within
      * the "admin" theme.
      *
-     * @param $view
+     * @param string    $view
+     * @param array     $data
+     * @param int       $cache_time  The number of MINUTES to cache the output
      * @return mixed
      */
-    public function display($view);
+    public function display($view, $data = array(), $cache_time = 0);
 
     //--------------------------------------------------------------------
 
