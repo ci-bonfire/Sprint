@@ -75,6 +75,17 @@ If you want to call a view, but don't know what the current theme will be, you c
 
 	<?= $themer->display('{theme}:parts/header'); ?>
 
+### Parsing Views
+Any file ran through the themer's `display()` method has the option of being ran through the [Template Parser](http://www.codeigniter.com/userguide3/libraries/parser.html). This is turned off by default, but can be turned on globally by setting the appropriate config variable to true in `application/config/application.php`.
+
+	$config['theme.parse_views'] = false;
+
+If you need to control when it's parsing views and when it isn't, you can keep the config variable set to `false` and then call the `parseViews()` method of the Themer. The only parameter is a boolean that tells it whether to parse the views or not.
+
+	$this->themer->parseViews(true);
+
+### Caching Views
+
 If you want to cache that particular view, perhaps due to it containing some callbacks that might be intensive, you can pass the number of **minutes** to cache the output for as the second parameter.
 
 	<?= $themer->display('admin:parts/header’, [], 300); ?>

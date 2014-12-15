@@ -113,6 +113,14 @@
     $config['use_eldarion'] = true;
 
 //--------------------------------------------------------------------
+// Parse Views?
+//--------------------------------------------------------------------
+// If TRUE, all files ran through the themers display() method will
+// be passed through the parser, in addition to any other processing.
+//
+	$config['theme.parse_views'] = false;
+
+//--------------------------------------------------------------------
 // Settings Stores
 //--------------------------------------------------------------------
 // Lists the Settings stores to use. Must include full namespace to

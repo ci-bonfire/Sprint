@@ -54,6 +54,8 @@ class ViewThemer implements ThemerInterface
 
     protected $current_variant = '';
 
+	protected $parse_views = false;
+
     protected $ci;
 
     //--------------------------------------------------------------------
@@ -61,6 +63,8 @@ class ViewThemer implements ThemerInterface
     public function __construct($ci)
     {
         $this->ci = $ci;
+
+	    $this->parse_views = config_item('theme.parse_views');
     }
 
     //--------------------------------------------------------------------
@@ -142,8 +146,6 @@ class ViewThemer implements ThemerInterface
      * If a variant has been specified, it will be added to the end
      * of the view name before looking for the file.
      *
-     * If $parse is TRUE, the output will be ran through the parser
-     *
      * @param string $view
      * @param array  $data
      * @param int    $cache_time Number of minutes to cache the page for
@@ -216,6 +218,18 @@ class ViewThemer implements ThemerInterface
 		    {
 			    $this->ci->cache->save($cache_name, $output, (int)$cache_time * 60);
 		    }
+	    }
+
+	    // Parse views?
+	    if ($this->parse_views)
+	    {
+		    $this->ci->load->library('parser');
+
+		    // Any class objects will cause failure
+		    // so get rid of those bad boys....
+		    unset($data['uikit'], $data['themer']);
+
+		    $output = $this->ci->parser->parse_string($output, $data, true);
 	    }
 
         return $output;
@@ -428,6 +442,8 @@ class ViewThemer implements ThemerInterface
      */
     public function parseViews($parse = false)
     {
+	    $this->parse_views = $parse;
+
         return $this;
     }
 
