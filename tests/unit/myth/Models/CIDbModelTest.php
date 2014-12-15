@@ -36,8 +36,6 @@ class CIDbModelTest extends \Codeception\TestCase\Test
 
     protected function _after()
     {
-        m::close();
-
         if (isset($this->model))
         {
             unset($this->model);

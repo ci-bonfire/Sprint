@@ -23,7 +23,9 @@ class FlatAuthorizationTest extends CodeIgniterTestCase {
 
 	public function _after()
 	{
-
+		unset($this->groupModel);
+		unset($this->permModel);
+		unset($this->auth);
 	}
 
 	//--------------------------------------------------------------------
