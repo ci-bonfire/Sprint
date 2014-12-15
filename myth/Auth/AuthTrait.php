@@ -183,7 +183,7 @@ trait AuthTrait {
 		}
 
 		get_instance()->config->load('auth');
-		get_instance()->load->lang('auth');
+		get_instance()->load->language('auth/auth');
 
 		/*
 		 * Authentication

@@ -48,6 +48,8 @@ class FlatAuthorization implements AuthorizeInterface {
 	{
 		$this->groupModel      = ! empty($groupModel) ? $groupModel : new FlatGroupsModel();
 		$this->permissionModel = ! empty($permModel)  ? $permModel  : new FlatPermissionsModel();
+
+		get_instance()->load->language('auth/auth');
 	}
 
 	//--------------------------------------------------------------------
@@ -149,7 +151,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 			if ( ! $p )
 			{
-				$this->error = 'Unable to locate that Permission.';
+				$this->error = lang('auth.permission_not_found');
 
 				return FALSE;
 			}
@@ -192,7 +194,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 			if ( ! $g )
 			{
-				$this->error = 'Unable to locate that Group.';
+				$this->error = lang('auth.group_not_found');
 
 				return FALSE;
 			}
@@ -242,7 +244,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 			if ( ! $g )
 			{
-				$this->error = 'Unable to locate that Group.';
+				$this->error = lang('auth.group_not_found');
 
 				return FALSE;
 			}
@@ -283,7 +285,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 			if ( ! $p )
 			{
-				$this->error = 'Unable to locate that Permission.';
+				$this->error = lang('auth.permission_not_found');
 
 				return FALSE;
 			}
@@ -299,7 +301,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 			if ( ! $g )
 			{
-				$this->error = 'Unable to locate that Group.';
+				$this->error = lang('auth.group_not_found');
 
 				return FALSE;
 			}
@@ -341,7 +343,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 			if ( ! $p )
 			{
-				$this->error = 'Unable to locate that Permission.';
+				$this->error = lang('auth.permission_not_found');
 
 				return FALSE;
 			}
@@ -357,7 +359,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 			if ( ! $g )
 			{
-				$this->error = 'Unable to locate that Group.';
+				$this->error = lang('auth.group_not_found');
 
 				return FALSE;
 			}

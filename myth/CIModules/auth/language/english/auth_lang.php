@@ -56,3 +56,6 @@ $lang['auth.remind_subject']        = "Here's how to reset your password...";
 $lang['auth.need_reset_code']       = 'You must provide the Reset Code.';
 $lang['auth.reset_no_user']         = 'Unable to find an account with that email and reset code. Please try again.';
 $lang['auth.reset_subject']         = "Your password has been reset.";
+
+$lang['auth.permission_not_found']  = 'Unable to locate that Permission.';
+$lang['auth.group_not_found']       = 'Unable to locate that Group.';
