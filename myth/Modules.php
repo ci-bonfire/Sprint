@@ -225,7 +225,7 @@ class Modules {
 	{
 		if ( ! function_exists( 'directory_map' ) )
 		{
-			require BASEPATH . 'helpers/directory.php';
+			require BASEPATH . 'helpers/directory_helper.php';
 		}
 
 		$map = array();
@@ -360,7 +360,7 @@ class Modules {
 	{
 		if ( ! function_exists( 'directory_map' ) )
 		{
-			require BASEPATH . 'helpers/directory.php';
+			require BASEPATH . 'helpers/directory_helper.php';
 		}
 
 		$files = array();
