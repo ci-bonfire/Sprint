@@ -30,8 +30,6 @@
  * @since       Version 1.0
  */
 
-use Myth\Docs\SettingsStoreInterface;
-
 /**
  * Class ConfigStore
  *

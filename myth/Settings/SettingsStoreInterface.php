@@ -1,4 +1,4 @@
-<?php namespace Myth\Docs;
+<?php namespace Myth\Settings;
 /**
  * Sprint
  *
