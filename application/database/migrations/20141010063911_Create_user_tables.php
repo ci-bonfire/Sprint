@@ -33,8 +33,8 @@ class Migration_create_user_tables extends CI_Migration {
                 'null'          => true
             ],
             'password_hash' => [
-                'type' => 'char',
-                'constraint' => 60
+                'type' => 'varchar',
+                'constraint' => 255
             ],
             'reset_hash' => [
                 'type' => 'varchar',
