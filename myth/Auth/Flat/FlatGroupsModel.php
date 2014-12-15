@@ -1,4 +1,4 @@
-<?php namespace Myth\Auth\Models;
+<?php namespace Myth\Auth\Flat;
 
 /**
  * Sprint

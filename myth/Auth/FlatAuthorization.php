@@ -31,8 +31,8 @@
  * @since       Version 1.0
  */
 
-use Myth\Auth\Models\FlatGroupsModel;
-use Myth\Auth\Models\FlatPermissionsModel;
+use Myth\Auth\Flat\FlatGroupsModel;
+use Myth\Auth\Flat\FlatPermissionsModel;
 
 class FlatAuthorization implements AuthorizeInterface {
 
