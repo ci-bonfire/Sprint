@@ -40,6 +40,8 @@ class ViewThemer implements ThemerInterface
 
     protected $default_theme = null;
 
+	protected $active_theme = null;
+
     protected $layout = 'index';
 
     protected $view = '';
@@ -84,6 +86,8 @@ class ViewThemer implements ThemerInterface
         if (! isset($this->folders[$theme])) {
             throw new \LogicException("No folder found for theme: {$theme}.");
         }
+
+	    $this->active_theme = $theme;
 
         // Make the path available within views.
         $this->vars['theme_path'] = $this->folders[$theme];
@@ -163,6 +167,8 @@ class ViewThemer implements ThemerInterface
 		    if ( strpos( $view, ':' ) !== FALSE )
 		    {
 			    list( $theme, $view ) = explode( ':', $view );
+
+			    $theme = str_replace('{theme}', $this->active_theme, $theme);
 		    }
 
 		    if ( ! empty( $theme ) && isset( $this->folders[ $theme ] ) )

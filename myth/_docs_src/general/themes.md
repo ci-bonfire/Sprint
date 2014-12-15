@@ -71,6 +71,10 @@ To display view fragments from within your theme itself, you will prefix the nam
 
 	<?= $themer->display('admin:parts/header'); ?>
 
+If you want to call a view, but don't know what the current theme will be, you can use the `{theme}` placeholder where the theme name would be. It will be replaced with the currently active theme. 
+
+	<?= $themer->display('{theme}:parts/header'); ?>
+
 If you want to cache that particular view, perhaps due to it containing some callbacks that might be intensive, you can pass the number of **minutes** to cache the output for as the second parameter.
 
 	<?= $themer->display('admin:parts/header’, [], 300); ?>
