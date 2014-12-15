@@ -97,8 +97,6 @@ abstract class BaseGenerator extends CLIController {
      * The method called by the main generator script. This must be
      * overridden by child classes to implement the actual logic used.
      *
-     * todo Return a 'Done' when the generator has ran
-     *
      * @param array $segments
      * @param bool  $quiet      If true, models should accept default values.
      * @return mixed
