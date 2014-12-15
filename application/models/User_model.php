@@ -15,32 +15,32 @@ class User_model extends \Myth\Models\CIDbModel {
     protected $validation_rules = [
         [
             'field' => 'first_name',
-            'label' => 'First Name',
+            'label' => 'lang:auth.first_name',
             'rules' => 'trim|alpha|max_length[255]|xss_clean'
         ],
         [
             'field' => 'last_name',
-            'label' => 'Last Name',
+            'label' => 'lang:auth.last_name',
             'rules' => 'trim|alpha|max_length[255]|xss_clean'
         ],
         [
             'field' => 'email',
-            'label' => 'Email Address',
+            'label' => 'lang:auth.email',
             'rules' => 'trim|valid_email|max_length[255]|xss_clean'
         ],
         [
             'field' => 'username',
-            'label' => 'Username',
+            'label' => 'lang:auth.username',
             'rules' => 'trim|alpha|max_length[255]|xss_clean'
         ],
         [
             'field' => 'password',
-            'label' => 'Password',
+            'label' => 'lang:auth.password',
             'rules' => 'trim|xss_clean|max_length[255]|isStrongPassword'
         ],
         [
             'field' => 'pass_confirm',
-            'label' => 'Password (Again)',
+            'label' => 'lang:auth.pass_confirm',
             'rules' => 'trim|matches[password]'
         ],
     ];
