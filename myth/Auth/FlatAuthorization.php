@@ -185,6 +185,11 @@ class FlatAuthorization implements AuthorizeInterface {
 			return null;
 		}
 
+		if (! \Myth\Events::trigger('beforeAddUserToGroup', [$user_id, $group]))
+		{
+			return false;
+		}
+
 		$group_id = $group;
 
 		// Group ID
@@ -209,6 +214,8 @@ class FlatAuthorization implements AuthorizeInterface {
 
 			return FALSE;
 		}
+
+		\Myth\Events::trigger('didAddUserToGroup', [$user_id, $group]);
 
 		return TRUE;
 	}
@@ -235,6 +242,11 @@ class FlatAuthorization implements AuthorizeInterface {
 			return null;
 		}
 
+		if (! \Myth\Events::trigger('beforeRemoveUserFromGroup', [$user_id, $group]))
+		{
+			return false;
+		}
+
 		$group_id = $group;
 
 		// Group ID
@@ -259,6 +271,8 @@ class FlatAuthorization implements AuthorizeInterface {
 
 			return FALSE;
 		}
+
+		\Myth\Events::trigger('didRemoveUserFromGroup', [$user_id, $group]);
 
 		return TRUE;
 	}

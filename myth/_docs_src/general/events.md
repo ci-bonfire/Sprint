@@ -103,6 +103,16 @@ didResetPassword	| (array)$user	| After a user has reset their password.
 didPurgeLoginAttempts	| (str)$email	| Called after a user's LoginAttempts have been purged. 
 didPurgeRememberTokens	| (str)$email	| After a user's RememberMe Tokens have been purged.
 
+### User Authorization
+
+Event Name | Parameters | Description
+------------------|-----------------|----------------
+beforeAddUserToGroup  |  (int)$user_id, (mixed)$group  |  Called just prior to adding a user to a group.
+didAddUserToGroup | (int)$user_id, (mixed)$group  | Called after adding a user to a group.
+beforeRemoveUserFromGroup  |  (int)$user_id, (mixed)$group | Called just prior to removing a user from a group.
+didRemoveUserFromGroup  |  (int)$user_id, (mixed)$group | Called after removing a user from a group.
+
+
 ### Cron Jobs
 
 Event Name | Parameters | Description
