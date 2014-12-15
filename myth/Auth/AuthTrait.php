@@ -65,7 +65,7 @@ trait AuthTrait {
 
 		if (method_exists($this, 'setMessage'))
 		{
-			$this->setMessage('You must be logged in to view that page.');
+			$this->setMessage( lang('auth.not_logged_in') );
 		}
 
 		if (empty($uri))
@@ -113,7 +113,7 @@ trait AuthTrait {
 
 		if (method_exists($this, 'setMessage'))
 		{
-			$this->setMessage('You do not have sufficient privileges to view that page.');
+			$this->setMessage( lang('auth.not_enough_privilege') );
 		}
 
 		if (empty($uri))
@@ -154,7 +154,7 @@ trait AuthTrait {
 
 		if (method_exists($this, 'setMessage'))
 		{
-			$this->setMessage('You do not have sufficient privileges to view that page.');
+			$this->setMessage( lang('auth.not_enough_privilege') );
 		}
 
 		if (empty($uri))
@@ -183,6 +183,7 @@ trait AuthTrait {
 		}
 
 		get_instance()->config->load('auth');
+		get_instance()->load->lang('auth');
 
 		/*
 		 * Authentication
@@ -190,7 +191,7 @@ trait AuthTrait {
 		$auth = config_item('auth.authenticate_lib');
 
 		if (empty($auth)) {
-			throw new \RuntimeException('No Authentication System chosen.');
+			throw new \RuntimeException( lang('auth.no_authenticate') );
 		}
 
 		$this->authenticate = new $auth( get_instance() );
@@ -210,7 +211,7 @@ trait AuthTrait {
 		$auth = config_item('auth.authorize_lib');
 
 		if (empty($auth)) {
-			throw new \RuntimeException('No Authorization System chosen.');
+			throw new \RuntimeException( lang('auth.no_authenticate') );
 		}
 
 		$this->authorize = new $auth();

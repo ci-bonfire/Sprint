@@ -1,5 +1,10 @@
 <?php
 
+$lang['auth.no_authenticate']       = 'No Authentication System chosen.';
+$lang['auth.no_authorize']          = 'No Authorization System chosen.';
+$lang['auth.not_enough_privilege']  = 'You do not have sufficient privileges to view that page.';
+$lang['auth.not_logged_in']         = 'You must be logged in to view that page.';
+
 $lang['auth.did_login']             = 'Welcome back!';
 $lang['auth.did_logout']            = 'You have been logged out. Come back soon!';
 $lang['auth.did_register']          = 'Account created. Please login.';
