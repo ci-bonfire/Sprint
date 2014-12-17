@@ -496,7 +496,7 @@ class Route
     public static function getAreaName($controller)
     {
         foreach (self::$areas as $area => $cont) {
-            if ($controller == $cont) {
+            if (strtolower($controller) == strtolower($cont) ) {
                 return $area;
             }
         }

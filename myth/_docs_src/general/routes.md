@@ -187,6 +187,12 @@ This creates a series of routes that map the parameters into the module. It's a 
 
 If you need to offset your parameter numbers for the above routes, you can pass on 'offset' key/value in your options array as the last parameter.
 
+### Determine Current Area
+Often you will need to know the name of the current area when creating new anchor URLs, like in an admin area. You can determine the area that belongs to your controller with the `getAreaName()` method. The only parameter is the name of the controller that you want to check. 
+
+For example, you're in an 'Admin' controller and needing to create a link to one of it's methods in the view. 
+
+    <a href="<?= site_url( \Myth\Route::getAreaName('admin') .'some/method' ) ?>">Link</a>
    
 ## Blocking Routes
 
