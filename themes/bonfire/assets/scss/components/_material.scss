@@ -1,0 +1,34 @@
+/*
+  Mixins for various bits of Google's material
+  design.
+*/
+
+/**
+ * Google Material Design style card depth
+ * Can receive an int between -5 and 5 (negatives use inset shadows) ex: @include depth(5); @include depth(-3)
+ */
+@mixin depth($layer) {
+  @if $layer > 0 {
+    $inset: 0;
+    $offset: null;
+  } @else {
+    $inset: inset;
+    $offset: 1px;
+    $layer: $layer * -1;
+  }
+  box-shadow: $inset $offset 1px*($layer/2) 5px*$layer rgba(100, 100, 100, .2*$layer);
+}
+
+/*
+  Button designs for material styling.
+*/
+.button {
+  @include depth(1);
+
+  &:hover {
+    @include depth(2);
+  }
+  &:active {
+    @include depth(3);
+  }
+}

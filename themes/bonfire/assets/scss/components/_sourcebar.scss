@@ -1,0 +1,127 @@
+/*
+  Wraps the sourcebar to allow
+  scrolling and sets the width
+  and background-colors.
+*/
+.sourcebar-wrap {
+  background: $dark-bg-color;
+  width: $sourcebar-width;
+  @include depth(1);
+  z-index: 3;
+}
+
+/*
+    Holds the actual list items.
+  */
+.sourcebar {
+  width: $sourcebar-width;
+
+  ul {
+    list-style-type: none;
+    list-style-position: inside;
+    margin: 0;
+    padding: 0;
+
+    &:last-child {
+      border-bottom: 0;
+    }
+    &:first-child {
+      border-top: 0;
+      padding-top: 0;
+    }
+  }
+
+  li {
+    a {
+      font-size: medium;
+      display: block;
+      line-height: 2.8rem;
+      padding: 0 4rem 0 1.5rem;
+      position: relative;
+      border-left: 7px solid $dark-bg-color;
+      &:hover {
+        background-color: $dark-bg-color * 1.3;
+        color: $primary_color;
+        border-color: $primary_color * 1.3;
+      }
+
+      .label {
+        position: absolute;
+        right: 1.5rem;
+        top: 0.75rem;
+      }
+
+    }
+    &.active a {
+      background-color: $dark-bg-color / 1.2;
+      border-left-color: $primary_color;
+      color: #fff;
+    }
+    .fa {
+      margin-right: 0.62rem;
+    }
+  }
+
+  li.spacer {
+    height: 1rem;
+  }
+
+  a {
+    color: $dark-bg-font;
+  }
+
+  hr {
+    height: 1px;
+    border-top: 1px solid $dark-bg-color / 1.5;
+    border-bottom: 1px solid $dark-bg-color * 1.3;
+    margin: 0.62rem 0;
+  }
+}
+
+// Child lists
+.sourcebar > ul > li.active {
+  ul {
+
+    a {
+      background: $dark-bg-color * 1.4;
+      font-size: 0.9rem;
+      line-height: 2.1;
+      color: $dark-bg-font / 1.1;
+      border-color: $primary_color / 1.2;
+
+      &:hover {
+        border-color: inherit;
+        color: $primary_color;
+      }
+    }
+
+    li.active {
+      a {
+        font-weight: bold;
+        border-color: $dark-bg-color;
+      }
+    }
+  }
+}
+
+/*
+  Sourcebar Header
+*/
+.sourcebar header {
+  padding: 0.6rem 1rem 0.2rem 1rem;
+  border-bottom: 1px solid $dark-bg-color * 1.5;
+  margin-bottom: 1rem;
+
+  a:hover .avatar {
+    border-color: $primary_color;
+  }
+
+  .logout-btn {
+    font-size: 2rem;
+    color: $dark-bg-font / 1.5;
+
+    &:hover {
+      color: $primary_color;
+    }
+  }
+}

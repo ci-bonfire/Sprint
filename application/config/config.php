@@ -32,6 +32,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $config['modules_locations'] = array(
     APPPATH .'modules/',
+	APPPATH .'../bonfire/CIModules/',
     APPPATH .'../myth/CIModules/'
 );
 
@@ -351,7 +352,7 @@ $config['encryption_key'] = 'PLEASE_CHANGE_ME!';
 | 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_driver']			= 'cookie';
+$config['sess_driver']			= 'native';
 $config['sess_valid_drivers']	= array();
 $config['sess_cookie_name']		= 'ci_session';
 $config['sess_expiration']		= 7200;
