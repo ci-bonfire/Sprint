@@ -2,6 +2,8 @@
 
 class Ajax extends \Myth\Controllers\ThemedController {
 
+	protected $theme = 'foundation';
+
     protected $tasks = array();
 
     protected $done_tasks = array();

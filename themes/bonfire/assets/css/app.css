@@ -1,4 +1,4 @@
-@import url('app-blessed1.css?z=1418791796667');
+@import url('app-blessed1.css?z=1418794711482');
 
 
 /* large displays */
@@ -397,7 +397,7 @@ th.hide-for-touch {
 */
 /* line 41, /Volumes/MyData/WebSites/SprintWeb/themes/bonfire/assets/scss/common */
 .main-section {
-  margin-left: 250px;
+  margin-left: 220px;
   position: relative;
   top: 0;
   bottom: 0;
@@ -412,7 +412,7 @@ th.hide-for-touch {
   box-shadow: 0 0.5px 5px rgba(100, 100, 100, 0.2); }
   /* line 56, /Volumes/MyData/WebSites/SprintWeb/themes/bonfire/assets/scss/common */
   .main-section.with-controlbar {
-    margin-left: 500px; }
+    margin-left: 470px; }
 
 /*
   Avatars
@@ -450,7 +450,7 @@ img.avatar {
 /* line 8, /Volumes/MyData/WebSites/SprintWeb/themes/bonfire/assets/scss/components/controlbar */
 .controlbar-wrap {
   background-color: #fff;
-  left: 250px;
+  left: 220px;
   box-shadow: 0 0.5px 5px rgba(100, 100, 100, 0.2);
   z-index: 2; }
 
@@ -500,7 +500,7 @@ img.avatar {
     text-transform: uppercase;
     color: #a7a7a7;
     font-weight: 300;
-    margin-bottom: 1.5rem; }
+    margin-bottom: 0.5rem; }
 
 /* line 72, /Volumes/MyData/WebSites/SprintWeb/themes/bonfire/assets/scss/components/controlbar */
 .controlbar header {
@@ -514,7 +514,7 @@ img.avatar {
   /* line 82, /Volumes/MyData/WebSites/SprintWeb/themes/bonfire/assets/scss/components/controlbar */
   .controlbar header h2 {
     color: #F9F9F9;
-    font-size: 1.1rem;
+    font-size: medium;
     line-height: 2rem;
     font-weight: normal;
     margin: 0; }
@@ -535,7 +535,7 @@ img.avatar {
 /* line 6, /Volumes/MyData/WebSites/SprintWeb/themes/bonfire/assets/scss/components/sourcebar */
 .sourcebar-wrap {
   background: #33373b;
-  width: 250px;
+  width: 220px;
   box-shadow: 0 0.5px 5px rgba(100, 100, 100, 0.2);
   z-index: 3; }
 
@@ -544,7 +544,7 @@ img.avatar {
   */
 /* line 16, /Volumes/MyData/WebSites/SprintWeb/themes/bonfire/assets/scss/components/sourcebar */
 .sourcebar {
-  width: 250px; }
+  width: 220px; }
   /* line 19, /Volumes/MyData/WebSites/SprintWeb/themes/bonfire/assets/scss/components/sourcebar */
   .sourcebar ul {
     list-style-type: none;

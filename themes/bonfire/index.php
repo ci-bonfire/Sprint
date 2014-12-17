@@ -4,7 +4,11 @@
 
 	<?= $themer->display('bonfire:fragments/sourcebar') ?>
 
-	<div class="main-section">
+	<?php if (! empty($controlbar)) : ?>
+		<?= $controlbar ?>
+	<?php endif; ?>
+
+	<div class="main-section <?php if (! empty($controlbar)) echo 'with-controlbar' ?>">
 
 		<?= $notice ?>
 

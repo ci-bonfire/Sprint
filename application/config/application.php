@@ -57,6 +57,7 @@
 // method of the
     $config['theme.paths'] = array(
         'bonfire'    => FCPATH .'themes/bonfire',
+        'foundation'    => FCPATH .'themes/foundation5',
         'docs'       => FCPATH .'themes/docs',
         'email'      => FCPATH .'themes/email'
     );
