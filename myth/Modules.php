@@ -299,12 +299,12 @@ class Modules {
 	 */
 	public static function filePath( $module = NULL, $folder = NULL, $file = NULL )
 	{
-		if ( empty( $module ) || empty( $folder ) || empty( $file ) )
+		if ( empty( $module ) || empty( $file ) )
 		{
 			return FALSE;
 		}
 
-		$folders = Modules::folders();
+		$folders = self::$locations;
 		foreach ( $folders as $module_folder )
 		{
 			$test_file = "{$module_folder}{$module}/{$folder}/{$file}";

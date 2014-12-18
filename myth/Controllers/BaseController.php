@@ -29,6 +29,7 @@
  * @link        http://sprintphp.com
  * @since       Version 1.0
  */
+use Myth\Modules;
 
 /**
  * The following properties are used to provide autocomplete for IDE's.
@@ -111,6 +112,8 @@ class BaseController extends \CI_Controller
         $this->autoMigrate();
 
         $this->setupProfiler();
+
+	    $this->initModules();
 
         log_message('debug', get_class($this) .' controller loaded.');
     }
@@ -195,6 +198,37 @@ class BaseController extends \CI_Controller
 
     //--------------------------------------------------------------------
 
+	/**
+	 * Loads up modules and initializes menus, events, etc.
+	 */
+	protected function initModules()
+	{
+		$modules = Modules::listModules();
+
+		foreach ($modules as $module)
+		{
+			$module = rtrim($module, '/ ');
+			$class = $module .'Module';
+
+			if ($path = Modules::filePath($module, null, $class .'.php'))
+			{
+				require $path;
+
+				if (! class_exists($class, false))
+				{
+					continue;
+				}
+
+				// Once loaded, the class will automatically
+				// run it's initialization routines.
+				$class = new $class();
+
+				unset($class);
+			}
+		}
+	}
+
+	//--------------------------------------------------------------------
 
     //--------------------------------------------------------------------
     // Simple Rendering Methods

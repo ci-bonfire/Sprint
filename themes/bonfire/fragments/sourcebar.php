@@ -14,12 +14,6 @@
 			</div>
 		</header>
 
-		<ul>
-			<li class="active"><a href="#"><i class="fa fa-dashboard fa-lg"></i>Dashboard</a></li>
-			<li class="spacer"></li>
-			<li class=""><a href="#"><i class="fa fa-wrench fa-lg"></i>Tools</a></li>
-			<li><a href="#"><i class="fa fa-gear fa-lg"></i>Settings</a></li>
-		</ul>
-
+		<?= $themer->call('\Bonfire\Dashboard\MainMenu:display'); ?>
 	</div>
 </div>
