@@ -79,7 +79,7 @@
 }
 
 // Child lists
-.sourcebar > ul > li.active {
+.sourcebar > ul > li {
   ul {
 
     a {
@@ -87,7 +87,8 @@
       font-size: 0.9rem;
       line-height: 2.1;
       color: $dark-bg-font / 1.1;
-      border-color: $primary_color / 1.2;
+      border-color: $dark-bg-color;
+      padding-left: 2.3rem;
 
       &:hover {
         border-color: inherit;
@@ -98,7 +99,7 @@
     li.active {
       a {
         font-weight: bold;
-        border-color: $dark-bg-color;
+        border-color: $primary_color / 1.2;
       }
     }
   }

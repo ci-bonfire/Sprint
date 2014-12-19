@@ -26,6 +26,15 @@
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+//--------------------------------------------------------------------
+// Show Default Styles?
+//--------------------------------------------------------------------
+// If TRUE, states that the standard Forensics style will be used.
+// If FALSE, it will leave out the styling altogether and you
+// will have to provide it for your own application.
+//
+	$config['profiler.default_styles'] = false;
+
 /*
 | -------------------------------------------------------------------------
 | Profiler Sections
