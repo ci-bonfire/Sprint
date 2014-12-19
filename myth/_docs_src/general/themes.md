@@ -104,10 +104,20 @@ Callbacks are intended to be used within view files. They should return the data
 
 	<?= $themer->call('posts:recent show=10 order=title dir=asc'); ?>
 	
-The first parameter is a string that allows you to, very flexibly, define the class, the method and any number of named parameters that can be sent to the callback. 
+The first parameter is a string that allows you to, very flexibly, define the class, the method and any number of named parameters that can be sent to the callback. The parameters are passed as an array of key/value pairs. In the case of this example, it would pass in the following array. 
+
+    $params = [
+        'show' => 10,
+        'order' => 'title',
+        'dir' => 'asc'
+    ];
+    
+    class Posts {
+        public function recent($params) { . . . }
+    }
 
 ### Caching Callback Results
-You can tell the system to simply cache the results for a period of time, instead of hitting the callback constantly. This is done by passing in the number of seconds to cache the results for. This will use the built-in CodeIgniter caching library that is setup in the BaseController, and defined in either the application config file or the controller itself. 
+You can tell the system to simply cache the results for a period of time, instead of hitting the callback constantly. This is done by passing in the number of **minutes** to cache the results for. This will use the built-in CodeIgniter caching library that is setup in the BaseController, and defined in either the application config file or the controller itself. 
 
 	// Cache it for 1 hour
 	 <?= $themer->call('posts:recent show=10 order=title dir=asc', 60); ?>
