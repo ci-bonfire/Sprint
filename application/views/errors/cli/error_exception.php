@@ -32,38 +32,30 @@
  * @copyright	Copyright (c) 2014, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	http://codeigniter.com
- * @since	Version 1.0.0
+ * @since	Version 3.0.0
  * @filesource
  */
 defined('BASEPATH') OR exit('No direct script access allowed');
 ?>
 
-<div style="border:1px solid #990000;padding-left:20px;margin:0 0 10px 0;">
+<?php echo \Myth\CLI::error("\n\tAn uncaught Exception was encountered"); ?>
 
-<h4>A PHP Error was encountered</h4>
+<?php echo \Myth\CLI::write("\Type: {get_class($exception)}"); ?>
+<?php echo \Myth\CLI::write("\Message: {$message}"); ?>
+<?php echo \Myth\CLI::write("\Filename: {$exception->getFile()}"); ?>
+<?php echo \Myth\CLI::write("\ine Number: {$exception->getLine()}"); ?>
 
-<p>Severity: <?php echo $severity; ?></p>
-<p>Message:  <?php echo $message; ?></p>
-<p>Filename: <?php echo $filepath; ?></p>
-<p>Line Number: <?php echo $line; ?></p>
+<?php
+	if (defined('SHOW_DEBUG_BACKTRACE') && SHOW_DEBUG_BACKTRACE === TRUE) {
 
-<?php if (defined('SHOW_DEBUG_BACKTRACE') && SHOW_DEBUG_BACKTRACE === TRUE): ?>
+		echo \Myth\CLI::write("\n\tBacktrace");
 
-	<p>Backtrace:</p>
-	<?php foreach (debug_backtrace() as $error): ?>
+		foreach ($exception->getTrace() as $error) {
+			if (isset($error['file']) && strpos($error['file'], realpath(BASEPATH)) !== 0) {
+				echo \Myth\CLI::write("\t\t- {$error['function']}() - Line {$error['line']} in {$error['file']}");
+			}
+		}
+	}
 
-		<?php if (isset($error['file']) && strpos($error['file'], realpath(BASEPATH)) !== 0): ?>
-
-			<p style="margin-left:10px">
-			File: <?php echo $error['file'] ?><br />
-			Line: <?php echo $error['line'] ?><br />
-			Function: <?php echo $error['function'] ?>
-			</p>
-
-		<?php endif ?>
-
-	<?php endforeach ?>
-
-<?php endif ?>
-
-</div>
+echo \Myth\CLI::new_line();
+?>
