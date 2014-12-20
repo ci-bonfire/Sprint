@@ -160,7 +160,7 @@ class ViewThemer implements ThemerInterface
 		    $cache_name = str_replace( '/', '_', $cache_name );
 	    }
 
-	    if (! $output = $this->ci->cache->get($cache_name))
+	    if ($cache_time == 0 || ! $output = $this->ci->cache->get($cache_name))
 	    {
 		    $theme        = NULL;
 		    $variant_view = NULL;
