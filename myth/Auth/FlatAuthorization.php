@@ -132,8 +132,6 @@ class FlatAuthorization implements AuthorizeInterface {
 	 */
 	public function hasPermission( $permission, $user_id )
 	{
-		$permission_id = $permission;
-
 		if (empty($permission) || (! is_string($permission) && ! is_numeric($permission)) )
 		{
 			return null;
@@ -145,19 +143,11 @@ class FlatAuthorization implements AuthorizeInterface {
 		}
 
 		// Get the Permission ID
+		$permission_id = $this->getPermissionID($permission);
+
 		if ( ! is_numeric( $permission_id ) )
 		{
-			$p = $this->permissionModel->find_by( 'name', $permission );
-
-			if ( ! $p )
-			{
-				$this->error = lang('auth.permission_not_found');
-
-				return FALSE;
-			}
-
-			$permission_id = $p->id;
-			unset( $p );
+			return false;
 		}
 
 		return $this->permissionModel->doesUserHavePermission( (int)$user_id, (int)$permission_id );
@@ -289,23 +279,13 @@ class FlatAuthorization implements AuthorizeInterface {
 	 */
 	public function addPermissionToGroup( $permission, $group )
 	{
-		$permission_id = $permission;
+		$permission_id = $this->getPermissionID($permission);
 		$group_id      = $group;
 
 		// Permission ID
 		if ( ! is_numeric( $permission_id ) )
 		{
-			$p = $this->permissionModel->find_by( 'name', $permission );
-
-			if ( ! $p )
-			{
-				$this->error = lang('auth.permission_not_found');
-
-				return FALSE;
-			}
-
-			$permission_id = $p->id;
-			unset( $p );
+			return false;
 		}
 
 		// Group ID
@@ -347,23 +327,13 @@ class FlatAuthorization implements AuthorizeInterface {
 	 */
 	public function removePermissionFromGroup( $permission, $group )
 	{
-		$permission_id = $permission;
+		$permission_id = $this->getPermissionID($permission);
 		$group_id      = $group;
 
 		// Permission ID
 		if ( ! is_numeric( $permission_id ) )
 		{
-			$p = $this->permissionModel->find_by( 'name', $permission );
-
-			if ( ! $p )
-			{
-				$this->error = lang('auth.permission_not_found');
-
-				return FALSE;
-			}
-
-			$permission_id = $p->id;
-			unset( $p );
+			return false;
 		}
 
 		// Group ID
@@ -394,6 +364,37 @@ class FlatAuthorization implements AuthorizeInterface {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Assigns a single permission to a user, irregardless of permissions
+	 * assigned by roles. This is saved to the user's meta information.
+	 *
+	 * @param int|string $permission
+	 * @param int        $user_id
+	 */
+	public function addPermissionToUser( $permission, $user_id )
+	{
+
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Removes a single permission from a user. Only applies to permissions
+	 * that have been assigned with addPermissionToUser, not to permissions
+	 * inherited based on groups they belong to.
+	 *
+	 * @param int/string $permission
+	 * @param int        $user_id
+	 */
+	public function removePermissionFromUser( $permission, $user_id )
+	{
+
+	}
+
+	//--------------------------------------------------------------------
+
+
 
 	//--------------------------------------------------------------------
 	// Groups
@@ -641,4 +642,36 @@ class FlatAuthorization implements AuthorizeInterface {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Verifies that a permission (either ID or the name) exists and returns
+	 * the permission ID.
+	 *
+	 * @param int|string $permission
+	 *
+	 * @return int|null
+	 */
+	protected function getPermissionID( $permission )
+	{
+		// If it's a number, we're done here.
+		if (is_numeric($permission))
+		{
+			return (int)$permission;
+		}
+
+		// Otherwise, pull it from the database.
+		$p = $this->permissionModel->find_by( 'name', $permission );
+
+		if ( ! $p )
+		{
+			$this->error = lang('auth.permission_not_found');
+
+			return FALSE;
+		}
+
+		return (int)$p->id;
+	}
+
+	//--------------------------------------------------------------------
+
 }
