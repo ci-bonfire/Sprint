@@ -169,7 +169,7 @@ class User_model extends \Myth\Models\CIDbModel {
      *
      * @return object
      */
-    public function addMetaToUser($user_id, $key, $value=null)
+    public function saveMetaToUser($user_id, $key, $value=null)
     {
         if (! \Myth\Events::trigger('beforeAddMetaToUser', [$user_id, $key]))
         {

@@ -330,11 +330,51 @@ class FlatAuthorization implements AuthorizeInterface {
 	 * assigned by roles. This is saved to the user's meta information.
 	 *
 	 * @param int|string $permission
-	 * @param int        $user_id
+	 * @param int $user_id
+	 *
+	 * @return int|bool
 	 */
 	public function addPermissionToUser( $permission, $user_id )
 	{
+		$permission_id = $this->getPermissionID($permission);
 
+		if (! is_numeric($permission_id) )
+		{
+			return false;
+		}
+
+		if (empty($user_id) || ! is_numeric($user_id))
+		{
+			return null;
+		}
+
+		$user_id = (int)$user_id;
+
+		if (! \Myth\Events::trigger('beforeAddPermissionToUser', [$user_id, $permission]))
+		{
+			return false;
+		}
+
+		$ci =& get_instance();
+		$ci->load->model('User_model');
+
+		$permissions = $ci->user_model->getMetaItem($user_id, 'RBAC_permissions');
+
+		// If we already have permissions, unserialize them and add
+		// the new permission to it.
+		if (! empty($permissions))
+		{
+			$permissions = unserialize($permissions);
+		}
+		else
+		{
+			$permissions = [];
+		}
+
+		$permissions[] = $permission_id;
+
+		// Save the updated permissions
+		return $ci->user_model->saveMetaToUser($user_id, 'RBAC_permissions', serialize($permissions));
 	}
 
 	//--------------------------------------------------------------------
@@ -349,7 +389,75 @@ class FlatAuthorization implements AuthorizeInterface {
 	 */
 	public function removePermissionFromUser( $permission, $user_id )
 	{
+		$permission_id = $this->getPermissionID($permission);
 
+		if (! is_numeric($permission_id) )
+		{
+			return false;
+		}
+
+		if (empty($user_id) || ! is_numeric($user_id))
+		{
+			return null;
+		}
+
+		$user_id = (int)$user_id;
+
+		if (! \Myth\Events::trigger('beforeRemovePermissionFromUser', [$user_id, $permission]))
+		{
+			return false;
+		}
+
+		// Grab the existing permissions for this user, and remove
+		// the permission id from the list.
+		$ci =& get_instance();
+		$ci->load->model('User_model');
+
+		$permissions = $ci->user_model->getMetaItem($user_id, 'RBAC_permissions');
+
+		if (! is_array($permissions))
+		{
+			$permissions = [];
+		}
+
+		unset($permissions[ array_search($permission_id, $permissions) ]);
+
+		// Save the updated permissions
+		return $ci->user_model->saveMetaToUser($user_id, 'RBAC_permissions', serialize($permissions));
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Checks to see if a user has private permission assigned to it.
+	 *
+	 * @param $user_id
+	 * @param $permission
+	 *
+	 * @return bool|null
+	 */
+	public function doesUserHavePermission($user_id, $permission)
+	{
+		$permission_id = $this->getPermissionID($permission);
+
+		if (! is_numeric($permission_id) )
+		{
+			return false;
+		}
+
+		if (empty($user_id) || ! is_numeric($user_id))
+		{
+			return null;
+		}
+
+		$user_id = (int)$user_id;
+
+		$ci =& get_instance();
+		$ci->load->model('User_model');
+
+		$permissions = $ci->user_model->getMetaItem($user_id, 'RBAC_permissions');
+
+		return in_array($permission_id, $permissions);
 	}
 
 	//--------------------------------------------------------------------
