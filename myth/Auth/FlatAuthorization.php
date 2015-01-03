@@ -150,7 +150,14 @@ class FlatAuthorization implements AuthorizeInterface {
 			return false;
 		}
 
-		return $this->permissionModel->doesUserHavePermission( (int)$user_id, (int)$permission_id );
+		// First check the permission model. If that exists, then we're golden.
+		if ($this->permissionModel->doesUserHavePermission( (int)$user_id, (int)$permission_id ) )
+		{
+			return true;
+		}
+
+		// Still here? Then we have one last check to make - any user private permissions.
+		return $this->doesUserHavePermission( (int)$user_id, (int)$permission_id);
 	}
 
 	//--------------------------------------------------------------------
