@@ -160,5 +160,94 @@ class User_model extends \Myth\Models\CIDbModel {
 
     //--------------------------------------------------------------------
 
+    /**
+     * Adds a single piece of meta information to a user.
+     *
+     * @param $user_id
+     * @param $key
+     * @param null $value
+     *
+     * @return object
+     */
+    public function addMetaToUser($user_id, $key, $value=null)
+    {
+        if (! \Myth\Events::trigger('beforeAddMetaToUser', [$user_id, $key]))
+        {
+            return false;
+        }
+
+        $user_id = (int)$user_id;
+
+        // Does this key already exist?
+        $test = $this->db->where([ 'user_id' => $user_id, 'meta_key' => $key ])->get('user_meta');
+
+        // Doesn't exist, so insert it.
+        if (! $test->num_rows())
+        {
+            $data = [
+                'user_id'       => $user_id,
+                'meta_key'      => $key,
+                'meta_value'    => $value
+            ];
+
+            return $this->db->insert('user_meta', $data);
+        }
+
+        // Otherwise, we need to update the existing.
+        return $this->db->where('user_id', $user_id)
+                        ->where('meta_key', $key)
+                        ->set('meta_value', $value)
+                        ->update('user_meta');
+    }
+    
+    //--------------------------------------------------------------------
+
+    /**
+     * Gets the value of a single Meta item from a user.
+     *
+     * @param $user_id
+     * @param $key
+     *
+     * @return mixed
+     */
+    public function getMetaItem($user_id, $key)
+    {
+        $query = $this->db->where('user_id', (int)$user_id)
+                          ->where('meta_key', $key)
+                          ->select('meta_value')
+                          ->get('user_meta');
+
+        if (! $query->num_rows())
+        {
+            return null;
+        }
+
+        return $query->row()->$key;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Deletes a single meta value from a user.
+     *
+     * @param $user_id
+     * @param $key
+     *
+     * @return bool
+     */
+    public function removeMetaFromUser($user_id, $key)
+    {
+        if (! \Myth\Events::trigger('beforeRemoveMetaFromUser', [$user_id, $key]))
+        {
+            return false;
+        }
+
+        $this->db->where('user_id', (int)$user_id)
+                 ->where('meta_key', $key)
+                 ->delete('user_meta');
+    }
+
+    //--------------------------------------------------------------------
+
 
 }
