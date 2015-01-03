@@ -180,22 +180,12 @@ class FlatAuthorization implements AuthorizeInterface {
 			return false;
 		}
 
-		$group_id = $group;
+		$group_id = $this->getGroupID($group);
 
 		// Group ID
 		if ( ! is_numeric( $group_id ) )
 		{
-			$g = $this->groupModel->find_by( 'name', $group );
-
-			if ( ! $g )
-			{
-				$this->error = lang('auth.group_not_found');
-
-				return FALSE;
-			}
-
-			$group_id = $g->id;
-			unset( $g );
+			return false;
 		}
 
 		if ( ! $this->groupModel->addUserToGroup( (int)$user_id, (int)$group_id ) )
@@ -237,22 +227,12 @@ class FlatAuthorization implements AuthorizeInterface {
 			return false;
 		}
 
-		$group_id = $group;
+		$group_id = $this->getGroupID($group);
 
 		// Group ID
 		if ( ! is_numeric( $group_id ) )
 		{
-			$g = $this->groupModel->find_by( 'name', $group );
-
-			if ( ! $g )
-			{
-				$this->error = lang('auth.group_not_found');
-
-				return FALSE;
-			}
-
-			$group_id = $g->id;
-			unset( $g );
+			return false;
 		}
 
 		if ( ! $this->groupModel->removeUserFromGroup( $user_id, $group_id ) )
@@ -280,7 +260,7 @@ class FlatAuthorization implements AuthorizeInterface {
 	public function addPermissionToGroup( $permission, $group )
 	{
 		$permission_id = $this->getPermissionID($permission);
-		$group_id      = $group;
+		$group_id      = $this->getGroupID($group);
 
 		// Permission ID
 		if ( ! is_numeric( $permission_id ) )
@@ -291,17 +271,7 @@ class FlatAuthorization implements AuthorizeInterface {
 		// Group ID
 		if ( ! is_numeric( $group_id ) )
 		{
-			$g = $this->groupModel->find_by( 'name', $group );
-
-			if ( ! $g )
-			{
-				$this->error = lang('auth.group_not_found');
-
-				return FALSE;
-			}
-
-			$group_id = $g->id;
-			unset( $g );
+			return false;
 		}
 
 		// Remove it!
@@ -328,7 +298,7 @@ class FlatAuthorization implements AuthorizeInterface {
 	public function removePermissionFromGroup( $permission, $group )
 	{
 		$permission_id = $this->getPermissionID($permission);
-		$group_id      = $group;
+		$group_id      = $this->getGroupID($group);
 
 		// Permission ID
 		if ( ! is_numeric( $permission_id ) )
@@ -339,17 +309,7 @@ class FlatAuthorization implements AuthorizeInterface {
 		// Group ID
 		if ( ! is_numeric( $group_id ) )
 		{
-			$g = $this->groupModel->find_by( 'name', $group );
-
-			if ( ! $g )
-			{
-				$this->error = lang('auth.group_not_found');
-
-				return FALSE;
-			}
-
-			$group_id = $g->id;
-			unset( $g );
+			return false;
 		}
 
 		// Remove it!
@@ -519,6 +479,35 @@ class FlatAuthorization implements AuthorizeInterface {
 		}
 
 		return TRUE;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Given a group, will return the group ID. The group can be either
+	 * the ID or the name of the group.
+	 *
+	 * @param int|string $group
+	 *
+	 * @return int|false
+	 */
+	protected function getGroupID( $group )
+	{
+		if (is_numeric($group))
+		{
+			return (int)$group;
+		}
+
+		$g = $this->groupModel->find_by( 'name', $group );
+
+		if ( ! $g )
+		{
+			$this->error = lang('auth.group_not_found');
+
+			return FALSE;
+		}
+
+		return (int)$g->id;
 	}
 
 	//--------------------------------------------------------------------
