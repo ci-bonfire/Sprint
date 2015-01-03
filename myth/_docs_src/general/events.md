@@ -90,6 +90,13 @@ If you want to remove all listeners to all events and clear out the system, you 
 ## Provided Events
 The following is a list of all Events provided in SprintPHP core. This does not include any third-party code that might prevent their own. 
 
+### Users
+
+Event Name | Parameters | Description
+------------------|-----------------|----------------
+beforeAddMetaToUser | (int)$user_id, (mixed)$key | Called prior to adding a meta value to a user.
+beforeRemoveMetaFromUser | (int)$user_id, (mixed)$key | Called prior to removing a meta value from a user.
+
 ### User Authentication
 
 Event Name | Parameters | Description
@@ -111,6 +118,8 @@ beforeAddUserToGroup  |  (int)$user_id, (mixed)$group  |  Called just prior to a
 didAddUserToGroup | (int)$user_id, (mixed)$group  | Called after adding a user to a group.
 beforeRemoveUserFromGroup  |  (int)$user_id, (mixed)$group | Called just prior to removing a user from a group.
 didRemoveUserFromGroup  |  (int)$user_id, (mixed)$group | Called after removing a user from a group.
+beforeAddPermissionToUser  | (int)$user_id, (mixed)$permission | Called prior to adding a permission to a user.
+beforeRemovePermissionFromUser | (int)$user_id, (mixed)$permission | Called prior to removing a permission from a user.
 
 
 ### Cron Jobs
