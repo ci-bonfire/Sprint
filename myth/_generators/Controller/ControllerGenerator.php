@@ -173,7 +173,7 @@ class ControllerGenerator extends \Myth\Forge\BaseGenerator {
 			'fields'      => $this->prepareFields()
 		];
 
-		$subfolder = empty( $this->module ) ? '/' . $name : '';
+		$subfolder = empty( $this->module ) ? '/' . $name : '/'. $data['lower_name'];
 
 		// Index
 		$destination = $this->determineOutputPath( 'views' . $subfolder ) . 'index.php';
