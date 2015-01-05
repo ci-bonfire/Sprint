@@ -57,6 +57,8 @@ class ScaffoldGenerator extends \Myth\Forge\BaseGenerator {
 		$this->makeSeed($name);
 		$this->makeModel($name);
 		$this->makeController($name);
+
+		$this->readme();
 	}
 
 	//--------------------------------------------------------------------

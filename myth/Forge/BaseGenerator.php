@@ -365,7 +365,16 @@ abstract class BaseGenerator extends CLIController {
 
 	    $path = $this->locateGenerator($name);
 
-	    die($path);
+        if (! file_exists($path . $file))
+        {
+            CLI::error('Unable to find the readme file: '. $file);
+        }
+
+	    $contents = file_get_contents($path . $file);
+
+        CLI::new_line(2);
+        CLI::write( CLI::wrap($contents), 'green' );
+        CLI::new_line();
     }
 
     //--------------------------------------------------------------------
