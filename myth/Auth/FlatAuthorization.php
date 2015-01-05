@@ -42,6 +42,8 @@ class FlatAuthorization implements AuthorizeInterface {
 
 	protected $error = NULL;
 
+	protected $user_model = null;
+
 	//--------------------------------------------------------------------
 
 	public function __construct($groupModel = null, $permModel = null)
@@ -61,6 +63,21 @@ class FlatAuthorization implements AuthorizeInterface {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Allows the consuming application to pass in a reference to the
+	 * model that should be used.
+	 *
+	 * @param $model
+	 * @return mixed
+	 */
+	public function useModel($model)
+	{
+		$this->user_model =& $model;
+
+		return $this;
+	}
+
+	//--------------------------------------------------------------------
 
 	//--------------------------------------------------------------------
 	// Actions
@@ -459,10 +476,17 @@ class FlatAuthorization implements AuthorizeInterface {
 
 		$user_id = (int)$user_id;
 
-		$ci =& get_instance();
-		$ci->load->model('User_model');
+		$model = $this->user_model;
 
-		$permissions = $ci->user_model->getMetaItem($user_id, 'RBAC_permissions');
+		if (empty($model))
+		{
+			$ci =& get_instance();
+			$ci->load->model( 'User_model' );
+
+			$model = $ci->user_model;
+		}
+
+		$permissions = $model->getMetaItem($user_id, 'RBAC_permissions');
 
 		return in_array($permission_id, $permissions);
 	}
