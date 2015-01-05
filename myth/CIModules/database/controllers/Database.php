@@ -83,6 +83,23 @@ class Database extends \Myth\Controllers\CLIController
             }
         }
 
+        // We need to append 'mod:' to properly handle modules, if
+        // the $type is not one of the recognized migration groups.
+        $this->config->load('migration');
+        $groups = config_item('migration_paths');
+        $groups = array_keys($groups);
+
+        // If it's not in the groups list, then assume it's a module.
+        if (! in_array($type, $groups))
+        {
+            if (strpos($type, 'mod:') !== 0)
+            {
+                $type = 'mod:'. $type;
+            }
+        }
+
+        unset($groups);
+
         // Get our stats on the migrations
         $latest = $this->migration->get_latest($type);
         $latest = empty($latest) ? 0 : $latest;
