@@ -615,6 +615,11 @@ class CLI {
 			return '';
 		}
 
+        if ($max == 0)
+        {
+            $max = CLI::getWidth();
+        }
+
 		if (CLI::getWidth() < $max)
 		{
 			$max = CLI::getWidth();
