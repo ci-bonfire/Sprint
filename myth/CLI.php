@@ -429,7 +429,7 @@ class CLI {
      */
     public static function color($text, $foreground, $background = null, $format=null)
     {
-        if (static::is_windows() and ! \Input::server('ANSICON'))
+        if (static::is_windows() and ! isset($_SERVER['ANSICON']))
         {
             return $text;
         }
