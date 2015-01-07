@@ -101,7 +101,7 @@ class Database extends \Myth\Controllers\CLIController
         unset($groups);
 
         // Get our stats on the migrations
-        $latest = $this->migration->get_latest($type);
+        $latest = $this->migration->latest($type);
         $latest = empty($latest) ? 0 : $latest;
 
         if (empty($latest)) {
