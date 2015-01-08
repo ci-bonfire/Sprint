@@ -102,7 +102,7 @@ class Database extends \Myth\Controllers\CLIController
 
         // Get our stats on the migrations
         $latest = $this->migration->get_latest($type);
-        $latest = empty($latest) ? 0 : $latest;
+        $latest = empty($latest) ? 0 : substr($latest, 0, strpos($latest, '_'));
 
         if (empty($latest)) {
             return CLI::write("\tNo migrations found.", 'yellow');
@@ -111,9 +111,9 @@ class Database extends \Myth\Controllers\CLIController
         $current = $this->migration->get_version($type);
 
         // Already at the desired version?
-        if (! is_null($to) && $current == $to)
+        if ((! is_null($to) && $current == $to) OR (is_null($to) && $current == $latest))
         {
-            return $silent ? true : CLI::write("\tDatabase is already at the desired version ({$to})", 'yellow');
+            return $silent ? true : CLI::write("\tDatabase is already at the desired version ({$current})", 'yellow');
         }
 
         $target = is_null($to) ? $latest : $to;
