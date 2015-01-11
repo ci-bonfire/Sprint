@@ -55,7 +55,7 @@ class CI_Cart {
 	 *
 	 * @var string
 	 */
-	public $product_id_rules	= '\.a-z0-9_-';
+	public $product_id_rules = '\.a-z0-9_-';
 
 	/**
 	 * These are the regular expression rules that we use to validate the product ID and product name
@@ -63,14 +63,14 @@ class CI_Cart {
 	 *
 	 * @var string
 	 */
-	public $product_name_rules	= '\w \-\.\:';
+	public $product_name_rules = '\w \-\.\:';
 
 	/**
 	 * only allow safe product names
 	 *
 	 * @var bool
 	 */
-	public $product_name_safe	= TRUE;
+	public $product_name_safe = TRUE;
 
 	// --------------------------------------------------------------------------
 
@@ -86,7 +86,7 @@ class CI_Cart {
 	 *
 	 * @var array
 	 */
-	protected $_cart_contents	= array();
+	protected $_cart_contents = array();
 
 	/**
 	 * Shopping Class Constructor

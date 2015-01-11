@@ -59,35 +59,35 @@ class CI_Zip {
 	 *
 	 * @var string
 	 */
-	public $zipdata		= '';
+	public $zipdata = '';
 
 	/**
 	 * Zip data for a directory in string form
 	 *
 	 * @var string
 	 */
-	public $directory	= '';
+	public $directory = '';
 
 	/**
 	 * Number of files/folder in zip file
 	 *
 	 * @var int
 	 */
-	public $entries		= 0;
+	public $entries = 0;
 
 	/**
 	 * Number of files in zip
 	 *
 	 * @var int
 	 */
-	public $file_num	= 0;
+	public $file_num = 0;
 
 	/**
 	 * relative offset of local header
 	 *
 	 * @var int
 	 */
-	public $offset		= 0;
+	public $offset = 0;
 
 	/**
 	 * Reference to time at init
@@ -473,11 +473,11 @@ class CI_Zip {
 	 */
 	public function clear_data()
 	{
-		$this->zipdata		= '';
-		$this->directory	= '';
-		$this->entries		= 0;
-		$this->file_num		= 0;
-		$this->offset		= 0;
+		$this->zipdata = '';
+		$this->directory = '';
+		$this->entries = 0;
+		$this->file_num = 0;
+		$this->offset = 0;
 		return $this;
 	}
 
