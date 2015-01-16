@@ -3,6 +3,11 @@ Sprint provides you with a jump-start to your web-application development by pro
 
 This documentation is included with every download of Sprint. Please navigate within your site to `/docs` to view them. To learn about configuring docs or writing your own documentation, see our page on [Writing Documentation](writing_docs).
 
+## How Do I Install It?
+Installation is simple, but does require that [Composer](https://getcomposer.org/) is installed. You can find installation instructions for that over in [their docs](https://getcomposer.org/doc/00-intro.md#installation-linux-unix-osx). I highly recomend installing it globallly. You'll use it a lot once you get used to it. 
+
+Once that's installed, just follow the simple steps in our [installation guide](installation).
+
 ## Server Requirements
 Sprint requires the following server setup, at minimum:
 

@@ -10,7 +10,7 @@ This class is automatically loaded for you in the router and you should not have
 	$route = new \Myth\Route();
 
 ## Basic Routes
-When creating your routes file, you have the option of sticking with the standard CodeIgniter routes array, or using Sprint's `Route` library. The Route library provides enhanced features, including named routes, grouping, creating `areas`, and more.
+When creating your routes file, you have the option of sticking with the standard CodeIgniter routes array, or using Sprint's `Route` library. The Route library provides enhanced features, including named routes, grouping, creating "areas", and more. You can mix and match between the two throughout the file without a problem.
 
 When using the Route library, you use the `any()` method in place of adding to the `$routes` array.
 
@@ -100,7 +100,7 @@ If you need to match multiple verbs against a single route, you can use the `mat
 
 ### Customizing Resourceful Routes
 
-While the standard naming convention provided by the `resources` Route method will often serve you well, you may find that you need to customize the route to easily control where your URL's route to.
+While the standard naming convention provided by the `resources` Route method will often serve you well, you may find that you need to customize the route to easily control where your URL s route to.
 
 #### Specifying a controller to use
 

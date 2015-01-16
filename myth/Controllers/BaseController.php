@@ -296,12 +296,12 @@ class BaseController extends \CI_Controller
      */
     public function renderJS($js = null)
     {
-        if (!is_string($js)) {
+        if (! is_string($js)) {
             throw new RenderException('No javascript passed to the render_js() method.');
         }
 
         $this->output->enable_profiler(false)
-            ->set_content_type('application/x-javascript')
+            ->set_content_type('application/javascript')
             ->set_output($js);
     }
 
@@ -318,7 +318,7 @@ class BaseController extends \CI_Controller
     public function renderRealtime()
     {
         if (ob_get_level() > 0) {
-            end_end_flush();
+            ob_end_flush();
         }
         ob_implicit_flush(true);
     }
@@ -331,6 +331,8 @@ class BaseController extends \CI_Controller
      *
      * If the URL is a relative URL, it will be converted to a full URL for this site
      * using site_url().
+     *
+     * todo modify ajaxRedirect to work both with and without Eldarion
      *
      * @param  string $location [description]
      */

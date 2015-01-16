@@ -6,7 +6,7 @@ Themes provide a simple, yet very flexible, way of providing consistent interfac
 Themes are simply a collection of layout views and their assets that are used to determine the overall look of a page. They are the wrappers around your [Views](general/views). 
 
 ### Theme Locations
-Themes are stored in the same root folder as the rest of the project, alongside the `system` and `application` folders.  All themes are expected to live there. Each theme is required to have an entry in the `config/application.php` configuration file.  
+Themes are typically stored in the same root folder as the rest of the project, alongside the `system` and `application` folders.  Each theme is required to have an entry in the `config/application.php` configuration file.  
 
 	$config['theme.paths'] = [
     	'admin' => APPPATH .'../themes/admin',
@@ -15,20 +15,19 @@ Themes are stored in the same root folder as the rest of the project, alongside 
 
 The keys in the array are the name they are referenced by when removing the them or using the `display` method (see below). These names must match the folder name within the themes folder in order for the views to be found. The values are the paths to the themes folder, relative to the site's `index.php`.
 
-If you need to add configuration items on the fly, you will need to modify that config entry since it is used by a couple of different libraries. 
 
 ### Themers
-The Theme system is expandable to use most any PHP template library out there. To do so you would create a new class that extends from the [Myth\Interfaces\ThemerInterface](interfaces/template) class. The class is then instantiated at run time using the class that is set in the `config/application.php` configuration file.
+The Theme system is expandable to use most any PHP template library out there. To do so you would create a new class that extends from the [Myth\Interfaces\ThemerInterface](interfaces/themers) class. The class is then instantiated at run time using the class that is set in the `config/application.php` configuration file.
 
 	$config['active_themer'] = '\Myth\Themers\ViewThemer';
 
 
 ## Using Themes
 
-In order to use the theming system, your controller must extend the `ThemedController` or one of its children, like the `FrontController `or `AuthenticatedController`. This provides a set of simple methods to make using themes simple.
+In order to use the theming system, your controller must extend the `ThemedController`. This provides a set of simple methods to make using themes simple.
 
 ### render()
-The `render()` method is the primary means of interacting with the system. Use it to display the final page to the user. It should be the last action in your method. 
+The `render()` method is the primary means of interacting with the system. Use it to display the final page to the user. It should be the last action in your method. The view name will be automatically determined by the system based on the module/controller/method names, unless you've set the view to use yourself with `$this->themer->setView()`.
 
 	$this->render();
 
@@ -83,16 +82,18 @@ Any file ran through the themer's `display()` method has the option of being ran
 If you need to control when it's parsing views and when it isn't, you can keep the config variable set to `false` and then call the `parseViews()` method of the Themer. The only parameter is a boolean that tells it whether to parse the views or not.
 
 	$this->themer->parseViews(true);
+	
+Note that when parsing views, the `$themer` and `$uikit` objects are not available within the view files being parse.
 
 ### Caching Views
 
 If you want to cache that particular view, perhaps due to it containing some callbacks that might be intensive, you can pass the number of **minutes** to cache the output for as the second parameter.
 
-	<?= $themer->display('admin:parts/header’, [], 300); ?>
+	<?= $themer->display('admin:parts/header’, [], 5); ?>
 
 You can specify a custom name for the cache key by passing it in as the fourth parameter.
 
-	<?= $themer->display('admin:parts/header’, [], 300, ‘anon-admin_header’); ?>
+	<?= $themer->display('admin:parts/header’, [], 15, ‘anon-admin_header’); ?>
 
 ## Callbacks
 Callbacks allow you to call other code from within your theme file. They allow you to easily include formatted modules, or simply to collect pieces of commonly used code from across your application into one place so that you don't have to keep coding that information. 
@@ -100,7 +101,7 @@ Callbacks allow you to call other code from within your theme file. They allow y
 For example, say you had a set of recent blog posts. That block of posts might show up on the home page, on the sidebar of the blog, and on the individual posts page. That's three different places in your controllers that you would need to remember to call the model and include this data as a view variable. Instead, we can create a callback that will load the model, grab the data, render it into a view for us, and spit out the formatted data.
 
 ### Calling the Callbacks
-Callbacks are intended to be used within view files. They should return the data, not echo it out. 
+Callbacks are intended to be used within view files. They should return the HTML, not echo it out. 
 
 	<?= $themer->call('posts:recent show=10 order=title dir=asc'); ?>
 	
