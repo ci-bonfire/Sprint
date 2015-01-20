@@ -358,7 +358,7 @@ class BaseController extends \CI_Controller
      * as JSON data. This is useful when your javascript is sending JSON data
      * to the application.
      *
-     * @param  strign $format The type of element to return, either 'object' or 'array'
+     * @param  string $format The type of element to return, either 'object' or 'array'
      * @param  int $depth The number of levels deep to decode
      *
      * @return mixed    The formatted JSON data, or NULL.
