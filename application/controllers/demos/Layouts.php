@@ -25,7 +25,7 @@ class Layouts extends \Myth\Controllers\ThemedController {
 
         if ($theme == 'foundation')
         {
-            $this->addStyle( site_url('themes/foundation/css/theme.css') );
+            $this->addStyle( site_url('themes/foundation5/css/theme.css') );
         }
 
         // Any variant specified
