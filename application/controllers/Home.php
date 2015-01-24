@@ -59,6 +59,3 @@ class Home extends \Myth\Controllers\ThemedController {
 		$this->render();
 	}
 }
-
-/* End of file welcome.php */
-/* Location: ./application/controllers/Welcome.php */
