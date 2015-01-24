@@ -1200,7 +1200,11 @@ class CI_Loader {
 	 */
 	protected function _ci_autoloader()
 	{
-		include(APPPATH.'config/autoload.php');
+		if (file_exists(APPPATH.'config/autoload.php'))
+		{
+			include(APPPATH.'config/autoload.php');
+		}
+
 		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/autoload.php'))
 		{
 			include(APPPATH.'config/'.ENVIRONMENT.'/autoload.php');
