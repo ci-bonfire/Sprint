@@ -10,7 +10,7 @@ class Layouts extends \Myth\Controllers\ThemedController {
     {
         parent::__construct();
 
-        $this->load->driver('session');
+        $this->load->library('session');
     }
 
     //--------------------------------------------------------------------
