@@ -12,7 +12,7 @@ class Ajax extends \Myth\Controllers\ThemedController {
     {
         parent::__construct();
 
-        $this->load->driver('session');
+        $this->load->library('session');
 
         $this->tasks = $this->session->userdata('tasks');
         if (! empty($this->tasks))
