@@ -42,7 +42,7 @@ class Auth extends \Myth\Controllers\ThemedController
 
         $this->config->load('auth');
         $this->lang->load('auth');
-        $this->ci->load->library('session');
+        $this->load->library('session');
     }
 
     //--------------------------------------------------------------------
