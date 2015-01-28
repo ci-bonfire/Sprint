@@ -381,7 +381,7 @@ abstract class CI_DB_driver {
 			}
 		}
 
-		log_message('debug', 'Database Driver Class Initialized');
+		log_message('info', 'Database Driver Class Initialized');
 	}
 
 	// --------------------------------------------------------------------
@@ -1906,6 +1906,3 @@ abstract class CI_DB_driver {
 	}
 
 }
-
-/* End of file DB_driver.php */
-/* Location: ./system/database/DB_driver.php */

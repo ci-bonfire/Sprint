@@ -32,7 +32,6 @@
  */
 
 use Myth\Auth\AuthenticateInterface;
-use Myth\Route;
 use Myth\Events as Events;
 
 /**
@@ -83,8 +82,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (empty($this->ci->session))
         {
-            $this->ci->load->driver('session');
-            $this->ci->session->select_driver( config_item('sess_driver') );
+            $this->ci->load->library('session');
         }
 
         $this->ci->config->load('auth');
@@ -243,7 +241,8 @@ class LocalAuthentication implements AuthenticateInterface {
         // to determine whether a user is logged in or not.
         if (! $this->user)
         {
-            $this->user = $this->user_model->as_array()->find_by('id', (int)$id);
+            $this->user = $this->user_model->as_array()
+                                           ->find_by('id', (int)$id);
 
             if (empty($this->user))
             {
@@ -274,7 +273,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Attempt to match the token against our auth_tokens table.
         $query = $this->ci->db->where('hash', $this->ci->login_model->hashRememberToken($token))
-                          ->get('auth_tokens');
+                              ->get('auth_tokens');
 
         if (! $query->num_rows())
         {
@@ -752,8 +751,8 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Save the token to the database.
         $data = [
-            'email' => $user['email'],
-            'hash' => sha1(config_item('auth.salt') . $new_token),
+            'email'   => $user['email'],
+            'hash'    => sha1(config_item('auth.salt') . $new_token),
             'created' => date('Y-m-d H:i:s')
         ];
 

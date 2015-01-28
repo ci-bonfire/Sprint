@@ -267,11 +267,11 @@ class BaseController extends \CI_Controller
                 if ($this->ajax_notices === true) {
 	                if ( ! empty( $this->themer ) && ! empty( $this->theme ) )
 	                {
-		                $json['fragments']['#notices'] = $this->themer->display( "{$this->theme}:notice", array( 'notice' => $this->message() ) );
+		                $json['fragments']['#notice'] = $this->themer->display( "{$this->theme}:notice", array( 'notice' => $this->message() ) );
 	                }
 	                else if (file_exists(APPPATH .'views/notice.php'))
 	                {
-		                $json['fragments']['#notices'] = $this->load->view_path( "notice", array( 'notice' => $this->message() ), TRUE );
+		                $json['fragments']['#notice'] = $this->load->view_path( "notice", array( 'notice' => $this->message() ), TRUE );
 	                }
                 }
             }
