@@ -1,12 +1,12 @@
 # Cron Jobs
-The cron system allows you to have many tasks that run at scheduled times. This provides a single controller action to call from your web server's cron system or Scheduled Tasks system. Because the cron controller is also accessible from the web, applications running under shared hosting without access to standard cron tools can use web-based runners to still get access to the recurring tasks. 
+The cron system allows you to have many tasks that run at scheduled times. This provides a single controller action to call from your web server's cron system or Scheduled Tasks system. 
 
 ## Setting Up Your Server
 How you setup your server depends greatly on the operating system your web server is running. Instead of providing detailed instructions for many different operating systems, I will provide links to instructions for several common operating systems.
 
 You need to know two items: 1) the CLI command to have the cronjob run and 2) the interval to have it run. 
 
-The script that will need to run is your webroot folder followed by the index file and cron controller. It would look something like the following, though you'll have to verify for your exact setup. 
+The script that will need to run is your `webroot folder` followed by the `index file` and `cron controller`. It would look something like the following, though you'll have to verify for your exact setup. 
 
 	/home/www/mysite/index.php cron run
 
@@ -23,10 +23,10 @@ The interval should be equal to the smallest frequency of any tasks that need to
 ## Running the Tasks
 In order to tell the system to process all of the tasks and run the ones that are scheduled, you use the `run` command. 
 
-	$ php index.php cron run
+	$ php sprint cron run
 	
 ### Event: afterCron
-Once the cronjob has been run, it will fire an [Event](general/events) to allow other parties to take an action. By default, and action is provided (but disabled) to send an email with the output of the cron job to the email listed in `application/config/application.php` as `site.auth_email`. This is best used for debugging, though doesn't hurt for monitoring purposes, but can clog up inboxes depending on the frequency of the cron job.
+Once the cronjob has been run, it will fire an [Event](general/events) to allow other parties to take an action. By default, an action is provided (but disabled) to send an email with the output of the cron job to the email listed in `application/config/application.php` as `site.auth_email`. This is best used for debugging, though doesn't hurt for monitoring purposes, but can clog up inboxes depending on the frequency of the cron job.
 
 	\Myth\Events::trigger('afterCron', [$output]);
 
@@ -81,7 +81,7 @@ The cron module provides a few CLI-based tools to help you verify when your cron
 ### Show Tasks
 Lists the available tasks defined in the sytem.
 
-	$ php index.php cron show
+	$ php sprint cron show
 	
 	Available Tasks:
 		task1
@@ -90,7 +90,7 @@ Lists the available tasks defined in the sytem.
 ### Show All Tasks
 The `list all` task will spit out a table with all scheduled tasks and their next and previous run times.
 
-	$ php index.php cron show all
+	$ php sprint cron show all
 	
 	Task				Next Run				Previous Run
 	--------------------------------------------------------------------------
@@ -111,18 +111,18 @@ You can suspend a task from running temporarily with the `suspend` command. This
 
 The only parameter is the name of the task. 
 
-	$ php index.php cron suspend task1 
+	$ php sprint cron suspend task1 
 
 ### Resume A Task
 Resuming a task that has been suspended is a simple process with the `resume`. 
 
-	$ php index.php cron resumeTask task1
+	$ php sprint cron resumeTask task1
 
 ### Stop Cron From Running
 You can suspend the cronjobs from running completely with the `disable` command. This will stop the cron system from running any tasks until you enable it again. The value is stored in the [Settings](general/settings) system. 
 
-	$ php index.php cron disable
+	$ php sprint cron disable
 	
 This can be restarted again with the `enable` command. 
 
-	$ php index.php cron enable
+	$ php sprint cron enable

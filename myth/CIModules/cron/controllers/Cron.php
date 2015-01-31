@@ -33,6 +33,7 @@
 use Myth\CLI;
 use Myth\Settings\Settings;
 
+// todo Add ability to log actual cron jobs to database to verify when they ran for sure.
 class Cron extends \Myth\Controllers\CLIController {
 
     protected $descriptions = [
