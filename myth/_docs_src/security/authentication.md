@@ -235,7 +235,15 @@ The BCRYPT method of encryption allows you to define the "cost", or number of it
 Valid range is between 4 - 31.
 
 	$config['auth.hash_cost'] = 10;
-	
+
+A **command line tool** has been provided that determines the appropriate value to set the hash_cost to based upon a desired processing time. The command defaults to a value of 50 milliseconds, which is an acceptable time for interactive logins, though this value could be raised to 100 milliseconds or higher, depending on the type of site, how busy it is, and the patience of your users.
+
+	$ php sprint auth test index
+
+If you want to test against a different value, enter the number of milliseconds after the command. 
+
+	$ php sprint auth test index 100
+
 ### auth.default_role_id
 The ID of the role that a member should be assigned when they first sign up.
 
