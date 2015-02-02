@@ -105,6 +105,36 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function login($credentials, $remember=false)
     {
+        // If the user is throttled due to too many invalid logins
+        // or the system is under attack, kick them back.
+        // We need to test for this prior to validation to avoid
+        // hitting the password hashing process if possible.
+
+        // Ensure we have an email address to use for throttling.
+        if (empty($credentials['email']))
+        {
+            $tc = $credentials;
+            unset($credentials['password']);
+
+            $user = $this->user_model->select('email')
+                                     ->where($tc)
+                                     ->first();
+
+            if (! $user)
+            {
+                $this->user = null;
+                return null;
+            }
+
+            // If throttling time is above zero, we can't allow
+            // logins now.
+            if ($time = (int)$this->isThrottled($user->email) > 0)
+            {
+                $this->error = sprintf(lang('auth.throttled'), $time);
+                return false;
+            }
+        }
+
         $user = $this->validate($credentials, true);
 
         if (! $user)

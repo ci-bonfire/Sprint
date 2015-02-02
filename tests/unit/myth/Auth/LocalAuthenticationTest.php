@@ -151,6 +151,10 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
             'password' => 'father'
         );
 
+        $this->auth->user_model->shouldReceive('select')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('where')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( null );
+
         $result = $this->auth->login($creds);
 
         $this->assertNull($result);

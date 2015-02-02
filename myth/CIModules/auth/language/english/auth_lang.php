@@ -59,3 +59,5 @@ $lang['auth.reset_subject']         = "Your password has been reset.";
 
 $lang['auth.permission_not_found']  = 'Unable to locate that Permission.';
 $lang['auth.group_not_found']       = 'Unable to locate that Group.';
+
+$lang['auth.throttled']             = 'Not currently allowed. Please wait %s seconds before trying again.';
