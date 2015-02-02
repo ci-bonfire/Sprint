@@ -62,8 +62,6 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 
 
-
-
 //--------------------------------------------------------------------
 // PERSISTENT LOGINS
 //--------------------------------------------------------------------
@@ -190,6 +188,19 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
     $config['auth.use_dictionary'] = false;
 
 //--------------------------------------------------------------------
+// PASSWORD HASHING COST
+//--------------------------------------------------------------------
+// The BCRYPT method of encryption allows you to define the "cost"
+// or number of iterations made, whenver a password hash is created.
+// This defaults to a value of 10 which is an acceptable number.
+// However, depending on the security needs of your application
+// and the power of your hardware, you might want to increase the
+// cost. This makes the hasing process takes longer.
+//
+// Valid range is between 4 - 31.
+$config['auth.hash_cost'] = 10;
+
+//--------------------------------------------------------------------
 // Activation Method
 //--------------------------------------------------------------------
 // The site supports 3 methods of activating a user:
@@ -209,4 +220,4 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 //--------------------------------------------------------------------
 // Sets the Default role id to use when creating new users.
 //
-    $config['auth.default_role_id'] = 1;
+    $config['auth.default_role_id'] = 3;

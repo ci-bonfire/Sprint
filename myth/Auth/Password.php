@@ -61,7 +61,12 @@ class Password {
      */
     public static function hashPassword($password)
     {
-        return password_hash($password, PASSWORD_BCRYPT);
+        if (! config_item('auth.hash_cost'))
+        {
+            get_instance()->load->config('auth');
+        }
+
+        return password_hash($password, PASSWORD_BCRYPT, ['cost' => config_item('auth.hash_cost')]);
     }
 
     //--------------------------------------------------------------------
