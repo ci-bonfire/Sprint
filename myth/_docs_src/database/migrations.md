@@ -37,7 +37,7 @@ A migration is a subclass of `CI_Migration` that implements two methods: up (per
 ## Creating a Migration
 The easiest way to create a migration is to call the `database newMigration` task from the command line.
 
-	php index.php database newMigration {migration_name}
+	php sprint database newMigration {migration_name}
 	
 The `{migration_name}` will be used as part of the filename. The  filename is prefixed with the current date/time to allow for ease of working in teams. If your migration name was `CreateUserTable` the filename would look something like `20141001052249_CreateUserTable.php`. 
 
@@ -75,27 +75,27 @@ Migrations can be run, both up and down by using the `database` tools on the com
 
 For all of the following commands, you can replace the group name with `mod:` followed by the module name. 
 
-	php index.php database migrate mod:users
+	php sprint database migrate mod:users
 
 ### migrate
 This will run the migrations to a specific version, or to the latest if no version is supplied. The first parameter is the `alias` of the migrations group. The second parameter is the version to migrate to. This would be the filename you want to end your migrations on. Any migrations past this will not be ran. If no version is passed in the second parameter, then will be prompted to run to the latest version available for that group, or cancel.
 
-	php index.php database migrate app
-	php index.php database migrate mod:users
+	php sprint database migrate app
+	php sprint database migrate mod:users
 
 ### quietMigrate
 This is identical to the `migrate` method, but will not return any output to the command line, just a success/fail result. This is useful when part of a build script process.
 
 If no migrations are found, or the database is already at the current migration, the script will return TRUE.
 
-	php index.php database quietMigrate app
-	php index.php database quietMigrate mod:users
+	php sprint database quietMigrate app
+	php sprint database quietMigrate mod:users
 
 ### refresh
 This will run the down() method on all migrations in the specified group in reverse order, effectively uninstalling those changes, and then rerun them up to the latest available migration. This is useful to reset the data to a pristine version before running [seeds](database/seeds).
 
-	php index.php database refresh app
-	php index.php database refresh mod:users
+	php sprint database refresh app
+	php sprint database refresh mod:users
 
 ## Auto-Running Migrations
 
