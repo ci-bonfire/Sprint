@@ -655,7 +655,7 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function changeStatus($newStatus, $message=null)
     {
-
+        // todo actually record new users status!
     }
 
     //--------------------------------------------------------------------
