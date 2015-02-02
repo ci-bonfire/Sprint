@@ -105,42 +105,25 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function login($credentials, $remember=false)
     {
-        // If the user is throttled due to too many invalid logins
-        // or the system is under attack, kick them back.
-        // We need to test for this prior to validation to avoid
-        // hitting the password hashing process if possible.
-
-        // Ensure we have an email address to use for throttling.
-        if (empty($credentials['email']))
-        {
-            $tc = $credentials;
-            unset($credentials['password']);
-
-            $user = $this->user_model->select('email')
-                                     ->where($tc)
-                                     ->first();
-
-            if (! $user)
-            {
-                $this->user = null;
-                return null;
-            }
-
-            // If throttling time is above zero, we can't allow
-            // logins now.
-            if ($time = (int)$this->isThrottled($user->email) > 0)
-            {
-                $this->error = sprintf(lang('auth.throttled'), $time);
-                return false;
-            }
-        }
-
         $user = $this->validate($credentials, true);
 
         if (! $user)
         {
             $this->user = null;
             return $user;
+        }
+
+        // If the user is throttled due to too many invalid logins
+        // or the system is under attack, kick them back.
+        // We need to test for this after validation becuase we
+        // don't want it to affect a valid login.
+
+        // If throttling time is above zero, we can't allow
+        // logins now.
+        if ($time = (int)$this->isThrottled($user['email']) > 0)
+        {
+            $this->error = sprintf(lang('auth.throttled'), $time);
+            return false;
         }
 
         $this->loginUser($user);
@@ -489,7 +472,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // If this user was found to possibly be under a brute
         // force attack, their account would have been banned
         // for 15 minutes.
-        if ($time = $this->ci->session->userdata('bruteBan'))
+        if ($time = isset($_SESSION['bruteBan']) ? $_SESSION['bruteBan'] : false)
         {
             // If the current time is less than the
             // the ban expiration, plus any distributed time
@@ -502,7 +485,7 @@ class LocalAuthentication implements AuthenticateInterface {
             }
 
             // Still here? The the ban time is over...
-            $this->ci->session->unset_userdata('bruteBan');
+            unset($_SESSION['bruteBan']);
         }
 
         // Grab the time of last attempt and
@@ -539,7 +522,7 @@ class LocalAuthentication implements AuthenticateInterface {
             $this->error = lang('auth.bruteBan_notice');
 
             $ban_time = 60 * 15;    // 15 minutes
-            $this->ci->session->set_userdata('bruteBan', time() + $ban_time);
+            $_SESSION['bruteBan'] = time() + $ban_time;
             return $ban_time;
         }
 
