@@ -55,7 +55,7 @@ class Auth extends \Myth\Controllers\ThemedController
         $this->load->model('user_model');
         $auth->useModel($this->user_model);
 
-        $redirect_url = $_SESSION['redirect_url'];
+        $redirect_url = $this->session->userdata('redirect_url');
 
         // No need to login again if they are already logged in...
         if ($auth->isLoggedIn())

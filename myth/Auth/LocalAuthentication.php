@@ -156,6 +156,7 @@ class LocalAuthentication implements AuthenticateInterface {
 		    return false;
 	    }
 
+        // Ensure that the fields are allowed validation fields
 	    if (! in_array(key($credentials), config_item('auth.valid_fields')) )
 	    {
 		    $this->error = lang('auth.invalid_credentials');
@@ -180,6 +181,18 @@ class LocalAuthentication implements AuthenticateInterface {
         {
             $this->error = lang('auth.invalid_password');
             return false;
+        }
+
+        // Check to see if the password needs to be rehashed.
+        // This would be due to the hash algorithm or hash
+        // cost changing since the last time that a user
+        // logged in.
+        if (password_needs_rehash($user['password_hash'], PASSWORD_DEFAULT, ['cost' => config_item('auth.hash_cost')] ))
+        {
+            $new_hash = Password::hashPassword($password);
+            $this->user_model->skip_validation()
+                             ->update($user['id'], ['password_hash' => $new_hash]);
+            unset($new_hash);
         }
 
         // Is the user active?
