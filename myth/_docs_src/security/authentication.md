@@ -7,10 +7,10 @@ When modifying any provided module located in the `myth/CIModules` folder, you s
 > DISCLAIMER: I am, by no means, a security expert. Any knowledge that I have has been gathered from reading articles from people smarter and more experienced than I am. If you know that I've explained something incorrectly and can tell me the correct solution, or can point to research that invalidates anything said here, please feel free to drop me a line and correct me. I'll make sure to read through it and try to correct either my docs or the code itself. 
 
 ## LocalAuthentication Class
-The included class, `Myth\Auth\LocalAuthentication`, together with the `Login_model` is the power behind the features listed below. If you want to create your own, create a new class that implements the `Myth\Auth\AuthenticateInterface`. Then modify `application/config/application.php` to use the new class. This will be automatically loaded up and readied for any class that extends from `Myth\Controllers\AuthenticatedController`.
+The included class, `Myth\Auth\LocalAuthentication`, together with the `Login_model` is the power behind the features listed below. If you want to create your own, create a new class that implements the `Myth\Auth\AuthenticateInterface`. Then modify `application/config/application.php` to use the new class. This will be automatically loaded up and readied for any class that uses the [Auth Trait](security/auth_trait).
 
 ## Logging Users In
-Use the `login()` method to attempt to log users in. The first parameter is an array of credentials to verify the user against. The library does not enforce a specific set of credentials to confirm against. You are free to use any combination of fields that exist within the `users` table, but typical uses would be either `email` or `username`.  You must include a field name `password`, though as it will be compared against the hashed version in the database.
+Use the `login()` method to attempt to log users in. The first parameter is an array of credentials to verify the user against. The library does not enforce a specific set of credentials to confirm against. You are free to use any combination of fields that exist within the `users` table, but typical uses would be either `email` or `username`.  You must include a field name `password`, though as it will be verified against the hashed version in the database.
 
 	$auth = new \Myth\Auth\LocalAuthentication();
 	
@@ -118,6 +118,8 @@ The method `isThrottled()` will determine whether the user is under any form of 
 		$this->setMessage( $auth->error(), 'warning');
 		return false;
 	}
+
+This is automatically checked during the `login()` method and you will probably never need to call this method directly.
 
 ### Brute Force Protection
 A brute force attack is one where a single user is targeted and many attempts are made against a single user, in an attempt to determine that single user's password. Brute Force attacks are often very fast attacks with many attempts made in rapid succession against a single user. These are relatively easy to detect. The protection against them is trickier, though. 

@@ -22,10 +22,8 @@ Using the sprint CLI tool you would make the call like:
 
 If you're using a Linux or OS X system, you make it more user-friendly by ensuring the sprint file has execute permissions on your local machine and PHP is in your $PATH. Then you can call sprint without prefixing it with php.
 
-	chmod a+x sprint
+	chmod u+x sprint
 	sprint database migrate
-
-> NOTE: The CLI tool is currently under very heavy development and it's stability and features is in constant flux. It has also had ZERO testing under Windows. If you're are attempting to use this tool in a Windows environment, please consider submitting pull requests with changes that make it work in that environment. 
 
 ### Listing Tool Commands
 When calling a CLIController based tool, you can list all of the commands available within that tool using by simply calling the tool name.
