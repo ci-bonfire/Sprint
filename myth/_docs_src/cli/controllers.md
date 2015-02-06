@@ -3,6 +3,7 @@ You can create controllers intended for use only on the command line by extendin
 
 CLI Controllers can be used for creating tools that can be called from third-party scripts on your server. You can create tools that handle redundant chores for yourself, or add new features to your code, like the `database tools` that have been provided with Sprint. 
 
+	use \Myth\CLI as CLI;
 	class myTools extends Myth\Controllers\CLIController {
 		. . .
 	}

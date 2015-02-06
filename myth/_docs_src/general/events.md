@@ -1,13 +1,13 @@
 # Events
 The Events system can be thought of as a more flexible version of CodeIgniter's built-in Hooks. It allows events to be executed at different points during code execution without having to modify the actual code itself. Sprint includes a number of events sprinkled at key points througout the system execution that can allow you to perform new actions when a new user registers with your site, for example.
 
-You are highly encouraged to use this system and provide events within any modules that you distribute to allow users the most flexibility when using your code.
+You are highly encouraged to use this system and provide events within any modules that you distribute to allow users the most flexibility when using your code. The [Mail system](general/email) is easiest to use when combined with the Events library.
 
 ## Loading the Library
 The `Myth\Events` library is a static library so no instantiation of this library is needed. 
 
 ## Listening For Existing Events
-In order to listen for any existing events and have your code executed at these Event triggers, you will use the `on()` method. 
+In order to listen for any existing events and have your code executed at these Event triggers, you will use the `on()` method. Any number of listeners can be setup for a single Event.
 
 In general, these will be placed in the `application/config/events.php` config file, but you can always call the method at run-time also. You could organize your events into different files if desired. The only requirement is that they are included from the events config file. To save on memory, the events config file is not read until the first event is triggered, at which time the events config file is read and all of the events are registered. 
 
@@ -36,7 +36,7 @@ The class defines 3 constants to help keep things consistent and readable.
 
 ### Cancelling Event Execution	
 
-Each event is called, in order of priority, until one of two conditions is met: either all listeners have executed, or a registered method returns `false`. Once a method has returned false, the remaining listeners are not executed and the trigger returns `false`. This allows you to define conditions, like checking permissions, in a high-priority listener, and cancelling the remaining objects if the condition is not met. This is especially useful with events triggered **before** actions occur, as it gives a chance to bail before taking the action. 
+Each event is called, in order of descending priority, until one of two conditions is met: either all listeners have executed successfully, or a registered method returns `false`. Once a method has returned false, the remaining listeners are not executed and the trigger itself returns `false` to your script. This allows you to define conditions, like checking permissions, in a high-priority listener, and cancelling the remaining objects if the condition is not met. This is especially useful with events triggered **before** actions occur, as it gives a chance to bail before taking the action. 
 
 	if (\Myth\Events::trigger('beforeDeleteUser') === false)
 	{

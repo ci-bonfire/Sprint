@@ -41,3 +41,6 @@ Then, open up `application/config/application.php` and modify the theme location
         'foundation' => APPPATH .'../public/themes/foundation5',
         'docs'       => APPPATH .'../public/themes/docs'
     );
+   
+### sprint File
+The `sprint` CLI script will also need to have the `$apppath` variable modified to point to the new APPPATH location.

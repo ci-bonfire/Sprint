@@ -6,13 +6,13 @@ Modules are simply mini-applications that are semi-self-contained and can be eas
 By default, you can store modules in the `application/modules` folder. You can edit this by adding to the array of module locations in the `application/config/config.php` file. 
 
 	$config['modules_locations'] = array(
-    	APPPATH .'modules/'             => '../modules/',
-	    APPPATH .'../myth/CIModules/'   => '../../myth/CIModules/'
+    	APPPATH .'modules/',
+	    APPPATH .'../myth/CIModules/' 
 	);
 
-The key of each element is the full system path. The value of each element is the offset from the `application/controllers` folder to the new modules folder.
+Each element is simply the full system path to the folder that can contain other modules. 
 
-When a module is being located it takes the first one found. If you have a module of the same name in two different folders, then the one in the first modules_locations folder will be the module used. To allow you to override the function of any of Sprint's bundled modules, you should ensure that the `CIModules` entry is always the last element in the array.
+When a module is being located it takes the first one found. If you have a module of the same name in two different folders, then the one in the first `modules_locations` folder will be the module used. To allow you to override the function of any of Sprint's bundled modules, you should ensure that the `CIModules` entry is always the last element in the array.
 
 ## Module Structure
 The name of the folder is the name of the module, as far as the system is concerned. So, a module named `Users` would need a folder (lowercase) named `users`.
@@ -28,6 +28,13 @@ The name of the folder is the name of the module, as far as the system is concer
 				/views
 				
 You can map a call to URL with the name of the module, as long as your controller name is the same as the module name. A module named `users` would have a controller named `users.php`, and a class named `Users`. This could be reached in the browser at `example.com/users`. 
+
+	// Module: users, Controller: Users
+	mysite.com/users					// Runs the index() method
+	// Module: users, Controller: Users
+	mysite.com/users/manage				// Runs the manage() method
+	// Module: users, Controller: manage
+	mysite.com/users/manage				// Runs the index() method
 
 ## Module Helpers
 A utility class, `Myth\Modules` provides a number of small commands to work with modules. For the most part you shouldn't need access to these, unless you are creating code that helps manipulate modules. 

@@ -116,6 +116,3 @@ $routes->block('auth/(:any)');
 
 // Make sure CI's Router gets the array they expect.
 $route = $routes->map($route);
-
-/* End of file routes.php */
-/* Location: ./application/config/routes.php */

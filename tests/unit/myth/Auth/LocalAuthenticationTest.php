@@ -151,6 +151,10 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
             'password' => 'father'
         );
 
+        $this->auth->user_model->shouldReceive('select')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('where')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( null );
+
         $result = $this->auth->login($creds);
 
         $this->assertNull($result);
@@ -208,6 +212,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
 
         $result = $this->auth->login($creds);
 
@@ -230,6 +237,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
 
         $result = $this->auth->login($creds);
 
@@ -252,6 +262,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
 
         $result = $this->auth->login($creds);
 
@@ -431,11 +444,12 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $email = 'darth@theempire.com';
 
         $bruteTime = (60*14) + time();
+        $_SESSION['bruteBan'] = $bruteTime;
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
-        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn( $bruteTime );
+//        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn( $bruteTime );
         $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->never();
         $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->never();
         $this->ci->login_model->shouldReceive('isBruteForced')->with($email)->never();
@@ -444,6 +458,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->session->shouldReceive('set_userdata')->with('bruteBan', time() + (60*15))->never();
 
         $this->assertEquals($bruteTime - time(), $this->auth->isThrottled($email));
+        unset($_SESSION['bruteBan']);
     }
 
     //--------------------------------------------------------------------
@@ -453,11 +468,12 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $email = 'darth@theempire.com';
 
         $bruteTime = (60*14) + time();
+        $_SESSION['bruteBan'] = $bruteTime;
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(45);
         // Not under a brute force attack
-        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn( $bruteTime );
+//        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn( $bruteTime );
         $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->never();
         $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->never();
         $this->ci->login_model->shouldReceive('isBruteForced')->with($email)->never();
@@ -466,6 +482,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->session->shouldReceive('set_userdata')->with('bruteBan', time() + (60*15))->never();
 
         $this->assertEquals($bruteTime - time() + 45, $this->auth->isThrottled($email));
+        unset($_SESSION['bruteBan']);
     }
 
     //--------------------------------------------------------------------

@@ -11,6 +11,8 @@ On top of this, the Mail System allows your emails to either be sent immediately
 
 It is not required to use this system to deliver emails. You can still use CodeIgniter's built-in Email library in your applications. This system provides much more flexbility and power for when you need it.
 
+NOTE: This system is only designed to handle _outgoing_ email and does not work with inbound emails in any way.
+
 ## Mail
 This is the face of the mail system, though possibly provides the fewest actual capabilities. It is primarily concerned with launching [Mailers](#mailers) to send the appropriate email and processing the queue during a cronjob. 
 
@@ -128,13 +130,13 @@ If you need to specify a different view to be used than what would be chosen aut
 	$this->send($user->email, 'Welcome to My Site!', $data, 'a_different_view');
 
 
-### headers()
+### header()
 Allows you to set custom headers that need to be sent with this email.  The first parameter is the name of the header to set. The second parameter is the value.
 
 	$this->header('Your-Header-Name', 'the header value');
 
 ### attach()
-Allows you to add an attachment to your email. The first parameter is the filename to attach. This should include the path so that the file can be found. The second parameter is the `disposition`, either `inline` or `attachment`. The default is `attachment`. The third value is the filename to rename to when sent. The fourth parameters allows you to set a custom mime type. Only the first parameters is required.
+Allows you to add an attachment to your email. The first parameter is the filename to attach. This should include the path so that the file can be found. The second parameter is the `disposition`, either `inline` or `attachment`. The default is `attachment`. The third value is the filename to rename to when sent. The fourth parameter allows you to set a custom mime type. Only the first parameters is required.
 
 	$this->attach('path/to/file.zip');
 
@@ -164,7 +166,7 @@ The simple theme provided with Sprint uses Zurb's [Ink Email Framework](http://z
 ### Formatted Emails
 Most emails today are sent as HTML emails, though you do want to provide options on most sites. To make this simple, the system will look for view names with the format appended. If it finds the file, that format will be added to the outgoing email. 
 
-For example, if we want the user didRegister email to have only an email version, we would need a view file at: `application/views/emails/usermailer/didregister.html.php`
+For example, if we want the user didRegister email to have only an HTML version, we would need a view file at: `application/views/emails/usermailer/didregister.html.php`
 
 If you want to provide a text-only alternative, you could also have `didregister.text.php`. 
 
@@ -181,6 +183,8 @@ The value must be a fully-namespaced class name that will be instantiated and us
 You can tell the system to simply pretend to send emails by setting the `mail.pretend` config setting to true. This happens in the BaseMailer during the send method. It doesn't affect the the queue method at all.
 
 	$config['mail.pretend'] = false;
+	
+Often, though, it's better to use the LogMailer to log the emails instead of not sending them altogether.
 
 ## Mail Services
 Mail Services take the constructed email and send them across the internet. Sprint ships with two Mail Services, but it should be fairly easy to create your own if you need to use third-party services like [Mandrill](http://mandrill.com/) or [PostMark](https://postmarkapp.com/) for mail delivery.

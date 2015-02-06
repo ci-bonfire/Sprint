@@ -167,7 +167,7 @@ abstract class CI_DB_forge {
 	public function __construct(&$db)
 	{
 		$this->db =& $db;
-		log_message('debug', 'Database Forge Class Initialized');
+		log_message('info', 'Database Forge Class Initialized');
 	}
 
 	// --------------------------------------------------------------------
@@ -1033,6 +1033,3 @@ abstract class CI_DB_forge {
 	}
 
 }
-
-/* End of file DB_forge.php */
-/* Location: ./system/database/DB_forge.php */

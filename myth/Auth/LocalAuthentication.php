@@ -32,7 +32,6 @@
  */
 
 use Myth\Auth\AuthenticateInterface;
-use Myth\Route;
 use Myth\Events as Events;
 
 /**
@@ -83,8 +82,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (empty($this->ci->session))
         {
-            $this->ci->load->driver('session');
-            $this->ci->session->select_driver( config_item('sess_driver') );
+            $this->ci->load->library('session');
         }
 
         $this->ci->config->load('auth');
@@ -113,6 +111,19 @@ class LocalAuthentication implements AuthenticateInterface {
         {
             $this->user = null;
             return $user;
+        }
+
+        // If the user is throttled due to too many invalid logins
+        // or the system is under attack, kick them back.
+        // We need to test for this after validation becuase we
+        // don't want it to affect a valid login.
+
+        // If throttling time is above zero, we can't allow
+        // logins now.
+        if ($time = (int)$this->isThrottled($user['email']) > 0)
+        {
+            $this->error = sprintf(lang('auth.throttled'), $time);
+            return false;
         }
 
         $this->loginUser($user);
@@ -158,6 +169,7 @@ class LocalAuthentication implements AuthenticateInterface {
 		    return false;
 	    }
 
+        // Ensure that the fields are allowed validation fields
 	    if (! in_array(key($credentials), config_item('auth.valid_fields')) )
 	    {
 		    $this->error = lang('auth.invalid_credentials');
@@ -182,6 +194,18 @@ class LocalAuthentication implements AuthenticateInterface {
         {
             $this->error = lang('auth.invalid_password');
             return false;
+        }
+
+        // Check to see if the password needs to be rehashed.
+        // This would be due to the hash algorithm or hash
+        // cost changing since the last time that a user
+        // logged in.
+        if (password_needs_rehash($user['password_hash'], PASSWORD_DEFAULT, ['cost' => config_item('auth.hash_cost')] ))
+        {
+            $new_hash = Password::hashPassword($password);
+            $this->user_model->skip_validation()
+                             ->update($user['id'], ['password_hash' => $new_hash]);
+            unset($new_hash);
         }
 
         // Is the user active?
@@ -243,7 +267,8 @@ class LocalAuthentication implements AuthenticateInterface {
         // to determine whether a user is logged in or not.
         if (! $this->user)
         {
-            $this->user = $this->user_model->as_array()->find_by('id', (int)$id);
+            $this->user = $this->user_model->as_array()
+                                           ->find_by('id', (int)$id);
 
             if (empty($this->user))
             {
@@ -274,7 +299,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Attempt to match the token against our auth_tokens table.
         $query = $this->ci->db->where('hash', $this->ci->login_model->hashRememberToken($token))
-                          ->get('auth_tokens');
+                              ->get('auth_tokens');
 
         if (! $query->num_rows())
         {
@@ -447,7 +472,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // If this user was found to possibly be under a brute
         // force attack, their account would have been banned
         // for 15 minutes.
-        if ($time = $this->ci->session->userdata('bruteBan'))
+        if ($time = isset($_SESSION['bruteBan']) ? $_SESSION['bruteBan'] : false)
         {
             // If the current time is less than the
             // the ban expiration, plus any distributed time
@@ -460,7 +485,7 @@ class LocalAuthentication implements AuthenticateInterface {
             }
 
             // Still here? The the ban time is over...
-            $this->ci->session->unset_userdata('bruteBan');
+            unset($_SESSION['bruteBan']);
         }
 
         // Grab the time of last attempt and
@@ -497,7 +522,7 @@ class LocalAuthentication implements AuthenticateInterface {
             $this->error = lang('auth.bruteBan_notice');
 
             $ban_time = 60 * 15;    // 15 minutes
-            $this->ci->session->set_userdata('bruteBan', time() + $ban_time);
+            $_SESSION['bruteBan'] = time() + $ban_time;
             return $ban_time;
         }
 
@@ -630,7 +655,7 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function changeStatus($newStatus, $message=null)
     {
-
+        // todo actually record new users status!
     }
 
     //--------------------------------------------------------------------
@@ -752,8 +777,8 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Save the token to the database.
         $data = [
-            'email' => $user['email'],
-            'hash' => sha1(config_item('auth.salt') . $new_token),
+            'email'   => $user['email'],
+            'hash'    => sha1(config_item('auth.salt') . $new_token),
             'created' => date('Y-m-d H:i:s')
         ];
 

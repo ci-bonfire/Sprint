@@ -117,36 +117,13 @@ class CIDbModel
     protected $primary_key = 'id';
 
     /**
-     * Field name to use to the created time column in the DB table.
+     * The type of date/time field used for created_on and modified_on fields.
+     * Valid types are: 'int', 'datetime', 'date'
      *
      * @var string
      * @access protected
      */
-    protected $created_field = 'created_on';
-
-    /**
-     * Field name to use to the modified time column in the DB table.
-     *
-     * @var string
-     * @access protected
-     */
-    protected $modified_field = 'modified_on';
-
-    /**
-     * Whether or not to auto-fill a 'created_on' field on inserts.
-     *
-     * @var boolean
-     * @access protected
-     */
-    protected $set_created = TRUE;
-
-    /**
-     * Whether or not to auto-fill a 'modified_on' field on updates.
-     *
-     * @var boolean
-     * @access protected
-     */
-    protected $set_modified = TRUE;
+    protected $date_format = 'datetime';
 
     /*
         Var: $log_user
@@ -157,6 +134,24 @@ class CIDbModel
     */
     protected $log_user = FALSE;
 
+
+
+    /**
+     * Whether or not to auto-fill a 'created_on' field on inserts.
+     *
+     * @var boolean
+     * @access protected
+     */
+    protected $set_created = TRUE;
+
+    /**
+     * Field name to use to the created time column in the DB table.
+     *
+     * @var string
+     * @access protected
+     */
+    protected $created_field = 'created_on';
+
     /*
         Var: $created_by_field
         Field name to use to the created by column in the DB table.
@@ -165,6 +160,24 @@ class CIDbModel
             Protected
     */
     protected $created_by_field = 'created_by';
+
+
+
+    /**
+     * Whether or not to auto-fill a 'modified_on' field on updates.
+     *
+     * @var boolean
+     * @access protected
+     */
+    protected $set_modified = TRUE;
+
+    /**
+     * Field name to use to the modified time column in the DB table.
+     *
+     * @var string
+     * @access protected
+     */
+    protected $modified_field = 'modified_on';
 
     /*
         Var: $modified_by_field
@@ -175,6 +188,14 @@ class CIDbModel
     */
     protected $modified_by_field = 'modified_by';
 
+
+    /**
+     * Support for soft_deletes.
+     */
+    protected $soft_deletes = FALSE;
+    protected $soft_delete_key = 'deleted';
+    protected $temp_with_deleted = FALSE;
+
     /*
         Var: $deleted_by_field
         Field name to use for the deleted by column in the DB table.
@@ -184,21 +205,7 @@ class CIDbModel
     */
     protected $deleted_by_field = 'deleted_by';
 
-    /**
-     * The type of date/time field used for created_on and modified_on fields.
-     * Valid types are: 'int', 'datetime', 'date'
-     *
-     * @var string
-     * @access protected
-     */
-    protected $date_format = 'datetime';
 
-    /**
-     * Support for soft_deletes.
-     */
-    protected $soft_deletes = FALSE;
-    protected $soft_delete_key = 'deleted';
-    protected $temp_with_deleted = FALSE;
 
     /**
      * Various callbacks available to the class. They are simple lists of
@@ -215,31 +222,14 @@ class CIDbModel
 
     protected $callback_parameters = array();
 
-    /**
-     * Protected, non-modifiable attributes
-     */
-    protected $protected_attributes = array();
 
-    /**
-     * An array of validation rules. This needs to be the same format
-     * as validation rules passed to the Form_validation library.
-     */
-    protected $validation_rules = array();
 
-    /**
-     * An array of extra rules to add to validation rules during inserts only.
-     * Often used for adding 'required' rules to fields on insert, but not udpates.
-     *
-     *   array( 'username' => 'required|strip_tags' );
-     * @var array
+    /*
+        If TRUE, inserts will return the last_insert_id. However,
+        this can potentially slow down large imports drastically
+        so you can turn it off with the return_insert_id(false) method.
      */
-    protected $insert_validate_rules = array();
-
-    /**
-     * Optionally skip the validation. Used in conjunction with
-     * skip_validation() to skip data validation for any future calls.
-     */
-    protected $skip_validation = FALSE;
+    protected $return_insert_id = true;
 
     /**
      * By default, we return items as objects. You can change this for the
@@ -250,31 +240,42 @@ class CIDbModel
     protected $return_type = 'object';
     protected $temp_return_type = NULL;
 
-    /*
-        If TRUE, inserts will return the last_insert_id. However,
-        this can potentially slow down large imports drastically
-        so you can turn it off with the return_insert_id(false) method.
+    /**
+     * Protected, non-modifiable attributes
      */
-    protected $return_insert_id = true;
+    protected $protected_attributes = array();
+
+
 
     /**
-     * @var Array Metadata for the model's database fields
+     * An array of validation rules. This needs to be the same format
+     * as validation rules passed to the Form_validation library.
+     */
+    protected $validation_rules = array();
+
+    /**
+     * Optionally skip the validation. Used in conjunction with
+     * skip_validation() to skip data validation for any future calls.
+     */
+    protected $skip_validation = FALSE;
+
+    /**
+     * An array of extra rules to add to validation rules during inserts only.
+     * Often used for adding 'required' rules to fields on insert, but not udpates.
+     *
+     *   array( 'username' => 'required|strip_tags' );
+     * @var array
+     */
+    protected $insert_validate_rules = array();
+
+
+
+    /**
+     * @var Array Columns for the model's database fields
      *
      * This can be set to avoid a database call if using $this->prep_data()
-     * and/or $this->get_field_info().
-     *
-     * @see http://ellislab.com/codeigniter/user-guide/database/fields.html
-     *
-     * Each field's definition should be as follows:
-            array(
-            'name'            => $field_name,
-            'type'            => $field_data_type,
-            'default'         => $field_default_value,
-            'max_length'      => $field_max_length,
-            'primary_key'     => (1 if the column is a primary key),
-            ),
      */
-    protected $field_info = array();
+    protected $fields = array();
 
     //--------------------------------------------------------------------
 

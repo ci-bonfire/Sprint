@@ -121,6 +121,3 @@ $config['migration_version'] = 0;
 $config['migration_paths'] = array(
     'app'       => APPPATH . 'database/migrations/'
 );
-
-/* End of file migration.php */
-/* Location: ./application/config/migration.php */

@@ -7,10 +7,10 @@ When modifying any provided module located in the `myth/CIModules` folder, you s
 > DISCLAIMER: I am, by no means, a security expert. Any knowledge that I have has been gathered from reading articles from people smarter and more experienced than I am. If you know that I've explained something incorrectly and can tell me the correct solution, or can point to research that invalidates anything said here, please feel free to drop me a line and correct me. I'll make sure to read through it and try to correct either my docs or the code itself. 
 
 ## LocalAuthentication Class
-The included class, `Myth\Auth\LocalAuthentication`, together with the `Login_model` is the power behind the features listed below. If you want to create your own, create a new class that implements the `Myth\Auth\AuthenticateInterface`. Then modify `application/config/application.php` to use the new class. This will be automatically loaded up and readied for any class that extends from `Myth\Controllers\AuthenticatedController`.
+The included class, `Myth\Auth\LocalAuthentication`, together with the `Login_model` is the power behind the features listed below. If you want to create your own, create a new class that implements the `Myth\Auth\AuthenticateInterface`. Then modify `application/config/application.php` to use the new class. This will be automatically loaded up and readied for any class that uses the [Auth Trait](security/auth_trait).
 
 ## Logging Users In
-Use the `login()` method to attempt to log users in. The first parameter is an array of credentials to verify the user against. The library does not enforce a specific set of credentials to confirm against. You are free to use any combination of fields that exist within the `users` table, but typical uses would be either `email` or `username`.  You must include a field name `password`, though as it will be compared against the hashed version in the database.
+Use the `login()` method to attempt to log users in. The first parameter is an array of credentials to verify the user against. The library does not enforce a specific set of credentials to confirm against. You are free to use any combination of fields that exist within the `users` table, but typical uses would be either `email` or `username`.  You must include a field name `password`, though as it will be verified against the hashed version in the database.
 
 	$auth = new \Myth\Auth\LocalAuthentication();
 	
@@ -119,6 +119,8 @@ The method `isThrottled()` will determine whether the user is under any form of 
 		return false;
 	}
 
+This is automatically checked during the `login()` method and you will probably never need to call this method directly.
+
 ### Brute Force Protection
 A brute force attack is one where a single user is targeted and many attempts are made against a single user, in an attempt to determine that single user's password. Brute Force attacks are often very fast attacks with many attempts made in rapid succession against a single user. These are relatively easy to detect. The protection against them is trickier, though. 
 
@@ -156,6 +158,21 @@ If you need to remove all failed login attempts for a user you can use the `purg
 
 ## Configuration
 Many aspects of the system can be configured in the `application/config/auth.php` config file. These options are described here. 
+
+### auth.authorize_lib
+Specifies the Authorization library that will be used by the Auth Trait. This should include the fully namespaced class name. 
+
+	$config['auth.authorize_lib'] = '\Myth\Auth\FlatAuthorization';
+
+### auth.authentication_lib
+Specifies the Authorization library that will be used by the Auth Trait. This should include the fully namespaced class name. 
+
+	$config['auth.authenticate_lib'] = '\Myth\Auth\LocalAuthentication';
+
+### auth.valid_fields
+The names of the fields in the user table that are allowed by used when testing credentials in the `validate()` method. 
+
+	$config['auth.valid_fields'] = ['email', 'username'];
 
 ### auth.allow_remembering
 This can be either TRUE or FALSE, and determines whether or not the system allows persistent logins (Remember Me). For most sites, you will likely want to leave this turned on for your user's convenience. If your site holds extremely confidential information and you cannot have your site hacked for any reason, you should set this to FALSE and not allow persistent connections ever.
@@ -196,3 +213,40 @@ The value to multiply the average daily failed request rate by to determine when
 The additional suspension between login attempts the system will use when it is determined to be under a Distributed Brute Force Attack. This value is added to any additional throttling suspensions.
 
 	$config['auth.distributed_brute_add_time'] = 45;
+
+### auth.min_password_strength
+The minimum value of  entropy that a password must meet to be considered a "strong-enough" password. This is primarily based on [NIST Special Publication 800-63](http://en.wikipedia.org/wiki/Password_strength#NIST_Special_Publication_800-63) with additional features by [Thomas Hruska](http://cubicspot.blogspot.com/) as part of his [Barebones CMS SSO Server/Client package](http://barebonescms.com/documentation/sso/). 
+
+	$config['auth.min_password_strength'] = 18;
+
+While the formula is a bit complex, the following are good guidelines to use based on the type of site that you are running:
+
+- 18 bits of entropy = minimum for ANY website.
+- 25 bits of entropy = minimum for a general purpose web service used relatively widely (e.g. Hotmail).
+- 30 bits of entropy = minimum for a web service with business critical applications (e.g. SAAS).
+- 40 bits of entropy = minimum for a bank or other financial service.
+
+### auth.use_dictionary
+Determines whether the passwords should be compared against an 300,000+ word English-language dictionary to eliminate common words and their variations that would be pretty simple for a hacker to guess.
+
+	$config['auth.use_dictionary'] = false;
+
+### auth.password_cost
+The BCRYPT method of encryption allows you to define the "cost", or number of iterations made, whenever a password hash is created. This defaults to a value of 10 which is an acceptable number. However, depending on the security needs of your application and the power of your server, you might want to increase the cost. This makes the hasing process takes longer.
+
+Valid range is between 4 - 31.
+
+	$config['auth.hash_cost'] = 10;
+
+A **command line tool** has been provided that determines the appropriate value to set the hash_cost to based upon a desired processing time. The command defaults to a value of 50 milliseconds, which is an acceptable time for interactive logins, though this value could be raised to 100 milliseconds or higher, depending on the type of site, how busy it is, and the patience of your users.
+
+	$ php sprint auth test index
+
+If you want to test against a different value, enter the number of milliseconds after the command. 
+
+	$ php sprint auth test index 100
+
+### auth.default_role_id
+The ID of the role that a member should be assigned when they first sign up.
+
+	$config['auth.default_role_id'] = 1;	

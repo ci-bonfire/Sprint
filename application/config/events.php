@@ -85,8 +85,12 @@ Events::on('didResetPassword', function($user) {
 //--------------------------------------------------------------------
 
 // Send Cron Job Summary Email
+// Uncomment the following block to enable mailing of cron
+// task results to the email in application config as site.auth_email.
+/*
 Events::on('afterCron', function($output) {
 
     return Mail::queue('CronMailer:results', [$output]);
 
 }, EVENTS_PRIORITY_NORMAL);
+*/
