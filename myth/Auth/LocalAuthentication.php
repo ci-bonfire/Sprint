@@ -193,6 +193,7 @@ class LocalAuthentication implements AuthenticateInterface {
         if (! $result)
         {
             $this->error = lang('auth.invalid_password');
+            $this->ci->login_model->recordLoginAttempt($user['email']);
             return false;
         }
 
