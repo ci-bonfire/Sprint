@@ -188,7 +188,7 @@ class BaseController extends \CI_Controller
         // The profiler is dealt with twice so that we can set
         // things up to work correctly in AJAX methods using $this->render_json
         // and it's cousins.
-        if ($this->config->item('show_profiler') == true) {
+        if ($this->config->item('show_profiler') === true) {
             $this->output->enable_profiler(true);
         }
     }

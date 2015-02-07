@@ -76,7 +76,7 @@ class ControllerGenerator extends \Myth\Forge\BaseGenerator {
 
 		$data = array_merge( $data, $this->options );
 
-		if ($data['themed'] == 'y' || $data['themed'] == true)
+		if ($data['themed'] == 'y' || $data['themed'] === true)
 		{
 			$data['base_class'] = 'ThemedController';
 		}
