@@ -81,7 +81,7 @@ class CLI {
      */
     public static function _init()
     {
-	    if (static::$initialized == true)
+	    if (static::$initialized === true)
 	    {
 		    return;
 	    }
