@@ -31,6 +31,7 @@
  * @since       Version 1.0
  */
 
+use Myth\Auth\AuthTrait;
 use Myth\Controllers\BaseController;
 
 /**
@@ -42,6 +43,8 @@ use Myth\Controllers\BaseController;
  * @package Myth\Api\Server
  */
 class ApiController extends BaseController {
+
+	use AuthTrait;
 
 	protected $ajax_notices = false;
 
@@ -155,9 +158,27 @@ class ApiController extends BaseController {
 
 		$this->config->load('api');
 
+		// Should we restrict to SSL requests?
+		if (config_item('require_ssl') === true && ! $this->request->ssl)
+		{
+			$this->failForbidden('All requests must be performed over a secure connection.');
+		}
+
+		// Should we restrict to only allow AJAX requests?
+		if (config_item('api.ajax_only') === true && ! $this->input->is_ajax_request() )
+		{
+			$this->failForbidden('All requests must be performed as AJAX requests.');
+		}
+
 		$this->detectPage();
 
-		// todo Do Auth check here...
+		if ($this->do_auth_check)
+		{
+			if (! $this->restrict() )
+			{
+				$this->failUnauthorized("Unauthorized");
+			}
+		}
 
 		// NEVER allow profiling via API.
 		$this->output->enable_profiler(false);
@@ -175,12 +196,6 @@ class ApiController extends BaseController {
 	 */
 	public function _remap($method, $arguments = [])
 	{
-	    // Should we restrict to SSL requests?
-		if (config_item('require_ssl') === true && ! $this->request->ssl)
-		{
-			$this->failForbidden('All requests must be performed over a secure connection.');
-		}
-
 		// Now, run the right thing!
 		if (method_exists($this, $method))
 		{

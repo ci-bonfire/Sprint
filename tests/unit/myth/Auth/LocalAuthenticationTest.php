@@ -190,6 +190,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
 
@@ -516,17 +517,6 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
-    // Don't know how to test currently - since the session won't be populated until after page refresh...
-//    public function testIsLoggedInReturnsTrueWhenLoggedIn()
-//    {
-//        $_SESSION['logged_in'] = true;
-//
-//        $this->ci->session->shouldReceive('userdata');
-//
-//        $this->assertTrue($this->auth->isLoggedIn());
-//    }
-//
-//    //--------------------------------------------------------------------
 
     //--------------------------------------------------------------------
     // Remember Me
