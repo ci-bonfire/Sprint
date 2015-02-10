@@ -353,6 +353,12 @@ $config['encryption_key'] = 'PLEASE_CHANGE_ME!';
 |
 |	How many seconds between CI regenerating the session ID.
 |
+| 'sess_regenerate_destroy'
+|
+|	Whether to destroy session data associated with the old session ID
+|	when auto-regenerating the session ID. When set to FALSE, the data
+|	will be later deleted by the garbage collector.
+|
 | Other session cookie settings are shared with the rest of the application,
 | except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 |
