@@ -4,9 +4,6 @@ use Myth\Models\CIDbModel as CIDbModel;
 use Myth\Auth\LocalAuthentication as Authenticate;
 use \Mockery as m;
 
-include APPPATH .'models/User_model.php';
-
-
 class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     protected $auth;

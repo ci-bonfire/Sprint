@@ -3,9 +3,13 @@
 use Myth\Api\Auth\APIAuthentication as Authenticate;
 use \Mockery as m;
 
-include APPPATH .'models/User_model.php';
-
 class APIAuthenticationTests extends CodeIgniterTestCase {
+
+	protected $ci;
+
+	protected $user_model;
+
+	protected $auth;
 
 	//--------------------------------------------------------------------
 
@@ -41,22 +45,22 @@ class APIAuthenticationTests extends CodeIgniterTestCase {
 
 	//--------------------------------------------------------------------
 
-//	public function testBlocksIPBlacklist()
-//	{
-//		$this->ci->config->set_item('api.ip_blacklist', '127.0.0.1, 0.0.0.0');
-//
-//		$this->setExpectedException('\Exception', 'IP Address is denied.');
-//
-//		$this->auth->checkIPBlacklist();
-//	}
-//
-//	//--------------------------------------------------------------------
-//
-//	public function testBasicAuthFailsWithNoCredentials()
-//	{
-//	    $this->assertFalse( $this->auth->tryBasicAuthentication() );
-//		$this->assertNotNull( $this->ci->output->get_header('WWW-Authenticate: Basic realm="'. config_item('api.realm') .'"'));
-//	}
+	public function testBlocksIPBlacklist()
+	{
+		$this->ci->config->set_item('api.ip_blacklist', '127.0.0.1, 0.0.0.0');
+
+		$this->setExpectedException('\Exception', 'IP Address is denied.');
+
+		$this->auth->checkIPBlacklist();
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testBasicAuthFailsWithNoCredentials()
+	{
+	    $this->assertFalse( $this->auth->tryBasicAuthentication() );
+		$this->assertNotNull( $this->ci->output->get_header('WWW-Authenticate: Basic realm="'. config_item('api.realm') .'"'));
+	}
 
 	//--------------------------------------------------------------------
 

@@ -87,7 +87,6 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $this->ci->config->load('auth');
         $this->ci->load->model('auth/login_model');
-        $this->ci->load->model('user_model', '', true);
         $this->ci->load->language('auth/auth');
     }
 
