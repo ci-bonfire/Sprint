@@ -119,6 +119,14 @@ class APIAuthentication extends LocalAuthentication {
 
 	/**
 	 * Checks to see if someone is authorized via HTTP Digest Authentication.
+	 *
+	 * NOTE: This requires that a new field, 'api_key', be added to the user's
+	 * table and, during new user creation, or password reset, that the api_key
+	 * be calculated as md5({username}:{realm}:{password})
+	 *
+	 * References:
+	 *  - http://www.faqs.org/rfcs/rfc2617.html
+	 *  - http://www.sitepoint.com/understanding-http-digest-access-authentication/
 	 */
 	public function tryDigestAuthentication()
 	{
@@ -135,11 +143,58 @@ class APIAuthentication extends LocalAuthentication {
 			$digest_string = $this->input->server('HTTP_AUTHORIZATION');
 		}
 
+		$nonce = md5(uniqid());
+		$opaque = md5(uniqid());
+
 		// No digest string? Then you're done. Go home.
 		if (empty($digest_string))
 		{
-			$this->ci->output->set_header();
+			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
+			return false;
 		}
+
+		// Grab the parts from the digest string.
+		// They will be provided as an array of the parts: username, nonce, uri, nc, cnonce, qop, response
+		$matches = [];
+		preg_match_all('@(username|nonce|uri|nc|cnonce|qop|response)=[\'"]?([^\'",]+)@', $digest_string, $matches);
+		$digest = (empty($matches[1]) || empty($matches[2])) ? array() : array_combine($matches[1], $matches[2]);
+
+		if (! array_key_exists('username', $digest))
+		{
+			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
+			return false;
+		}
+
+		// Grab the user that corresponds to that "username"
+		// exact field determined in the api config file - api.auth_field setting.
+		$user = $this->user_model->as_array()->find_by( config_item('api.auth_field'), $digest['username'] );
+		if (!  $user)
+		{
+			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
+			return false;
+		}
+
+		// Calc the correct response
+		$A1 = $user['api_key'];
+
+		if ($digest['qop'] == 'auth')
+		{
+			$A2 = md5( strtoupper( $this->ci->request->method ) .':'. $digest['uri'] );
+		} else {
+			$body = file_get_contents('php://input');
+			$A2 = md5( strtoupper( $this->ci->request->method ) .':'. $digest['uri'] .':'. md5($body) );
+		}
+		$valid_response = md5($A1 .':'. $digest['nonce'].':'. $digest['nc'] .':'. $digest['cnonce'] .':'. $digest['qop'] .':'. $A2);
+
+		if ($digest['response'] != $valid_response)
+		{
+			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
+			return false;
+		}
+
+		$this->user = $user;
+
+		return $user;
 	}
 
 	//--------------------------------------------------------------------
