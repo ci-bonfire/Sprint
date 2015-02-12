@@ -7,7 +7,7 @@ In addition, these are designed to work out of the box with the  [AuthTrait](sec
 The following are a list of the components that are provided to help you build out your API. 
 
 - An [API  Controller](api/controller) with helper methods for return JSON-based success/failure messages and paginating results in a consistent manner.
-- Additional Authentication classes, based on [HTTP Basic](api/httpbasic), [HTTP Digest](api/httpdigest), [API Keys](api/keys), and [oAuth 2](api/oauth) authentication standards, all with built-in throttling and logging. 
+- Additional Authentication classes, based on [HTTP Basic](api/httpbasic), [HTTP Digest](api/httpdigest), and [API Keys](api/keys) authentication standards, all with built-in throttling and logging. 
 - The [Routes](general/routes) enhancement provides a number of tools designed to make creating API's simpler.
 
 ## Setting Up Your System
