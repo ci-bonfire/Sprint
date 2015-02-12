@@ -65,3 +65,17 @@ A comma-seperated list of IP Address that should be the only ones allowed access
 If `true` then the API will only respond to AJAX requests. Any non-AJAX requests will return a 403 Forbidden HTTP status message.
 
 	$config['api.ajax_only'] = true;
+
+### api.enable_logging
+If `true` then will log all requests made to an APIController. 
+
+	$config['api.enable_logging'] = false;
+
+In order to run this you must create a table in your database. The api generator will ask you if you want to enable logging and create the migration for you. You will still need to run the migration yourself. 
+
+	$ php sprint forge api
+	$ php sprint database migrate
+
+If any of the controller methods don't need to be logged, you can turn it off by setting the class var `enable_logging` to false from the method itself. 
+
+	$this->enable_logging = false;

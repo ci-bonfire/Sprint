@@ -25,7 +25,7 @@ class Migration_Add_api_key_to_users extends CI_Migration {
 				'null' => true
 			]
 		];
-		\$this->db_forge->add_column('users', \$field);
+		\$this->dbforge->add_column('users', \$field);
     }
 
     //--------------------------------------------------------------------

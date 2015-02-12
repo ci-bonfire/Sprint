@@ -59,7 +59,7 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 		switch ($this->auth_type)
 		{
 			case 'basic':
-				$this->setAuthType('basic');
+				$this->setupBasic();
 				$this->readme('readme_basic.txt');
 				break;
 			case 'digest':
@@ -74,14 +74,48 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
+	private function setupBasic()
+	{
+		$this->setAuthType('basic');
+
+		$this->setupLogging();
+	}
+
+	//--------------------------------------------------------------------
+
 	private function setupDigest()
 	{
 		$this->makeMigration('migration', 'Add_api_key_to_users');
 
 		$this->setAuthType('digest');
+
+		$this->setupLogging();
 	}
 
 	//--------------------------------------------------------------------
+
+	//--------------------------------------------------------------------
+	// Utility Methods
+	//--------------------------------------------------------------------
+
+	private function setupLogging()
+	{
+		$shouldWe = CLI::prompt('Enable Request Logging?', ['y', 'n']);
+
+		if (strtolower($shouldWe) != 'y')
+		{
+			return;
+		}
+
+		$this->makeMigration('log_migration', 'Create_api_log_table');
+
+		// Update the config setting
+		$content = "config['api.enable_logging']    = true;";
+		$this->injectIntoFile(APPPATH .'config/api.php', $content, ['regex' => "/config\['api.enable_logging']\s+=\s+[a-zA-Z]+;/u"] );
+	}
+
+	//--------------------------------------------------------------------
+
 
 	private function makeMigration( $tpl, $name )
 	{

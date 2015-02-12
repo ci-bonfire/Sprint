@@ -98,6 +98,20 @@ class ApiController extends BaseController {
 	protected $offset = 0;
 
 	/**
+	 * The time in microseconds that the request started.
+	 *
+	 * @var null
+	 */
+	protected $start_time = null;
+
+	/**
+	 * Specifies whether this request should be logged.
+	 *
+	 * @var bool
+	 */
+	protected $enable_logging = false;
+
+	/**
 	 * Status strings/codes allowed when using
 	 * the generic 'fail' method.
 	 *
@@ -132,6 +146,8 @@ class ApiController extends BaseController {
 
 	public function __construct()
 	{
+		$this->start_time = microtime(true);
+
 		$this->request = new \stdClass();
 		$this->request->ssl     = is_https();
 		$this->request->method  = $this->detectMethod();
@@ -182,6 +198,9 @@ class ApiController extends BaseController {
 
 		// NEVER allow profiling via API.
 		$this->output->enable_profiler(false);
+
+		// Set logging default value
+		$this->enable_logging = config_item('api.enable_logging');
 	}
 
 	//--------------------------------------------------------------------
@@ -200,6 +219,11 @@ class ApiController extends BaseController {
 		if (method_exists($this, $method))
 		{
 			call_user_func_array([$this, $method], $arguments);
+
+			if ($this->enable_logging === true)
+			{
+				$this->logTime();
+			}
 		}
 		else
 		{
@@ -632,5 +656,25 @@ class ApiController extends BaseController {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Takes care of logging the request information to the database.
+	 */
+	public function logTime()
+	{
+	    $model = new LogModel();
+
+		$data = [
+			'duration' => microtime(true) - $this->start_time,
+			'user_id'  => $this->auth->id(),
+			'request'  => $this->uri->uri_string() ."?". $_SERVER['QUERY_STRING'],
+			'method'   => $this->request->method
+		];
+
+		$model->insert($data);
+	}
+
+	//--------------------------------------------------------------------
+
 
 }

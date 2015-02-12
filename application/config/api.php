@@ -85,3 +85,11 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 // AJAX calls. All other traditional calls will be rejected.
 //
 	$config['api.ajax_only'] = false;
+
+//--------------------------------------------------------------------
+// Enable API Logging?
+//--------------------------------------------------------------------
+// If enabled, will record performance and monitoring information
+// for this request.
+//
+	$config['api.enable_logging'] = false;
