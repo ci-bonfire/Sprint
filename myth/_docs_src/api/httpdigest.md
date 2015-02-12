@@ -12,8 +12,11 @@ Enabling digest authentication is simple:
 1. Edit `config/api.php` and set `api.auth_type` to `digest`. 
 2. Also set the value of `api.realm` to something specific to your site. Often the site name is good.
 3. Ensure that your controllers extend from `APIController`.
-4. Create and run the migrations: `php sprint forge api` and answer the questions. This creates a new `api_key` column in the user's table that stores the pre-calced digest auth code for the site's realm.
-5. Modify User Saving to create the API Key.
+4. Create and run the migrations: `php sprint forge api` and answer the questions. This creates a new `api_key` column in the user's table that stores the pre-calced digest auth code for the site's realm. This will also set the current `auth_type` in the `config/api.php` file for you, if the file is writeable.
+5. Update the `User_model` to have `createDigestKey` prior to `hashPassword` in the `before_insert` and `before_update` arrays. This method will automatically create the digest key ($A1) and save it whenever enough information exists to change it. Since the User_model is an application-level file we don't want to modify it and mess with any other observers you've already put in place.
+
+	protected $before_insert = ['hashPassword'];
+    protected $before_update = ['hashPassword'];
 
 ## How does Digest work?
 Every time you send a request to the API it will look for a `Authorization: Digest` header with the information needed to authenticate the user. 

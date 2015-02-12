@@ -221,7 +221,13 @@ class FileKit {
 
         $file_contents = preg_replace($pattern, $replace, $file_contents);
 
-        $result = file_put_contents($file, $file_contents);
+        $result = false;
+
+        // Don't let us erase a file!
+        if (! empty($file_contents))
+        {
+            $result = file_put_contents( $file, $file_contents );
+        }
 
         return (bool)$result;
     }

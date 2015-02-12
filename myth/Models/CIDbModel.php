@@ -627,7 +627,7 @@ class CIDbModel
             $data = $this->validate($data);
         }
 
-        $data = $this->trigger('before_update', $data, $skip_validation);
+        $data = $this->trigger('before_update', array_merge([$this->primary_key => $id], $data), $skip_validation);
 
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
