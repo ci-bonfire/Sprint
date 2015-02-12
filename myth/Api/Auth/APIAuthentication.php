@@ -134,13 +134,13 @@ class APIAuthentication extends LocalAuthentication {
 
 		// We need to test which server authentication variable to use
 		// because the PHP ISAPI module in IIS acts different from CGI
-		if ($this->input->server('PHP_AUTH_DIGEST'))
+		if ($this->ci->input->server('PHP_AUTH_DIGEST'))
 		{
-			$digest_string = $this->input->server('PHP_AUTH_DIGEST');
+			$digest_string = $this->ci->input->server('PHP_AUTH_DIGEST');
 		}
-		elseif ($this->input->server('HTTP_AUTHORIZATION'))
+		elseif ($this->ci->input->server('HTTP_AUTHORIZATION'))
 		{
-			$digest_string = $this->input->server('HTTP_AUTHORIZATION');
+			$digest_string = $this->ci->input->server('HTTP_AUTHORIZATION');
 		}
 
 		$nonce = md5(uniqid());
@@ -179,10 +179,10 @@ class APIAuthentication extends LocalAuthentication {
 
 		if ($digest['qop'] == 'auth')
 		{
-			$A2 = md5( strtoupper( $this->ci->request->method ) .':'. $digest['uri'] );
+			$A2 = md5( strtoupper( $_SERVER['REQUEST_METHOD'] ) .':'. $digest['uri'] );
 		} else {
 			$body = file_get_contents('php://input');
-			$A2 = md5( strtoupper( $this->ci->request->method ) .':'. $digest['uri'] .':'. md5($body) );
+			$A2 = md5( strtoupper( $_SERVER['REQUEST_METHOD'] ) .':'. $digest['uri'] .':'. md5($body) );
 		}
 		$valid_response = md5($A1 .':'. $digest['nonce'].':'. $digest['nc'] .':'. $digest['cnonce'] .':'. $digest['qop'] .':'. $A2);
 
