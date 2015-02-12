@@ -107,15 +107,21 @@ class CI_Session_files_driver extends CI_Session_driver implements SessionHandle
 	 * Sanitizes the save_path directory.
 	 *
 	 * @param	string	$save_path	Path to session files' directory
-	 * @param	string	$name		Session cookie name, unused
+	 * @param	string	$name		Session cookie name
 	 * @return	bool
 	 */
 	public function open($save_path, $name)
 	{
-		if ( ! is_dir($save_path) && ! mkdir($save_path, 0700, TRUE))
+		if ( ! is_dir($save_path))
 		{
-			log_message('error', "Session: Configured save path '".$this->_config['save_path']."' is not a directory, doesn't exist or cannot be created.");
-			return FALSE;
+			if ( ! mkdir($save_path, 0700, TRUE))
+			{
+				throw new Exception("Session: Configured save path '".$this->_config['save_path']."' is not a directory, doesn't exist or cannot be created.");
+			}
+		}
+		elseif ( ! is_writable($save_path))
+		{
+			throw new Exception("Session: Configured save path '".$this->_config['save_path']."' is not writable by the PHP process.");
 		}
 
 		$this->_config['save_path'] = $save_path;
@@ -263,7 +269,7 @@ class CI_Session_files_driver extends CI_Session_driver implements SessionHandle
 	 *
 	 * Releases locks and closes file descriptor.
 	 *
-	 * @return	void
+	 * @return	bool
 	 */
 	public function close()
 	{
@@ -326,10 +332,16 @@ class CI_Session_files_driver extends CI_Session_driver implements SessionHandle
 
 		$ts = time() - $maxlifetime;
 
+		$pattern = sprintf(
+			'/^%s[0-9a-f]{%d}$/',
+			preg_quote($this->_config['cookie_name'], '/'),
+			($this->_config['match_ip'] === TRUE ? 72 : 40)
+		);
+
 		foreach ($files as $file)
 		{
 			// If the filename doesn't match this pattern, it's either not a session file or is not ours
-			if ( ! preg_match('/(?:[0-9a-f]{32})?[0-9a-f]{40}$/i', $file)
+			if ( ! preg_match($pattern, $file)
 				OR ! is_file($this->_config['save_path'].DIRECTORY_SEPARATOR.$file)
 				OR ($mtime = filemtime($this->_config['save_path'].DIRECTORY_SEPARATOR.$file)) === FALSE
 				OR $mtime > $ts)

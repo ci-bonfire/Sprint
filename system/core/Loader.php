@@ -1232,7 +1232,11 @@ class CI_Loader {
 	 */
 	protected function _ci_autoloader()
 	{
-		include(APPPATH.'config/autoload.php');
+		if (file_exists(APPPATH.'config/autoload.php'))
+		{
+			include(APPPATH.'config/autoload.php');
+		}
+
 		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/autoload.php'))
 		{
 			include(APPPATH.'config/'.ENVIRONMENT.'/autoload.php');
@@ -1240,7 +1244,7 @@ class CI_Loader {
 
 		if ( ! isset($autoload))
 		{
-			return FALSE;
+			return;
 		}
 
 		// Autoload packages
@@ -1365,6 +1369,3 @@ class CI_Loader {
 	}
 
 }
-
-/* End of file Loader.php */
-/* Location: ./system/core/Loader.php */
