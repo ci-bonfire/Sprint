@@ -49,6 +49,18 @@ A comma-seperated list of IP Address that should be banned from the site.
 
 	$config['api.ip_blacklist'] = '252.32.125.32, 162.15.325.124';
 
+### api.ip_whitelist_enabled
+Determines whether whitelisting of visitors based on IP address is turned on or off. If true, then only IP addresses listed here will be allowed access to the site. All other IP addresses will be blocked.
+
+Local IP addresses are always added in (127.0.0.1 and 0.0.0.0);
+
+	$config['api.ip_whitelist_enabled'] = true;
+
+### api.ip_whitelist
+A comma-seperated list of IP Address that should be the only ones allowed access to the site.
+
+	$config['api.ip_whitelist'] = '252.32.125.32, 162.15.325.124';
+
 ### api.ajax_only
 If `true` then the API will only respond to AJAX requests. Any non-AJAX requests will return a 403 Forbidden HTTP status message.
 

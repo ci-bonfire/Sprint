@@ -66,8 +66,17 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 // A comma-separated list of IP addresses that will not be allowed access
 // to the API under any circumstances.
 //
-	$config['api.ip_blacklist_enabled']    = true;
+	$config['api.ip_blacklist_enabled']    = false;
 	$config['api.ip_blacklist']            = '';
+
+//--------------------------------------------------------------------
+// IP Whitelists
+//--------------------------------------------------------------------
+// A comma-separated list of IP address that are the ONLY IP addresses
+// allowed to access the site. Any other IP's will be rejected.
+//
+	$config['api.ip_whitelist_enabled'] = false;
+	$config['aip.ip_whitelist']         = '';
 
 //--------------------------------------------------------------------
 // AJAX Requests Only?

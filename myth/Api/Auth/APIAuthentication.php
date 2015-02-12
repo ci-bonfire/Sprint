@@ -51,6 +51,12 @@ class APIAuthentication extends LocalAuthentication {
 		{
 			$this->checkIPBlacklist();
 		}
+
+		// Do we need to do whitelisting?
+		if (config_item('auth.ip_whitelist_enabled'))
+		{
+			$this->checkIPWhitelist();
+		}
 	}
 
 	//--------------------------------------------------------------------
@@ -274,8 +280,35 @@ class APIAuthentication extends LocalAuthentication {
 		{
 			throw new \Exception('IP Address is denied.', 401);
 		}
+
+		return true;
 	}
 	
+	//--------------------------------------------------------------------
+
+	/**
+	 * Checks the client's IP address against any IP addresses specified
+	 * in the api config file. If the client is not accessing the site
+	 * from one of those addresses then their access is denied.
+	 */
+	public function checkIPWhitelist()
+	{
+		$whitelist = explode(',', config_item('api.ip_whitelist'));
+
+		array_push($whitelist, '127.0.0.1', '0.0.0.0');
+
+		array_walk($whitelist, function (&$item, $key) {
+			$item = trim($item);
+		});
+
+		if (! in_array($this->ci->input->ip_address(), $whitelist))
+		{
+			throw new \Exception('IP Address is denied.', 401);
+		}
+
+		return true;
+	}
+
 	//--------------------------------------------------------------------
 
 	/**

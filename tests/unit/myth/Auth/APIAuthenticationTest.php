@@ -49,59 +49,75 @@ class APIAuthenticationTests extends CodeIgniterTestCase {
 	// Common
 	//--------------------------------------------------------------------
 
-//	public function testBlocksIPBlacklist()
-//	{
-//		$this->ci->config->set_item('api.ip_blacklist', '127.0.0.1, 0.0.0.0');
-//
-//		$this->setExpectedException('\Exception', 'IP Address is denied.');
-//
-//		$this->auth->checkIPBlacklist();
-//	}
-//
-//	//--------------------------------------------------------------------
-//
-//	public function testBasicAuthFailsWithNoCredentials()
-//	{
-//	    $this->assertFalse( $this->auth->tryBasicAuthentication() );
-//		$this->assertNotNull( $this->ci->output->get_header('WWW-Authenticate: Basic realm="'. config_item('api.realm') .'"'));
-//	}
-//
-//	//--------------------------------------------------------------------
-//
-//	public function testBasicAuthReturnsFalseWithInvalidUser()
-//	{
-//		$_SERVER['PHP_AUTH_USER'] = 'baduser';
-//		$_SERVER['PHP_AUTH_PW']  = 'nocookies';
-//
-//		$this->auth->user_model->shouldReceive('as_array')->once()->andReturn( $this->auth->user_model );
-//		$this->auth->user_model->shouldReceive('where')->once()->andReturn( $this->auth->user_model );
-//		$this->auth->user_model->shouldReceive('first')->once()->andReturn( false );
-//
-//		$this->assertFalse( $this->auth->tryBasicAuthentication() );
-//	}
-//
-//	//--------------------------------------------------------------------
-//
-//	public function testBasicAuthReturnsUserWithValidUser()
-//	{
-//		$_SERVER['PHP_AUTH_USER'] = 'baduser';
-//		$_SERVER['PHP_AUTH_PW']  = 'nocookies';
-//
-//		$user = [
-//			'id' => 12,
-//			'email'	=> 'baduser',
-//			'password_hash' => password_hash('nocookies', PASSWORD_DEFAULT),
-//			'active' => 1
-//		];
-//
-//		$this->auth->user_model->shouldReceive('as_array')->once()->andReturn( $this->auth->user_model );
-//		$this->auth->user_model->shouldReceive('where')->once()->andReturn( $this->auth->user_model );
-//		$this->auth->user_model->shouldReceive('first')->once()->andReturn( $user );
-//		$this->ci->login_model->shouldReceive('recordLoginAttempt');
-//
-//		$this->assertEquals($user, $this->auth->tryBasicAuthentication() );
-//		$this->assertEquals(12, $this->auth->id());
-//	}
+	public function testBlocksIPBlacklist()
+	{
+		$this->ci->config->set_item('api.ip_blacklist_enabled', true);
+		$this->ci->config->set_item('api.ip_whitelist_enabled', false);
+		$this->ci->config->set_item('api.ip_blacklist', '127.0.0.1, 0.0.0.0');
+
+		$this->setExpectedException('\Exception', 'IP Address is denied.');
+
+		$this->auth->checkIPBlacklist();
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testIPWhitelist()
+	{
+		$this->ci->config->set_item('api.ip_blacklist_enabled', false);
+		$this->ci->config->set_item('api.ip_whitelist_enabled', true);
+
+		$_SERVER['REMOTE_ADDR'] ='123.45.56.789';
+
+		$this->assertTrue($this->auth->checkIPWhitelist() );
+	}
+
+	//--------------------------------------------------------------------
+	// Basic Authentication
+	//--------------------------------------------------------------------
+
+	public function testBasicAuthFailsWithNoCredentials()
+	{
+	    $this->assertFalse( $this->auth->tryBasicAuthentication() );
+		$this->assertNotNull( $this->ci->output->get_header('WWW-Authenticate: Basic realm="'. config_item('api.realm') .'"'));
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testBasicAuthReturnsFalseWithInvalidUser()
+	{
+		$_SERVER['PHP_AUTH_USER'] = 'baduser';
+		$_SERVER['PHP_AUTH_PW']  = 'nocookies';
+
+		$this->auth->user_model->shouldReceive('as_array')->once()->andReturn( $this->auth->user_model );
+		$this->auth->user_model->shouldReceive('where')->once()->andReturn( $this->auth->user_model );
+		$this->auth->user_model->shouldReceive('first')->once()->andReturn( false );
+
+		$this->assertFalse( $this->auth->tryBasicAuthentication() );
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testBasicAuthReturnsUserWithValidUser()
+	{
+		$_SERVER['PHP_AUTH_USER'] = 'baduser';
+		$_SERVER['PHP_AUTH_PW']  = 'nocookies';
+
+		$user = [
+			'id' => 12,
+			'email'	=> 'baduser',
+			'password_hash' => password_hash('nocookies', PASSWORD_DEFAULT),
+			'active' => 1
+		];
+
+		$this->auth->user_model->shouldReceive('as_array')->once()->andReturn( $this->auth->user_model );
+		$this->auth->user_model->shouldReceive('where')->once()->andReturn( $this->auth->user_model );
+		$this->auth->user_model->shouldReceive('first')->once()->andReturn( $user );
+		$this->ci->login_model->shouldReceive('recordLoginAttempt');
+
+		$this->assertEquals($user, $this->auth->tryBasicAuthentication() );
+		$this->assertEquals(12, $this->auth->id());
+	}
 
 	//--------------------------------------------------------------------
 
@@ -113,7 +129,7 @@ class APIAuthenticationTests extends CodeIgniterTestCase {
 	{
 		$this->assertFalse( $this->auth->tryDigestAuthentication() );
 
-		$header = $this->ci->output->get_header('WWW-Authenticate');
+		$header = $this->ci->output->get_header('WWW-Authenticate: Digest');
 
 		$matches = [];
 		preg_match_all('@(nonce|opaque|realm)=[\'"]?([^\'",]+)@', $header, $matches);
@@ -132,7 +148,7 @@ class APIAuthenticationTests extends CodeIgniterTestCase {
 		// first things - hit the server and get our nonce and such...
 		$this->auth->tryDigestAuthentication();
 
-		$header = $this->ci->output->get_header('WWW-Authenticate');
+		$header = $this->ci->output->get_header('WWW-Authenticate: Digest');
 
 		$matches = [];
 		preg_match_all('@(nonce|opaque|realm)=[\'"]?([^\'",]+)@', $header, $matches);
