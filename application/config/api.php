@@ -93,3 +93,19 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 // for this request.
 //
 	$config['api.enable_logging'] = false;
+
+//--------------------------------------------------------------------
+// Enable Rate Limiting?
+//--------------------------------------------------------------------
+// If enabled, will restrict a user to X request per hour.
+// This can be overridden per controller
+//
+	$config['api.enable_rate_limits'] = false;
+
+//--------------------------------------------------------------------
+// Rate Limits
+//--------------------------------------------------------------------
+// The number of requests against the API a user can make per hour.
+// This can be overridden per controller.
+//
+	$config['api.rate_limits'] = 100;

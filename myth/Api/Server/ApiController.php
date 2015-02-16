@@ -109,7 +109,21 @@ class ApiController extends BaseController {
 	 *
 	 * @var bool
 	 */
-	protected $enable_logging = false;
+	protected $enable_logging;
+
+	/**
+	 * Whether rate limiting is enabled.
+	 *
+	 * @var bool
+	 */
+	protected $enable_rate_limits;
+
+	/**
+	 * The number of requests allowed per user/hour
+	 *
+	 * @var int
+	 */
+	protected $rate_limits = 0;
 
 	/**
 	 * Status strings/codes allowed when using
@@ -135,6 +149,7 @@ class ApiController extends BaseController {
 		'not_acceptable'            => 406,
 		'resource_exists'           => 409,
 		'resource_gone'             => 410,
+		'too_many_requests'         => 429,
 		'server_error'              => 500,
 		'unsupported_grant_type'    => 501,
 		'not_implemented'           => 501
@@ -174,6 +189,11 @@ class ApiController extends BaseController {
 
 		$this->config->load('api');
 
+		// Gather config defaults when a value isn't set for this controller
+		if ( empty($this->enable_logging) ) $this->enable_logging = config_item('api.enable_logging');
+		if ( empty($this->enable_rate_limits) ) $this->enable_rate_limits = config_item('api.enable_rate_limits');
+		if ( empty($this->rate_limits) ) $this->rate_limits = config_item('api.rate_limits');
+
 		// Should we restrict to SSL requests?
 		if (config_item('require_ssl') === true && ! $this->request->ssl)
 		{
@@ -194,6 +214,12 @@ class ApiController extends BaseController {
 			{
 				$this->failUnauthorized("Unauthorized");
 			}
+		}
+
+		// Has the user hit rate limits for this hour?
+		if ($this->enable_rate_limits && ! $this->isWithinLimits())
+		{
+			$this->failTooManyRequests("Only {$this->rate_limits} requests per hour are allowed per user.");
 		}
 
 		// NEVER allow profiling via API.
@@ -437,6 +463,21 @@ class ApiController extends BaseController {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Used when the user has made too many requests against the  within
+	 * the last hour.
+	 *
+	 * @param $description
+	 *
+	 * @return mixed
+	 */
+	protected function failTooManyRequests($description)
+	{
+		return $this->fail($description, 'too_many_requests');
+	}
+
+	//--------------------------------------------------------------------
+
 	//--------------------------------------------------------------------
 	// Utility Methods
 	//--------------------------------------------------------------------
@@ -672,6 +713,28 @@ class ApiController extends BaseController {
 		];
 
 		$model->insert($data);
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Checks the user's number of requests within the current hour.
+	 * Returns true if they are within their limits and can make additional
+	 * requests. Returns false if they have exceeded the number of requests
+	 * for this hour.
+	 *
+	 * @return bool
+	 */
+	private function isWithinLimits()
+	{
+		$model = new LogModel();
+
+		if ($model->requestsThisHourForUser( $this->id() ) > $this->rate_limits)
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	//--------------------------------------------------------------------

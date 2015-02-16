@@ -7,7 +7,7 @@ In addition, these are designed to work out of the box with the  [AuthTrait](sec
 The following are a list of the components that are provided to help you build out your API. 
 
 - An [API  Controller](api/controller) with helper methods for return JSON-based success/failure messages and paginating results in a consistent manner.
-- Additional Authentication classes, based on [HTTP Basic](api/httpbasic), [HTTP Digest](api/httpdigest), and [API Keys](api/keys) authentication standards, all with built-in throttling and logging. 
+- Additional Authentication classes, based on [HTTP Basic](api/httpbasic), [HTTP Digest](api/httpdigest) authentication standards, all with built-in throttling and logging. 
 - The [Routes](general/routes) enhancement provides a number of tools designed to make creating API's simpler.
 
 ## Setting Up Your System
@@ -20,14 +20,12 @@ In order to make use of the API-server features provided, your controllers MUST 
 The configuration values for the API tools are found in the `application/config/api.php` file.
 
 ### api.auth_type
-This allows you to specify which type of authentication is used, unless you are using the `oAuth2Authentication` library, which requires its own driver. Allowed values are: `basic`, `digest`, and `keys`. 
+This allows you to specify which type of authentication is used, unless you are using the `oAuth2Authentication` library, which requires its own driver. Allowed values are: `basic`, and `digest` 
 
 	$config['api.auth_type'] = 'basic';
 
 * __basic__ This authentication system uses the standard username/password combination that are already present for the users, though it is not very secure. If you choose to use this type, you MUST have the entire domain protected via HTTPS in order to have any modicum of security.
 * __digest__ This uses a nonce and a secret key that is known between the client and the server and hashed. Provides much better security than _basic_, but should still be behind HTTPS. 
-* __keys__ uses API keys that are unique to each user that are passed with each request.
-* __oAuth2__ Uses the [oAuth 2.0](http://oauth.net/2/) spec and is one of the most secure methods for securing an API in common use today. 
 
 ### api.realm
 If the authorisation type supports it, this is the default realm that is used across your application. While the specs allow a site to specify different credentials for each realm of the site, this library only supports a single set of username/password combinations per user for the entire site.
@@ -79,3 +77,19 @@ In order to run this you must create a table in your database. The api generator
 If any of the controller methods don't need to be logged, you can turn it off by setting the class var `enable_logging` to false from the method itself. 
 
 	$this->enable_logging = false;
+
+### api.enable_rate_limiting
+Rate Limiting restricts that a user cannot make more than `X` requests against the API per hour. The exact value is determined by the `api.rate_limits` setting, below. If `true` any user that exceeds that limit within the current hour will have their access denied until the start of the next hour. 
+
+This works hand-in-hand with the logging feature so the logging feature MUST be enabled for the rate_limiting to work.
+
+	$config['api.enable_rate_limits'] = false;
+
+This setting can be overridden on a per-controller basis by setting the controller's class var `enable_rate_limits` to the desired setting.
+
+### api.rate_limits
+An integer with the number of requests per hour that a user can make against the API. 
+
+	$config['api.rate_limits'] = 100;
+
+This setting can be overridden on a per-controller basis by setting the controller's class var `rate_limits` to the desired setting.
