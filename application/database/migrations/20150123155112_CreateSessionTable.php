@@ -30,7 +30,6 @@ class Migration_Createsessiontable extends CI_Migration {
             ),
             'data' => array(
                 'type'          => 'blob',
-                'default'       => '',
                 'null'          => false
             )
         );
