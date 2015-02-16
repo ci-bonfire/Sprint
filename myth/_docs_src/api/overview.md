@@ -81,6 +81,8 @@ If any of the controller methods don't need to be logged, you can turn it off by
 ### api.enable_rate_limiting
 Rate Limiting restricts that a user cannot make more than `X` requests against the API per hour. The exact value is determined by the `api.rate_limits` setting, below. If `true` any user that exceeds that limit within the current hour will have their access denied until the start of the next hour. 
 
+If the user exceeds the number of allowed requests the server will respond with an HTTP status code of 429 - Too Many Requests.
+
 This works hand-in-hand with the logging feature so the logging feature MUST be enabled for the rate_limiting to work.
 
 	$config['api.enable_rate_limits'] = false;
