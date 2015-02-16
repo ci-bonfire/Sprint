@@ -19,7 +19,7 @@ class Migration_Add_api_key_to_users extends CI_Migration {
     public function up ()
     {
 		\$field = [
-			'api_key' => [
+			'digest_key' => [
 				'type' => 'VARCHAR',
 				'constraint' => '255',
 				'null' => true
@@ -32,7 +32,7 @@ class Migration_Add_api_key_to_users extends CI_Migration {
 
     public function down ()
     {
-		\$this->dbforge->drop_column('users', 'api_key');
+		\$this->dbforge->drop_column('users', 'digest_key');
     }
 
     //--------------------------------------------------------------------

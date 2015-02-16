@@ -126,8 +126,8 @@ class APIAuthentication extends LocalAuthentication {
 	/**
 	 * Checks to see if someone is authorized via HTTP Digest Authentication.
 	 *
-	 * NOTE: This requires that a new field, 'api_key', be added to the user's
-	 * table and, during new user creation, or password reset, that the api_key
+	 * NOTE: This requires that a new field, 'digest_key', be added to the user's
+	 * table and, during new user creation, or password reset, that the digest_key
 	 * be calculated as md5({username}:{realm}:{password})
 	 *
 	 * References:
@@ -181,7 +181,7 @@ class APIAuthentication extends LocalAuthentication {
 		}
 
 		// Calc the correct response
-		$A1 = $user['api_key'];
+		$A1 = $user['digest_key'];
 
 		if ($digest['qop'] == 'auth')
 		{
