@@ -168,7 +168,7 @@ class APIAuthenticationTests extends CodeIgniterTestCase {
 		$A2 = md5('GET:'. $uri);
 		$response = md5($A1 .':'. $matches['nonce'] .':1:'. $cnonce .':auth:'.  $A2);
 
-		$user['api_key'] = $A1;
+		$user['digest_key'] = $A1;
 
 		$header_string = sprintf('Authorization: Digest username="%s", realm="%s", nonce="%s", nc="1", cnonce="%s", opaque="%s", qop="auth", uri="%s", response="%s"',
 			$user['email'], $matches['realm'], $matches['nonce'], $cnonce, $matches['opaque'], $uri, $response);
