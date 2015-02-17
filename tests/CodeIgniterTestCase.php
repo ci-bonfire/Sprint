@@ -25,7 +25,6 @@ function show_404($page = '', $log_error = TRUE)
 
 ob_start();
 	include( ROOT . 'index.php' );
-//	$ci =& get_instance();
 ob_end_clean();
 
 /**

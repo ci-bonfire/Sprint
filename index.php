@@ -65,9 +65,13 @@ include "vendor/autoload.php";
      * variable called TRAVIS which is set in the .travis.yml file.
      * This allows a database-specific setup for Travis testing.
      */
-    if (isset($ENV['TRAVIS']))
+    if (isset($_ENV['TRAVIS']))
     {
         define('ENVIRONMENT', 'travis');
+    }
+    else if (isset($_ENV['TESTING']))
+    {
+	    define('ENVIRONMENT', 'testing');
     }
     else if (strpos($domain, '.dev') !== false || $domain == 'cli')
     {
@@ -89,11 +93,11 @@ switch (ENVIRONMENT)
 {
 	case 'development':
     case 'travis':
+	case 'testing':
 		error_reporting(-1);
 		ini_set('display_errors', 1);
 	break;
 
-	case 'testing':
 	case 'production':
 		ini_set('display_errors', 0);
 		if (version_compare(PHP_VERSION, '5.3', '>='))
