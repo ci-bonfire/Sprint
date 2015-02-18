@@ -14,7 +14,7 @@ echo "<?php
  * Created by: SprintPHP
  * Created on: {$today}
  */
-class Migration_Add_api_key_to_users extends CI_Migration {
+class Migration_Add_digest_key_to_users extends CI_Migration {
 
     public function up ()
     {
