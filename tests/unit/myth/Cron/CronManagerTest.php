@@ -182,6 +182,14 @@ class CronManagerTest extends CodeIgniterTestCase {
     // List All
     //--------------------------------------------------------------------
 
+    public function testListAllReturnsNullWithNotTasks()
+    {
+        $this->assertNull(CronManager::listAll());
+    }
+    
+    //--------------------------------------------------------------------
+    
+    
     public function testListAllReturnsArrayItemsForEachTask()
     {
         CronManager::schedule('task1', '5 minutes', 'library:method');
