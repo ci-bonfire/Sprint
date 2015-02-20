@@ -25,7 +25,11 @@ class BaseMailerTest extends CodeIgniterTestCase {
 	public function _after() {
 		unset($this->mailer);
 
-		array_map('unlink', glob(APPPATH ."logs/email/*"));
+		if (is_dir(APPPATH ."logs/email"))
+		{
+			@array_map('unlink', glob(APPPATH ."logs/email/{,.}*", GLOB_BRACE));
+			rmdir( APPPATH . "logs/email" );
+		}
 	}
 
 	//--------------------------------------------------------------------
