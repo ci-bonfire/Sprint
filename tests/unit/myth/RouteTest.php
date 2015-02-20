@@ -65,6 +65,21 @@ class RouteTest extends \Codeception\TestCase\Test
 
     //--------------------------------------------------------------------
 
+    public function testAnyWithBefore ()
+    {
+        $final = [
+            'from' => 'home/to'
+        ];
+
+        $this->route->any('from', 'home/to', ['before' => function() {
+            throw new \Exception(); }]
+        );
+
+        $this->assertEquals($final, $this->route->map( [] ));
+    }
+
+    //--------------------------------------------------------------------
+
     //--------------------------------------------------------------------
     // HTTP Verb-based Routes
     //--------------------------------------------------------------------
@@ -344,6 +359,26 @@ class RouteTest extends \Codeception\TestCase\Test
 
     //--------------------------------------------------------------------
 
+    public function testResourcesWithDefaultConstraint ()
+    {
+        $_SERVER['REQUEST_METHOD'] = 'GET';
+
+        $final = [
+            'posts'                 => 'posts/list_all',            // GET
+            'posts/new'             => 'posts/creation_form',       // GET
+            'posts/(:num)/edit'     => 'posts/editing_form/$1',     // GET
+            'posts/(:num)'          => 'posts/show/$1',             // GET
+        ];
+
+        $this->route->setDefaultConstraint('num');
+
+        $this->route->resources('posts');
+
+        $this->assertEquals($final, $this->route->map( [] ));
+    }
+
+    //--------------------------------------------------------------------
+
     public function testResourcesController ()
     {
         $_SERVER['REQUEST_METHOD'] = 'GET';
@@ -459,6 +494,8 @@ class RouteTest extends \Codeception\TestCase\Test
         $this->route->area('admin', 'adminController');
 
         $this->assertEquals('admin', Route::getAreaName( 'adminController' ));
+
+        $this->assertNull( Route::getAreaName('missingController') );
     }
 
     //--------------------------------------------------------------------
@@ -601,6 +638,15 @@ class RouteTest extends \Codeception\TestCase\Test
 
     //--------------------------------------------------------------------
 
+    public function testBlockEmpty()
+    {
+        $this->assertNull( $this->route->block() );
+    }
+
+    //--------------------------------------------------------------------
+
+
+
     //--------------------------------------------------------------------
     // Named Routes
     //--------------------------------------------------------------------
@@ -613,6 +659,14 @@ class RouteTest extends \Codeception\TestCase\Test
     }
 
     //--------------------------------------------------------------------
+
+    public function testNamedReturnsNullWithUnrecognizedName()
+    {
+        $this->assertNull( Route::named('betty'));
+    }
+
+    //--------------------------------------------------------------------
+
 
     //--------------------------------------------------------------------
     // Constraints
@@ -643,7 +697,7 @@ class RouteTest extends \Codeception\TestCase\Test
             'users/(:num)'   => 'users/$1'
         ];
 
-        $this->route->registerConstraint('id', '(^.*)');
+        $this->route->registerConstraint('ids', '(^.*)');
 
         $this->route->any('users/{id}', 'users/$1');
 
@@ -666,6 +720,7 @@ class RouteTest extends \Codeception\TestCase\Test
     }
 
     //--------------------------------------------------------------------
+
 
     //--------------------------------------------------------------------
     // Match
