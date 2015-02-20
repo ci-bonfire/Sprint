@@ -29,6 +29,18 @@ class CronTaskTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    public function testCreationThrowsExceptionWithBadTasl()
+    {
+        $schedule = '2 seconds';
+        $myTask   = 'somethingbad';
+
+        $this->setExpectedException('RuntimeException');
+
+        $task = new CronTask($schedule, $myTask);
+    }
+
+    //--------------------------------------------------------------------
+
     //--------------------------------------------------------------------
     // Schedule Type
     //--------------------------------------------------------------------
@@ -283,6 +295,18 @@ class CronTaskTest extends CodeIgniterTestCase {
     // Next Run Date
     //--------------------------------------------------------------------
 
+    public function testNextRunDateWithBadInfo()
+    {
+        $schedule = 'fracisco';
+        $myTask   = 'library:method';
+
+        $task = new CronTask($schedule, $myTask);
+
+        $this->assertNull( $task->nextRunDate() );
+    }
+
+    //--------------------------------------------------------------------
+
     public function testNextRunDateWithSeconds()
     {
         $schedule = '7 seconds';
@@ -353,6 +377,18 @@ class CronTaskTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
     // Previous Run Date
+    //--------------------------------------------------------------------
+
+    public function testPrevRunDateWithBadInfo()
+    {
+        $schedule = 'fracisco';
+        $myTask   = 'library:method';
+
+        $task = new CronTask($schedule, $myTask);
+
+        $this->assertNull( $task->previousRunDate() );
+    }
+
     //--------------------------------------------------------------------
 
     public function testPrevRunDateWithSeconds()
@@ -512,6 +548,27 @@ class CronTaskTest extends CodeIgniterTestCase {
     }
 
     //--------------------------------------------------------------------
+
+    //--------------------------------------------------------------------
+    // Format
+    //--------------------------------------------------------------------
+
+    public function testFormat()
+    {
+        $schedule = '5 minutes';
+        $myTask   = 'library:method';
+
+        $task = new CronTask($schedule, $myTask);
+
+        $stamp = time();
+        $formatted = date('Y-m-d', $stamp);
+
+        $this->assertEquals($formatted, $task->format('Y-m-d'));
+    }
+
+    //--------------------------------------------------------------------
+
+
 
     //--------------------------------------------------------------------
     // Various Schedule String Tests
