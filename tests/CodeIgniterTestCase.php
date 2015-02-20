@@ -35,6 +35,8 @@ ob_end_clean();
  */
 class CodeIgniterTestCase extends \Codeception\TestCase\Test {
 
+	use \MythTester;
+
 	protected $ci;
 
 	//--------------------------------------------------------------------
