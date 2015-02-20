@@ -158,7 +158,14 @@ class BaseMailer {
 
         if (! empty($this->cc))         $this->service->cc($this->cc);
         if (! empty($this->bcc))        $this->service->bcc($this->bcc);
-        if (! empty($this->reply_to))   $this->service->reply_to($this->reply_to);
+
+        if (is_array($this->reply_to)) {
+            $this->service->reply_to($this->reply_to[0], $this->reply_to[1]);
+        }
+        else
+        {
+            $this->service->reply_to($this->reply_to);
+        }
 
 
         // Determine the view to use. We have to hack this a bit with

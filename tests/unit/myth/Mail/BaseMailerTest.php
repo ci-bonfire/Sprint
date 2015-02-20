@@ -96,7 +96,7 @@ class BaseMailerTest extends CodeIgniterTestCase {
 	public function testSendWithText()
 	{
 		$options = [
-			'from' => ['someone@lovesyou.com', 'Someone'],
+			'from' => 'someone@lovesyou.com',
 			'reply_to' => 'someonelse@lovesyou.com',
 			'cc' => 'carbon@copy.com',
 			'bcc' => 'blind@copy.com',
@@ -131,7 +131,7 @@ class BaseMailerTest extends CodeIgniterTestCase {
 	{
 		$options = [
 			'from' => ['someone@lovesyou.com', 'Someone'],
-			'reply_to' => 'someonelse@lovesyou.com',
+			'reply_to' => ['someonelse@lovesyou.com', 'Someone Else'],
 			'cc' => 'carbon@copy.com',
 			'bcc' => 'blind@copy.com',
 			'theme' => 'email',
