@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Sprint
  *
@@ -73,6 +72,5 @@ class SeedGenerator extends \Myth\Forge\BaseGenerator {
 	}
 
 	//--------------------------------------------------------------------
-
 
 }

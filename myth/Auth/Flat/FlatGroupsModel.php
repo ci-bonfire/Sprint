@@ -1,5 +1,4 @@
 <?php namespace Myth\Auth\Flat;
-
 /**
  * Sprint
  *
@@ -200,6 +199,5 @@ class FlatGroupsModel extends CIDbModel {
 	}
 
 	//--------------------------------------------------------------------
-
 
 }

@@ -31,4 +31,3 @@
 
 
 <?= $themer->display('foundation:fragments/footer') ?>
-

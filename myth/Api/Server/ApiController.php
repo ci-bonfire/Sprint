@@ -1,5 +1,4 @@
 <?php namespace Myth\Api\Server;
-
 /**
  * Sprint
  *
@@ -738,6 +737,5 @@ class ApiController extends BaseController {
 	}
 
 	//--------------------------------------------------------------------
-
 
 }
