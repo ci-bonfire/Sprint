@@ -69,6 +69,11 @@ class Mail {
 
         $mailer = new $class( $options );
 
+        if (! method_exists($mailer, $method))
+        {
+            throw new \BadMethodCallException("Mailer method does not exist: {$class}::{$method}");
+        }
+
         // try to deliver the mail, but don't send back the contents
         // since we don't want to force the mailers to return anything.
         if (call_user_func_array([$mailer, $method], $params) )
@@ -83,8 +88,15 @@ class Mail {
 
     /**
      * Adds an item to the email queue to be sent out next time.
+     *
+     * @param string $mailer_name
+     * @param array $params
+     * @param array $options
+     * @param \Myth\Mail\Queue $queue
+     *
+     * @return mixed
      */
-    public static function queue($mailer_name, $params=[], $options=[])
+    public static function queue($mailer_name, $params=[], $options=[], &$queue=null)
     {
         $data = [
             'mailer'    => $mailer_name,
@@ -92,7 +104,10 @@ class Mail {
             'options'   => serialize($options)
         ];
 
-        $queue = new \Myth\Mail\Queue();
+        if (empty($queue))
+        {
+            $queue = new \Myth\Mail\Queue();
+        }
 
         return $queue->insert($data);
     }
@@ -106,9 +121,12 @@ class Mail {
      * @param int $chunk_size   // How many emails to send per batch.
      * @return string           // The output of the cronjob...
      */
-    public static function process($chunk_size=50)
+    public static function process($chunk_size=50, &$db=null)
     {
-        $db = new \Myth\Mail\Queue();
+        if (empty($db))
+        {
+            $db = new \Myth\Mail\Queue();
+        }
 
         // Grab our batch of emails to process
         $queue = $db->find_many_by('sent', 0);
