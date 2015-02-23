@@ -38,6 +38,8 @@ class MainMenu {
 
 		if ($menu->hasItems())
 		{
+			$menu->sortBy('order', 'asc');
+
 			foreach ($menu->items() as $item)
 			{
 				$output .= $this->renderItem( $item );

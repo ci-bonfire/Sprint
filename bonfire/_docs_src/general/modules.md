@@ -66,7 +66,10 @@ When an admin page is loaded, any modules that have the `initAdmin()` method in 
 		// .. variables, update logic, etc...
 		
 		function initAdmin() {
-			$this->menu->addChild(new MenuItem('modulename'), 'Content');
+            // Grab the admin menu.
+            $menu = MenuCollection::menu('admin');
+		
+            $menu->addChild(new MenuItem('modulename'), 'Content');
 		}
 	}
 	

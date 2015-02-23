@@ -25,7 +25,7 @@ class MenuItem {
 
     //--------------------------------------------------------------------
 
-    public function __construct($name, $title=null, $link=null, $icon=null)
+    public function __construct($name, $title=null, $link=null, $icon=null, $order=0)
     {
         $this->name = $this->prepareName($name);
 
@@ -34,6 +34,8 @@ class MenuItem {
         $this->link = $link;
 
 	    $this->icon = $icon;
+
+	    $this->order = $order;
     }
 
     //--------------------------------------------------------------------
