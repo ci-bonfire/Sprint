@@ -1,8 +1,9 @@
 # MailServiceInterface
-[Mail Services](http://sprint.dev/docs/developer/general/email#mail_services) are used to handle the actual construction and sending of emails through different providers. You might create new MailServices to handle sending mail via third party services like Postmark or Mandrill.
+
+[Mail Services](general/email#mail_services) are used to handle the actual construction and sending of emails through different providers. You might create new MailServices to handle sending mail via third party services like Postmark or Mandrill.
 
 ## send()
-Does the actual delivery of the email. All of the information must have been already set through other class methods (like `to` and `from`) before calling this method. 
+Does the actual delivery of the email. All of the information must have been already set through other class methods (like `to` and `from`) before calling this method.
 
 The only parameter is a boolean value that tells the system whether all values should be reset after sending the email. This should default to `true`.
 
@@ -19,7 +20,7 @@ The first parameter is the field name, while the second is the value to set the 
 ## to()
 Accepts the email address that the email should be delivered to. An array can be provided to set the value to more than one email address.
 
-	$mailService->to( 'darth@theempire.com');
+	$mailService->to('darth@theempire.com');
 	$mailService->to( ['darth@theempire.com', 'luke@skywalkerranch.com'] );
 
 ##  from()
@@ -35,7 +36,7 @@ Sets one or an array of emails that this email should be BCC'd to.
 Sets the reply to address for this email. The first parameter is the email address to use. The second, optional, parameter is the name to display.
 
 ## subject()
-Sets the subject line to be used for the email. 
+Sets the subject line to be used for the email.
 
 ## html_message()
 Takes a single string that sets any HTML content to be sent along with this email, if any.
@@ -44,7 +45,7 @@ Takes a single string that sets any HTML content to be sent along with this emai
 Takes a single string that sets any TEXT content to be sent along with this email, if any.
 
 ## format()
-Sets the format to send the email as. Either 'html' or 'text'. 
+Sets the format to send the email as. Either 'html' or 'text'.
 
 ## reset()
-Resets all class values. By default, it will erase the attachments, also. If you want the attachment to stay so you can send it to other people, you can pass in FALSE as the only parameter.
+Resets all class values. By default, it will erase the attachments, also. If you want the attachment to stay so you can send it to other people, you can pass in `false` as the only parameter.
