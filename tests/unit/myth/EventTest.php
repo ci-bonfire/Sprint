@@ -187,7 +187,45 @@ class EventTest extends \CodeIgniterTestCase
 
     //--------------------------------------------------------------------
 
+    public function testRemoveAllListenersWithSingleEvent()
+    {
+        $result = false;
+
+        $callback = function() use (&$result)
+        {
+            $result = true;
+        };
+
+        Events::on('foo', $callback);
+
+        Events::removeAllListeners('foo');
+
+        $listeners = Events::listeners('foo');
+
+        $this->assertEquals([], $listeners);
+    }
+
+    //--------------------------------------------------------------------
 
 
+    public function testRemoveAllListenersWithMultipleEvents()
+    {
+        $result = false;
+
+        $callback = function() use (&$result)
+        {
+            $result = true;
+        };
+
+        Events::on('foo', $callback);
+        Events::on('bar', $callback);
+
+        Events::removeAllListeners();
+
+        $this->assertEquals([], Events::listeners('foo'));
+        $this->assertEquals([], Events::listeners('bar'));
+    }
+
+    //--------------------------------------------------------------------
 
 }

@@ -53,8 +53,11 @@ trait AuthTrait {
 	 * Verifies that a user is logged in
 	 *
 	 * @param null $uri
+	 * @param bool $return_only
+	 *
+	 * @return bool
 	 */
-	public function restrict($uri=null)
+	public function restrict($uri=null, $return_only=false)
 	{
 	    $this->setupAuthClasses();
 
@@ -66,6 +69,11 @@ trait AuthTrait {
 		if (method_exists($this, 'setMessage'))
 		{
 			$this->setMessage( lang('auth.not_logged_in') );
+		}
+
+		if ($return_only)
+		{
+			return false;
 		}
 
 		if (empty($uri))

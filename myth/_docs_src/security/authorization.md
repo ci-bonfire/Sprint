@@ -59,7 +59,7 @@ Removes a user from a single group. The first parameter is the user id. The seco
 	removeUserFromGroup($user_id, 'moderators');
 
 ### addPermissionToGroup()
-Adds a permission to a single group. The permission must already exist. The first parameter is the parameter. The second parameter is the group to add it to. Both of the parameters can be either the ID or the name. 
+Adds a permission to a single group. The permission must already exist. The first parameter is the permission. The second parameter is the group to add it to. Both of the parameters can be either the ID or the name. 
 
 	addPermissionToGroup($permission_id, $group_id);
 	addPermissionToGroup('permission name', $group_id);
@@ -73,6 +73,25 @@ Removes a single permission from a group. Does not delete the permission. The fi
 	removePermissionFromGroup('permission name', $group_id);
 	removePermissionFromGroup('permission name', 'group name');
 	removePermissionFromGroup($permission_id, 'group_name');
+	
+### addPermissionToUser()
+Adds a private permission to a single user. This is in addition to any permissions that might be granted by the user's groups. 
+
+The permission must already exist. The first parameter is the permission. The second parameter is the user's ID. The permission may be either the permission ID or the name assigned to it.
+
+    addPermissionToUser($permission_id, $user_id);
+    addPermissionToUser('permission name', $user_id);
+
+### removePermissionFromUser()
+Removes a single private permission from a user. Does not delete the user. The first parameter is the permission. The second parameter is the user ID. The permission may be either the permission ID or the name assigned to it.
+
+    removePermissionFromUser($permission_id, $user_id);
+    removePermissionFromUser('permission name', $user_id);
+    
+### doesUserHavePermission()
+Checks a user to see if they have a private permission. The first parameter is the user_id. The second parameter is the permission. The permission may be either the permission ID or the name of the permission. Returns either true or false.
+
+This is called automatically by the `hasPermission()` method, so you don't need to call it again if you are using that method, or the `restrictWithPermissions()` method in the Auth Trait.
 
 ## Groups
 We refer to our Roles as Groups because we do not enforce the concept of a role. Groups are simply collections of users that have a set of permissions assigned to them. While it makes natural sense to treat them like roles, you could use them for any other purpose that you needed to. You could group beta testers into a `beta` group, for example. 

@@ -17,7 +17,15 @@ So Sprint is basically CodeIgniter, but with more cowbell.
 
 NOTE: This is currently in an **Alpha-release** state. What's that mean? It means that all of the features that I intend on having in the first release are in place, but they may have bugs, documentation errors, etc. Before the Beta release I will be adding additional tests to the system, additional docs, and trying to verify that docs are correct, and possibly streamlining some code or implementing some todos in the code I missed. If you use the project and find changes to the code or docs, pull requests are accepted :) Preferably with tests in place, though I won't be enforcing that at this point.
 
+## System Requirements
+
+- PHP version 5.4 or newer.
+- SimpleXML enabled on your PHP installation for the docs to work.
+- Composer installed on development server.
+- A Database. We currently use MySQL but try to keep it fairly flexible.
+
 ## How To Install?
+
 Installation instructions can be found in the docs source here on [GitHub](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/installation.md).
 
 ## What's In The Box?

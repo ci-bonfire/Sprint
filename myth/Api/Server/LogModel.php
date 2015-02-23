@@ -1,4 +1,4 @@
-<?php namespace Myth\Controllers;
+<?php namespace Myth\Api\Server;
 /**
  * Sprint
  *
@@ -30,49 +30,35 @@
  * @since       Version 1.0
  */
 
-class AuthenticatedController extends BaseController {
+use Myth\Models\CIDbModel;
 
-    protected $auth = null;
+class LogModel extends CIDbModel {
 
-    protected $restrict_to_roles = array();
+	protected $table_name = 'api_logs';
 
-    //--------------------------------------------------------------------
+	protected $set_created = true;
+	protected $set_modified = false;
 
-    /**
-     * Responsible for loading an instance of our selected Auth library,
-     * attempting autologin, and ensuring the current user has the correct
-     * role.
-     */
-    public function __construct()
-    {
-        parent::__construct();
+	//--------------------------------------------------------------------
 
-        $auth = config_item('active_auth_library');
+	/**
+	 * Returns the number of requests this user has made this hour
+	 *
+	 * @param $user_id
+	 *
+	 * @return int
+	 */
+	public function requestsThisHourForUser($user_id)
+	{
+		$time = date('Y-m-d H:00:00');
 
-        if (empty($auth)) {
-            throw new \RuntimeException('No Authentication System chosen.');
-        }
+		$query = $this->db->select('id')
+					      ->where('user_id', (int)$user_id)
+					      ->where('created_on >=', $time)
+					      ->get($this->table_name);
 
-        $this->auth = new $auth( get_instance() );
+		return (int)$query->num_rows();
+	}
 
-        $this->attempt_autologin();
-
-        $this->restrict();
-    }
-
-    //--------------------------------------------------------------------
-
-    protected function attempt_autologin() {
-
-    }
-
-    //--------------------------------------------------------------------
-
-    protected function restrict()
-    {
-
-    }
-
-    //--------------------------------------------------------------------
-
+	//--------------------------------------------------------------------
 }

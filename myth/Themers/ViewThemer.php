@@ -160,7 +160,7 @@ class ViewThemer implements ThemerInterface
 		    $cache_name = str_replace( '/', '_', $cache_name );
 	    }
 
-	    if (! $output = $this->ci->cache->get($cache_name))
+	    if ($cache_time == 0 || ! $output = $this->ci->cache->get($cache_name))
 	    {
 		    $theme        = NULL;
 		    $variant_view = NULL;
@@ -242,7 +242,7 @@ class ViewThemer implements ThemerInterface
      *
      * @param $command
      * @param int $cache_time
-     * @param string $cache_name
+     * @param string $cache_name    // Number of MINUTES to cache output
      * @return mixed|void
      */
     public function call($command, $cache_time=0, $cache_name=null)

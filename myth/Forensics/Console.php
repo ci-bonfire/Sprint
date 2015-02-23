@@ -117,13 +117,13 @@ class Console {
 			'type' => 'log'
 		);
 		
-		self::add_to_console('log_count', $log_item);
+		self::addToConsole('log_count', $log_item);
 	}
 	
 	//--------------------------------------------------------------------
 	
 	/*
-		Method: log_memory()
+		Method: logMemory()
 		
 		Logs the memory usage a single variable, or the entire script.
 		
@@ -131,7 +131,7 @@ class Console {
 			$object	- The object to store the memory usage of.
 			$name	- The name to be displayed in the console.
 	*/
-	public static function log_memory($object=false, $name='PHP') 
+	public static function logMemory($object=false, $name='PHP')
 	{
 		$memory = memory_get_usage();
 		
@@ -147,29 +147,42 @@ class Console {
 			'data_type' => gettype($object)
 		);
 
-		self::add_to_console('memory_count', $log_item);
+		self::addToConsole('memory_count', $log_item);
 	}
 	
 	//--------------------------------------------------------------------
 	
 	/*
-		Method: get_logs()
+		Method: getLogs()
 		
 		Returns the logs array for use in external classes. (Namely the
 		Forensics Profiler.
 	*/
-	public static function get_logs() 
+	public static function getLogs()
 	{
 		return self::$logs;
 	}
 	
 	//--------------------------------------------------------------------
-	
+
+	public function reset()
+	{
+	    self::$logs = array(
+		    'console'		=> array(),
+		    'log_count'		=> 0,
+		    'memory_count'	=> 0,
+	    );
+	}
+
+	//--------------------------------------------------------------------
+
+
+
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
 	
-	public static function add_to_console($log=null, $item=null) 
+	protected static function addToConsole($log=null, $item=null)
 	{
 		if (empty($log) || empty($item)) 
 		{ 

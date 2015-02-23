@@ -2,11 +2,11 @@
 /**
  * CodeIgniter
  *
- * An open source application development framework for PHP 5.2.4 or newer
+ * An open source application development framework for PHP
  *
  * This content is released under the MIT License (MIT)
  *
- * Copyright (c) 2014, British Columbia Institute of Technology
+ * Copyright (c) 2014 - 2015, British Columbia Institute of Technology
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,7 +29,7 @@
  * @package	CodeIgniter
  * @author	EllisLab Dev Team
  * @copyright	Copyright (c) 2008 - 2014, EllisLab, Inc. (http://ellislab.com/)
- * @copyright	Copyright (c) 2014, British Columbia Institute of Technology (http://bcit.ca/)
+ * @copyright	Copyright (c) 2014 - 2015, British Columbia Institute of Technology (http://bcit.ca/)
  * @license	http://opensource.org/licenses/MIT	MIT License
  * @link	http://codeigniter.com
  * @since	Version 1.0.0
@@ -54,7 +54,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 if ( ! function_exists('is_php'))
 {
 	/**
-	 * Determines if the current version of PHP is greater then the supplied value
+	 * Determines if the current version of PHP is equal to or greater than the supplied value
 	 *
 	 * @param	string
 	 * @return	bool	TRUE if the current version is $version or higher
@@ -86,7 +86,7 @@ if ( ! function_exists('is_really_writable'))
 	 *
 	 * @link	https://bugs.php.net/bug.php?id=54709
 	 * @param	string
-	 * @return	void
+	 * @return	bool
 	 */
 	function is_really_writable($file)
 	{
@@ -492,6 +492,11 @@ if ( ! function_exists('set_status_header'))
 	 */
 	function set_status_header($code = 200, $text = '')
 	{
+		if (is_cli())
+		{
+			return;
+		}
+
 		$stati = array(
 			200	=> 'OK',
 			201	=> 'Created',
@@ -555,15 +560,14 @@ if ( ! function_exists('set_status_header'))
 			}
 		}
 
-		$server_protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : FALSE;
-
 		if (strpos(PHP_SAPI, 'cgi') === 0)
 		{
 			header('Status: '.$code.' '.$text, TRUE);
 		}
 		else
 		{
-			header(($server_protocol ? $server_protocol : 'HTTP/1.1').' '.$code.' '.$text, TRUE, $code);
+			$server_protocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
+			header($server_protocol.' '.$code.' '.$text, TRUE, $code);
 		}
 	}
 }
@@ -615,7 +619,7 @@ if ( ! function_exists('_error_handler'))
 		$_error->log_exception($severity, $message, $filepath, $line);
 
 		// Should we display the error?
-		if (ini_get('display_errors'))
+		if (str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors')))
 		{
 			$_error->show_php_error($severity, $message, $filepath, $line);
 		}
@@ -650,7 +654,7 @@ if ( ! function_exists('_exception_handler'))
 		$_error->log_exception('error', 'Exception: '.$exception->getMessage(), $exception->getFile(), $exception->getLine());
 
 		// Should we display the error?
-		if (ini_get('display_errors'))
+		if (str_ireplace(array('off', 'none', 'no', 'false', 'null'), '', ini_get('display_errors')))
 		{
 			$_error->show_exception($exception);
 		}
@@ -842,6 +846,3 @@ if ( ! function_exists('function_usable'))
 		return FALSE;
 	}
 }
-
-/* End of file Common.php */
-/* Location: ./system/core/Common.php */

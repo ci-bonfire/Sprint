@@ -42,6 +42,8 @@ class FlatAuthorization implements AuthorizeInterface {
 
 	protected $error = NULL;
 
+	protected $user_model = null;
+
 	//--------------------------------------------------------------------
 
 	public function __construct($groupModel = null, $permModel = null)
@@ -61,6 +63,21 @@ class FlatAuthorization implements AuthorizeInterface {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Allows the consuming application to pass in a reference to the
+	 * model that should be used.
+	 *
+	 * @param $model
+	 * @return mixed
+	 */
+	public function useModel($model)
+	{
+		$this->user_model =& $model;
+
+		return $this;
+	}
+
+	//--------------------------------------------------------------------
 
 	//--------------------------------------------------------------------
 	// Actions
@@ -132,8 +149,6 @@ class FlatAuthorization implements AuthorizeInterface {
 	 */
 	public function hasPermission( $permission, $user_id )
 	{
-		$permission_id = $permission;
-
 		if (empty($permission) || (! is_string($permission) && ! is_numeric($permission)) )
 		{
 			return null;
@@ -145,22 +160,21 @@ class FlatAuthorization implements AuthorizeInterface {
 		}
 
 		// Get the Permission ID
+		$permission_id = $this->getPermissionID($permission);
+
 		if ( ! is_numeric( $permission_id ) )
 		{
-			$p = $this->permissionModel->find_by( 'name', $permission );
-
-			if ( ! $p )
-			{
-				$this->error = lang('auth.permission_not_found');
-
-				return FALSE;
-			}
-
-			$permission_id = $p->id;
-			unset( $p );
+			return false;
 		}
 
-		return $this->permissionModel->doesUserHavePermission( (int)$user_id, (int)$permission_id );
+		// First check the permission model. If that exists, then we're golden.
+		if ($this->permissionModel->doesUserHavePermission( (int)$user_id, (int)$permission_id ) )
+		{
+			return true;
+		}
+
+		// Still here? Then we have one last check to make - any user private permissions.
+		return $this->doesUserHavePermission( (int)$user_id, (int)$permission_id);
 	}
 
 	//--------------------------------------------------------------------
@@ -190,22 +204,12 @@ class FlatAuthorization implements AuthorizeInterface {
 			return false;
 		}
 
-		$group_id = $group;
+		$group_id = $this->getGroupID($group);
 
 		// Group ID
 		if ( ! is_numeric( $group_id ) )
 		{
-			$g = $this->groupModel->find_by( 'name', $group );
-
-			if ( ! $g )
-			{
-				$this->error = lang('auth.group_not_found');
-
-				return FALSE;
-			}
-
-			$group_id = $g->id;
-			unset( $g );
+			return false;
 		}
 
 		if ( ! $this->groupModel->addUserToGroup( (int)$user_id, (int)$group_id ) )
@@ -247,22 +251,12 @@ class FlatAuthorization implements AuthorizeInterface {
 			return false;
 		}
 
-		$group_id = $group;
+		$group_id = $this->getGroupID($group);
 
 		// Group ID
 		if ( ! is_numeric( $group_id ) )
 		{
-			$g = $this->groupModel->find_by( 'name', $group );
-
-			if ( ! $g )
-			{
-				$this->error = lang('auth.group_not_found');
-
-				return FALSE;
-			}
-
-			$group_id = $g->id;
-			unset( $g );
+			return false;
 		}
 
 		if ( ! $this->groupModel->removeUserFromGroup( $user_id, $group_id ) )
@@ -289,39 +283,19 @@ class FlatAuthorization implements AuthorizeInterface {
 	 */
 	public function addPermissionToGroup( $permission, $group )
 	{
-		$permission_id = $permission;
-		$group_id      = $group;
+		$permission_id = $this->getPermissionID($permission);
+		$group_id      = $this->getGroupID($group);
 
 		// Permission ID
 		if ( ! is_numeric( $permission_id ) )
 		{
-			$p = $this->permissionModel->find_by( 'name', $permission );
-
-			if ( ! $p )
-			{
-				$this->error = lang('auth.permission_not_found');
-
-				return FALSE;
-			}
-
-			$permission_id = $p->id;
-			unset( $p );
+			return false;
 		}
 
 		// Group ID
 		if ( ! is_numeric( $group_id ) )
 		{
-			$g = $this->groupModel->find_by( 'name', $group );
-
-			if ( ! $g )
-			{
-				$this->error = lang('auth.group_not_found');
-
-				return FALSE;
-			}
-
-			$group_id = $g->id;
-			unset( $g );
+			return false;
 		}
 
 		// Remove it!
@@ -347,39 +321,19 @@ class FlatAuthorization implements AuthorizeInterface {
 	 */
 	public function removePermissionFromGroup( $permission, $group )
 	{
-		$permission_id = $permission;
-		$group_id      = $group;
+		$permission_id = $this->getPermissionID($permission);
+		$group_id      = $this->getGroupID($group);
 
 		// Permission ID
 		if ( ! is_numeric( $permission_id ) )
 		{
-			$p = $this->permissionModel->find_by( 'name', $permission );
-
-			if ( ! $p )
-			{
-				$this->error = lang('auth.permission_not_found');
-
-				return FALSE;
-			}
-
-			$permission_id = $p->id;
-			unset( $p );
+			return false;
 		}
 
 		// Group ID
 		if ( ! is_numeric( $group_id ) )
 		{
-			$g = $this->groupModel->find_by( 'name', $group );
-
-			if ( ! $g )
-			{
-				$this->error = lang('auth.group_not_found');
-
-				return FALSE;
-			}
-
-			$group_id = $g->id;
-			unset( $g );
+			return false;
 		}
 
 		// Remove it!
@@ -394,6 +348,152 @@ class FlatAuthorization implements AuthorizeInterface {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Assigns a single permission to a user, irregardless of permissions
+	 * assigned by roles. This is saved to the user's meta information.
+	 *
+	 * @param int|string $permission
+	 * @param int $user_id
+	 *
+	 * @return int|bool
+	 */
+	public function addPermissionToUser( $permission, $user_id )
+	{
+		$permission_id = $this->getPermissionID($permission);
+
+		if (! is_numeric($permission_id) )
+		{
+			return false;
+		}
+
+		if (empty($user_id) || ! is_numeric($user_id))
+		{
+			return null;
+		}
+
+		$user_id = (int)$user_id;
+
+		if (! \Myth\Events::trigger('beforeAddPermissionToUser', [$user_id, $permission]))
+		{
+			return false;
+		}
+
+		$ci =& get_instance();
+		$ci->load->model('User_model');
+
+		$permissions = $ci->user_model->getMetaItem($user_id, 'RBAC_permissions');
+
+		// If we already have permissions, unserialize them and add
+		// the new permission to it.
+		if (! empty($permissions))
+		{
+			$permissions = unserialize($permissions);
+		}
+		else
+		{
+			$permissions = [];
+		}
+
+		$permissions[] = $permission_id;
+
+		// Save the updated permissions
+		return $ci->user_model->saveMetaToUser($user_id, 'RBAC_permissions', serialize($permissions));
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Removes a single permission from a user. Only applies to permissions
+	 * that have been assigned with addPermissionToUser, not to permissions
+	 * inherited based on groups they belong to.
+	 *
+	 * @param int/string $permission
+	 * @param int        $user_id
+	 */
+	public function removePermissionFromUser( $permission, $user_id )
+	{
+		$permission_id = $this->getPermissionID($permission);
+
+		if (! is_numeric($permission_id) )
+		{
+			return false;
+		}
+
+		if (empty($user_id) || ! is_numeric($user_id))
+		{
+			return null;
+		}
+
+		$user_id = (int)$user_id;
+
+		if (! \Myth\Events::trigger('beforeRemovePermissionFromUser', [$user_id, $permission]))
+		{
+			return false;
+		}
+
+		// Grab the existing permissions for this user, and remove
+		// the permission id from the list.
+		$ci =& get_instance();
+		$ci->load->model('User_model');
+
+		$permissions = $ci->user_model->getMetaItem($user_id, 'RBAC_permissions');
+
+		if (! is_array($permissions))
+		{
+			$permissions = [];
+		}
+
+		unset($permissions[ array_search($permission_id, $permissions) ]);
+
+		// Save the updated permissions
+		return $ci->user_model->saveMetaToUser($user_id, 'RBAC_permissions', serialize($permissions));
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Checks to see if a user has private permission assigned to it.
+	 *
+	 * @param $user_id
+	 * @param $permission
+	 *
+	 * @return bool|null
+	 */
+	public function doesUserHavePermission($user_id, $permission)
+	{
+		$permission_id = $this->getPermissionID($permission);
+
+		if (! is_numeric($permission_id) )
+		{
+			return false;
+		}
+
+		if (empty($user_id) || ! is_numeric($user_id))
+		{
+			return null;
+		}
+
+		$user_id = (int)$user_id;
+
+		$model = $this->user_model;
+
+		if (empty($model))
+		{
+			$ci =& get_instance();
+			$ci->load->model( 'User_model' );
+
+			$model = $ci->user_model;
+		}
+
+		$permissions = $model->getMetaItem($user_id, 'RBAC_permissions');
+
+		return in_array($permission_id, $permissions);
+	}
+
+	//--------------------------------------------------------------------
+
+
 
 	//--------------------------------------------------------------------
 	// Groups
@@ -522,6 +622,35 @@ class FlatAuthorization implements AuthorizeInterface {
 
 	//--------------------------------------------------------------------
 
+	/**
+	 * Given a group, will return the group ID. The group can be either
+	 * the ID or the name of the group.
+	 *
+	 * @param int|string $group
+	 *
+	 * @return int|false
+	 */
+	protected function getGroupID( $group )
+	{
+		if (is_numeric($group))
+		{
+			return (int)$group;
+		}
+
+		$g = $this->groupModel->find_by( 'name', $group );
+
+		if ( ! $g )
+		{
+			$this->error = lang('auth.group_not_found');
+
+			return FALSE;
+		}
+
+		return (int)$g->id;
+	}
+
+	//--------------------------------------------------------------------
+
 	//--------------------------------------------------------------------
 	// Permissions
 	//--------------------------------------------------------------------
@@ -641,4 +770,36 @@ class FlatAuthorization implements AuthorizeInterface {
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Verifies that a permission (either ID or the name) exists and returns
+	 * the permission ID.
+	 *
+	 * @param int|string $permission
+	 *
+	 * @return int|null
+	 */
+	protected function getPermissionID( $permission )
+	{
+		// If it's a number, we're done here.
+		if (is_numeric($permission))
+		{
+			return (int)$permission;
+		}
+
+		// Otherwise, pull it from the database.
+		$p = $this->permissionModel->find_by( 'name', $permission );
+
+		if ( ! $p )
+		{
+			$this->error = lang('auth.permission_not_found');
+
+			return FALSE;
+		}
+
+		return (int)$p->id;
+	}
+
+	//--------------------------------------------------------------------
+
 }

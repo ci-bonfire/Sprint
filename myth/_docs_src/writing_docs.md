@@ -6,17 +6,15 @@ Sprint makes including documentation with your application, or even just one of 
 
 To create application-specific documentation that can easily be versioned and shipped out with your application, simply place [Markdown](http://daringfireball.net/projects/markdown/)-formatted text files in the `application/docs` folder. (Technically, we use [Markdown Extra](http://michelf.ca/projects/php-markdown/extra/) for even more formatting possibilities).
 
-For any modules that you create and want to create documentation for, just place the same Markdown-formatted docs in the module's folder, under a new folder named `docs`.
-
     my_module/
         css/
         docs/
         . . .
 
-The files must have the file extension of `.md` in order to be recognized by the system. When a page is displayed, the Document Map in the sidebar will automatically scan your docs and generate the map based on the `<h2>` and <`h3>` tags in the document.
+The files must have the file extension of `.md` in order to be recognized by the system. When a page is displayed, the Document Map in the sidebar will automatically scan your docs and generate the map based on the `<h2>` and `<h3>` tags in the document.
 
 ### Documentation Groups
-By default, Sprint ships with documentation in two groups, one for your application and one for Sptint's docs. These can be found at `application/docs` and `myth/_docs_src` respectively. These groups are the items you see in the topbar when viewing the default documentation. You can create your own groups to further customize your documentation.
+By default, Sprint ships with documentation in two groups: one for your application, and one for Sprint's docs. These can be found at `application/docs` and `myth/_docs_src` respectively. These groups are the items you see in the topbar when viewing the default documentation. You can create your own groups to further customize your documentation.
 
 The settings are located in the docs module, `myth/CIModules/docs/config/docs.php` configuration file. To make changes to this you should consider copying this file to the `application/config` folder.
 

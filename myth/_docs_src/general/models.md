@@ -1,19 +1,19 @@
 # Sprint Models
 
-Keeping with the MVC spirit, Sprint uses Models to allow you interact with your database in a simple, consistent manner. By using the **CIDbModel** as the base class for all of your models, you can very quickly setup a simple model capable of finding records, creating new and editing existing records, deleting records, checking if a key/value is unique in this table, counting the results, and more.
+Keeping with the MVC spirit, Sprint uses Models to allow you interact with your database in a simple, consistent manner. By using the **CIDbModel** as the base class for all of your models, you can very quickly setup a simple model capable of finding records, creating new and editing existing records, deleting records, checking if a key/value is unique in this table, counting the results, handling data validation, and more.
 
-CIDbModel acts as a middleman layer between your models and CodeIgniter's standard Model class, working hand-in-hand with ActiveRecord query builder. If you don't need any special queries, you can have a working model in just a handful of lines.
+CIDbModel acts as a middleman layer between your models and CodeIgniter's standard Model class, working hand-in-hand with CodeIgniter's Query Builder. If you don't need any special queries, you can have a working model in just a handful of lines.
 
 
 ## A Skeleton Model
 
-To get started with a new model, you can use the following skeleton file:
+To get started with a new model, you can use the following skeleton file. Many of the options here will not be needed for each instance, but this skeleton shows the power that's baked in.
 
 
     class X_model extends \Myth\Models\CIDbModel
 	{
         protected $table_name	= '';
-        protected $key			= 'id';
+        protected $primary_key	= 'id';
         protected $date_format	= 'datetime';
         protected $log_user		= FALSE;
 
@@ -46,26 +46,25 @@ To get started with a new model, you can use the following skeleton file:
         protected $validation_rules         = array();
         protected $insert_validation_rules  = array();
         protected $skip_validation          = false;
-        protected $empty_validation_rules   = array();
         
-        protected $fields = array();
+        protected $field_info = array();
     }
 
 
-This is the bare minimum needed to take advantage of CIDbModel's built-in functions. All variables shown here are set to their default, so you don't need to show them if you are using the default values.  Model_name is the name of your class and follows the same rules as [CodeIgniter models](http://codeigniter.com/user_guide/general/models.html).
+This is all that is needed to take advantage of CIDbModel's built-in functions. All variables shown here are set to their default, so you don't need to show them if you are using the default values.  Model_name is the name of your class and follows the same rules as [CodeIgniter models](http://www.codeigniter.com/userguide3/general/models.html).
 
 CIDbModel supports quite a few ways to customize how your class works with the database.
 
-You can easily create a new skeleton model by using the [Forge CLI command](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/generators.md).
+You can easily create a new skeleton model by using the [Forge CLI command](forge/generators#model).
 
 ### $table_name
 
 The var `$table_name` should be set to the name of the table in your database. If you database is set to use a prefix (Sprint defaults to a `bf_` prefix), you should leave the prefix off. So a table named `bf_users` should be entered as `users`.
 
 
-### $key
+### $primary_key
 
-The var `$key` should be the name of the primary key for your table. CIDbModel requires that your table has primary key. If it doesn't you should extend Model and will need to write your own methods to interface with the database. The `$key` is expected to be linked to an INT field.
+The var `$primary_key` should be the name of the primary key for your table. CIDbModel requires that your table has primary key. If it doesn't you should extend Model and will need to write your own methods to interface with the database. The `$primary_key` is expected to be linked to an INT field.
 
 
 ### $soft_deletes
@@ -88,7 +87,7 @@ Determines the type of field that is used to store created and modified dates. T
 - ‘datetime’ Is a MySQL Datetime field. ( YYYY-MM-DD HH:MM:SS )
 - ‘date’ is a MySQL Date field. ( YYYY-MM-DD )
 
-While ‘int’ seems to be one of the most common amongst PHP developers, datetime should be at least considered since it makes inspecting your data within the database much easier to interpret, though it does take a little bit more work during the script execution.
+While `int` seems to be one of the most common amongst PHP developers, `datetime` should be at least considered since it makes inspecting your data within the database much easier to interpret, though it does take a little bit more work during the script execution.
 
 
 ### $set_created
@@ -104,7 +103,7 @@ The name of the `created_on` field may be modified by setting `$created_field`.
 Sprint can automatically set your modified on dates and times for you, in the format specified through `$date_format`. To use this, your table must have a `modified_on` field of the proper type.
 The name of the `modified_on` field may be modified by setting `$modified_field`.
 
-If `$set_created == TRUE`, Sprint will set the `created_on` field value for you at the time of an `insert()` call.
+If `$set_modified == TRUE`, Sprint will set the `modified_on` field value for you at the time of an `insert()` call.
 
 ### $created_field
 ### $modified_field
@@ -118,18 +117,11 @@ If `$set_created == TRUE`, Sprint will set the `created_on` field value for you 
 
 The name of the fields to store the user id in can be set by changing the `created_by_field`, `modified_by_field` and `deleted_by_field` values. They default to `created_by`, `modified_by` and `deleted_by`, respectively.
 
-### $deleted_field` & `$deleted_by_field
+### $deleted_field
+### $deleted_by_field
 
 `deleted_field` and `deleted_by_field` specify the name of the fields used to determine whether a row has been deleted (when `$soft_deletes` == true) and the user which deleted the row (when `$log_user` == true).
 
-### $escape
-
-When FALSE, the `select()` method will not try to protect your field names with backticks. This is useful if you need a compound statement.
-
-
-### $db_con
-
-Holds the database connection details for this model only. Can be either a string or an array as per the [CodeIgniter manual](http://codeigniter.com/user_guide/database/connecting.html). This is useful if you have a single model that needs to use a database connection different than the rest, like a logging class.
 
 ### $return_type
 
@@ -141,7 +133,7 @@ The format can be overridden on a per-call basis using the `as_array` and `as_ob
 
 ### $protected_attributes
 
-This is simply a list of keys that will always be removed from the data arrays passed to the insert, update, and similar methods. This is convenient if you like to throw your $_POST arrays directly at the model, but don't want the 'submit' inputs being saved, or for always removing the 'id' if it's passed in.
+This is simply a list of columns that will always be removed from the data arrays passed to the insert, update, and similar methods. This is convenient if you like to throw your $_POST arrays directly at the model, but don't want the 'submit' inputs being saved, or for always removing the 'id' if it's passed in.
 
     protected $protected_attributes = array( 'submit', 'id' );
 
@@ -154,7 +146,7 @@ This is primarily in place to allow you to provide more data than you need withi
 
 ## Provided Methods
 
-By using the skeleton file, you get a number of methods ready to use on your model, in addition to all of the standard CodeIgniter Query Builder methods. All of these methods can be overriden in your own model if you need to customize them by joining other tables, processing the results before handing off to the controller, etc.
+By extending CIDbModel, you get a number of methods ready to use on your model, in addition to all of the standard CodeIgniter Query Builder methods. All of these methods can be overriden in your own model if you need to customize them by joining other tables, processing the results before handing off to the controller, etc.
 
 
     $user = $this->user_model->select(‘id, username, email’)
@@ -422,6 +414,12 @@ Deletes all rows that have primary key values contained within the array passed 
 
 ## Utility Methods
 
+### with_deleted()
+For this request only, will return both deleted and not deleted rows. This only works with soft_deletes.
+
+### get_with_deleted()
+Returns whether or not the current request will return soft-deleted items.
+
 ### is_unique()
 
 Checks to see if a given field/value combination would be unique in the table.
@@ -448,7 +446,13 @@ Counts the number of elements that match the field/value pair.
 
 Returns an INT containing the number of results, or FALSE.
 
+### table()
+Returns the model's table name.
 
+### return_insert_id()
+By default, the insert* methods will return the primary key of the row that was just inserted. This is the ideal use case in most situations. However, there is a slight performance hit that can be costly when doing very large, time-sensitive imports. You can pass either `true` or `false` as the only parameter to turn this feature on or off. If you pass `false` then a boolean value will be returned to show the success instead of the ID.
+
+	$this->user_model->return_insert_id( false );
 
 ### get_field()
 
@@ -459,9 +463,19 @@ A convenience method to return only a single field of the specified row. The fir
 
 Returns the value of the row's field, or FALSE.
 
+### get_fields()
+Returns an array of the field names for this model's table.
+
+### protect()
+Adds a column to the list of $protected_attributes. Pass the column name as the only parameter. Applies to the current request only.
+
+	$this->user_model->protect( 'uuid' );
+
 ### prep_data()
 
 Intended to be called by a controller and/or extended in the model, `prep_data` processes an array of field/value pairs (can be the result of `$this->input->post()`) and attempts to setup a `$data` array suitable for use in the model's `insert`/`update` methods. The output array will not include the model's `key`, `created_on`, `created_by`, `modified_on`, `modified_by`, `deleted`, or `deleted_by` fields, or fields indicated as the primary key in the model's `field_info` array.
+
+This is called automatically during the insert* and update* methods for you. Please ensure that your $fields array is completed and accurate for the highest performance.
 
 For example, the user_model extends prep_data to map field names from the view that don't match the tables in the database and ensure fields that should not be set are not set:
 
@@ -685,7 +699,6 @@ The following events can be observed by your class:
 - after_find
 - before_delete
 - after_delete
-- empty_validation_rules
 
 These are each arrays that should have the name of the methods to call, in order of priority as the array’s elements.
 

@@ -30,7 +30,7 @@ class UserSeeder extends Seeder {
 ## Running the Seeders
 Seeders must be run from the command line, using the database tools, and passing the name of the seed class as the last argument.
 
-	php index.php database seed TestSeeder
+	php sprint database seed TestSeeder
 
 	
 

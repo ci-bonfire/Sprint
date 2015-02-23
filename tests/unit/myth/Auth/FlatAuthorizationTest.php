@@ -9,14 +9,19 @@ class FlatAuthorizationTest extends CodeIgniterTestCase {
 	public $groupModel;
 	public $permModel;
 
+	public $user_model;
+
 	//--------------------------------------------------------------------
 
 	public function _before()
 	{
+		$this->user_model = m::mock('User_model');
+
 		$this->groupModel = m::mock('\Myth\Auth\FlatGroupModel');
 		$this->permModel  = m::mock('\Myth\Auth\FlatPermissionModel');
 
 	    $this->auth = new \Myth\Auth\FlatAuthorization($this->groupModel, $this->permModel);
+		$this->auth->useModel($this->user_model);
 	}
 
 	//--------------------------------------------------------------------
@@ -200,8 +205,20 @@ class FlatAuthorizationTest extends CodeIgniterTestCase {
 	public function testHasPermissionReturnsFalseWithNoPermissionsFoundID()
 	{
 		$this->permModel->shouldReceive('doesUserHavePermission')->once()->with(1, 3)->andReturn(false);
+		$this->user_model->shouldReceive('getMetaItem')->once()->andReturn([]);
 
 		$this->assertFalse( $this->auth->hasPermission(3, 1) );
+	}
+
+	//--------------------------------------------------------------------
+
+	public function testHasPermissionReturnsFalseWithNoPermissionsFoundWithPrivatePermission()
+	{
+		$this->permModel->shouldReceive('doesUserHavePermission')->andReturn(false);
+		$this->user_model->shouldReceive('getMetaItem')->once()->andReturn([3]);
+
+		$this->assertTrue( $this->auth->hasPermission(3, 1) );
+		$this->assertFalse( $this->auth->hasPermission(5, 1) );
 	}
 
 	//--------------------------------------------------------------------

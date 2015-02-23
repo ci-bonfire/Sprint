@@ -15,3 +15,11 @@ modules:
             user: ''
             password: ''
             dump: tests/_data/dump.sql
+coverage:
+    enabled: true
+    include:
+        - myth/*
+    exclude:
+        - myth/Auth/dictionary.txt
+        - myth/_docs_src/*
+        - myth/Forensics/views/profiler_template.php

@@ -269,31 +269,41 @@ abstract class BaseGenerator extends CLIController {
         }
         else if (is_array($options) && count($options))
         {
-            $param = $options[0];
-            $action = array_shift( array_keys($options) );
+            $keys = array_keys($options);
+            $action = array_shift( $keys );
+            $param = $options[$action];
         }
 
         switch ( strtolower($action) )
         {
             case 'prepend':
-                $kit->prepend($path, $content);
+                $success = $kit->prepend($path, $content);
                 break;
             case 'before':
-                $kit->before($path, $param, $content);
+                $success = $kit->before($path, $param, $content);
                 break;
             case 'after':
-                $kit->after($path, $param, $content);
+                $success = $kit->after($path, $param, $content);
                 break;
             case 'replace':
-                $kit->replaceIn($path, $param, $content);
+                $success = $kit->replaceIn($path, $param, $content);
                 break;
             case 'regex':
-                $kit->replaceWithRegex($path, $param, $content);
+                $success = $kit->replaceWithRegex($path, $param, $content);
                 break;
             case 'append':
             default:
-                $kit->append($path, $content);
+                $success = $kit->append($path, $content);
                 break;
+        }
+
+        if ($success)
+        {
+            CLI::write( CLI::color("\tmodified ", 'cyan') . str_replace(APPPATH, '', $path ) );
+        }
+        else
+        {
+            CLI::write( CLI::color("\terror ", 'light_red') . str_replace(APPPATH, '', $path ) );
         }
 
         return $this;
@@ -365,7 +375,16 @@ abstract class BaseGenerator extends CLIController {
 
 	    $path = $this->locateGenerator($name);
 
-	    die($path);
+        if (! file_exists($path . $file))
+        {
+            CLI::error('Unable to find the readme file: '. $file);
+        }
+
+	    $contents = file_get_contents($path . $file);
+
+        CLI::new_line(2);
+        CLI::write( CLI::wrap($contents), 'green' );
+        CLI::new_line();
     }
 
     //--------------------------------------------------------------------

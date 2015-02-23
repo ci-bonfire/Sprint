@@ -81,7 +81,7 @@ class CLI {
      */
     public static function _init()
     {
-	    if (static::$initialized == true)
+	    if (static::$initialized === true)
 	    {
 		    return;
 	    }
@@ -429,7 +429,7 @@ class CLI {
      */
     public static function color($text, $foreground, $background = null, $format=null)
     {
-        if (static::is_windows() and ! \Input::server('ANSICON'))
+        if (static::is_windows() and ! isset($_SERVER['ANSICON']))
         {
             return $text;
         }
@@ -614,6 +614,11 @@ class CLI {
 		{
 			return '';
 		}
+
+        if ($max == 0)
+        {
+            $max = CLI::getWidth();
+        }
 
 		if (CLI::getWidth() < $max)
 		{

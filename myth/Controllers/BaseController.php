@@ -191,7 +191,7 @@ class BaseController extends \CI_Controller
         // The profiler is dealt with twice so that we can set
         // things up to work correctly in AJAX methods using $this->render_json
         // and it's cousins.
-        if ($this->config->item('show_profiler') == true) {
+        if ($this->config->item('show_profiler') === true) {
             $this->output->enable_profiler(true);
         }
     }
@@ -301,11 +301,11 @@ class BaseController extends \CI_Controller
                 if ($this->ajax_notices === true) {
 	                if ( ! empty( $this->themer ) && ! empty( $this->theme ) )
 	                {
-		                $json['fragments']['#notices'] = $this->themer->display( "{$this->theme}:notice", array( 'notice' => $this->message() ) );
+		                $json['fragments']['#notice'] = $this->themer->display( "{$this->theme}:notice", array( 'notice' => $this->message() ) );
 	                }
 	                else if (file_exists(APPPATH .'views/notice.php'))
 	                {
-		                $json['fragments']['#notices'] = $this->load->view_path( "notice", array( 'notice' => $this->message() ), TRUE );
+		                $json['fragments']['#notice'] = $this->load->view_path( "notice", array( 'notice' => $this->message() ), TRUE );
 	                }
                 }
             }
@@ -330,12 +330,12 @@ class BaseController extends \CI_Controller
      */
     public function renderJS($js = null)
     {
-        if (!is_string($js)) {
+        if (! is_string($js)) {
             throw new RenderException('No javascript passed to the render_js() method.');
         }
 
         $this->output->enable_profiler(false)
-            ->set_content_type('application/x-javascript')
+            ->set_content_type('application/javascript')
             ->set_output($js);
     }
 
@@ -352,7 +352,7 @@ class BaseController extends \CI_Controller
     public function renderRealtime()
     {
         if (ob_get_level() > 0) {
-            end_end_flush();
+            ob_end_flush();
         }
         ob_implicit_flush(true);
     }
@@ -365,6 +365,8 @@ class BaseController extends \CI_Controller
      *
      * If the URL is a relative URL, it will be converted to a full URL for this site
      * using site_url().
+     *
+     * todo modify ajaxRedirect to work both with and without Eldarion
      *
      * @param  string $location [description]
      */
@@ -390,7 +392,7 @@ class BaseController extends \CI_Controller
      * as JSON data. This is useful when your javascript is sending JSON data
      * to the application.
      *
-     * @param  strign $format The type of element to return, either 'object' or 'array'
+     * @param  string $format The type of element to return, either 'object' or 'array'
      * @param  int $depth The number of levels deep to decode
      *
      * @return mixed    The formatted JSON data, or NULL.

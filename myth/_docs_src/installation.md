@@ -3,7 +3,20 @@
 ## Overview
 Sprint does not have an installation script. There are, however, two steps to do to make the system usable as a whole. 
 
-### Composer Install
+### Automatic Install
+If you already have [Composer](https://getcomposer.org/) installed on your server then you can use the [create_project](https://getcomposer.org/doc/03-cli.md#create-project) command to create a new folder, clone the repo, and install any dependencies. 
+
+	$ composer create-project sprintphp/sprintphp <install folder>  
+
+Currently, you'll need to ensure that you pass the `dev-develop` version as the final argument.
+
+	$ composer create-project sprintphp/sprintphp <install folder> 
+	
+You're now ready to skip to [migrating the database](#migrate_the_database).
+
+### Manual Install
+If you do not want, or are unable to do the automatic install, then you can download the package, or do a `git clone` to get it on your server.
+
 After you've extracted your files you should jump onto the command line, in your web root folder, and tell [Composer](https://getcomposer.org/) to install the dependencies for you.
 
 	$ composer install

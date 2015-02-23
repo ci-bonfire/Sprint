@@ -1,4 +1,35 @@
 <?php
+/**
+ * Sprint
+ *
+ * A set of power tools to enhance the CodeIgniter framework and provide consistent workflow.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ *
+ * @package     Sprint
+ * @author      Lonnie Ezell
+ * @copyright   Copyright 2014-2015, New Myth Media, LLC (http://newmythmedia.com)
+ * @license     http://opensource.org/licenses/MIT  (MIT)
+ * @link        http://sprintphp.com
+ * @since       Version 1.0
+ */
+if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 //--------------------------------------------------------------------
 // AUTHORIZATION ENGINE
@@ -28,8 +59,6 @@
 // 'username'
 //
 	$config['auth.valid_fields'] = ['email', 'username'];
-
-
 
 
 
@@ -159,6 +188,19 @@
     $config['auth.use_dictionary'] = false;
 
 //--------------------------------------------------------------------
+// PASSWORD HASHING COST
+//--------------------------------------------------------------------
+// The BCRYPT method of encryption allows you to define the "cost"
+// or number of iterations made, whenver a password hash is created.
+// This defaults to a value of 10 which is an acceptable number.
+// However, depending on the security needs of your application
+// and the power of your hardware, you might want to increase the
+// cost. This makes the hasing process takes longer.
+//
+// Valid range is between 4 - 31.
+$config['auth.hash_cost'] = 10;
+
+//--------------------------------------------------------------------
 // Activation Method
 //--------------------------------------------------------------------
 // The site supports 3 methods of activating a user:
@@ -178,4 +220,4 @@
 //--------------------------------------------------------------------
 // Sets the Default role id to use when creating new users.
 //
-    $config['auth.default_role_id'] = 1;
+    $config['auth.default_role_id'] = 3;

@@ -6,6 +6,8 @@ This guide will cover the integration as it exists, and the basics of using Elda
 
 If you don't use this integration you should turn off the `use_eldarion` config setting in the application config file. This stops the built-in controllers from using their functionality. This is mainly used in the `BaseController::render_json()` method to return the profiler and notices during AJAX views.
 
+NOTE: There appears to be a bug in the Eldarion AJAX library that makes it incompatible with the version 2.x series of jQuery.
+
 ## Including AJAX libraries
 To make full use of the included AJAX functionality, you will need to include the following three files in your themes, or build their functionality into your own CSS and javascript files. In the themes that ship with Sprint, these files are already included.
 

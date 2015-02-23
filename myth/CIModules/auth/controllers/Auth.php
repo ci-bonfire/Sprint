@@ -42,7 +42,7 @@ class Auth extends \Myth\Controllers\ThemedController
 
         $this->config->load('auth');
         $this->lang->load('auth');
-        $this->load->driver('session');
+        $this->load->library('session');
     }
 
     //--------------------------------------------------------------------
@@ -60,7 +60,7 @@ class Auth extends \Myth\Controllers\ThemedController
         // No need to login again if they are already logged in...
         if ($auth->isLoggedIn())
         {
-            $this->session->unset_userdata('redirect_url');
+            unset($_SESSION['redirect_url']);
             redirect($redirect_url);
         }
 
@@ -75,7 +75,7 @@ class Auth extends \Myth\Controllers\ThemedController
 
             if ($auth->login($post_data, $remember))
             {
-                $this->session->unset_userdata('redirect_url');
+                unset($_SESSION['redirect_url']);
                 $this->setMessage(lang('auth.did_login'), 'success');
                 redirect($redirect_url);
             }

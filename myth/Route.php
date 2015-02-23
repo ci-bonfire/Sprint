@@ -71,10 +71,6 @@ class Route
 
     protected $current_subdomain = null;
 
-    protected static $_filters = [];
-
-    protected static $filtered_routes = [];
-
     //--------------------------------------------------------------------
 
     /**
@@ -169,7 +165,7 @@ class Route
         $pattern = '(' . trim($pattern, '() ') . ')';
 
         // Not here? Add it and leave...
-        if (!array_key_exists($name, $this->constraints)) {
+        if (! array_key_exists($name, $this->constraints)) {
             $this->constraints[$name] = $pattern;
 
             return;
@@ -419,10 +415,6 @@ class Route
      */
     public function resources($name, $options = [])
     {
-        if (empty($name)) {
-            return;
-        }
-
         // In order to allow customization of the route the
         // resources are sent to, we need to have a new name
         // to store the values in.
@@ -521,7 +513,7 @@ class Route
     {
         $paths = func_get_args();
 
-        if (!is_array($paths)) {
+        if (! is_array($paths) || ! count($paths)) {
             return;
         }
 
@@ -580,15 +572,6 @@ class Route
             if (!$this->checkSubdomains($options['subdomain'])) {
                 return;
             }
-        }
-
-        // Save the route's filters...
-        if (isset($options['before'])) {
-            $this->assignFilterToRoute($options['before'], $from, 'before');
-        }
-
-        if (isset($options['after'])) {
-            $this->assignFilterToRoute($options['after'], $from, 'after');
         }
 
         // Are we offsetting the parameters?

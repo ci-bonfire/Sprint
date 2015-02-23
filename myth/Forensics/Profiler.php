@@ -439,7 +439,7 @@ class Profiler extends \CI_Loader {
 
 	public function _compile_console()
 	{
-		$logs = Console::get_logs();
+		$logs = Console::getLogs();
 
 		if ($logs['console'])
 		{

@@ -93,6 +93,8 @@ class User_model extends \Myth\Models\CIDbModel {
      * data array to be saved to the database.
      *
      * @param array $data
+     *
+     * @return array
      */
     protected function hashPassword($data)
     {
@@ -107,6 +109,56 @@ class User_model extends \Myth\Models\CIDbModel {
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * A callback designed to work with Digest Authentication to create
+     * and store the $A1 value since we'll never have access to the
+     * password except during inserts or updates.
+     *
+     * This assumes that this is working as part of an API and that
+     * the api config file is already loaded into memory.
+     *
+     * @param $data
+     *
+     * @return $data
+     */
+    public function createDigestKey($data)
+    {
+        $field = config_item('api.auth_field');
+        $value = null;
+
+        // If it's an update, we probably won't have the username/email
+        // so grab it so that we can use it.
+        if (! empty($data[ $this->primary_key ]))
+        {
+            if (! isset($data[$field]) )
+            {
+                $value = $this->get_field( $data['id'], $field );
+            }
+        }
+        // However, if it's an insert, then we should have it, If we don't, leave.
+        else
+        {
+            if (empty($data[$field]))
+            {
+                return $data;
+            }
+
+            $value = $data[$field];
+        }
+
+        // Still here? then create the hash based on the current realm.
+        if (! empty($data['password']) )
+        {
+            $key = md5($value .':'. config_item('api.realm') .':'. $data['password']);
+            $data['api_key'] = $key;
+        }
+
+        return $data;
+    }
+
+    //--------------------------------------------------------------------
+
 
     /**
      * A callback method intended to hook into the after_insert and after_udpate
@@ -156,6 +208,95 @@ class User_model extends \Myth\Models\CIDbModel {
         }
 
         return $data;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Adds a single piece of meta information to a user.
+     *
+     * @param $user_id
+     * @param $key
+     * @param null $value
+     *
+     * @return object
+     */
+    public function saveMetaToUser($user_id, $key, $value=null)
+    {
+        if (! \Myth\Events::trigger('beforeAddMetaToUser', [$user_id, $key]))
+        {
+            return false;
+        }
+
+        $user_id = (int)$user_id;
+
+        // Does this key already exist?
+        $test = $this->db->where([ 'user_id' => $user_id, 'meta_key' => $key ])->get('user_meta');
+
+        // Doesn't exist, so insert it.
+        if (! $test->num_rows())
+        {
+            $data = [
+                'user_id'       => $user_id,
+                'meta_key'      => $key,
+                'meta_value'    => $value
+            ];
+
+            return $this->db->insert('user_meta', $data);
+        }
+
+        // Otherwise, we need to update the existing.
+        return $this->db->where('user_id', $user_id)
+                        ->where('meta_key', $key)
+                        ->set('meta_value', $value)
+                        ->update('user_meta');
+    }
+    
+    //--------------------------------------------------------------------
+
+    /**
+     * Gets the value of a single Meta item from a user.
+     *
+     * @param $user_id
+     * @param $key
+     *
+     * @return mixed
+     */
+    public function getMetaItem($user_id, $key)
+    {
+        $query = $this->db->where('user_id', (int)$user_id)
+                          ->where('meta_key', $key)
+                          ->select('meta_value')
+                          ->get('user_meta');
+
+        if (! $query->num_rows())
+        {
+            return null;
+        }
+
+        return $query->row()->$key;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Deletes a single meta value from a user.
+     *
+     * @param $user_id
+     * @param $key
+     *
+     * @return bool
+     */
+    public function removeMetaFromUser($user_id, $key)
+    {
+        if (! \Myth\Events::trigger('beforeRemoveMetaFromUser', [$user_id, $key]))
+        {
+            return false;
+        }
+
+        $this->db->where('user_id', (int)$user_id)
+                 ->where('meta_key', $key)
+                 ->delete('user_meta');
     }
 
     //--------------------------------------------------------------------

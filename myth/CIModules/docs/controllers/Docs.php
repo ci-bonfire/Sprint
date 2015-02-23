@@ -149,6 +149,8 @@ class Docs extends \Myth\Controllers\ThemedController
     /**
      * Determines which groups are allowed to be viewed by the current system
      * and the user/environment.
+     *
+     * todo Allow docs groups to be shown/hidden per-environment, using assoc-array for permitted environments
      */
     private function determineVisibleGroups($current_group, $current_path)
     {

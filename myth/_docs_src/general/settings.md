@@ -13,14 +13,14 @@ The `Myth\Settings\Settings` class is full of static methods so you do not need 
 You can assign the datastores that are to be used as well as the order of searching and the default store in the `application/config/application.php` config file. 
 
 ### Available Stores
-You can assign any fully-namespaced class that implements the `Myth\Interfaces\SettingsStoreInterface` as an available store in the `settings.stores` array. The 'key' is the alias the store can later be referenced by. The value is the full name of the class, including namespace if any.
+You can assign any fully-namespaced class that implements the [Myth\Interfaces\SettingsStoreInterface](interfaces/settings) as an available store in the `settings.stores` array. The `key` is the alias the store can later be referenced by. The value is the full name of the class, including namespace if any.
 
 	$config['settings.stores'] = [
         'db'        => '\Myth\Settings\DatabaseStore',
         'config'    => '\Myth\Settings\ConfigStore'
     ];
    
-The order the stores are defined in is the order they will be searched across.
+The order the stores are defined in is the order they will be searched in.
    
 ### Default Store
 Assign the default store to use if none is specified. Primarily used when saving items or the findBy method. 
@@ -48,7 +48,7 @@ If you know which datastore you want to pull the item from, you can specify the 
 	$email = Settings::get('site.email', 'app', 'config');
 
 ### Saving An Item
-You can save a new item, or update an existing item, with the `save()` method. The first parameter is the name  item. The second parameter is the value to set it to. The third parameter is the group name. The fourth parameter is the datastore. If left blank, it will use the default datastore. By default, this means it would save it to the database. 
+You can save a new item, or update an existing item, with the `save()` method. The first parameter is the name  of the item. The second parameter is the value to set it to. The third parameter is the group name. The fourth parameter is the datastore. If left blank, it will use the default datastore. By default, this means it would save it to the database. 
 
 	Settings::save('site.email', 'darth.vader@theempire.com');
 

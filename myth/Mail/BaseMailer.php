@@ -53,6 +53,8 @@ class BaseMailer {
     protected $cc       = null;
     protected $bcc      = null;
 
+    protected $message  = null;
+
     protected $theme    = 'email';
     protected $layout   = 'index';
     protected $view     = null;
@@ -83,11 +85,33 @@ class BaseMailer {
      */
     public function __construct($options=null)
     {
+        if (! empty($options))
+        {
+            $this->setOptions($options);
+        }
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Sets the basic options available to the mailer, like 'from', 'to',
+     * 'cc', 'bcc', etc.
+     *
+     * @param $options
+     */
+    public function setOptions($options)
+    {
         if (is_array($options))
         {
             foreach ($options as $key => $value)
             {
-                if (isset($this->$key))
+                if ($key == 'service')
+                {
+                    $this->service =& $value;
+                    continue;
+                }
+
+                if (property_exists($this, $key))
                 {
                     $this->$key = $value;
                 }
@@ -97,15 +121,19 @@ class BaseMailer {
 
     //--------------------------------------------------------------------
 
+
+
     /**
      * Sends an email immediately using the system-defined MailService.
      *
-     * @param string $to        // Who the email is being sent to.
-     * @param string $subject   // The subject line for the email
-     * @param strign $data      // the key/value pairs to send to the views.
-     * @param string $view      // You can override the view used for the email here.
+     * @param string $to // Who the email is being sent to.
+     * @param string $subject // The subject line for the email
+     * @param strign $data // the key/value pairs to send to the views.
+     * @param string $view // You can override the view used for the email here.
      *                          // You can change themes by prepending theme name
      *                          // like: 'newtheme:newview'
+     *
+     * @return bool
      */
     public function send($to, $subject, $data=[], $view=null)
     {
@@ -115,7 +143,7 @@ class BaseMailer {
             return true;
         }
 
-        $this->startMailService($this->service_name);
+        $this->startMailService();
 
         $this->service->to($to);
         $this->service->subject($subject);
@@ -130,14 +158,21 @@ class BaseMailer {
 
         if (! empty($this->cc))         $this->service->cc($this->cc);
         if (! empty($this->bcc))        $this->service->bcc($this->bcc);
-        if (! empty($this->reply_to))   $this->service->reply_to($this->reply_to);
+
+        if (is_array($this->reply_to)) {
+            $this->service->reply_to($this->reply_to[0], $this->reply_to[1]);
+        }
+        else
+        {
+            $this->service->reply_to($this->reply_to);
+        }
 
 
         // Determine the view to use. We have to hack this a bit with
         // the debug_backtrace, though, to make it all function in the background.
         list(, $method) = debug_backtrace(false);
 
-        $view = 'emails/'. strtolower( get_class($this) ) .'/'. $method['function'];
+        $view = 'emails/'. strtolower( (new \ReflectionClass($this))->getShortName() ) .'/'. $method['function'];
 
         // Get our message's text and html versions based on which files exist...
         $basepath = APPPATH .'views/'. $view;
@@ -145,12 +180,13 @@ class BaseMailer {
         // Is a text version available?
         if (file_exists($basepath .'.text.php'))
         {
-            $text = get_instance()->load->view($view .'.text.php', $data, true);
+            $text = $this->load->view($view .'.text.php', $data, true);
             $this->service->text_message($text);
         }
 
         // If an html version is around, we need to theme it out
-        if (file_exists($basepath .'.html.php')) {
+        if (file_exists($basepath .'.html.php'))
+        {
             $this->startThemer();
 
             $this->themer->setTheme($this->theme);
@@ -223,15 +259,15 @@ class BaseMailer {
      *
      * @param $service_name
      */
-    private function startMailService($service_name=null)
+    protected function startMailService()
     {
         // Only once!
         if (! empty($this->service) && is_object($this->service))
+        {
             return;
-
-        if (empty($service_name)) {
-            $service_name = ! empty($this->service_name) ? $this->service_name : config_item('mail.default_service');
         }
+
+        $service_name = ! empty($this->service_name) ? $this->service_name : config_item('mail.default_service');
 
         if (! class_exists($service_name))
         {
@@ -246,7 +282,7 @@ class BaseMailer {
     /**
      * Fires up the default themer so we can use it to theme our HTML messages.
      */
-    private function startThemer()
+    protected function startThemer()
     {
         /*
          * Setup our Template Engine
@@ -257,7 +293,10 @@ class BaseMailer {
             throw new \RuntimeException('No Themer chosen.');
         }
 
-        $this->themer = new $themer( get_instance() );
+        if (empty($this->themer))
+        {
+            $this->themer = new $themer( get_instance() );
+        }
 
         // Register our paths with the themer
         $paths = config_item('theme.paths');

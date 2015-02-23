@@ -1,9 +1,9 @@
 # Views
 
-Sprint uses CodeIgniter's standard views to form the basis of its Template system. The documentation in here only applies when using the default `ViewThemer` engine. See [Custom Template Engines](template_engines.md) for more information about using other template systems with Sprint.
+Sprint uses CodeIgniter's standard views to form the basis of its Template system. The documentation in here only applies when using the default `ViewThemer` engine. 
 
 ## Using the Template System
-In order to use the view and template methods in this document, your controller must extend `Myth\Controllers\ThemedController` or one of its children, like the `FrontController`.
+In order to use the view and template methods in this document, your controller must extend `Myth\Controllers\ThemedController` or one of its children.
 
 	class SuperHeroController extends \Myth\Controllers\ThemedController
 	{
@@ -91,4 +91,4 @@ If you would like Sprint to attempt to automatically determine which variant to 
  
 If TRUE, this will use the [Mobile Detect](http://mobiledetect.net/) library to determine. This library is built buy the gang at [BrowserStack](http://www.browserstack.com/) and kept up to date. 
 
-If you need to modify how this works (by adding browser or OS detection, for example) you will need to modify the `__construct()` method of the `ThemedController` file. Or you can turn of autodetection and do your own detection routine in `MY_Controller`. 
+If you need to modify how this works (by adding browser or OS detection, for example) you will need to modify the `__construct()` method of the `ThemedController` file. Or you can turn off autodetection and do your own detection routine in `MY_Controller`. 
