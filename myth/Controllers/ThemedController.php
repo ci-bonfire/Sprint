@@ -115,12 +115,6 @@ class ThemedController extends BaseController
         // Set our default theme.
         $this->themer->setDefaultTheme( config_item('theme.default_theme') );
 
-        // Set Current Theme
-        if (! empty($this->theme))
-        {
-            $this->themer->setTheme($this->theme);
-        }
-
         // Register our variants with the engine.
         $variants = config_item('theme.variants');
 

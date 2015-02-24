@@ -91,7 +91,7 @@ class ViewThemer implements ThemerInterface
             throw new \LogicException("No folder found for theme: {$theme}.");
         }
 
-	    $this->theme = $theme;
+	    $this->active_theme = $theme;
 
         // Make the path available within views.
         $this->vars['theme_path'] = $this->folders[$theme];
@@ -170,12 +170,7 @@ class ViewThemer implements ThemerInterface
 		    {
 			    list( $theme, $view ) = explode( ':', $view );
 
-                if (empty($this->active_theme))
-                {
-                    $this->active_theme = $this->theme;
-                }
-
-			    $theme = str_replace('{theme}', $this->theme, $theme);
+			    $theme = str_replace('{theme}', $this->active_theme, $theme);
 		    }
 
 		    if ( ! empty( $theme ) && isset( $this->folders[ $theme ] ) )
