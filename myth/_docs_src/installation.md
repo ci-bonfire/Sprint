@@ -10,7 +10,7 @@ If you already have [Composer](https://getcomposer.org/) installed on your serve
 
 Currently, you'll need to ensure that you pass the `dev-develop` version as the final argument.
 
-	$ composer create-project sprintphp/sprintphp <install folder>
+	$ composer create-project sprintphp/sprintphp <install folder> dev-develop
 
 You're now ready to skip to [migrating the database](#migrate_the_database).
 
