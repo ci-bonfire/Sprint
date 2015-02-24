@@ -3607,12 +3607,12 @@
 		"outputPathIsSetByUser": 0,
 		"processed": 0
 		},
-	"\/js\/eldarion-ajax.min.js": {
+	"\/js\/eldarion-ajax.min-min.js": {
 		"fileType": 64,
 		"ignore": 0,
 		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/js\/eldarion-ajax.min.js",
-		"outputAbbreviatedPath": "\/js\/min\/eldarion-ajax.min-min.js",
+		"inputAbbreviatedPath": "\/js\/eldarion-ajax.min-min.js",
+		"outputAbbreviatedPath": "\/js\/min\/eldarion-ajax.min-min-min.js",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 1,
@@ -3702,22 +3702,6 @@
 		"ignoreWasSetByUser": 0,
 		"inputAbbreviatedPath": "\/scss\/components\/_material.scss",
 		"outputAbbreviatedPath": "\/scss\/css\/_material.css",
-		"outputPathIsOutsideProject": 0,
-		"outputPathIsSetByUser": 0,
-		"outputStyle": 0,
-		"shouldRunAutoprefixer": 0,
-		"shouldRunBless": 0,
-		"useLibsass": 0
-		},
-	"\/scss\/components\/_profiler.scss": {
-		"createSourceMap": 0,
-		"debugStyle": 0,
-		"decimalPrecision": 10,
-		"fileType": 4,
-		"ignore": 1,
-		"ignoreWasSetByUser": 0,
-		"inputAbbreviatedPath": "\/scss\/components\/_profiler.scss",
-		"outputAbbreviatedPath": "\/scss\/css\/_profiler.css",
 		"outputPathIsOutsideProject": 0,
 		"outputPathIsSetByUser": 0,
 		"outputStyle": 0,

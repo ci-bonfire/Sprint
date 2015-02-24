@@ -58,7 +58,6 @@ $config['docs.cache_time'] = 0;
 */
 $config['docs.folders'] = [
     'application'   => APPPATH .'docs',
-	'bonfire'       => APPPATH .'../bonfire/_docs_src',
     'developer'     => APPPATH .'../myth/_docs_src'
 ];
 
