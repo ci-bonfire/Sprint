@@ -575,10 +575,3 @@ class Profiler extends \CI_Loader {
 	}
 
 }
-
-// END CI_Profiler class
-
-//--------------------------------------------------------------------
-
-/* End of file Profiler.php */
-/* Location: ./system/libraries/Profiler.php */

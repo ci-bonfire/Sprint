@@ -7,6 +7,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 $config['modules_locations'] = array(
     APPPATH .'modules/',
+	APPPATH .'../bonfire/CIModules/',
     APPPATH .'../myth/CIModules/'
 );
 

@@ -311,5 +311,4 @@ class Login_model extends \Myth\Models\CIDbModel {
 
     //--------------------------------------------------------------------
 
-
 }

@@ -1,5 +1,4 @@
 <?php namespace Myth\Auth\Flat;
-
 /**
  * Sprint
  *
@@ -139,7 +138,7 @@ class FlatGroupsModel extends CIDbModel {
 	public function getGroupsForUser($user_id)
 	{
 	    return $this->select('auth_groups_users.*, auth_groups.name, auth_groups.description')
-		            ->join('auth_groups', 'auth_groups.group_id = groups.id', 'left')
+		            ->join('auth_groups_users', 'auth_groups_users.group_id = auth_groups.id', 'left')
 		            ->where('user_id', $user_id)
 		            ->as_array()
 		            ->find_all();
@@ -200,6 +199,5 @@ class FlatGroupsModel extends CIDbModel {
 	}
 
 	//--------------------------------------------------------------------
-
 
 }

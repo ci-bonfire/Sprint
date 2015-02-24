@@ -273,5 +273,4 @@ class Auth extends \Myth\Controllers\ThemedController
 
     //--------------------------------------------------------------------
 
-
 }

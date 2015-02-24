@@ -3,9 +3,7 @@
 ## File Format
 All files should be in the UTF-8 format. Line endings should be set to Unix-style line endings (LF). It is possible to have git auto-correct the line-endings for you. Please see [GitHub’s Help Pages](http://help.github.com/dealing-with-lineendings/) for more information.
 
-Where possible, we follow the [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) standards. If you use an idea like [PHPStorm](http://www.jetbrains.com/phpstorm/) then it can take care of the formatting for you. 
-
-
+Where possible, we follow the [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) standards. If you use an idea like [PHPStorm](http://www.jetbrains.com/phpstorm/) then it can take care of the formatting for you.
 
 ## PHP Closing Tag
 The PHP closing tag for the file should be _omitted_. This protects files from echoing data before they need to.
@@ -13,26 +11,26 @@ The PHP closing tag for the file should be _omitted_. This protects files from e
 ## Visibility
 All class variables and methods must have visibility declared.
 
-    class Class_name {
+	class Class_name {
 
-        public     $property;
-        protected  $other_property;
-        private    $ci;
+		public    $property;
+		protected $other_property;
+		private   $ci;
 
-        //--------------------------------------------------------------------
+		//--------------------------------------------------------------------
 
-        public function methodName()
-        {
+		public function methodName()
+		{
 
-        }
+		}
 
-        //--------------------------------------------------------------------
-    }
+		//--------------------------------------------------------------------
+	}
 
 ## Class and Method Naming
-Class names should **always** have their first letter uppercase. 
+Class names should **always** have their first letter uppercase.
 
-Use the PHP 5 *__construct()* function for constructors unless absolutely necessary.
+Use the PHP 5 `__construct()` function for constructors unless absolutely necessary.
 
 Multiple words should be CamelCased.
 
@@ -53,47 +51,47 @@ Avoid deep nesting of logic checks where possible. This only serves to make the 
 
 GOOD:
 
-    public function methodName()
-    {
-        if ( ! isset($var)) {
-            return false;
-        }
+	public function methodName()
+	{
+		if ( ! isset($var)) {
+			return false;
+		}
 
-        if ($other_var !== TRUE) {
-            return false;
-        }
+		if ($other_var !== true) {
+			return false;
+		}
 
-        foreach ($this as $that) {
-            // Code here...
-        }
-    }
+		foreach ($this as $that) {
+			// Code here...
+		}
+	}
 
-    //--------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
 
 BAD:
 
-    public function method_name()
-    {
-        if (isset($var))  {
-            if ($other_var === TRUE) {
-                foreach ($this as $that) {
-                    if ($that == $something) {
-                        // Code here...
-                    }
-                }
-            }
-        }
-    }
+	public function method_name()
+	{
+		if (isset($var))  {
+			if ($other_var === true) {
+				foreach ($this as $that) {
+					if ($that == $something) {
+						// Code here...
+					}
+				}
+			}
+		}
+	}
 
-    //--------------------------------------------------------------------
+	//--------------------------------------------------------------------
 
 ### Comment as Needed
 Comments should be used as frequently as needed, but not overdone. If your variable names and method names are descriptive then your code will be understandable without a lot of comments.
 
 This doesn’t mean don’t comment at all. That’s even worse.
 
-Use comments to
+Use comments to:
 
 - Describe why you are doing something (not how - that’s what the code is for)
 - Separate the logic into self-contained chunks to make finding your place easier.
