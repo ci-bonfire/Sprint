@@ -58,5 +58,4 @@ class ViewGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
-
 }

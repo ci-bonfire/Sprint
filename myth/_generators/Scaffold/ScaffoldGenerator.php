@@ -105,6 +105,4 @@ class ScaffoldGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
-
-
 }

@@ -30,4 +30,3 @@
 </div><!-- /.container -->
 
 <?= $themer->display('bootstrap:fragments/footer') ?>
-

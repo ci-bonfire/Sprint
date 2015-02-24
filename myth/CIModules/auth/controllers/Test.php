@@ -64,5 +64,4 @@ class Test extends \Myth\Controllers\CLIController {
 	
 	//--------------------------------------------------------------------
 	
-	
 }

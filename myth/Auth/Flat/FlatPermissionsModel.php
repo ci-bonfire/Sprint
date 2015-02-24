@@ -1,5 +1,4 @@
 <?php namespace Myth\Auth\Flat;
-
 /**
  * Sprint
  *
@@ -100,6 +99,5 @@ class FlatPermissionsModel extends CIDbModel {
 	}
 
 	//--------------------------------------------------------------------
-
 
 }

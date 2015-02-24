@@ -31,5 +31,4 @@ class CronMailer extends \Myth\Mail\BaseMailer {
 
     //--------------------------------------------------------------------
 
-
 }

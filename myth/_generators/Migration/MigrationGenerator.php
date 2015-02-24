@@ -368,5 +368,4 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
-
 }

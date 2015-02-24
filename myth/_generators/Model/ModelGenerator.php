@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Sprint
  *
@@ -321,6 +320,5 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 	}
 
 	//--------------------------------------------------------------------
-
 
 }

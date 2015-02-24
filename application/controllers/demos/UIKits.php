@@ -38,5 +38,4 @@ class UIKits extends \Myth\Controllers\ThemedController {
 
     //--------------------------------------------------------------------
     
-    
 }

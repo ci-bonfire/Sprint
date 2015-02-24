@@ -1,5 +1,4 @@
 <?php namespace Myth\Auth;
-
 /**
  * Sprint
  *
@@ -855,6 +854,5 @@ class LocalAuthentication implements AuthenticateInterface {
     }
 
     //--------------------------------------------------------------------
-
 
 }

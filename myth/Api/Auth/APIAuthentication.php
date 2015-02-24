@@ -394,5 +394,4 @@ class APIAuthentication extends LocalAuthentication {
 
 	//--------------------------------------------------------------------
 
-
 }
