@@ -16,27 +16,27 @@ class User_model extends \Myth\Models\CIDbModel {
         [
             'field' => 'first_name',
             'label' => 'lang:auth.first_name',
-            'rules' => 'trim|alpha|max_length[255]|xss_clean'
+            'rules' => 'trim|alpha|max_length[255]'
         ],
         [
             'field' => 'last_name',
             'label' => 'lang:auth.last_name',
-            'rules' => 'trim|alpha|max_length[255]|xss_clean'
+            'rules' => 'trim|alpha|max_length[255]'
         ],
         [
             'field' => 'email',
             'label' => 'lang:auth.email',
-            'rules' => 'trim|valid_email|max_length[255]|xss_clean'
+            'rules' => 'trim|valid_email|max_length[255]'
         ],
         [
             'field' => 'username',
             'label' => 'lang:auth.username',
-            'rules' => 'trim|alpha|max_length[255]|xss_clean'
+            'rules' => 'trim|alpha|max_length[255]'
         ],
         [
             'field' => 'password',
             'label' => 'lang:auth.password',
-            'rules' => 'trim|xss_clean|max_length[255]|isStrongPassword'
+            'rules' => 'trim|max_length[255]|isStrongPassword'
         ],
         [
             'field' => 'pass_confirm',
