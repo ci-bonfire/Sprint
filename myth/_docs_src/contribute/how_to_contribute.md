@@ -15,12 +15,10 @@ You should also assign one of the labels to the issue. For most issues, simply a
 
 Once you've submitted your report, don't hold your breath for a fix. Unless this is flagged as a "Critical, It Won't Work At All!" type of bug, you are creating the issue in the hopes that other developers will work with you to find a fix. There is no guarantee that someone else will jump in a fix the problem for you. Creating an issue like this is mostly to help yourself start on the path of fixing the problem and for others to confirm it with a "I'm having this problem too" comment.
 
-
 <a name="feature-requests"></a>
 ### Submitting Feature Requests
 
 You can submit a feature request in much the same was reporting a bug (above). This time, however, you need to make sure to add a 'Feature Request' label to the issue so that everyone can easily sort the issues.
-
 
 <a name="fix-issues"></a>
 ## Helping Fix Existing Issues
@@ -41,12 +39,12 @@ Anything you can do to make bug reports more succinct or easier to reproduce is 
 
 You can also help out by examining pull requests that have been submitted to Sprint via GitHub. To apply someone's changes you need to first create a dedicated branch:
 
-    $ git checkout -b testing_branch
+	$ git checkout -b testing_branch
 
 Then you can use their remote branch to update your codebase. For example, let's say the GitHub user JohnSmith has forked and pushed to the topic branch located at https://github.com/JohnSmith/Sprint.
 
-    $ git remote add JohnSmith git://github.com/JohnSmith/Sprint.git
-    $ git pull JohnSmith topic
+	$ git remote add JohnSmith git://github.com/JohnSmith/Sprint.git
+	$ git pull JohnSmith topic
 
 After applying their branch, test it out! Here are some things to think about:
 
@@ -63,7 +61,6 @@ Once you're happy that the pull request contains a good change, comment on the G
 
 If your comment simply says "+1", then odds are that other reviewers aren't going to take it too seriously. Show that you took the time to review the pull request.
 
-
 <a name="bonfire-docs"></a>
 ## Contributing to Sprint Documentation
 
@@ -73,7 +70,7 @@ Changes are made directly within this wiki so please double-check all edits for 
 
 If you are unsure of the documentation changes, you can create an issue in the [issues tracker](https://github.com/ci-bonfire/Sprint/issues?sort=created&direction=desc&state=open) on GitHub.
 
-When working with documentation, please take into account the [Coding Conventions](coding_conventions).
+When working with documentation, please take into account the [Coding Conventions](contribute/coding_conventions).
 
 <a name="bonfire-code"></a>
 ## Contributing to the Sprint Code
@@ -83,12 +80,12 @@ When working with documentation, please take into account the [Coding Convention
 
 The first thing you need to do to be able to contribute code is to clone the repository:
 
-    $ git clone git://github.com/ci-bonfire/Sprint.git
+	$ git clone git://github.com/ci-bonfire/Sprint.git
 
 and create a dedicated branch:
 
-    $ cd Sprint
-    $ git checkout -b my_new_branch
+	$ cd Sprint
+	$ git checkout -b my_new_branch
 
 It doesn't really matter what name you use, because this branch will only exist on your local computer.
 
@@ -124,20 +121,20 @@ You should not be the only person who looks at the code before you submit it. Yo
 
 When you're happy with the code on your computer, you need to commit the changes to git:
 
-    $ git commit -a -m "Here is a commit message on what I changed in this commit"
+	$ git commit -a -m "Here is a commit message on what I changed in this commit"
 
 <a name="update-master"></a>
 ### Update Master
 
 It's pretty likely that other changes to master have happened while you were working. Go get them:
 
-    $ git checkout master
-    $ git pull
+	$ git checkout master
+	$ git pull
 
 Now reapply your patch on top of the latest changes:
 
-    $ git checkout my_new_branch
-    $ git rebase master
+	$ git checkout my_new_branch
+	$ git rebase master
 
 No conflicts? Change still seems reasonable to you? Then move on.
 
@@ -148,11 +145,11 @@ Navigate to the Sprint [GitHub repository](https://github.com/ci-bonfire/Sprint)
 
 Add the new remote to your local repository on your local machine:
 
-    $ git remote add mine git@github.com:<your user name>/Sprint.git
+	$ git remote add mine git@github.com:<your user name>/Sprint.git
 
 Push to your remote:
 
-    $ git push mine my_new_branch
+	$ git push mine my_new_branch
 
 <a name="issue-pull-request"></a>
 ### Issue a Pull Request
@@ -170,4 +167,4 @@ Fill in some details about your potential patch including a meaningful title. Wh
 
 It's entirely possible that the feedback you get will suggest changes. Don't get discouraged: the whole point of contributing to an active open source project is to tap into community knowledge. If people are encouraging you to tweak your code, then it's worth making the tweaks and resubmitting.
 
-And then...think about your next contribution!
+And then... think about your next contribution!

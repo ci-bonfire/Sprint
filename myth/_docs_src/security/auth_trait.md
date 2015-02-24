@@ -8,7 +8,7 @@ Before you can protect a controller, you must first attach the `AuthTrait` to yo
 		use \Myth\Auth\AuthTrait;
 	}
 
-Once attached, you would call one of the `restrict...` methods, which will load up the Authorization and Authentication classes, as defined in the auth config file, and attempt to log the user in if they're remembered or currently logged in. 
+Once attached, you would call one of the `restrict...` methods, which will load up the Authorization and Authentication classes, as defined in the auth config file, and attempt to log the user in if they're remembered or currently logged in.
 
 ### restrict()
 This method simply ensures that the user is logged in. You can pass it a URL to redirect to in the case they are not logged in. If no URI is provided, it will try to use the route named 'login'.
@@ -47,7 +47,7 @@ Like the restrict method, this will ensure that a user is logged in, but you can
 	$this->restrictWithPermissions(['blog.posts.view', 'blog.posts.manage'], site_url('login') );
 
 ## Accessing the Libraries
-There may be times when you don't need to hit one of the restrict* methods, but you do need to get access to the [Authentication](security/authentication) and [Authorization](security/authorization) libraries directly. You must first call the `setupAuthClasses()` method, which is called automatically by the restrict* methods and loads the libraries, logs users, etc. 
+There may be times when you don't need to hit one of the restrict* methods, but you do need to get access to the [Authentication](security/authentication) and [Authorization](security/authorization) libraries directly. You must first call the `setupAuthClasses()` method, which is called automatically by the restrict* methods and loads the libraries, logs users, etc.
 
 Once that method is ran, you can get direct access to the loaded instance through either `$this->authenticate` or `$this->authorize` class vars.
 
