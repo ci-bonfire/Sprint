@@ -21,7 +21,7 @@ class dbtoolsModule extends \Bonfire\Module {
 		// Add the main menu item
 		$menu = MenuCollection::menu('admin');
 
-		$menu->ensureItem( new MenuItem('tools', 'Tools', '#', 'fa-wrench', 90 ) );
+		$menu->ensureItem( new MenuItem('tools', 'Tools', '#', 'fa-wrench' ) );
 
 		$menu->addChild( new MenuItem('dbtools', 'Database', site_url( \Myth\Route::getAreaName('admin') .'/dbtools' ), 'fa-database' ), 'tools' );
 	}

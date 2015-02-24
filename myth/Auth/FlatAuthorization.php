@@ -522,21 +522,9 @@ class FlatAuthorization implements AuthorizeInterface {
 	 *
 	 * @return array of objects
 	 */
-	public function groups($with_counts = false)
+	public function groups()
 	{
-		$groups = $this->groupModel->find_all();
-
-		if (! $groups) return $groups;
-
-		if ($with_counts)
-		{
-			foreach ($groups as &$group)
-			{
-				$group->count = get_instance()->db->where('group_id', $group->id)->count_all_results('auth_groups_users');
-			}
-		}
-
-		return $groups;
+		return $this->groupModel->find_all();
 	}
 
 	//--------------------------------------------------------------------
