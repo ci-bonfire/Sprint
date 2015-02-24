@@ -31,7 +31,7 @@
 				<ul>
 				<?php foreach ($tables as $table) : ?>
 					<li>
-						<a href="<?= site_url(\Myth\Route::getAreaName('admin') .'/dbtools/list_table/'. $table) ?>" class="ajax" data-replace-inner="#data-wrap"><?= $table ?></a>
+						<a href="<?= site_url('dbtools/list_table/'. $table) ?>" class="ajax" data-replace-inner="#data-wrap"><?= $table ?></a>
 					</li>
 				<?php endforeach; ?>
 				</ul>
