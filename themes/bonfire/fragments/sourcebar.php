@@ -15,10 +15,10 @@
 		</header>
 
 		<ul>
-			<li class="active"><a href="#"><i class="fa fa-dashboard fa-lg"></i>Dashboard</a></li>
+			<li class="active"><a href="#"><i class="fa fa-dashboard fa-lg"></i>Dashboard <span class="label radius">5</span></a></li>
 			<li class="spacer"></li>
-			<li class=""><a href="#"><i class="fa fa-wrench fa-lg"></i>Tools</a></li>
-			<li><a href="#"><i class="fa fa-gear fa-lg"></i>Settings</a></li>
+			<li class=""><a href="#"><i class="fa fa-wrench fa-lg"></i>Tools <span class="label radius">5</span></a></li>
+			<li><a href="#"><i class="fa fa-gear fa-lg"></i>Settings <span class="label radius success">10</span></a></li>
 		</ul>
 
 	</div>

@@ -138,7 +138,7 @@ $body-font-weight: $font-weight-normal;
 $font-smoothing: antialiased;
 
 $controlbar-width: 250px;
-$sourcebar-width: 220px;
+$sourcebar-width: 250px;
 
 // We use these to control text direction settings
 // $text-direction: ltr;
@@ -348,7 +348,7 @@ $global-radius: 3px;
 
 // We use these to control text style.
 // $alert-font-weight: $font-weight-normal;
-$alert-font-size: rem-calc(16);
+// $alert-font-size: rem-calc(13);
 // $alert-font-color: $white;
 // $alert-font-color-alt: scale-color($secondary-color, $lightness: -66%);
 

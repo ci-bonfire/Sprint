@@ -10,10 +10,11 @@
 
 	<title>Dashboard Template for Bootstrap</title>
 
+	<link href="/themes/bonfire/assets/css/app.css" rel="stylesheet">
 	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
 	<!-- Custom styles for this template -->
-	<link href="/themes/bonfire/assets/css/app.css" rel="stylesheet">
+	<link href="assets/css/app.css" rel="stylesheet">
 </head>
 
 <body>
