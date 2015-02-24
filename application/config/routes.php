@@ -61,7 +61,7 @@ $route['translate_uri_dashes'] = FALSE;
 // Admin Area
 //--------------------------------------------------------------------
 // You can easily change the name of URI segment here...
-$routes->area('manager', 'admin');
+$routes->area('admin');
 
 //--------------------------------------------------------------------
 // Auth-Related Routes

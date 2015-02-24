@@ -1,9 +1,5 @@
 <?php namespace Bonfire\Controllers;
 
-use Bonfire\Navigation\Menu;
-
-define('IN_ADMIN', true);
-
 /**
  * Admin Controller
  *
@@ -26,8 +22,6 @@ class AdminController extends \Myth\Controllers\ThemedController {
 		$this->load->driver('session');
 
 		$this->load->database();
-
-		$this->restrictToGroups('admins', \Myth\Route::named('login') );
 
 		/**
 		 * Automatically set a view var called 'controlbar'
