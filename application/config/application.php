@@ -87,7 +87,8 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 // is the alias name. This is used to reference within the 'display'
 // method of the
     $config['theme.paths'] = array(
-        'bonfire'    => FCPATH .'themes/bonfire',
+        'bootstrap'  => FCPATH .'themes/bootstrap3',
+        'foundation' => FCPATH .'themes/foundation5',
         'docs'       => FCPATH .'themes/docs',
         'email'      => FCPATH .'themes/email'
     );

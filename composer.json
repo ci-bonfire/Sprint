@@ -5,7 +5,7 @@
     "type": "project",
     "keywords": ["php", "codeigniter"],
     "homepage": "http://sprintphp.com",
-    "license": "MIT",
+    "license": "MIT AND OSL-3.0",
     "authors": [
         {
             "name": "Lonnie Ezell",
@@ -16,8 +16,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Myth\\": "myth/",
-            "Bonfire\\": "bonfire/"
+            "Myth\\": "myth/"
         }
     },
 	"require": {
