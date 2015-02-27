@@ -160,6 +160,10 @@ class Modules {
 	 */
 	public static function find( $file, $module, $base )
 	{
+		if (! is_string($module) || ! is_string($file) || ! is_string($base))
+		{
+			throw new \InvalidArgumentException('Argument must be a string for Modules::find()');
+		}
 
 		// Find the actual file name. It will always be the last element.
 		$segments = explode( '/', $file );
@@ -183,7 +187,7 @@ class Modules {
 			$modules[ array_shift( $segments ) ] = ltrim( implode( '/', $segments ) . '/', '/' );
 		}
 
-		foreach ( self::$locations as $location => $offset )
+		foreach ( self::$locations as $location )
 		{
 
 			foreach ( $modules as $module => $subpath )
@@ -254,6 +258,15 @@ class Modules {
 			}
 		}
 
+		// CI 3 added trailing slashes to the folder names,
+		// so clean that up.
+		if (is_array($map))
+		{
+			array_walk($map, function(&$item, $key) {
+				$item = trim($item, '/ ');
+			});
+		}
+
 		return $map;
 	}
 
@@ -267,11 +280,11 @@ class Modules {
 	 *
 	 * @return boolean
 	 */
-	public static function controllerExists( $controller = NULL, $module = NULL )
+	public static function controllerExists($controller, $module )
 	{
-		if ( empty( $controller ) || empty( $module ) )
+		if (! is_string($module) || ! is_string($controller))
 		{
-			return FALSE;
+			throw new \InvalidArgumentException('Argument must be a string for Modules::controllerExists()');
 		}
 
 		// Look in all module paths
@@ -297,17 +310,17 @@ class Modules {
 	 *
 	 * @return  string          The full path to the file, or false if the file was not found
 	 */
-	public static function filePath( $module = NULL, $folder = NULL, $file = NULL )
+	public static function filePath( $module, $folder, $file )
 	{
-		if ( empty( $module ) || empty( $folder ) || empty( $file ) )
+		if (! is_string($module) || ! is_string($folder) || ! is_string($file))
 		{
-			return FALSE;
+			throw new \InvalidArgumentException('Argument must be a string for Modules::filePath()');
 		}
 
-		$folders = Modules::folders();
-		foreach ( $folders as $module_folder )
+		foreach ( self::$locations as $location )
 		{
-			$test_file = "{$module_folder}{$module}/{$folder}/{$file}";
+			$test_file = "{$location}{$module}/{$folder}/{$file}";
+
 			if ( is_file( $test_file ) )
 			{
 				return $test_file;
@@ -327,22 +340,27 @@ class Modules {
 	 *
 	 * @return string The path, relative to the front controller, or false if the folder was not found
 	 */
-	public static function path( $module = NULL, $folder = NULL )
+	public static function path( $module, $folder = null )
 	{
+		if (! is_string($module) || (! is_string($folder) && !is_null($folder) ) )
+		{
+			throw new \InvalidArgumentException('Argument must be a string for Modules::path()');
+		}
+
 		foreach ( self::$locations as $module_folder )
 		{
 			if ( is_dir( $module_folder . $module ) )
 			{
 				if ( ! empty( $folder ) && is_dir( "{$module_folder}{$module}/{$folder}" ) )
 				{
-					return "{$module_folder}{$module}/{$folder}";
+					return "{$module_folder}{$module}/{$folder}/";
 				}
 
 				return $module_folder . $module . '/';
 			}
 		}
 
-		return FALSE;
+		return null;
 	}
 
 	//--------------------------------------------------------------------
@@ -392,10 +410,10 @@ class Modules {
 				if ( is_array( $values ) )
 				{
 					// Add just the specified folder for this module
-					if ( ! empty( $module_folder ) && isset( $values[ $module_folder ] ) && count( $values[ $module_folder ] ) )
+					if ( ! empty( $module_folder ) && isset( $values[ $module_folder .'/' ] ) && count( $values[ $module_folder .'/' ] ) )
 					{
 						$files[ $mod_name ] = array(
-							$module_folder => $values[ $module_folder ],
+							$module_folder .'/' => $values[ $module_folder .'/' ],
 						);
 					}
 					// Add the entire module
@@ -407,7 +425,7 @@ class Modules {
 			}
 		}
 
-		return count( $files ) ? $files : FALSE;
+		return count( $files ) ? $files : null;
 	}
 
 	//--------------------------------------------------------------------
@@ -502,96 +520,4 @@ class Modules {
 
 	//--------------------------------------------------------------------
 
-	//--------------------------------------------------------------------
-	// Deprecated Methods
-	//--------------------------------------------------------------------
-
-	/**
-	 * Run a module controller method
-	 * Output from module is buffered and returned.
-	 *
-	 * DEPRECATED. The loading of module controllers is discouraged, since maintainability
-	 * and testability is enhanced by keeping the controllers lean and doing all of the
-	 * work within libraries or models.
-	 *
-	 * @param $module
-	 */
-	public static function run( $module )
-	{
-
-		$method = 'index';
-
-		if ( ( $pos = strrpos( $module, '/' ) ) != FALSE )
-		{
-			$method = substr( $module, $pos + 1 );
-			$module = substr( $module, 0, $pos );
-		}
-
-		if ( $class = self::load( $module ) )
-		{
-
-			if ( method_exists( $class, $method ) )
-			{
-				ob_start();
-				$args   = func_get_args();
-				$output = call_user_func_array( array( $class, $method ), array_slice( $args, 1 ) );
-				$buffer = ob_get_clean();
-
-				return ( $output !== NULL ) ? $output : $buffer;
-			}
-		}
-
-		log_message( 'error', "Module controller failed to run: {$module}/{$method}" );
-	}
-
-	//--------------------------------------------------------------------
-
-	/**
-	 * Load a module controller.
-	 *
-	 * DEPRECATED. The loading of module controllers is discouraged, since maintainability
-	 * and testability is enhanced by keeping the controllers lean and doing all of the
-	 * work within libraries or models.
-	 *
-	 * @param $module
-	 *
-	 * @return mixed
-	 */
-	public static function load( $module )
-	{
-
-		( is_array( $module ) ) ? list( $module, $params ) = each( $module ) : $params = NULL;
-
-		/* get the requested controller class name */
-		$alias = strtolower( basename( $module ) );
-
-		/* create or return an existing controller from the registry */
-		if ( ! isset( self::$registry[ $alias ] ) )
-		{
-
-			/* find the controller */
-			list( $class ) = CI::$APP->router->locate( explode( '/', $module ) );
-
-			/* controller cannot be located */
-			if ( empty( $class ) )
-			{
-				return;
-			}
-
-			/* set the module directory */
-			$path = APPPATH . 'controllers/' . CI::$APP->router->fetch_directory();
-
-			/* load the controller class */
-			$class = $class . CI::$APP->config->item( 'controller_suffix' );
-			self::load_file( $class, $path );
-
-			/* create and register the new controller */
-			$controller               = ucfirst( $class );
-			self::$registry[ $alias ] = new $controller( $params );
-		}
-
-		return self::$registry[ $alias ];
-	}
-
-	//--------------------------------------------------------------------
 }
