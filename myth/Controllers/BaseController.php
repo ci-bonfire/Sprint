@@ -30,6 +30,9 @@
  * @since       Version 1.0
  */
 
+/* PHP5 spl_autoload */
+spl_autoload_register( '\Myth\Modules::autoload' );
+
 /**
  * The following properties are used to provide autocomplete for IDE's.
  *

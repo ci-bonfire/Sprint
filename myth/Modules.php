@@ -53,8 +53,6 @@ if ( isset( $config ) )
 	unset( $config );
 }
 
-/* PHP5 spl_autoload */
-spl_autoload_register( '\Myth\Modules::autoload' );
 
 /**
  * This file has been copied from the original location and revised to work with CodeIgniter 3,
@@ -490,14 +488,6 @@ class Modules {
 		/* don't autoload CI_ prefixed classes or those using the config subclass_prefix */
 		if ( strstr( $class, 'CI_' ) OR strstr( $class, config_item( 'subclass_prefix' ) ) )
 		{
-			return;
-		}
-
-		/* autoload Modular Extensions MX core classes */
-		if ( strstr( $class, 'MX_' ) AND is_file( $location = dirname( __FILE__ ) . '/' . substr( $class, 3 ) . '.php' ) )
-		{
-			include_once $location;
-
 			return;
 		}
 
