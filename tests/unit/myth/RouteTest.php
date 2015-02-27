@@ -886,4 +886,46 @@ class RouteTest extends \Codeception\TestCase\Test
 
     //--------------------------------------------------------------------
 
+    public function testReset()
+    {
+        $this->route->area('admin', 'admin');
+
+        $this->assertEquals('admin', $this->route->getAreaName('admin'));
+
+        $this->route->reset();
+
+        $this->assertNull($this->route->getAreaName('admin'));
+    }
+    
+    //--------------------------------------------------------------------
+    
+    public function testEnvironmentReturnsFalseOnWrongEnvironment()
+    {
+        // We are in the testing environment while tests are being ran.
+        $this->assertNull( $this->route->environment('abadone', function() {}));
+    }
+    
+    //--------------------------------------------------------------------
+
+    public function testEnvironmentReturnsTrueOnRightEnvironment()
+    {
+        $this->setExpectedException('\BadMethodCallException');
+
+        // We are in the testing environment while tests are being ran.
+        $this->assertTrue( $this->route->environment(ENVIRONMENT, function() {
+            throw new \BadMethodCallException('generic error here');
+        }));
+    }
+
+    //--------------------------------------------------------------------
+
+    public function testEnvironmentExecutesInternalMethods()
+    {
+
+        // We are in the testing environment while tests are being ran.
+        $this->assertTrue( $this->route->environment(ENVIRONMENT, function() { }));
+    }
+
+    //--------------------------------------------------------------------
+    
 }

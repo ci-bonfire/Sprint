@@ -200,3 +200,11 @@ You might find times where you need to block access to one or more routes. For e
 	// The same as:
 	$route['users/login']   = '';
 	$route['photos/(:num)'] = '';
+
+## Restricting To Environments
+
+On rare occassions you might have routes that you only want to have work within a specific environment. This might be the case with some extra tools that should only be accessed from within the development environment. This can be done with the `environment` method.
+
+	$route->environment( 'development', function() {
+		$route->get('devtool', 'tools/dev');
+	});

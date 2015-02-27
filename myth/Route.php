@@ -499,6 +499,29 @@ class Route
     //--------------------------------------------------------------------
 
     /**
+     * Limits the routes to a specified ENVIRONMENT or they won't run.
+     *
+     * @param $env
+     * @param callable $callback
+     *
+     * @return bool|null
+     */
+    public function environment($env, \Closure $callback)
+    {
+        if (ENVIRONMENT == $env)
+        {
+            call_user_func($callback);
+            return true;
+        }
+
+        return null;
+    }
+
+    //--------------------------------------------------------------------
+
+
+
+    /**
      * Allows you to easily block access to any number of routes by setting
      * that route to an empty path ('').
      *
@@ -534,7 +557,7 @@ class Route
         $this->routes = array();
         $this->names  = array();
         $this->group  = null;
-        $this->areas  = array();
+        self::$areas  = array();
     }
 
     //--------------------------------------------------------------------
