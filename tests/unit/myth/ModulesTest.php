@@ -85,6 +85,9 @@ class ModulesTest extends CodeIgniterTestCase {
 
 	    $modules = Modules::listModules();
 
+		// Ensure we're sorted on all systems
+		sort($modules, SORT_STRING);
+
 		$this->assertEquals($expected, $modules);
 	}
 
