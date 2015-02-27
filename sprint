@@ -8,6 +8,9 @@ use Myth\CLI as CLI;
 $status = 0;
 $extra = '';
 
+// Reserved core methods provided by Sprint
+$core_methods = ['publish', 'version'];
+
 /**
  * Relative location to the application's
  * index.php from this file.
@@ -38,6 +41,12 @@ ini_set('display_errors', 1);
 // Default to a simple passthru of the basic command, less arguments.
 $command = CLI::cli_string();
 
+// If it's a core command, then modify the command string
+if (in_array(CLI::segment(1), $core_methods) )
+{
+	$command = 'sprint '. $command;
+}
+
 // Check all arguments that we're interested in here
 $options = CLI::getOptions();
 
@@ -59,32 +68,13 @@ if ( array_key_exists('h', $options) || array_key_exists('help', $options)) {
 //
 if ( array_key_exists('v', $options) || array_key_exists('version', $options) )
 {
-    define('BASEPATH', true);
-
-    require $apppath .'config/constants.php';
-
-    $output = '';
-
-    if (defined('SPRINT_VERSION'))
-    {
-        $output .= 'Running Sprint v'. CLI::color(SPRINT_VERSION, 'yellow');
-    }
-
-    if (defined('BONFIRE_VERSION'))
-    {
-        $output .= ' and Bonfire v'. CLI::color(BONFIRE_VERSION, 'yellow');
-    }
-
-    CLI::write($output);
-
-    exit(0);
+    $command = 'sprint version';
 }
 
 //--------------------------------------------------------------------
 // Standard Method call to CodeIgniter
 //--------------------------------------------------------------------
 //
-
 
 if (! $command)
 {
