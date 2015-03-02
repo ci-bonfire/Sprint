@@ -1,5 +1,8 @@
 <?php
 
+$lang['done']               = 'Done';
+$lang['fail']               = 'Failed';
+
 // BaseController
 $lang['bad_json_encode']    = 'Resources can not be converted to JSON data.';
 $lang['bad_javascript']     = 'No javascript passed to the render_js() method.';
@@ -12,3 +15,9 @@ $lang['cli.no_help']            = 'No help available for that command.';
 
 // ThemedController
 $lang['no_themer']              = 'No Themer chosen.';
+
+// CronManager
+$lang['cron.bad_alias']         = "Invalid (empty) alias.";
+$lang['cron.bad_timestring']    = "Invalid (empty) time string.";
+$lang['cron.bad_task']          = "Invalid task passed for task: ";
+$lang['cron.running_task']      = "Running task: %s...";
