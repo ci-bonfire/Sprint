@@ -162,6 +162,8 @@ class ApiController extends BaseController {
 
 	public function __construct()
 	{
+		parent::__construct();
+		
 		$this->start_time = microtime(true);
 
 		$this->request = new \stdClass();
@@ -185,8 +187,6 @@ class ApiController extends BaseController {
 
 			unset($file);
 		}
-
-	    parent::__construct();
 
 		$this->config->load('api');
 
