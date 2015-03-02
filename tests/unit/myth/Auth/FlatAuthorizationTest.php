@@ -316,7 +316,7 @@ class FlatAuthorizationTest extends CodeIgniterTestCase {
 
 	//--------------------------------------------------------------------
 
-	public function testAddUserToGroupReturnsFalseWhenCannotConvertStringGroupName()
+	public function testAddUserToGroupReturnsNullWhenCannotConvertStringGroupName()
 	{
 		$g = new stdClass();
 		$g->id = 1;
@@ -324,7 +324,7 @@ class FlatAuthorizationTest extends CodeIgniterTestCase {
 		$this->groupModel->shouldReceive('find_by')->once()->with('name', 'wilma')->andReturn( false );
 		$this->permModel->shouldReceive('doesUserHavePermission')->once()->with(1, 3)->andReturn(false);
 
-		$this->assertFalse( $this->auth->addUserToGroup( 1, 'wilma') );
+		$this->assertNull( $this->auth->addUserToGroup( 1, 'wilma') );
 	}
 
 	//--------------------------------------------------------------------
