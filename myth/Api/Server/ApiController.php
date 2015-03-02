@@ -45,6 +45,8 @@ class ApiController extends BaseController {
 
 	use AuthTrait;
 
+	protected $language_file = 'api';
+
 	protected $ajax_notices = false;
 
 	/**
@@ -196,13 +198,13 @@ class ApiController extends BaseController {
 		// Should we restrict to SSL requests?
 		if (config_item('require_ssl') === true && ! $this->request->ssl)
 		{
-			$this->failForbidden('All requests must be performed over a secure connection.');
+			$this->failForbidden( lang('api.ssl_required') );
 		}
 
 		// Should we restrict to only allow AJAX requests?
 		if (config_item('api.ajax_only') === true && ! $this->input->is_ajax_request() )
 		{
-			$this->failForbidden('All requests must be performed as AJAX requests.');
+			$this->failForbidden( lang('api.ajax_required') );
 		}
 
 		$this->detectPage();
@@ -211,14 +213,14 @@ class ApiController extends BaseController {
 		{
 			if (! $this->restrict() )
 			{
-				$this->failUnauthorized("Unauthorized");
+				$this->failUnauthorized( lang('api.unauthorized') );
 			}
 		}
 
 		// Has the user hit rate limits for this hour?
 		if ($this->enable_rate_limits && ! $this->isWithinLimits())
 		{
-			$this->failTooManyRequests("Only {$this->rate_limits} requests per hour are allowed per user.");
+			$this->failTooManyRequests( sprintf( lang('api.too_many_requests'), $this->rate_limits) );
 		}
 
 		// NEVER allow profiling via API.
@@ -252,7 +254,7 @@ class ApiController extends BaseController {
 		}
 		else
 		{
-			return $this->fail('Unknown API endpoint.', 'not_implemented');
+			return $this->fail( lang('api.unknown_endpoint'), 'not_implemented');
 		}
 	}
 

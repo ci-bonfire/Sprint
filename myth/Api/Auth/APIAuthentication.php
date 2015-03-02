@@ -31,6 +31,7 @@
  */
 
 use Myth\Auth\LocalAuthentication;
+use Myth\Events;
 
 class APIAuthentication extends LocalAuthentication {
 
@@ -45,6 +46,7 @@ class APIAuthentication extends LocalAuthentication {
 		parent::__construct($ci);
 
 		$this->ci->config->load('api');
+		$this->ci->lang->load('api');
 
 		// Has the IP address been blacklisted?
 		if (config_item('auth.ip_blacklist_enabled'))
@@ -246,7 +248,7 @@ class APIAuthentication extends LocalAuthentication {
 		// logins now.
 		if ($time = (int)$this->isThrottled($user['email']) > 0)
 		{
-			$this->error = sprintf(lang('auth.throttled'), $time);
+			$this->error = sprintf(lang('api.throttled'), $time);
 			return false;
 		}
 
@@ -278,7 +280,7 @@ class APIAuthentication extends LocalAuthentication {
 
 		if (in_array($this->ci->input->ip_address(), $blacklist))
 		{
-			throw new \Exception('IP Address is denied.', 401);
+			throw new \Exception( lang('api.ip_denied'), 401);
 		}
 
 		return true;
@@ -303,7 +305,7 @@ class APIAuthentication extends LocalAuthentication {
 
 		if (! in_array($this->ci->input->ip_address(), $whitelist))
 		{
-			throw new \Exception('IP Address is denied.', 401);
+			throw new \Exception( lang('api.ip_denied'), 401);
 		}
 
 		return true;
@@ -362,7 +364,7 @@ class APIAuthentication extends LocalAuthentication {
 	 */
 	public function login($credentials, $remember=false)
 	{
-		throw new \BadMethodCallException('This method is not used in the Authentication class.');
+		throw new \BadMethodCallException( lang('api.unused_method') );
 	}
 
 	//--------------------------------------------------------------------
@@ -377,7 +379,7 @@ class APIAuthentication extends LocalAuthentication {
 	 */
 	public function logout()
 	{
-		throw new \BadMethodCallException('This method is not used in the Authentication class.');
+		throw new \BadMethodCallException( lang('api.unused_method') );
 	}
 
 	//--------------------------------------------------------------------
