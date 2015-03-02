@@ -260,7 +260,7 @@ class BaseController extends \CI_Controller {
 	{
 		if ( is_resource( $json ) )
 		{
-			throw new RenderException( 'Resources can not be converted to JSON data.' );
+			throw new RenderException( lang('bad_json_encode') );
 		}
 
 		// When integrating Eldarion AJAX library, we get the addtional
@@ -322,7 +322,7 @@ class BaseController extends \CI_Controller {
 	{
 		if ( ! is_string( $js ) )
 		{
-			throw new RenderException( 'No javascript passed to the render_js() method.' );
+			throw new RenderException( lang('bad_javascript') );
 		}
 
 		$this->output->enable_profiler( FALSE )

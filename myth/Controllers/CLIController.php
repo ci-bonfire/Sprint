@@ -69,7 +69,7 @@ class CLIController extends \CI_Controller {
         // Restrict usage to the command line.
         if (! is_cli() )
         {
-            show_error('This controller must be called from the command line.');
+            show_error( lang('cli_required') );
         }
 
         // Make sure the CLI library is loaded and ready.
@@ -85,7 +85,7 @@ class CLIController extends \CI_Controller {
     public function index()
     {
         CLI::new_line();
-        CLI::write("Available commands:");
+        CLI::write( lang('cli.available_commands') );
 
         $this->sayDescriptions($this->descriptions);
 
@@ -104,7 +104,7 @@ class CLIController extends \CI_Controller {
     {
         if (empty($this->descriptions[$method]))
         {
-            return CLI::error('Unable to locate method description.');
+            return CLI::error( lang('cli.bad_description') );
         }
 
         CLI::write("\t{$this->descriptions[$method]}", 'yellow');
@@ -116,7 +116,7 @@ class CLIController extends \CI_Controller {
     {
         if (empty($this->long_descriptions[$method]))
         {
-            return CLI::error('No help available for that command.');
+            return CLI::error( lang('cli.no_help') );
         }
 
         CLI::write("\t{$this->long_descriptions[$method]}", 'yellow');

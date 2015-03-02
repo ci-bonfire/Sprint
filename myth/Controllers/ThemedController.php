@@ -100,7 +100,7 @@ class ThemedController extends BaseController
         $themer = config_item('active_themer');
 
         if (empty($themer)) {
-            throw new \RuntimeException('No Themer chosen.');
+            throw new \RuntimeException( lang('no_themer') );
         }
 
         $this->themer = new $themer( get_instance() );
