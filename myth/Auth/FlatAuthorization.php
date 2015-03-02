@@ -109,7 +109,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 		if ( ! $user_groups )
 		{
-			return FALSE;
+			return false;
 		}
 
 		foreach ( $groups as $group )
@@ -133,7 +133,7 @@ class FlatAuthorization implements AuthorizeInterface {
 			}
 		}
 
-		return FALSE;
+		return false;
 	}
 
 	//--------------------------------------------------------------------
@@ -208,7 +208,7 @@ class FlatAuthorization implements AuthorizeInterface {
 		// Group ID
 		if ( ! is_numeric( $group_id ) )
 		{
-			return false;
+			return null;
 		}
 
 		if ( ! $this->groupModel->addUserToGroup( (int)$user_id, (int)$group_id ) )
@@ -363,7 +363,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 		if (! is_numeric($permission_id) )
 		{
-			return false;
+			return null;
 		}
 
 		if (empty($user_id) || ! is_numeric($user_id))
