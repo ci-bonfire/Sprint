@@ -280,7 +280,7 @@ class User_model extends \Myth\Models\CIDbModel {
     //--------------------------------------------------------------------
 
     /**
-     * Deletes a single meta value from a user.
+     * Deletes one or more meta values from a user.
      *
      * @param $user_id
      * @param $key
@@ -294,8 +294,16 @@ class User_model extends \Myth\Models\CIDbModel {
             return false;
         }
 
+	    if (is_array($key))
+	    {
+		    $this->db->where_in('meta_key', $key);
+	    }
+	    else
+	    {
+		    $this->db->where('meta_key', $key);
+	    }
+
         $this->db->where('user_id', (int)$user_id)
-                 ->where('meta_key', $key)
                  ->delete('user_meta');
     }
 
