@@ -50,19 +50,19 @@ class CronManager {
         // Valid Alias?
         if (! is_string($alias) || empty($alias))
         {
-            throw new \RuntimeException("Invalid (empty) alias.");
+            throw new \RuntimeException( lang('cron.bad_alias') );
         }
 
         // Valid TimeString?
         if (! is_string($time_string) || empty($time_string))
         {
-            throw new \RuntimeException("Invalid (empty) time string.");
+            throw new \RuntimeException( lang('cron.bad_timestring') );
         }
 
         // Valid Task?
         if (! is_callable($task) && ! is_string($task))
         {
-            throw new \RuntimeException("Invalid task passed for task: {$alias}");
+            throw new \RuntimeException( lang('cron.bad_task') . $alias);
         }
 
         static::$tasks[$alias] = new CronTask($time_string, $task);
@@ -185,18 +185,18 @@ class CronManager {
         {
             if ($task->isDue($current_time) || $force_run === true)
             {
-                $output .= "Running task: {$alias}...";
+                $output .= sprintf( lang('cron.running_task'), $alias);
 
                 try {
                     $result = self::runTask($alias);
 
                     if (is_bool($result))
                     {
-                        $output .= $result === true ? "Done\n" : "Failed\n";
+                        $output .= $result === true ? lang('done') ."\n" : lang('failed') ."\n";
                     }
                     else if (is_string($result))
                     {
-                        $output .= "Done with message:\n{$result}\n";
+                        $output .= sprintf( lang('cron.done_with_msg'), $result);
                     }
                 }
                 catch (\Exception $e)
@@ -208,13 +208,13 @@ class CronManager {
             }
             else
             {
-                $output .= "'{$alias}' Not scheduled to run until {$task->nextRunDate()}.";
+                $output .= sprintf( lang('cron.not_scheduled_until'), $alias, $task->nextRunDate() );
             }
         }
 
         if (! $count)
         {
-            $output .= "No Tasks scheduled to run currently.";
+            $output .= lang('cron.nothing_scheduled');
         }
 
         return $output;

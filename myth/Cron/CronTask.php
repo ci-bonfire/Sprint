@@ -77,7 +77,7 @@ class CronTask {
         // string that we can parse. But it must have the colon in the string.
         if (! is_callable($task) && strpos($task, ':') === false)
         {
-            throw new \RuntimeException('Not a valid task.');
+            throw new \RuntimeException( lang('cron.invalid_task') );
         }
 
         $this->task = $task;
