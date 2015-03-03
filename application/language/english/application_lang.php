@@ -8,10 +8,12 @@ $lang['overwrote']          = 'Overwrote';
 $lang['modified']           = 'Modified';
 $lang['error']              = 'Error';
 
+
 $lang['errors.writing_file']    = 'Unknown error writing file: %s';
 $lang['errors.creating_dir']    = 'Unknown error creating directory: %s';
 $lang['errors.reading_file']    = "Unable to read from file: %s";
 $lang['errors.file_not_found']  = "File not found: %s";
+$lang['errors.cant_instantiate'] = "Unable to create instance of class: %s";
 
 // BaseController
 $lang['bad_json_encode']    = 'Resources can not be converted to JSON data.';
@@ -42,3 +44,10 @@ $lang['forge.no_themer']        = 'No themer chosen in forge config file.';
 $lang['forge.no_uikit']         = 'No uikit chosen in application config file.';
 $lang['forge.no_collections']   = 'No generator collections found.';
 
+// Mail
+$lang['mail.invalid_service']   = "Unable to find Mail Service: %s";
+$lang['mail.invalid_log_data']  = "Not enough data to log email. Must have to, subject and a message.";
+$lang['mail.error_html_log']    = 'Unable to create html the email log file: %s%s.html';
+$lang['mail.error_text_log']    = 'Unable to create the text email log file: %s%s.txt';
+$lang['mail.cant_find_mailer']  = "Unable to locate the mailer: %s";
+$lang['mail.invalid_mailer_method'] = "Mailer method does not exist: %s::%s";
