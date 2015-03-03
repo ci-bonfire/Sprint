@@ -78,7 +78,7 @@ class Settings {
 
         if (empty(self::$stores[ self::$default_store ]))
         {
-            show_error('Settings cannot find the default storage system.');
+            show_error( lang('settings.bad_default') );
         }
     }
 
@@ -128,7 +128,7 @@ class Settings {
         // so that they developer has a chance to fix it.
         if (! is_null($store) && empty(self::$stores[$store]))
         {
-            show_error("Unable to get setting item from specified datastore ({$store})");
+            show_error( sprintf( lang('settings.cant_retrieve'), $store ) );
         }
 
         // If $store is set, get the value from that store only.
@@ -170,7 +170,7 @@ class Settings {
         // so that they developer has a chance to fix it.
         if (! is_null($store) && empty(self::$stores[$store]))
         {
-            show_error("Unable to delete setting item from specified datastore ({$store})");
+            show_error( sprintf( lang('settings.cant_retrieve'), $store ) );
         }
 
         // If $store is set, get the value from that store only.

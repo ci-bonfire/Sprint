@@ -51,3 +51,9 @@ $lang['mail.error_html_log']    = 'Unable to create html the email log file: %s%
 $lang['mail.error_text_log']    = 'Unable to create the text email log file: %s%s.txt';
 $lang['mail.cant_find_mailer']  = "Unable to locate the mailer: %s";
 $lang['mail.invalid_mailer_method'] = "Mailer method does not exist: %s::%s";
+
+// Settings
+$lang['settings.bad_default']   = 'Settings cannot find the default storage system.';
+$lang['settings.cant_retrieve'] = "Unable to get setting item from specified datastore (%s)";
+$lang['settings.cant_retrieve'] = "Unable to delete setting item from specified datastore (%s)";
+
