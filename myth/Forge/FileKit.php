@@ -81,7 +81,7 @@ class FileKit {
 
         if ($file_contents === false)
         {
-            throw new \RuntimeException("Unable to read from file: {$file}");
+            throw new \RuntimeException( sprintf(lang('errors.reading_file'), $file));
         }
 
         $result = file_put_contents($file, $content . $file_contents);
@@ -114,7 +114,7 @@ class FileKit {
 
         if ($lines === false)
         {
-            throw new \RuntimeException("File not found: {$file}");
+            throw new \RuntimeException( sprintf( lang('errors.file_not_found'), $file ));
         }
 
         // Where to insert the row.
@@ -152,7 +152,7 @@ class FileKit {
 
         if ($lines === false)
         {
-            throw new \RuntimeException("File not found: {$file}");
+            throw new \RuntimeException( sprintf( lang('errors.file_not_found'), $file ) );
         }
 
         // Where to insert the row.
@@ -190,7 +190,7 @@ class FileKit {
 
         if ($file_contents === false)
         {
-            throw new \RuntimeException("Unable to read from file: {$file}");
+            throw new \RuntimeException( sprintf( lang('errors.reading_file'), $file ) );
         }
 
         $file_contents = str_replace($search, $replace, $file_contents);
@@ -216,7 +216,7 @@ class FileKit {
 
         if ($file_contents === false)
         {
-            throw new \RuntimeException("Unable to read from file: {$file}");
+            throw new \RuntimeException( sprintf( lang('errors.reading_file'), $file ) );
         }
 
         $file_contents = preg_replace($pattern, $replace, $file_contents);
