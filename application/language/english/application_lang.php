@@ -57,3 +57,6 @@ $lang['settings.bad_default']   = 'Settings cannot find the default storage syst
 $lang['settings.cant_retrieve'] = "Unable to get setting item from specified datastore (%s)";
 $lang['settings.cant_retrieve'] = "Unable to delete setting item from specified datastore (%s)";
 
+// Themers
+$lang['themer.bad_folder']      = "No folder found for theme: %s.";
+$lang['themer.bad_callback']    = "Method not found in View Callback - %s::%s";
