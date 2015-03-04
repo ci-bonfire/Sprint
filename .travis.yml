@@ -20,7 +20,7 @@ before_script:
   - travis_retry composer install --prefer-source --no-interaction --dev
   - travis_retry composer dump-autoload -o
   - mysql -e 'create database IF NOT EXISTS sprint;' -uroot
-  - mysql -u root password 'root'
+  - mysqladmin -u root password 'root'
 
 script:
   - php index.php database quietMigrate
