@@ -107,6 +107,10 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $user)
         {
+	        // We need to send an error even if no
+	        // user was found!
+	        $this->error = lang('auth.invalid_user');
+
             $this->user = null;
             return $user;
         }
