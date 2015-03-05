@@ -21,10 +21,12 @@ before_script:
   - travis_retry composer dump-autoload -o
   - mysql -e 'create database IF NOT EXISTS sprint;' -uroot
   - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
+  - php -S localhost:8000
+  - sleep 4
 
 script:
   - php index.php database quietMigrate
-  - php codecept.phar run
+  - php codecept.phar run -env travis
 
 after_failure:
   - cat tests/_output/*

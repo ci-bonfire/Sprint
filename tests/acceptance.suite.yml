@@ -14,9 +14,17 @@ modules:
         PhpBrowser:
           url: 'http://sprint.dev'
         Db:
-          dsn: 'mysql:host=localhost;dbname=sprint'
+          dsn: 'mysql:host=localhost;dbname=sprint_test'
           user: 'root'
           password: 'root'
           dump: 'tests/_data/dump.sql'
           populate: true
           cleanup: true
+env:
+  travis:
+    modules:
+      config:
+        PhpBrowser:
+          url: 'http://localhost:8000'
+        Db:
+          dsn: 'mysql:host=localhost;dbname=sprint'
