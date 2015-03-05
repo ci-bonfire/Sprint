@@ -26,7 +26,7 @@ before_script:
 
 script:
   - php index.php database quietMigrate
-  - php codecept.phar run -env travis
+  - php codecept.phar run --env travis
 
 after_failure:
   - cat tests/_output/*
