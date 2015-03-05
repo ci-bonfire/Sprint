@@ -20,7 +20,7 @@ before_script:
   - travis_retry composer install --prefer-source --no-interaction --dev
   - travis_retry composer dump-autoload -o
   - mysql -e 'create database IF NOT EXISTS sprint;' -uroot
-  - mysqladmin -u root password 'root'
+  - echo "USE mysql;\nUPDATE user SET password=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
 
 script:
   - php index.php database quietMigrate
