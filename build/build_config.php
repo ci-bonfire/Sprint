@@ -10,7 +10,7 @@
 //
 	$config['builds'] = [
 		'release'           => 'SprintRelease',
-		'postCreateProject' => 'InitialCleaning'
+		'postCreateProject' => 'InitialCleanup'
 //		'demo'      => 'sprint_demo',
 //		'docs'      => 'sprint_docs'
 	];
