@@ -39,14 +39,14 @@ class InitialCleanup extends BaseBuilder {
 	public function run()
 	{
 		// Clean up all temporary files/folders
-		CLI::write("\tClean up temp files...");
-		$this->cleanTempFiles();
-
-		CLI::write("\tClean up test folders...");
-		$this->cleanTestsFolder();
-
-		CLI::write("\tRemoving application modules...");
-		$this->cleanFolder($this->dest_path .'/application/modules', ['index.html', '.htaccess']);
+//		CLI::write("\tClean up temp files...");
+//		$this->cleanTempFiles();
+//
+//		CLI::write("\tClean up test folders...");
+//		$this->cleanTestsFolder();
+//
+//		CLI::write("\tRemoving application modules...");
+//		$this->cleanFolder($this->dest_path .'/application/modules', ['index.html', '.htaccess']);
 
 		CLI::write("\tGenerating default encryption key for config file...");
 		$this->generateEncryptionKey();
@@ -94,11 +94,13 @@ class InitialCleanup extends BaseBuilder {
 		$length = 16;
 
 		$this->ci->load->library('Encryption');
-		$key = $this->ci->encryption->create_key( $length );
+		$key = bin2hex( $this->ci->encryption->create_key( $length ) );
+
+		$replace = "hex2bin( '$key' )";
 
 		$kit = new FileKit();
 
-		$kit->replaceIn(BUILDBASE .'../application/config/config.php', 'PLEASE_CHANGE_ME!', $key);
+		$kit->replaceIn(BUILDBASE .'../application/config/config.php', "'PLEASE_CHANGE_ME!'", $replace);
 	}
 
 	//--------------------------------------------------------------------
