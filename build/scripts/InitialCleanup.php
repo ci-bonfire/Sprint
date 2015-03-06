@@ -39,14 +39,14 @@ class InitialCleanup extends BaseBuilder {
 	public function run()
 	{
 		// Clean up all temporary files/folders
-//		CLI::write("\tClean up temp files...");
-//		$this->cleanTempFiles();
-//
-//		CLI::write("\tClean up test folders...");
-//		$this->cleanTestsFolder();
-//
-//		CLI::write("\tRemoving application modules...");
-//		$this->cleanFolder($this->dest_path .'/application/modules', ['index.html', '.htaccess']);
+		CLI::write("\tClean up temp files...");
+		$this->cleanTempFiles();
+
+		CLI::write("\tClean up test folders...");
+		$this->cleanTestsFolder();
+
+		CLI::write("\tRemoving application modules...");
+		$this->cleanFolder($this->dest_path .'/application/modules', ['index.html', '.htaccess']);
 
 		CLI::write("\tGenerating default encryption key for config file...");
 		$this->generateEncryptionKey();
