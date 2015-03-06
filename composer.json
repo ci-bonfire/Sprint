@@ -26,4 +26,9 @@
     "require-dev": {
         "mockery/mockery": "dev-master"
     }
+    "scripts": {
+      "post-create-project-cmd": [
+        "php build/build.php InitialCleaning"
+      ]
+    }
 }
