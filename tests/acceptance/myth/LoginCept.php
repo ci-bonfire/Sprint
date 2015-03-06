@@ -10,8 +10,6 @@ $I->haveInDatabase('users', [
 	'username' => 'tester',
 	'password_hash' => '$2y$10$wEzfeu4AdmR4mQSit3TCH.je1THv/Z8XqzDI4AOCov4lssqeA/gwS',  // 'mylittlepony'
 	'created_on' => date('Y-m-d H:i:s', strtotime('-1 month')),
-	'timezone' => 'UM6',
-	'language' => 'english',
 	'active' => 1,
 	'deleted' => 0
 ]);

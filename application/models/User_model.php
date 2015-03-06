@@ -60,7 +60,7 @@ class User_model extends \Myth\Models\CIDbModel {
     // The columns in the 'users_meta' table - for auto updating of profile information.
     protected $meta_fields = ['first_name', 'last_name'];
 
-    protected $fields = ['id', 'email', 'username', 'password_hash', 'reset_hash', 'activate_hash', 'created_on', 'status', 'status_message', 'timezone', 'language', 'active', 'deleted', 'force_pass_reset'];
+    protected $fields = ['id', 'email', 'username', 'password_hash', 'reset_hash', 'activate_hash', 'created_on', 'status', 'status_message', 'active', 'deleted', 'force_pass_reset'];
 
     //--------------------------------------------------------------------
 

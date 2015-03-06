@@ -2,7 +2,11 @@
 Users in the system are stored using the same generic [CIDbModel](general/models) that is made available to you. This means that you have all of the standard CRUD methods and power/flexiblity that class allows. In addition this guide provides references to common tasks you will take with users. 
 
 ## Meta Information
-You can store meta information about users, like profile fields (first name, website, etc) or other data that is common across your application, but too specific for Sprint to provide.  In many cases this is handled automatically for you when you insert or update a single user record. The User_model takes any non-standard key/value pairs and treats them as meta data, automatically storing them in the `user_meta` table.
+You can store meta information about users, like profile fields (first name, website, etc) or other data that is common across your application, but too specific for Sprint to provide.  In many cases this is handled automatically for you when you insert or update a single user record. The User_model stores meta information in the `user_meta` table. 
+
+The exact fields that should be considered meta fields are specified in the user model itself. 
+
+	protected $meta_fields = ['first_name', 'last_name'];
 
 	$user = [
 		'username' => 'darth',

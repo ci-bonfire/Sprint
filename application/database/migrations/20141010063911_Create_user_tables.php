@@ -27,11 +27,6 @@ class Migration_create_user_tables extends CI_Migration {
                 'constraint'    => 30,
                 'null'          => true
             ],
-            'display_name'  => [
-                'type'          => 'varchar',
-                'constraint'    => 255,
-                'null'          => true
-            ],
             'password_hash' => [
                 'type' => 'varchar',
                 'constraint' => 255
@@ -59,16 +54,6 @@ class Migration_create_user_tables extends CI_Migration {
                 'type' => 'varchar',
                 'constraint'    => 255,
                 'null'      => true
-            ],
-            'timezone'  => [
-                'type'          => 'char',
-                'constraint'    => 4,
-                'default'       => 'UM6'
-            ],
-            'language'  => [
-                'type'          => 'varchar',
-                'constraint'    => 255,
-                'default'       => 'english'
             ],
             'active'  => [
                 'type'          => 'tinyint',
