@@ -27,7 +27,7 @@ $I->amOnPage('/login');
 
 $I->expect('the form is not submitted');
 $I->seeElement('#submit');
-$I->submitForm('form', [], 'submit');
+$I->submitForm('form', [], '#submit');
 $I->seeElement('.alert-danger');
 
 //--------------------------------------------------------------------
@@ -36,7 +36,7 @@ $I->seeElement('.alert-danger');
 
 $I->expect('error returned due to bad password');
 $I->seeElement('#submit');
-$I->submitForm('form', ['email' => 'tester@example.com', 'password' => 'badstuff'], 'submit');
+$I->submitForm('#login_form', ['email' => 'tester@example.com', 'password' => 'badstuff'], '#submit');
 $I->seeElement('.alert-danger');
 
 $I->expect('login attempt was logged');
@@ -48,7 +48,7 @@ $I->seeInDatabase('auth_login_attempts', ['email' => 'tester@example.com']);
 
 $I->expect('error returned due to bad email');
 $I->seeElement('#submit');
-$I->submitForm('form', ['email' => 'testy@examples.com', 'password' => 'mylittlepony'], 'submit');
+$I->submitForm('#login_form', ['email' => 'testy@examples.com', 'password' => 'mylittlepony'], '#submit');
 $I->seeElement('.alert-danger');
 
 $I->expect('login attempt was logged');
@@ -60,7 +60,7 @@ $I->seeInDatabase('auth_login_attempts', ['email' => 'testy@examples.com']);
 
 $I->expect('am logged in');
 $I->seeElement('#submit');
-$I->submitForm('form', ['email' => 'tester@example.com', 'password' => 'mylittlepony'], 'submit');
+$I->submitForm('#login_form', ['email' => 'tester@example.com', 'password' => 'mylittlepony'], '#submit');
 $I->dontSeeElement('.alert-danger');
 
 $I->expect('login action was logged');

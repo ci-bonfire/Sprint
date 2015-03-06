@@ -11,7 +11,7 @@ $I->amOnPage('/join');
 
 $I->expect('the form is not submitted');
 $I->seeElement('#submit');
-$I->submitForm('form', [], 'submit');
+$I->submitForm('form', [], '#submit');
 $I->seeElement('.alert-danger');
 
 //--------------------------------------------------------------------
@@ -28,7 +28,7 @@ $fields = [
 ];
 
 $I->expect('the form is not submitted');
-$I->submitForm('form', $fields, 'submit');
+$I->submitForm('#join_form', $fields, '#submit');
 $I->seeElement('.alert-danger');
 
 //--------------------------------------------------------------------
@@ -45,5 +45,5 @@ $fields = [
 ];
 
 $I->expect('the form is submitted and a user is created');
-$I->submitForm('form', $fields, 'submit');
+$I->submitForm('#join_form', $fields, '#submit');
 $I->dontSeeElement('.alert-danger');

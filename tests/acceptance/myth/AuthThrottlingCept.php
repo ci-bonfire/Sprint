@@ -35,7 +35,7 @@ for ($i = 0; $i <= 101; $i++)
 // Try to login - should be on same page with error
 //--------------------------------------------------------------------
 
-$I->submitForm('form', ['email' => 'tester@example.com', 'password' => 'mylittlepony'], 'submit');
+$I->submitForm('#login_form', ['email' => 'tester@example.com', 'password' => 'mylittlepony'], '#submit');
 $I->seeElement('.alert-danger');
 $I->see('throttled');
 $I->dontSeeInDatabase('auth_logins', [
