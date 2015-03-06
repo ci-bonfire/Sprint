@@ -16,9 +16,11 @@ class InitialCleanup extends BaseBuilder {
 
 	protected $ignore_files = ['.', '..', '.git', 'vendor', '.idea', '.travis.yml', 'build'];
 
-	public function __construct($destination)
+	public function __construct($destination, $ci=null)
 	{
-	    $this->source_path = realpath(BASEPATH .'../');
+		parent::__construct($ci);
+
+	    $this->source_path = realpath(BUILDBASE .'../');
 
 		if (empty($this->source_path))
 		{
@@ -89,14 +91,12 @@ class InitialCleanup extends BaseBuilder {
 	 */
 	public function generateEncryptionKey()
 	{
-		require BASEPATH .'system/libraries/Encryption.php';
-		$encrypt = new CI_Encryption();
-
-		$key = $encrypt->create_key(128);
+		$this->ci->load->library('Encryption');
+		$key = bin2hex( $this->ci->encryption->create_key(16) );
 
 		$kit = new FileKit();
 
-		$kit->replaceIn(BASEPATH .'application/config/config.php', 'PLEASE_CHANGE_ME!', $key);
+		$kit->replaceIn(BUILDBASE .'../application/config/config.php', 'PLEASE_CHANGE_ME!', $key);
 	}
 
 	//--------------------------------------------------------------------

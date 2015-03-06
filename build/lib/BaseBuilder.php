@@ -6,6 +6,17 @@ class BaseBuilder {
 
 	protected $ignore_files = ['.', '..', '.git', 'vendor', '.idea', '.travis.yml', 'tests'];
 
+	protected $ci;
+
+	//--------------------------------------------------------------------
+
+	public function __construct($ci=null)
+	{
+	    $this->ci =& $ci;
+	}
+
+	//--------------------------------------------------------------------
+
 	/**
 	 * Copies the entire contents of a single folder
 	 * into a source folder, recursively.

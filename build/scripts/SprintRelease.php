@@ -17,7 +17,7 @@ class SprintRelease extends BaseBuilder {
 
 	public function __construct($destination)
 	{
-	    $this->source_path = realpath(BASEPATH .'../');
+	    $this->source_path = realpath(BUILDBASE .'../');
 
 		if (empty($this->source_path))
 		{
@@ -25,7 +25,7 @@ class SprintRelease extends BaseBuilder {
 			exit(1);
 		}
 
-		$this->dest_path = BASEPATH . $destination;
+		$this->dest_path = BUILDBASE . $destination;
 		$this->dest_path = rtrim($this->dest_path, '/ ') .'/'. date('Y-m-d');
 	}
 

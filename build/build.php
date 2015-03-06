@@ -55,7 +55,15 @@ require __DIR__ .'/../vendor/autoload.php';
 require 'build_config.php';
 
 // Folder definitions
-define('BASEPATH', __DIR__ .'/');
+define('BUILDBASE', __DIR__ .'/');
+
+// Don't stop script exectuion on 404...
+function show_404($page = '', $log_error = TRUE) {}
+
+// Make sure we have access to CI() object.
+ob_start();
+	require( BUILDBASE .'../index.php' );
+ob_end_clean();
 
 //--------------------------------------------------------------------
 // Determine the build script to run
@@ -81,16 +89,16 @@ if (! array_key_exists($release, $config['builds']))
 $class_name = $config['builds'][$release];
 
 
-if (! file_exists(BASEPATH ."scripts/{$class_name}.php"))
+if (! file_exists(BUILDBASE ."scripts/{$class_name}.php"))
 {
 	CLI::error('Unable to find build script: '. $class_name .'.php');
 	exit(1);
 }
 
-require BASEPATH ."lib/BaseBuilder.php";
-require BASEPATH ."scripts/{$class_name}.php";
+require BUILDBASE ."lib/BaseBuilder.php";
+require BUILDBASE ."scripts/{$class_name}.php";
 
-$builder = new $class_name( $config['destinations'][$release] );
+$builder = new $class_name( $config['destinations'][$release], get_instance() );
 
 if (! is_object($builder))
 {
