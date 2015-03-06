@@ -25,6 +25,6 @@ env:
     modules:
       config:
         PhpBrowser:
-          url: 'http://localhost:8000'
+          url: 'http://localhost'
         Db:
           dsn: 'mysql:host=localhost;dbname=sprint'
