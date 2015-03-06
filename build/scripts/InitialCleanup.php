@@ -96,16 +96,6 @@ class InitialCleanup extends BaseBuilder {
 		$this->ci->load->library('Encryption');
 		$key = $this->ci->encryption->create_key( $length );
 
-		if (! ctype_print($key))
-		{
-			$key = bin2hex($key);
-		}
-
-		if (strlen($key) > $length)
-		{
-			$key = substr($key, 0, $length);
-		}
-
 		$kit = new FileKit();
 
 		$kit->replaceIn(BUILDBASE .'../application/config/config.php', 'PLEASE_CHANGE_ME!', $key);
