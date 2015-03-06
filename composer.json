@@ -28,7 +28,7 @@
     },
     "scripts": {
       "post-create-project-cmd": [
-        "php build/build.php InitialCleaning"
+        "php build/build.php postCreateProject"
       ]
     }
 }
