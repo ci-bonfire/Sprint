@@ -9,7 +9,8 @@
 // to perform that build.
 //
 	$config['builds'] = [
-		'release'   => 'SprintRelease',
+		'release'           => 'SprintRelease',
+		'postCreateProject' => 'InitialCleaning'
 //		'demo'      => 'sprint_demo',
 //		'docs'      => 'sprint_docs'
 	];
@@ -24,7 +25,8 @@
 // created.
 //
 	$config['destinations'] = [
-		'release'   => '../../SprintBuilds/',
+		'release'           => '../../SprintBuilds/',
+		'postCreateProject' => ''
 //		'demo'      => '',
 //		'docs'      => ''
 	];
