@@ -91,8 +91,20 @@ class InitialCleanup extends BaseBuilder {
 	 */
 	public function generateEncryptionKey()
 	{
+		$length = 16;
+
 		$this->ci->load->library('Encryption');
-		$key = bin2hex( $this->ci->encryption->create_key(16) );
+		$key = $this->ci->encryption->create_key( $length );
+
+		if (! ctype_print($key))
+		{
+			$key = bin2hex($key);
+		}
+
+		if (strlen($key) > $length)
+		{
+			$key = substr($key, 0, $length);
+		}
 
 		$kit = new FileKit();
 
