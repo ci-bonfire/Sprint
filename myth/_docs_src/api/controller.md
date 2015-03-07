@@ -129,6 +129,8 @@ The controller will automatically check for a `$_GET` variable named `page` and 
 
 	$this->model->limit($this->per_page, $this->offset);
 
+### nextURL and prevURL
+
 In addition, it provides two methods, `nextURL()` and `prevURL()` that can help build out URLs to send back with the response to grab the next and previous set of results. Any additional `$_GET` variables that may have been used for this request will be added to the URL, also.
 
 The first parameter is the base URI to use for the link. This is ran through the `site_url()` function to ensure it's portable among different Environments.
@@ -141,6 +143,13 @@ The first parameter is the base URI to use for the link. This is ran through the
 		'prev_link' => $this->prevURL("v1/locations/for_survey/{$survey_id}"),
 		'locations' => $locations
 	];
+
+### Changing Per Page
+Any API call can override the default per page value of 20 by passing the `per_page` $_GET variable to the API. The `$per_page` of the controller will automatically be updated to that.
+
+	http://example.com/api/users?per_page=10&page=2
+
+If the `per_page` var is set to zero, then the `nextURL` and `prevURL` will not produce any content since no paging is happening.
 
 ## Multilingual Support
 To aid in creating multilingual sites, the controller will automatically parse the `HTTP_ACCEPT_LANGUAGE` header and attempt to load the language file specified in `$this->language_file` in that idiom/language. If that language file doesn't exist, it will default to the 'application' language file.

@@ -534,6 +534,12 @@ class ApiController extends BaseController {
 			{
 				$params[ $key ] = $value;
 			}
+
+			// Ensure we get a correct per_page value
+			if (! array_key_exists('per_page', $params))
+			{
+				$params['per_page'] = $this->per_page;
+			}
 		}
 
 		return site_url($path) . '?' . http_build_query($params);
@@ -580,6 +586,12 @@ class ApiController extends BaseController {
 			{
 				$params[ $key ] = $value;
 			}
+
+			// Ensure we get a correct per_page value
+			if (! array_key_exists('per_page', $params))
+			{
+				$params['per_page'] = $this->per_page;
+			}
 		}
 
 		return site_url($path) . '?' . http_build_query($params);
@@ -600,6 +612,13 @@ class ApiController extends BaseController {
 	 */
 	protected function detectPage( )
 	{
+		// Is a per-page limit being set?
+		if ($count = $this->grabVar('per_page'))
+		{
+			$this->per_page = (int)$count;
+			unset($count);
+		}
+
 		$page = (int)$this->input->get('page');
 
 		if (! $page || $page == 1)
