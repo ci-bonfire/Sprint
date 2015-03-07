@@ -75,6 +75,12 @@ class Auth extends \Myth\Controllers\ThemedController
 
             if ($auth->login($post_data, $remember))
             {
+	            // Is the user being forced to reset their password?
+	            if ($auth->user()['force_pass_reset'] == 1)
+	            {
+		            redirect( Route::named('change_pass') );
+	            }
+
                 unset($_SESSION['redirect_url']);
                 $this->setMessage(lang('auth.did_login'), 'success');
                 redirect($redirect_url);
@@ -250,7 +256,68 @@ class Auth extends \Myth\Controllers\ThemedController
 
     //--------------------------------------------------------------------
 
+	/**
+	 * Allows a logged in user to enter their current password
+	 * and create a new one. Often used as part of the force password
+	 * reset process, but could be used within a user area.
+	 */
+	public function change_password()
+	{
+		$auth = new LocalAuthentication();
+		$this->load->model('user_model');
+		$auth->useModel($this->user_model);
 
+		if (! $auth->isLoggedIn())
+		{
+			redirect( Route::named('login') );
+		}
+
+		$this->load->helper('form');
+
+		if ($this->input->post())
+		{
+			$current_pass = $this->input->post('current_pass');
+			$password     = $this->input->post('password');
+			$pass_confirm = $this->input->post('pass_confirm');
+
+			// Does the current password match?
+			if (! password_verify($current_pass, $auth->user()['password_hash']))
+			{
+				$this->setMessage( lang('auth.bad_current_pass'), 'warning');
+				redirect( current_url() );
+			}
+
+			// Do the passwords match?
+			if ($password != $pass_confirm)
+			{
+				$this->setMessage( lang('auth.pass_must_match'), 'warning');
+				redirect( current_url() );
+			}
+
+			$hash = \Myth\Auth\Password::hashPassword($password);
+
+			if (! $this->user_model->update( $auth->id(), ['password_hash' => $hash, 'force_pass_reset' => 0]) )
+			{
+				$this->setMessage( 'Error: '. $this->user_model->error(), 'danger');
+				redirect( current_url() );
+			}
+
+			$redirect_url = $this->session->userdata('redirect_url');
+			unset($_SESSION['redirect_url']);
+
+			$this->setMessage( lang('auth.new_password_success'), 'success' );
+
+			$auth->logout();
+
+			redirect( Route::named('login') );
+		}
+
+		$this->addScript('register.js');
+		$this->themer->setLayout('login');
+		$this->render();
+	}
+
+	//--------------------------------------------------------------------
 
 
     //--------------------------------------------------------------------

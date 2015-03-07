@@ -46,6 +46,12 @@ $lang['auth.pass_code']             = 'Reset Code';
 $lang['auth.new_password']          = 'Choose a New Password';
 $lang['auth.new_password_success']  = 'Your password has been changed. Please sign in.';
 
+$lang['auth.force_change_note']     = 'You must select a new password.';
+$lang['auth.current_password']      = 'Current Password';
+$lang['auth.change_password']       = 'Change Password';
+$lang['auth.bad_current_pass']      = 'The current password does not match.';
+$lang['auth.pass_must_match']       = 'The new passwords must match.';
+
 $lang['auth.activate_account']      = 'Activate Account';
 $lang['auth.activate']              = 'Activate';
 $lang['auth.inactive_account']      = 'Your account is not active.';
