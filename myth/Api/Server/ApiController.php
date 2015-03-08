@@ -55,7 +55,6 @@ class ApiController extends BaseController {
 	 */
 	protected $vars = [];
 
-
 	protected $request;
 
 	protected $allowed_http_methods = [
@@ -156,8 +155,6 @@ class ApiController extends BaseController {
 		'not_implemented'           => 501
 	);
 
-
-
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -167,12 +164,12 @@ class ApiController extends BaseController {
 		$this->start_time = microtime(true);
 
 		$this->request = new \stdClass();
-		$this->request->ssl     = is_https();
-		$this->request->method  = $this->detectMethod();
-		$this->request->lang    = $this->detectLanguage();
+		$this->request->ssl    = is_https();
+		$this->request->method = $this->detectMethod();
+		$this->request->lang   = $this->detectLanguage();
 
 		// Load our language, requested.
-		if (!empty($this->request->lang))
+		if (! empty($this->request->lang))
 		{
 			$file = ! empty($this->language_file) ? $this->language_file : 'application';
 
@@ -191,36 +188,36 @@ class ApiController extends BaseController {
 		$this->config->load('api');
 
 		// Gather config defaults when a value isn't set for this controller
-		if ( empty($this->enable_logging) ) $this->enable_logging = config_item('api.enable_logging');
-		if ( empty($this->enable_rate_limits) ) $this->enable_rate_limits = config_item('api.enable_rate_limits');
-		if ( empty($this->rate_limits) ) $this->rate_limits = config_item('api.rate_limits');
+		if (empty($this->enable_logging)) $this->enable_logging = config_item('api.enable_logging');
+		if (empty($this->enable_rate_limits)) $this->enable_rate_limits = config_item('api.enable_rate_limits');
+		if (empty($this->rate_limits)) $this->rate_limits = config_item('api.rate_limits');
 
 		// Should we restrict to SSL requests?
 		if (config_item('require_ssl') === true && ! $this->request->ssl)
 		{
-			$this->failForbidden( lang('api.ssl_required') );
+			$this->failForbidden(lang('api.ssl_required'));
 		}
 
 		// Should we restrict to only allow AJAX requests?
-		if (config_item('api.ajax_only') === true && ! $this->input->is_ajax_request() )
+		if (config_item('api.ajax_only') === true && ! $this->input->is_ajax_request())
 		{
-			$this->failForbidden( lang('api.ajax_required') );
+			$this->failForbidden(lang('api.ajax_required'));
 		}
 
 		$this->detectPage();
 
 		if ($this->do_auth_check)
 		{
-			if (! $this->restrict() )
+			if (! $this->restrict())
 			{
-				$this->failUnauthorized( lang('api.unauthorized') );
+				$this->failUnauthorized(lang('api.unauthorized'));
 			}
 		}
 
 		// Has the user hit rate limits for this hour?
 		if ($this->enable_rate_limits && ! $this->isWithinLimits())
 		{
-			$this->failTooManyRequests( sprintf( lang('api.too_many_requests'), $this->rate_limits) );
+			$this->failTooManyRequests(sprintf(lang('api.too_many_requests'), $this->rate_limits));
 		}
 
 		// NEVER allow profiling via API.
@@ -254,7 +251,7 @@ class ApiController extends BaseController {
 		}
 		else
 		{
-			return $this->fail( lang('api.unknown_endpoint'), 'not_implemented');
+			return $this->fail(lang('api.unknown_endpoint'), 'not_implemented');
 		}
 	}
 
@@ -274,21 +271,21 @@ class ApiController extends BaseController {
 	 * @param int $status_code
 	 * @return mixed
 	 */
-	public function respond ($data = null, $status_code = null)
+	public function respond($data = null, $status_code = null)
 	{
 		// If data is NULL and not code provide, error and bail
-		if ($data === NULL && $status_code === NULL)
+		if ($data === null && $status_code === null)
 		{
 			$status_code = 404;
 
-			// create the output variable here in the case of $this->response(array());
-			$output = NULL;
+			// Create the output variable here in the case of $this->response(array());
+			$output = null;
 		}
 
 		// If data is NULL but http code provided, keep the output empty
-		else if ($data === NULL && is_numeric($status_code))
+		else if ($data === null && is_numeric($status_code))
 		{
-			$output = NULL;
+			$output = null;
 		}
 
 		else
@@ -316,7 +313,7 @@ class ApiController extends BaseController {
 	 * @param string $error_code
 	 * @return mixed
 	 */
-	protected function fail ($description, $status_code, $error_code = 'invalid_request')
+	protected function fail($description, $status_code, $error_code = 'invalid_request')
 	{
 		if (is_string($status_code))
 		{
@@ -368,7 +365,6 @@ class ApiController extends BaseController {
 	 * Used
 	 *
 	 * @param $description
-	 *
 	 * @return mixed
 	 */
 	protected function failUnauthorized($description)
@@ -383,7 +379,6 @@ class ApiController extends BaseController {
 	 * will not help.
 	 *
 	 * @param $description
-	 *
 	 * @return mixed
 	 */
 	public function failForbidden($description)
@@ -397,7 +392,6 @@ class ApiController extends BaseController {
 	 * Used when the resource the request is for cannot be found.
 	 *
 	 * @param $description
-	 *
 	 * @return mixed
 	 */
 	protected function failNotFound($description)
@@ -426,7 +420,6 @@ class ApiController extends BaseController {
 	 * in the future.
 	 *
 	 * @param $description
-	 *
 	 * @return mixed
 	 */
 	protected function failValidationError($description)
@@ -440,7 +433,6 @@ class ApiController extends BaseController {
 	 * Used when trying to create a new resource and it already exists.
 	 *
 	 * @param $description
-	 *
 	 * @return mixed
 	 */
 	protected function failResourceExists($description)
@@ -469,7 +461,6 @@ class ApiController extends BaseController {
 	 * the last hour.
 	 *
 	 * @param $description
-	 *
 	 * @return mixed
 	 */
 	protected function failTooManyRequests($description)
@@ -485,7 +476,6 @@ class ApiController extends BaseController {
 
 	/**
 	 * @param $name
-	 *
 	 * @return bool
 	 */
 	public function grabVar($name)
@@ -525,18 +515,18 @@ class ApiController extends BaseController {
 
 		if (! $clean_get)
 		{
-			if ( ! isset( $_GET ) || ! is_array( $_GET ) )
+			if (! isset($_GET) || ! is_array($_GET))
 			{
-				$_GET = [ ];
+				$_GET = [];
 			}
 
-			foreach ( $_GET as $key => $value )
+			foreach ($_GET as $key => $value)
 			{
-				$params[ $key ] = $value;
+				$params[$key] = $value;
 			}
 		}
 
-		return site_url($path) . '?' . http_build_query($params);
+		return site_url($path) .'?'. http_build_query($params);
 	}
 
 	//--------------------------------------------------------------------
@@ -557,7 +547,7 @@ class ApiController extends BaseController {
 	 *
 	 * @return string
 	 */
-	public function prevURL ($path, $clean_get = false)
+	public function prevURL($path, $clean_get = false)
 	{
 		// If paging is turned off, get out of here
 		if ($this->per_page == 0)
@@ -571,18 +561,18 @@ class ApiController extends BaseController {
 
 		if (! $clean_get)
 		{
-			if ( ! isset( $_GET ) || ! is_array( $_GET ) )
+			if (! isset($_GET) || ! is_array($_GET))
 			{
-				$_GET = [ ];
+				$_GET = [];
 			}
 
-			foreach ( $_GET as $key => $value )
+			foreach($_GET as $key => $value)
 			{
-				$params[ $key ] = $value;
+				$params[$key] = $value;
 			}
 		}
 
-		return site_url($path) . '?' . http_build_query($params);
+		return site_url($path) .'?'. http_build_query($params);
 	}
 
 	//--------------------------------------------------------------------
@@ -598,7 +588,7 @@ class ApiController extends BaseController {
 	 *
 	 * A request can set ?page=0 to turn off paging altogether.
 	 */
-	protected function detectPage( )
+	protected function detectPage()
 	{
 		$page = (int)$this->input->get('page');
 
@@ -671,7 +661,7 @@ class ApiController extends BaseController {
 	 */
 	protected function detectLanguage()
 	{
-		if ( ! $lang = $this->input->server('HTTP_ACCEPT_LANGUAGE'))
+		if (! $lang = $this->input->server('HTTP_ACCEPT_LANGUAGE'))
 		{
 			return null;
 		}
@@ -709,7 +699,7 @@ class ApiController extends BaseController {
 		$data = [
 			'duration' => microtime(true) - $this->start_time,
 			'user_id'  => $this->authenticate->id(),
-			'request'  => $this->uri->uri_string() ."?". $_SERVER['QUERY_STRING'],
+			'request'  => $this->uri->uri_string() .'?'. $_SERVER['QUERY_STRING'],
 			'method'   => $this->request->method
 		];
 

@@ -53,9 +53,9 @@ class LogModel extends CIDbModel {
 		$time = date('Y-m-d H:00:00');
 
 		$query = $this->db->select('id')
-					      ->where('user_id', (int)$user_id)
-					      ->where('created_on >=', $time)
-					      ->get($this->table_name);
+						  ->where('user_id', (int)$user_id)
+						  ->where('created_on >=', $time)
+						  ->get($this->table_name);
 
 		return (int)$query->num_rows();
 	}
