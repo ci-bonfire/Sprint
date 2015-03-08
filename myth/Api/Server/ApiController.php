@@ -730,7 +730,7 @@ class ApiController extends BaseController {
 	{
 		$model = new LogModel();
 
-		if ($model->requestsThisHourForUser( $this->id() ) > $this->rate_limits)
+		if ($model->requestsThisHourForUser($this->authenticate->id()) > $this->rate_limits)
 		{
 			return false;
 		}
