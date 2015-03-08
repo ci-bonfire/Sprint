@@ -708,7 +708,7 @@ class ApiController extends BaseController {
 
 		$data = [
 			'duration' => microtime(true) - $this->start_time,
-			'user_id'  => $this->auth->id(),
+			'user_id'  => $this->authenticate->id(),
 			'request'  => $this->uri->uri_string() ."?". $_SERVER['QUERY_STRING'],
 			'method'   => $this->request->method
 		];
