@@ -323,7 +323,7 @@ class ApiController extends BaseController {
 		if (is_string($status_code))
 		{
 			$error_code  = $status_code;
-			$status_code = in_array($status_code, $this->codes) ? $this->codes[$status_code] : 500;
+			$status_code = array_key_exists($status_code, $this->codes) ? $this->codes[$status_code] : 500;
 		}
 
 		$response = [
