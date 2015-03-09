@@ -21,7 +21,8 @@
     },
 	"require": {
 		"php": ">=5.4",
-        "mobiledetect/mobiledetectlib": "dev-master"
+        "mobiledetect/mobiledetectlib": "dev-master",
+        "raveren/kint": "0.9.*@dev"
 	},
     "require-dev": {
         "mockery/mockery": "dev-master"

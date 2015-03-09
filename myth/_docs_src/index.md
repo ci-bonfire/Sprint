@@ -37,6 +37,7 @@ Sprint also uses the following software packages:
 * [MobileDetect](http://mobiledetect.net/)
 * [PHP Error](http://phperror.net/)
 * [Ink: Responsive Email Framework](http://zurb.com/ink/)
+* [Kint debugging tool](http://raveren.github.io/kint/)
 
 For development and testing, Sprint uses:
 
