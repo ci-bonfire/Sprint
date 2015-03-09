@@ -694,7 +694,7 @@ die('here');
 	 */
 	protected function detectLanguage()
 	{
-		if ( ! $lang = $this->input->get_request_header('HTTP_ACCEPT_LANGUAGE'))
+		if ( ! $lang = $this->input->get_request_header('Accept-Language'))
 		{
 			return null;
 		}
