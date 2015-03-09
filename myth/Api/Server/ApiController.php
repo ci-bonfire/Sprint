@@ -74,7 +74,7 @@ class ApiController extends BaseController {
 	 * development environments.
 	 * @var bool
 	 */
-	protected $do_auth_check = true;
+	protected $do_auth_check = false;
 
 	/**
 	 * The current page of results being requested.
@@ -162,6 +162,8 @@ class ApiController extends BaseController {
 
 	public function __construct()
 	{
+		parent::__construct();
+
 		$this->start_time = microtime(true);
 
 		$this->request          = new \stdClass();
@@ -185,8 +187,6 @@ class ApiController extends BaseController {
 
 			unset($file);
 		}
-
-	    parent::__construct();
 
 		$this->config->load('api');
 
@@ -275,7 +275,7 @@ class ApiController extends BaseController {
 	 * 
 	 * @return mixed
 	 */
-	public function respond ($data = null, $status_code = null)
+	public function respond ($data = null, $status_code = 200)
 	{
 		// If data is null and not code provide, error and bail
 		if ($data === null && $status_code === null)
@@ -692,7 +692,7 @@ class ApiController extends BaseController {
 	 */
 	protected function detectLanguage()
 	{
-		if ( ! $lang = $this->input->server('HTTP_ACCEPT_LANGUAGE'))
+		if ( ! $lang = $this->input->get_request_header('HTTP_ACCEPT_LANGUAGE'))
 		{
 			return null;
 		}
