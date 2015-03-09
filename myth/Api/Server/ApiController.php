@@ -196,7 +196,7 @@ class ApiController extends BaseController {
 		if ( empty($this->rate_limits) ) $this->rate_limits = config_item('api.rate_limits');
 
 		// Should we restrict to SSL requests?
-		if (config_item('require_ssl') === true && ! $this->request->ssl)
+		if (config_item('api.require_ssl') === true && ! $this->request->ssl)
 		{
 			$this->failForbidden( lang('api.ssl_required') );
 		}
