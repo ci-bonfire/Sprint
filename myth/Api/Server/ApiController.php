@@ -74,7 +74,7 @@ class ApiController extends BaseController {
 	 * development environments.
 	 * @var bool
 	 */
-	protected $do_auth_check = false;
+	protected $do_auth_check = true;
 
 	/**
 	 * The current page of results being requested.
