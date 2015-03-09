@@ -152,7 +152,7 @@ Any API call can override the default per page value of 20 by passing the `per_p
 If the `per_page` var is set to zero, then the `nextURL` and `prevURL` will not produce any content since no paging is happening.
 
 ## Multilingual Support
-To aid in creating multilingual sites, the controller will automatically parse the `HTTP_ACCEPT_LANGUAGE` header and attempt to load the language file specified in `$this->language_file` in that idiom/language. If that language file doesn't exist, it will default to the 'application' language file.
+To aid in creating multilingual sites, the controller will automatically parse the `Accept-Language` header and attempt to load the language file specified in `$this->language_file` in that idiom/language. If that language file doesn't exist, it will default to the 'application' language file.
 
 ## Class Variables
 
