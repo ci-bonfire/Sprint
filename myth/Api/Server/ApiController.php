@@ -213,6 +213,7 @@ class ApiController extends BaseController {
 		{
 			if (! $this->restrict(null, true) )
 			{
+				$this->logTime();
 				$this->failUnauthorized( lang('api.unauthorized') );
 			}
 		}
@@ -246,9 +247,10 @@ class ApiController extends BaseController {
 		if (method_exists($this, $method))
 		{
 			call_user_func_array([$this, $method], $arguments);
-
+die('here');
 			if ($this->enable_logging === true)
 			{
+				die('here');
 				$this->logTime();
 			}
 		}
@@ -730,6 +732,7 @@ class ApiController extends BaseController {
 		$data = [
 			'duration' => microtime(true) - $this->start_time,
 			'user_id'  => $this->authenticate->id(),
+			'ip_address' => $this->input->ip_address(),
 			'request'  => $this->uri->uri_string() .'?'. $_SERVER['QUERY_STRING'],
 			'method'   => $this->request->method
 		];
