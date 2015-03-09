@@ -18,9 +18,6 @@
                     <li <?= $this->uri->segment(2) == 'uikits' ? 'class="active"' : '' ?>>
                         <a href="<?= site_url('demos/uikits') ?>">UIKits</a>
                     </li>
-                    <li <?= $this->uri->segment(2) == 'ajax' ? 'class="active"' : '' ?>>
-                        <a href="<?= site_url('demos/ajax') ?>">AJAX</a>
-                    </li>
 
                     <li <?= $this->uri->segment(2) == 'callbacks' ? 'class="active"' : '' ?>>
                         <a href="<?= site_url('demos/callbacks') ?>">Callbacks</a>

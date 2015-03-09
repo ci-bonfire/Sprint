@@ -162,15 +162,17 @@ class ApiController extends BaseController {
 
 	public function __construct()
 	{
+		parent::__construct();
+
 		$this->start_time = microtime(true);
 
-		$this->request = new \stdClass();
+		$this->request          = new \stdClass();
 		$this->request->ssl     = is_https();
 		$this->request->method  = $this->detectMethod();
 		$this->request->lang    = $this->detectLanguage();
 
 		// Load our language, requested.
-		if (!empty($this->request->lang))
+		if (! empty($this->request->lang))
 		{
 			$file = ! empty($this->language_file) ? $this->language_file : 'application';
 
@@ -186,8 +188,6 @@ class ApiController extends BaseController {
 			unset($file);
 		}
 
-	    parent::__construct();
-
 		$this->config->load('api');
 
 		// Gather config defaults when a value isn't set for this controller
@@ -196,7 +196,7 @@ class ApiController extends BaseController {
 		if ( empty($this->rate_limits) ) $this->rate_limits = config_item('api.rate_limits');
 
 		// Should we restrict to SSL requests?
-		if (config_item('require_ssl') === true && ! $this->request->ssl)
+		if (config_item('api.require_ssl') === true && ! $this->request->ssl)
 		{
 			$this->failForbidden( lang('api.ssl_required') );
 		}
@@ -211,8 +211,9 @@ class ApiController extends BaseController {
 
 		if ($this->do_auth_check)
 		{
-			if (! $this->restrict() )
+			if (! $this->restrict(null, true) )
 			{
+				$this->logTime();
 				$this->failUnauthorized( lang('api.unauthorized') );
 			}
 		}
@@ -246,9 +247,10 @@ class ApiController extends BaseController {
 		if (method_exists($this, $method))
 		{
 			call_user_func_array([$this, $method], $arguments);
-
+die('here');
 			if ($this->enable_logging === true)
 			{
+				die('here');
 				$this->logTime();
 			}
 		}
@@ -272,23 +274,24 @@ class ApiController extends BaseController {
 	 *
 	 * @param     $data
 	 * @param int $status_code
+	 * 
 	 * @return mixed
 	 */
-	public function respond ($data = null, $status_code = null)
+	public function respond ($data = null, $status_code = 200)
 	{
-		// If data is NULL and not code provide, error and bail
-		if ($data === NULL && $status_code === NULL)
+		// If data is null and not code provide, error and bail
+		if ($data === null && $status_code === null)
 		{
 			$status_code = 404;
 
 			// create the output variable here in the case of $this->response(array());
-			$output = NULL;
+			$output = null;
 		}
 
-		// If data is NULL but http code provided, keep the output empty
-		else if ($data === NULL && is_numeric($status_code))
+		// If data is null but http code provided, keep the output empty
+		else if ($data === null && is_numeric($status_code))
 		{
-			$output = NULL;
+			$output = null;
 		}
 
 		else
@@ -314,6 +317,7 @@ class ApiController extends BaseController {
 	 * @param        $description
 	 * @param        $status_code
 	 * @param string $error_code
+	 *
 	 * @return mixed
 	 */
 	protected function fail ($description, $status_code, $error_code = 'invalid_request')
@@ -321,7 +325,7 @@ class ApiController extends BaseController {
 		if (is_string($status_code))
 		{
 			$error_code  = $status_code;
-			$status_code = in_array($status_code, $this->codes) ? $this->codes[$status_code] : 500;
+			$status_code = array_key_exists($status_code, $this->codes) ? $this->codes[$status_code] : 500;
 		}
 
 		$response = [
@@ -342,6 +346,7 @@ class ApiController extends BaseController {
 	 * Used after successfully creating a new resource.
 	 *
 	 * @param $data
+	 *
 	 * @return mixed
 	 */
 	protected function respondCreated($data)
@@ -355,6 +360,7 @@ class ApiController extends BaseController {
 	 * Used when a resource has been successfully deleted.
 	 *
 	 * @param $data
+	 *
 	 * @return mixed
 	 */
 	protected function respondDeleted($data)
@@ -411,6 +417,7 @@ class ApiController extends BaseController {
 	 * Used for when invalid data is presented to the API.
 	 *
 	 * @param $description
+	 *
 	 * @return mixed
 	 */
 	protected function failBadRequest($description)
@@ -455,6 +462,7 @@ class ApiController extends BaseController {
 	 * be available again. Like when its already been deleted.
 	 *
 	 * @param $description
+	 *
 	 * @return mixed
 	 */
 	protected function failResourceGone($description)
@@ -503,7 +511,7 @@ class ApiController extends BaseController {
 	 * the URL, otherwise will include all $_GET values that were
 	 * sent to the URL.
 	 *
-	 * Returns NULL if this request has had paging turned off,
+	 * Returns null if this request has had paging turned off,
 	 * via ?page=0.
 	 *
 	 * @param $path
@@ -525,9 +533,9 @@ class ApiController extends BaseController {
 
 		if (! $clean_get)
 		{
-			if ( ! isset( $_GET ) || ! is_array( $_GET ) )
+			if ( ! isset($_GET) || ! is_array($_GET) )
 			{
-				$_GET = [ ];
+				$_GET = [];
 			}
 
 			foreach ( $_GET as $key => $value )
@@ -542,7 +550,7 @@ class ApiController extends BaseController {
 			}
 		}
 
-		return site_url($path) . '?' . http_build_query($params);
+		return site_url($path) .'?'. http_build_query($params);
 	}
 
 	//--------------------------------------------------------------------
@@ -555,7 +563,7 @@ class ApiController extends BaseController {
 	 * the URL, otherwise will include all $_GET values that were
 	 * sent to the URL.
 	 *
-	 * Returns NULL if this request has had paging turned off,
+	 * Returns null if this request has had paging turned off,
 	 * via ?page=0.
 	 *
 	 * @param $path
@@ -577,14 +585,14 @@ class ApiController extends BaseController {
 
 		if (! $clean_get)
 		{
-			if ( ! isset( $_GET ) || ! is_array( $_GET ) )
+			if ( ! isset($_GET) || ! is_array($_GET) )
 			{
-				$_GET = [ ];
+				$_GET = [];
 			}
 
 			foreach ( $_GET as $key => $value )
 			{
-				$params[ $key ] = $value;
+				$params[$key] = $value;
 			}
 
 			// Ensure we get a correct per_page value
@@ -594,7 +602,7 @@ class ApiController extends BaseController {
 			}
 		}
 
-		return site_url($path) . '?' . http_build_query($params);
+		return site_url($path) .'?'. http_build_query($params);
 	}
 
 	//--------------------------------------------------------------------
@@ -613,11 +621,7 @@ class ApiController extends BaseController {
 	protected function detectPage( )
 	{
 		// Is a per-page limit being set?
-		if ($count = $this->grabVar('per_page'))
-		{
-			$this->per_page = (int)$count;
-			unset($count);
-		}
+		$this->per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : $this->per_page;
 
 		$page = (int)$this->input->get('page');
 
@@ -690,7 +694,7 @@ class ApiController extends BaseController {
 	 */
 	protected function detectLanguage()
 	{
-		if ( ! $lang = $this->input->server('HTTP_ACCEPT_LANGUAGE'))
+		if ( ! $lang = $this->input->get_request_header('HTTP_ACCEPT_LANGUAGE'))
 		{
 			return null;
 		}
@@ -727,8 +731,9 @@ class ApiController extends BaseController {
 
 		$data = [
 			'duration' => microtime(true) - $this->start_time,
-			'user_id'  => $this->auth->id(),
-			'request'  => $this->uri->uri_string() ."?". $_SERVER['QUERY_STRING'],
+			'user_id'  => $this->authenticate->id(),
+			'ip_address' => $this->input->ip_address(),
+			'request'  => $this->uri->uri_string() .'?'. $_SERVER['QUERY_STRING'],
 			'method'   => $this->request->method
 		];
 
@@ -749,7 +754,7 @@ class ApiController extends BaseController {
 	{
 		$model = new LogModel();
 
-		if ($model->requestsThisHourForUser( $this->id() ) > $this->rate_limits)
+		if ($model->requestsThisHourForUser( $this->authenticate->id() ) > $this->rate_limits)
 		{
 			return false;
 		}

@@ -29,8 +29,13 @@ class Migration_Create_api_log_table extends CI_Migration {
 			'user_id' => [
 				'type' => 'INT',
 				'constraint' => 11,
-				'null' => false,
+				'null' => true,         // To log unauthorized requests
 				'unsigned' => true
+			],
+			'ip_address' => [
+				'type' => 'VARCHAR',
+				'constraint' => 45,
+				'null' => false
 			],
 			'duration' => [
 				'type' => 'FLOAT',

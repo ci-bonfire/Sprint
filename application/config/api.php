@@ -79,6 +79,14 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 	$config['aip.ip_whitelist']         = '';
 
 //--------------------------------------------------------------------
+// Restrict to SSL Requests
+//--------------------------------------------------------------------
+// If TRUE, will only accept API requests that are handled over
+// any HTTPS connection. FALSE will allow any request to be handled.
+//
+	$config['api.require_ssl'] = false;
+
+//--------------------------------------------------------------------
 // AJAX Requests Only?
 //--------------------------------------------------------------------
 // If TRUE, the API will be restricted to only allow calls through
