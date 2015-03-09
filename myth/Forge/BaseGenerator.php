@@ -124,7 +124,7 @@ abstract class BaseGenerator extends CLIController {
         if ($file_exists)
         {
 	        if (! $overwrite) {
-		        CLI::write( CLI::color("\texists: ", 'blue') . str_replace(APPPATH, '', $path ) );
+		        CLI::write( CLI::color("\t". strtolower(lang('exists')) .": ", 'blue') . str_replace(APPPATH, '', $path ) );
 		        return true;
 	        }
 
@@ -145,18 +145,18 @@ abstract class BaseGenerator extends CLIController {
 
         if (! write_file($path, $contents))
         {
-            throw new \RuntimeException('Unknown error writing file: '. $path);
+            throw new \RuntimeException( sprintf( lang('errors.writing_file'),  $path) );
         }
 
         chmod($path, $perms);
 
 	    if ($overwrite && $file_exists)
 	    {
-		    CLI::write( CLI::color("\toverwrote ", 'light_red') . str_replace(APPPATH, '', $path ) );
+		    CLI::write( CLI::color("\t". strtolower( lang('overwrote') ) ." ", 'light_red') . str_replace(APPPATH, '', $path ) );
 	    }
 	    else
 	    {
-		    CLI::write( CLI::color("\tcreated ", 'yellow') . str_replace(APPPATH, '', $path ) );
+		    CLI::write( CLI::color("\t". strtolower( lang('created') ) ." ", 'yellow') . str_replace(APPPATH, '', $path ) );
 	    }
 
         return $this;
@@ -183,7 +183,7 @@ abstract class BaseGenerator extends CLIController {
 
         if (! mkdir($path, $perms, true) )
         {
-            throw new \RuntimeException('Unknown error creating directory: '. $path);
+            throw new \RuntimeException( sprintf( lang('errors.creating_dir'), $path) );
         }
 
         return $this;
@@ -299,11 +299,11 @@ abstract class BaseGenerator extends CLIController {
 
         if ($success)
         {
-            CLI::write( CLI::color("\tmodified ", 'cyan') . str_replace(APPPATH, '', $path ) );
+            CLI::write( CLI::color("\t". strtolower( lang('modified') ) ." ", 'cyan') . str_replace(APPPATH, '', $path ) );
         }
         else
         {
-            CLI::write( CLI::color("\terror ", 'light_red') . str_replace(APPPATH, '', $path ) );
+            CLI::write( CLI::color("\t". strtolower( lang('error') ) ." ", 'light_red') . str_replace(APPPATH, '', $path ) );
         }
 
         return $this;
@@ -377,7 +377,7 @@ abstract class BaseGenerator extends CLIController {
 
         if (! file_exists($path . $file))
         {
-            CLI::error('Unable to find the readme file: '. $file);
+            CLI::error(sprintf( lang('forge.cant_find_readme'), $file) );
         }
 
 	    $contents = file_get_contents($path . $file);
@@ -493,7 +493,7 @@ abstract class BaseGenerator extends CLIController {
 
         if (! $themer_name)
         {
-            throw new \RuntimeException('No themer chosen in forge config file.');
+            throw new \RuntimeException( lang('forge.no_themer') );
         }
 
         $this->themer = new $themer_name( get_instance() );
@@ -514,7 +514,7 @@ abstract class BaseGenerator extends CLIController {
 
 		if (! $kit_name)
 		{
-			throw new \RuntimeException('No uikit chosen in application config file.');
+			throw new \RuntimeException( lang('forge.no_uikit') );
 		}
 
 		$uikit = new $kit_name();
@@ -552,7 +552,7 @@ abstract class BaseGenerator extends CLIController {
 
 		if (! is_array($collections) || ! count($collections) )
 		{
-			return CLI::error('No generator collections found.');
+			return CLI::error( lang('forge.no_collections') );
 		}
 
 		foreach ($collections as $alias => $path)

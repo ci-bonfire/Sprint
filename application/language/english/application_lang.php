@@ -2,6 +2,18 @@
 
 $lang['done']               = 'Done';
 $lang['fail']               = 'Failed';
+$lang['exists']             = 'Exists';
+$lang['created']            = 'Created';
+$lang['overwrote']          = 'Overwrote';
+$lang['modified']           = 'Modified';
+$lang['error']              = 'Error';
+
+
+$lang['errors.writing_file']    = 'Unknown error writing file: %s';
+$lang['errors.creating_dir']    = 'Unknown error creating directory: %s';
+$lang['errors.reading_file']    = "Unable to read from file: %s";
+$lang['errors.file_not_found']  = "File not found: %s";
+$lang['errors.cant_instantiate'] = "Unable to create instance of class: %s";
 
 // BaseController
 $lang['bad_json_encode']    = 'Resources can not be converted to JSON data.';
@@ -25,3 +37,26 @@ $lang['cron.running_task']      = "Running task: %s...";
 $lang['cron.done_with_msg']     = "Done with message:\n%s\n";
 $lang['cron.not_scheduled_until']   = "'%s' Not scheduled to run until %s.";
 $lang['cron.nothing_scheduled'] = "No Tasks scheduled to run currently.";
+
+// Forge
+$lang['forge.cant_find_readme'] = 'Unable to find the readme file: %s';
+$lang['forge.no_themer']        = 'No themer chosen in forge config file.';
+$lang['forge.no_uikit']         = 'No uikit chosen in application config file.';
+$lang['forge.no_collections']   = 'No generator collections found.';
+
+// Mail
+$lang['mail.invalid_service']   = "Unable to find Mail Service: %s";
+$lang['mail.invalid_log_data']  = "Not enough data to log email. Must have to, subject and a message.";
+$lang['mail.error_html_log']    = 'Unable to create html the email log file: %s%s.html';
+$lang['mail.error_text_log']    = 'Unable to create the text email log file: %s%s.txt';
+$lang['mail.cant_find_mailer']  = "Unable to locate the mailer: %s";
+$lang['mail.invalid_mailer_method'] = "Mailer method does not exist: %s::%s";
+
+// Settings
+$lang['settings.bad_default']   = 'Settings cannot find the default storage system.';
+$lang['settings.cant_retrieve'] = "Unable to get setting item from specified datastore (%s)";
+$lang['settings.cant_retrieve'] = "Unable to delete setting item from specified datastore (%s)";
+
+// Themers
+$lang['themer.bad_folder']      = "No folder found for theme: %s.";
+$lang['themer.bad_callback']    = "Method not found in View Callback - %s::%s";

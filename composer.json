@@ -1,11 +1,11 @@
 {
     "name" : "sprintphp/sprintphp",
-	"description" : "Dependencies for CodeIgniter's testing environment",
-    "version": "1.0-dev",
+	"description" : "Supercharged Tools on top of CodeIgniter 3",
+    "version": "1.0-alpha",
     "type": "project",
     "keywords": ["php", "codeigniter"],
     "homepage": "http://sprintphp.com",
-    "license": "MIT AND OSL-3.0",
+    "license": "MIT",
     "authors": [
         {
             "name": "Lonnie Ezell",
@@ -21,9 +21,15 @@
     },
 	"require": {
 		"php": ">=5.4",
-        "mobiledetect/mobiledetectlib": "dev-master"
+        "mobiledetect/mobiledetectlib": "dev-master",
+        "raveren/kint": "0.9.*@dev"
 	},
     "require-dev": {
         "mockery/mockery": "dev-master"
+    },
+    "scripts": {
+      "post-create-project-cmd": [
+        "php build/build.php postCreateProject"
+      ]
     }
 }

@@ -271,7 +271,7 @@ class BaseMailer {
 
         if (! class_exists($service_name))
         {
-            throw new \RuntimeException("Unable to find Mail Service: {$service_name}");
+            throw new \RuntimeException( sprintf( lang('mail.invalid_service'), $service_name) );
         }
 
         $this->service = new $service_name();
@@ -290,7 +290,7 @@ class BaseMailer {
         $themer = config_item('active_themer');
 
         if (empty($themer)) {
-            throw new \RuntimeException('No Themer chosen.');
+            throw new \RuntimeException( lang('no_themer') );
         }
 
         if (empty($this->themer))

@@ -12,6 +12,8 @@ Currently, you'll need to ensure that you pass the `dev-develop` version as the 
 
 	$ composer create-project sprintphp/sprintphp <install folder> dev-develop
 
+As a final step in the installation script, Composer will automatically run a build script that will cleanup any temporary files that might have made it into the repo, as well as the sprint-specific tests, and any application modules that might have been accidentally saved to the repo. It will also generate a new encryption key for you and modify `application/config/config.php` to use that encryption key automatically.
+
 You're now ready to skip to [migrating the database](#migrate_the_database).
 
 ### Manual Install

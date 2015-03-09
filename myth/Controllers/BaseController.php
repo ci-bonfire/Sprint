@@ -88,11 +88,6 @@ class BaseController extends \CI_Controller {
 	protected $cache_type = NULL;
 	protected $backup_cache = NULL;
 
-	// If TRUE, will send back the notices view
-	// through the 'render_json' method in the
-	// 'fragments' array.
-	protected $ajax_notices = TRUE;
-
 	// If set, this language file will automatically be loaded.
 	protected $language_file = NULL;
 
@@ -254,50 +249,19 @@ class BaseController extends \CI_Controller {
 	 * @param  mixed $json The data to be converted to JSON.
 	 *
 	 * @throws RenderException
-	 * @return void [type]       [description]
+	 * @return void
 	 */
 	public function renderJSON( $json )
 	{
 		if ( is_resource( $json ) )
 		{
-			throw new RenderException( lang('bad_json_encode') );
+			throw new \RuntimeException( lang('bad_json_encode') );
 		}
 
-		// When integrating Eldarion AJAX library, we get the addtional
-		// benefit of having the notices and profiler refreshed during AJAX calls.
-		if ( config_item( 'use_eldarion' ) )
+		if ( $this->config->item( 'show_profiler' ) )
 		{
-
-			// If there is a fragments array and we've enabled profiling,
-			// then we need to add the profile results to the fragments
-			// array so it will be updated on the site, since we disable
-			// all profiling below to keep the results clean.
-			if ( is_array( $json ) )
-			{
-				if ( ! isset( $json['fragments'] ) )
-				{
-					$json['fragments'] = array();
-				}
-
-				if ( $this->config->item( 'show_profiler' ) )
-				{
-					$this->load->library( 'profiler' );
-					$json['fragments']['#profiler'] = $this->profiler->run();
-				}
-
-				// Also, include our notices in the fragments array.
-				if ( $this->ajax_notices === TRUE )
-				{
-					if ( ! empty( $this->themer ) && ! empty( $this->theme ) )
-					{
-						$json['fragments']['#notices'] = $this->themer->display( "{$this->theme}:notice", array( 'notice' => $this->message() ) );
-					}
-					else if (file_exists(APPPATH .'views/notice.php'))
-					{
-						$json['fragments']['#notices'] = $this->load->view_path( "notice", array( 'notice' => $this->message() ), TRUE );
-					}
-				}
-			}
+			$this->load->library( 'profiler' );
+			$json['#sprint-profiler'] = $this->profiler->run();
 		}
 
 		$this->output->enable_profiler( FALSE )
@@ -316,13 +280,13 @@ class BaseController extends \CI_Controller {
 	 * @param  mixed $js The javascript to output.
 	 *
 	 * @throws RenderException
-	 * @return void [type]       [description]
+	 * @return void
 	 */
 	public function renderJS( $js = NULL )
 	{
 		if ( ! is_string( $js ) )
 		{
-			throw new RenderException( lang('bad_javascript') );
+			throw new \RuntimeException( lang('bad_javascript') );
 		}
 
 		$this->output->enable_profiler( FALSE )

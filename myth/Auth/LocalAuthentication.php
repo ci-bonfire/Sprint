@@ -107,6 +107,16 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $user)
         {
+	        // We need to send an error even if no
+	        // user was found!
+	        $this->error = lang('auth.invalid_user');
+
+	        // If an email is present, log the attempt
+	        if (! empty($credentials['email']) )
+	        {
+		        $this->ci->login_model->recordLoginAttempt($credentials['email']);
+	        }
+
             $this->user = null;
             return $user;
         }

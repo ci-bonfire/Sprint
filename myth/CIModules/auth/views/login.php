@@ -1,4 +1,4 @@
-<?= form_open(); ?>
+<?= form_open( current_url(), ['id' => 'login_form']); ?>
 
     <h2 class="form-signin-heading"><?= lang('auth.signin') ?></h2>
 
@@ -13,7 +13,7 @@
         <?= lang('auth.remember_label') ?>
     </label>
 
-    <button class="btn btn-lg btn-primary btn-block" id="submit" name="submit" type="submit"><?= lang('auth.signin') ?></button>
+    <input type="submit" class="btn btn-lg btn-primary btn-block" id="submit" name="submit" value="<?= lang('auth.signin') ?>">
 
     <br/>
     <p><?= lang('auth.need_account') ?></p>

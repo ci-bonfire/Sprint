@@ -88,7 +88,7 @@ class ViewThemer implements ThemerInterface
         $theme = empty($this->theme) ? $this->default_theme : $this->theme;
 
         if (! isset($this->folders[$theme])) {
-            throw new \LogicException("No folder found for theme: {$theme}.");
+            throw new \LogicException( sprintf( lang('theme.bad_folder'), $theme ) );
         }
 
 	    $this->active_theme = $theme;
@@ -283,7 +283,7 @@ class ViewThemer implements ThemerInterface
             }
 
             if (! method_exists($class, $method)) {
-                throw new \RuntimeException("Method not found in View Callback - {$class}::{$method}");
+                throw new \RuntimeException( sprintf( lang('themer.bad_callback'), $class, $method ) );
             }
 
             // Call the class with our parameters

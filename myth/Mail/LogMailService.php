@@ -79,7 +79,7 @@ class LogMailService implements MailServiceInterface {
             (empty($this->html_message) && empty($this->text_message))
         )
         {
-            throw new \RuntimeException("Not enough data to log email. Must have to, subject and a message.");
+            throw new \RuntimeException( lang('mail.invalid_log_data') );
         }
 
         $symbols = ['#', '%', '&', '{', '}', '\\', '/', '<', '>', '*', '?', ' ', '$', '!', '\'', '"', ':', '@', '+', '`', '='];
@@ -103,13 +103,13 @@ class LogMailService implements MailServiceInterface {
         // Write our HTML file out
         if (! empty($this->html_message) && ! write_file( $path . $filename . '.html', $this->html_message ) )
         {
-            throw new \RuntimeException('Unable to create html the email log file: '. $path . $filename . '.html');
+            throw new \RuntimeException( sprintf( lang('mail.error_html_log'), $path, $filename) );
         }
 
         // Write our TEXT file out
         if (! empty($this->text_message) && ! write_file( $path . $filename . '.txt', $this->text_message ) )
         {
-            throw new \RuntimeException('Unable to create the text email log file: '. $path . $filename . '.txt');
+            throw new \RuntimeException( sprintf( lang('mail.error_text_log'), $path, $filename) );
         }
 
         return true;

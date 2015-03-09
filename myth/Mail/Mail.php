@@ -57,21 +57,21 @@ class Mail {
 
         if (! is_file(APPPATH .'mailers/'. $class .'.php'))
         {
-            throw new \RuntimeException("Unable to locate the mailer: {$class}");
+            throw new \RuntimeException( sprintf( lang('mail.cant_find_mailer'), $class) );
         }
 
         require_once APPPATH .'mailers/'. $class .'.php';
 
         if (! class_exists($class, false))
         {
-            throw new \RuntimeException("Unable to create instance of class: {$class}");
+            throw new \RuntimeException( sprintf( lang('errors.cant_instantiate'), $class) );
         }
 
         $mailer = new $class( $options );
 
         if (! method_exists($mailer, $method))
         {
-            throw new \BadMethodCallException("Mailer method does not exist: {$class}::{$method}");
+            throw new \BadMethodCallException( sprintf( lang('mail.invalid_mailer_method'), $class, $method) );
         }
 
         // try to deliver the mail, but don't send back the contents

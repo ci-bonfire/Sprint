@@ -1,4 +1,4 @@
-<?= form_open() ?>
+<?= form_open( current_url(), ['id' => 'join_form'] ) ?>
 
     <h2 class="form-signin-heading"><?= lang('auth.register') ?></h2>
 
@@ -22,7 +22,7 @@
     <?= $uikit->notice(lang('auth.password_strength'), 'default', false, ['class' => 'pass-strength']); ?>
 
 
-    <button class="btn btn-lg btn-primary btn-block" id="submit" name="submit" disabled type="submit"><?= lang('auth.register') ?></button>
+    <input class="btn btn-lg btn-primary btn-block" id="submit" name="submit" disabled type="submit" value="<?= lang('auth.register') ?>" />
 
     <br/>
     <p><?= lang('auth.have_account') ?></p>
