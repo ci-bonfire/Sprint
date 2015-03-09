@@ -144,15 +144,6 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
     $config['theme.uikit'] = '\Myth\UIKits\Bootstrap';
 
 //--------------------------------------------------------------------
-// Use Eldarion AJAX?
-//--------------------------------------------------------------------
-// If TRUE, the eldarion ajax library will be integrated into the
-// BaseController for some additional helpers. If FALSE, then you
-// will have to replace the functionality on your own.
-//
-    $config['use_eldarion'] = true;
-
-//--------------------------------------------------------------------
 // Parse Views?
 //--------------------------------------------------------------------
 // If TRUE, all files ran through the themers display() method will

@@ -34,7 +34,6 @@ Sprint also uses the following software packages:
 * [Bootstrap CSS Framework](http://getbootstrap.com/)
 * [Foundation CSS Framework](http://foundation.zurb.com/)
 * [jQuery Javascript Framework](http://jquery.com/)
-* [Eldarion AJAX Framework](https://github.com/eldarion/eldarion-ajax)
 * [MobileDetect](http://mobiledetect.net/)
 * [PHP Error](http://phperror.net/)
 * [Ink: Responsive Email Framework](http://zurb.com/ink/)

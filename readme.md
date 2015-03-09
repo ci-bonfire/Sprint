@@ -37,7 +37,6 @@ The following is being built for the initial release:
 * [Extended Router](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/routes.md) to include module support, named routes, HTTP verb-based routing, Restful resources and scoped routes/areas.
 * Simple, but flexible, [Template](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/themes.md) system
 * Module Support, without being able to call other controllers. That simply gets too complex and causes too many problems. Instead, it's simply the ability to keep MVC triads in modules that can still be called from the URI.
-* Ready-to-roll [AJAX system](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/ajax.md) using [Eldarion AJAX](https://github.com/eldarion/eldarion-ajax)
 * Better [Database Migrations](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/database/migrations.md), with CLI tool for building and running
 * Database [Seeding](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/database/seeding.md) with CLI tool
 * Markdown-based [documentation system](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/writing_docs.md).
