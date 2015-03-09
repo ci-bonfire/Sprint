@@ -247,10 +247,9 @@ class ApiController extends BaseController {
 		if (method_exists($this, $method))
 		{
 			call_user_func_array([$this, $method], $arguments);
-die('here');
+
 			if ($this->enable_logging === true)
 			{
-				die('here');
 				$this->logTime();
 			}
 		}
