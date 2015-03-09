@@ -211,7 +211,7 @@ class ApiController extends BaseController {
 
 		if ($this->do_auth_check)
 		{
-			if (! $this->restrict() )
+			if (! $this->restrict(null, true) )
 			{
 				$this->failUnauthorized( lang('api.unauthorized') );
 			}
