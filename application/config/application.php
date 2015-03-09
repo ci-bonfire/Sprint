@@ -38,7 +38,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 // the application and the modules themselves if this is set to TRUE.
 //
     $config['auto_migrate'] = array(
-        // 'app',   // Comment this line out to turn off auto-migrations.
+//         'app',   // Comment this line out to turn off auto-migrations.
     );
 
 //--------------------------------------------------------------------
@@ -53,6 +53,15 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 //--------------------------------------------------------------------
 //
     $config['show_profiler'] = true;
+
+//--------------------------------------------------------------------
+// PHP Error
+//--------------------------------------------------------------------
+// If enabled, will use a custom error screen on PHP errors instead
+// of a generic screen. Only works in the development environment,
+// for all other environments it is ignored.
+//
+	$config['use_php_error'] = true;
 
 //--------------------------------------------------------------------
 // Caching
