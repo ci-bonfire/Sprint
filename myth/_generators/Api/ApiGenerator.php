@@ -52,7 +52,7 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 
 	public function run($segments=[], $quiet=false)
 	{
-		CLI::write("Available Auth Types: ". CLI::color('basic, digest', 'yellow') );
+		CLI::write("Available Auth Types: ". CLI::color('basic, digest, none', 'yellow') );
 
 		$this->auth_type = trim( CLI::prompt('Auth type') );
 
@@ -67,6 +67,8 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 				$this->readme('readme_digest.txt');
 				break;
 		}
+
+		$this->setupLogging();
 	}
 
 	//--------------------------------------------------------------------
@@ -74,8 +76,6 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 	private function setupBasic()
 	{
 		$this->setAuthType('basic');
-
-		$this->setupLogging();
 	}
 
 	//--------------------------------------------------------------------
@@ -85,8 +85,6 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 		$this->makeMigration('migration', 'Add_digest_key_to_users');
 
 		$this->setAuthType('digest');
-
-		$this->setupLogging();
 	}
 
 	//--------------------------------------------------------------------
