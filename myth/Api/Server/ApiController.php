@@ -99,6 +99,14 @@ class ApiController extends BaseController {
 	protected $offset = 0;
 
 	/**
+	 * Stores any select values passed to any methods
+	 * via the $_GET var ?fields=x,y,z.
+	 *
+	 * @var null
+	 */
+	protected $selects = null;
+
+	/**
 	 * The time in microseconds that the request started.
 	 *
 	 * @var null
@@ -721,6 +729,34 @@ die('here');
 	}
 
 	//--------------------------------------------------------------------
+
+	/**
+	 * Checks for the $_GET key of 'fields' and will store that
+	 * value automatically in $this->selects for use in your own queries.
+	 */
+	public function detectFields()
+	{
+	    if (! array_key_exists('fields', $_GET))
+	    {
+		    return;
+	    }
+
+		$fields = explode(',', $_GET['fields']);
+
+		if (! is_array($fields))
+		{
+			return;
+		}
+
+		array_walk($fields, function(&$item, $key) {
+			$item = trim($item);
+		});
+
+		$this->selects = $fields;
+	}
+
+	//--------------------------------------------------------------------
+
 
 	/**
 	 * Takes care of logging the request information to the database.

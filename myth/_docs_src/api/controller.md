@@ -2,8 +2,6 @@
 
 The ApiController provides the foundation of all of your API functionality. It takes care of authenticating users for you, enforces any HTTPS requirements, and provides a number of helpful methods for responding to the client.
 
-## Authentication
-
 ## Getting Request Data
 Any data sent along with a request can be retrieved through the `grabVar()` method. If the request used the GET method, then any `$_GET` variables can be retrieved. For POST requests it will hold the `$_POST` vars. For all others it will attempt to retrieve a JSON body from `php://input` and make that information available.
 
@@ -123,6 +121,14 @@ Returns a 410 HTTP status with the standard error response. Used when the client
 		"error": "resource_gone",
 		"error_message": "That item has been deleted."
 	}
+
+## Custom field selections
+To enable a consistent method for limiting the fields returned during an API call, the controller will automatically look for the $_GET var `fields` which can contain a comma-separated list of fields to return. This will NOT automatically be inserted into database queries. Instead, the value is sitting in `$this->selects` for your use whenever you need it.
+
+	// API Call
+	GET http://example.com/api/users/123?fields=username,email,last_login
+	// In Controller
+	$user = $this->user_model->select( $this->selects )->first();
 
 ## Paginating Results
 The controller will automatically check for a `$_GET` variable named `page` and store that information in the class. From that information, and the `$per_page` variable, it will determine the current `$offset` to use for any database requests.
