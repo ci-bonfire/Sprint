@@ -762,6 +762,11 @@ class ApiController extends BaseController {
 	 */
 	public function logTime()
 	{
+		if (! $this->enable_logging)
+		{
+			return;
+		}
+
 	    $model = new LogModel();
 
 		$data = [
