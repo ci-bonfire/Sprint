@@ -48,9 +48,269 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 
 	protected $auth_type;
 
+	protected $destination;
+
 	//--------------------------------------------------------------------
 
+	/**
+	 * @param array $segments
+	 * @param bool $quiet
+	 */
 	public function run($segments=[], $quiet=false)
+	{
+		// Show an index?
+		if (empty($segments[0]))
+		{
+			return $this->displayIndex();
+		}
+
+		$action = array_shift($segments);
+
+		switch ($action)
+		{
+			case 'install':
+				$this->install();
+				break;
+			case 'scaffold':
+				$this->scaffold($segments, $quiet);
+				break;
+			default:
+				if (! $quiet)
+				{
+					CLI::write('Nothing to do.', 'green');
+				}
+				break;
+		}
+	}
+
+	//--------------------------------------------------------------------
+
+	private function displayIndex()
+	{
+		CLI::write("\nAvailable API Generators");
+
+		CLI::write( CLI::color('install', 'yellow') .'   install        Creates migrations, alters config file for desired authentication' );
+		CLI::write( CLI::color('scaffold', 'yellow') .'  scaffold <name>  Creates basic CRUD controller, routes, and optionally API Blueprint files' );
+	}
+
+	//--------------------------------------------------------------------
+
+	//--------------------------------------------------------------------
+	// Scaffold Methods
+	//--------------------------------------------------------------------
+
+	/**
+	 * Quickly creates boilerplate code for a new API resource.
+	 *
+	 * @param $segments
+	 * @param $quiet
+	 */
+	private function scaffold( $segments, $quiet )
+	{
+		$this->load->helper('inflector');
+
+		/*
+		 * Gather needed info
+		 */
+
+		// Resource name
+		$resource = array_shift($segments);
+
+		if (empty($resource))
+		{
+			$resource = strtolower( CLI::prompt('Resource name') );
+		}
+
+		// Resources should be plural, but we'll need a singular name also.
+		$resource_single = singular($resource);
+		$resource_plural = plural($resource);
+
+		// API version
+		$version = $this->askVersion();
+
+		$blueprint = $this->askBlueprint();
+
+		$model = $this->detectModel($resource_single);
+
+		/*
+		 * Start Building
+		 */
+		$this->destination = APPPATH .'controllers/';
+		if (! empty($version))
+		{
+			$this->destination .= $version .'/';
+		}
+
+		// Controller
+		if (! $this->createController($resource_plural, $resource_single) )
+		{
+			CLI::error('Unknown error creating Controller.');
+			exit(1);
+		}
+
+//		// Views
+//		if (! $this->createViews($resource_plural) )
+//		{
+//			CLI::error('Unknown error creating Views.');
+//			exit(1);
+//		}
+//
+//		// Language Files
+//		if (! $this->createLanguage($resource_plural) )
+//		{
+//			CLI::error('Unknown error creating Language File.');
+//			exit(1);
+//		}
+//
+//		// Blueprint File
+//		if ($blueprint)
+//		{
+//			if (! $this->createBlueprint($resource_plural) )
+//			{
+//				CLI::error('Unknown error creating Blueprint file.');
+//				exit(1);
+//			}
+//		}
+//
+//		// Modify Routes
+//		if (! $this->addRoutes($resource_plural) )
+//		{
+//			CLI::error('Unknown error adding Routes.');
+//			exit(1);
+//		}
+
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Gets the version number/folder name for the controller to live.
+	 *
+	 * @return string
+	 */
+	private function askVersion()
+	{
+		CLI::write("\nVersions are simply controller folders (i.e. controllers/v1/...)");
+		CLI::write("(Enter 'na' for no version folder)");
+
+		$version = strtolower( CLI::prompt('Version name', 'v1') );
+		$version = $version == 'na' ? '' : $version;
+
+		return $version;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Should we create an API Blueprint file for this controller?
+	 *
+	 * @return bool
+	 */
+	private function askBlueprint()
+	{
+		CLI::write("\nAPI Blueprint is a plain-text API documentation starter.");
+		CLI::write("See: ". CLI::color('https://apiblueprint.org', 'light_blue'));
+
+		$make_blueprint = CLI::prompt('Create Blueprint file?', ['y', 'n']);
+
+		return $make_blueprint == 'y' ? true : false;
+	}
+
+	//--------------------------------------------------------------------
+
+	private function detectModel($name)
+	{
+		$model_name = ucfirst($name) .'_model.php';
+
+		if (! file_exists(APPPATH .'models/'. $model_name))
+		{
+			CLI::write("\nUnable to find model named: {$model_name}");
+			$model_name = CLI::prompt('Model filename');
+		}
+		else
+		{
+			CLI::write("Using model: ". CLI::color($model_name, 'yellow') );
+		}
+
+		return $model_name;
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Creates the new APIController - based resource with basic CRUD.
+	 *
+	 * @param $name
+	 *
+	 * @return $this
+	 */
+	private function createController( $plural, $single )
+	{
+		$data = [
+			'today'             => date( 'Y-m-d H:ia' ),
+			'model_name'        => strtolower($single) .'_model',
+			'plural'            => $plural,
+			'single'            => $single,
+			'class_name'        => ucfirst($plural)
+		];
+
+		$destination = $this->destination . ucfirst($plural) .'.php';
+
+		return $this->copyTemplate( 'controller', $destination, $data, $this->overwrite );
+	}
+
+	//--------------------------------------------------------------------
+
+	private function createViews( $name )
+	{
+
+	}
+
+	//--------------------------------------------------------------------
+
+	private function createLanguage( $name )
+	{
+
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Creates the API Blueprint file for that resource in
+	 * APPPATH/docs/api
+	 *
+	 * @param $name
+	 */
+	private function createBlueprint( $name )
+	{
+
+	}
+
+	//--------------------------------------------------------------------
+
+	/**
+	 * Modifies the routes file to include a line for the API endpoints
+	 * for this resource.
+	 *
+	 * @param $name
+	 */
+	private function addRoutes( $name )
+	{
+
+	}
+
+	//--------------------------------------------------------------------
+
+
+	//--------------------------------------------------------------------
+	// Installer Methods
+	//--------------------------------------------------------------------
+
+	/**
+	 * Handles actually installing the tables and correct authentication
+	 * type.
+	 */
+	private function install( )
 	{
 		CLI::write("Available Auth Types: ". CLI::color('basic, digest, none', 'yellow') );
 
@@ -72,6 +332,7 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 	}
 
 	//--------------------------------------------------------------------
+
 
 	private function setupBasic()
 	{

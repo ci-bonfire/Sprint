@@ -12,10 +12,29 @@ The following are a list of the components that are provided to help you build o
 - The [Routes](general/routes) enhancement provides a number of tools designed to make creating API's simpler.
 
 ## Setting Up Your System
-While the tools are all provided, you do need to run a generator that will create the proper migrations for you, and will even get you up and running with a basic API Admin area for you.
+Sprint provides a quick way to setup an fresh install with the basics needed to get going developing an API including: 
+
+* Create any migration files that might be needed
+* Setup your configuration file based on the type of authentication chosen
+
+This is done via a provided [forge](forge/overview) generator on the CLI.
+
+	$ php sprint forge api install
+	
+Simply follow the prompts and your system will be modified with the above basic tools, ready for you to start customizing the code to meet your needs. 
+
+If any migration files were created, you will need to run them yourself, still.
+
+	$ php sprint database migrate app
 
 ### APIController
-In order to make use of the API-server features provided, your controllers MUST extend the [APIController](api/controller). This class already has the [AuthTrait](security/auth_trait) loaded for you.
+In order to make use of the API-server features provided, your controllers MUST extend the [APIController](api/controller). This class already has the [AuthTrait](security/auth_trait) loaded for you, as well as a number of things in place to create a standard baseline to start any API from.
+
+New controllers can be scaffolded for you via another [forge](forge/overview) generator on the CLI. 
+
+	$ php sprint forge api scaffold <resource_name>
+
+
 
 ## Common Configuration
 The configuration values for the API tools are found in the `application/config/api.php` file.
