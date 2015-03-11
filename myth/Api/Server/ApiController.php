@@ -646,7 +646,7 @@ class ApiController extends BaseController {
 
 		// If they've specifically passed in page=0, then we need
 		// to ignore paging...
-		if ((int)$this->input->get('page') === 0 && $this->input->get('page') !== false)
+		if ((int)$this->input->get('page') === 0 && ! is_null($this->input->get('page')) )
 		{
 			$this->per_page = 0;
 		}
