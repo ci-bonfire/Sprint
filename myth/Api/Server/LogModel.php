@@ -39,7 +39,7 @@ class LogModel extends CIDbModel {
 	protected $set_created = true;
 	protected $set_modified = false;
 
-	protected $fields = ['id', 'user_id', 'ip_address', 'duration', 'request', 'method', 'created_ongit '];
+	protected $fields = ['id', 'user_id', 'ip_address', 'duration', 'request', 'method', 'created_on'];
 
 	//--------------------------------------------------------------------
 
