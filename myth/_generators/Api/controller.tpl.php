@@ -45,6 +45,14 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 	 */
 	protected \$primary_key = 'id';
 
+	/**
+	 * The version string for this API.
+	 * Represents the folder name and URI segment.
+	 *
+	 * @var string
+	 */
+	protected \$api_version = '{$version}';
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -356,6 +364,10 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 		{
 			\$new_resource[\$field] = array_key_exists(\$field, \$resource) ? \$resource[\$field] : null;
 		}
+
+		\$new_resource['meta'] = [
+			'url' => site_url(\"{\$this->api_version}/{$plural}/{\$resource[\$this->primary_key]}\")
+		];
 
 		return \$new_resource;
 	}

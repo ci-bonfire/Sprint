@@ -114,7 +114,7 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 		 */
 
 		// Resource name
-		$resource = array_shift($segments);
+		list($resource, $version, $blueprint, $model) = array_pad($segments, 4, null);
 
 		if (empty($resource))
 		{
@@ -126,11 +126,20 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 		$resource_plural = plural($resource);
 
 		// API version
-		$version = $this->askVersion();
+		if (empty($version))
+		{
+			$version = $this->askVersion();
+		}
 
-		$blueprint = $this->askBlueprint();
+		if (empty($blueprint))
+		{
+			$blueprint = $this->askBlueprint();
+		}
 
-		$model = $this->detectModel($resource_single);
+		if (empty($model))
+		{
+			$model = $this->detectModel( $resource_single );
+		}
 
 		/*
 		 * Start Building
@@ -142,7 +151,7 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 		}
 
 		// Controller
-		if (! $this->createController($resource_plural, $resource_single) )
+		if (! $this->createController($resource_single, $resource_plural, $version) )
 		{
 			CLI::error('Unknown error creating Controller.');
 			exit(1);
@@ -162,15 +171,15 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 //			exit(1);
 //		}
 //
-//		// Blueprint File
-//		if ($blueprint)
-//		{
-//			if (! $this->createBlueprint($resource_plural) )
-//			{
-//				CLI::error('Unknown error creating Blueprint file.');
-//				exit(1);
-//			}
-//		}
+		// Blueprint File
+		if ($blueprint)
+		{
+			if (! $this->createBlueprint($resource_single, $resource_plural, $version, $model) )
+			{
+				CLI::error('Unknown error creating Blueprint file.');
+				exit(1);
+			}
+		}
 //
 //		// Modify Routes
 //		if (! $this->addRoutes($resource_plural) )
@@ -244,14 +253,15 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 	 *
 	 * @return $this
 	 */
-	private function createController( $plural, $single )
+	private function createController( $single, $plural, $version )
 	{
 		$data = [
 			'today'             => date( 'Y-m-d H:ia' ),
 			'model_name'        => strtolower($single) .'_model',
 			'plural'            => $plural,
 			'single'            => $single,
-			'class_name'        => ucfirst($plural)
+			'class_name'        => ucfirst($plural),
+			'version'           => $version
 		];
 
 		$destination = $this->destination . ucfirst($plural) .'.php';
@@ -281,9 +291,36 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 	 *
 	 * @param $name
 	 */
-	private function createBlueprint( $name )
+	private function createBlueprint( $single, $plural, $version, $model )
 	{
+		$version = rtrim($version, '/');
+		if (! empty($version))
+		{
+			$version .= '/';
+		}
 
+		// Load the controller so we can use the formatResource method.
+//		require APPPATH ."controllers/{$version}". ucfirst($plural) .'.php';
+//
+//		$class_name = ucfirst($plural);
+//
+//		$controller = new $class_name();
+
+		// Load the model so that we can get the fields from it.
+
+
+		$data = [
+			'plural'            => $plural,
+			'single'            => $single,
+			'uc_single'         => ucfirst($single),
+			'uc_plural'         => ucfirst($plural),
+			'version'           => $version,
+			'site_url'          => site_url()
+		];
+
+		$destination = APPPATH .'docs/api/'. $version . $plural .'.md';
+
+		return $this->copyTemplate( 'blueprint', $destination, $data, $this->overwrite );
 	}
 
 	//--------------------------------------------------------------------
