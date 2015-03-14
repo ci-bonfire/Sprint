@@ -1715,6 +1715,12 @@ class CIDbModel
      */
     public function __get($key)
     {
+        // Give them first crack at any protected class vars
+        if (isset($this->$key))
+        {
+            return $this->$key;
+        }
+
         // Debugging note:
         //	If you're here because you're getting an error message
         //	saying 'Undefined Property: system/core/Model.php', it's
