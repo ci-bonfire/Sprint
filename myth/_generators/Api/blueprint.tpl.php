@@ -1,10 +1,7 @@
 <?php
 $page = <<<EOT
 FORMAT: 1A
-
-# {$uc_plural}
-
-Provides and API for managing {$uc_plural}.
+HOST: {$site_url}{$version}
 
 
 # Group {$uc_plural}
@@ -29,14 +26,7 @@ Lists all {$plural} in a paginated manner.
             "next_url": "{$site_url}/{$version}/{$plural}?page=2&per_page=20",
             "{$plural}": [
                 {
-                    "id": 1,
-                    "email": "user1@example.com",
-                    "username": "Lefty",
-                    "created_on": "2014-12-12 10:37:59",
-                    "status": null,
-                    "status_message": null,
-                    "active": 1,
-                    "deleted": 0,
+                    {$formatted}
                     "meta": {
                         "url": "http://api.example.com/v1/{$plural}/1
                     }
@@ -66,14 +56,7 @@ Allows you to create a new {$uc_single}. The information should be submitted as 
 + Response 201 (application/json)
 
         {
-            "id": 1,
-            "email": "user1@example.com",
-            "username": "Lefty",
-            "created_on": "2014-12-12 10:37:59",
-            "status": null,
-            "status_message": null,
-            "active": 1,
-            "deleted": 0,
+            {$formatted}
             "meta": {
                 "url": "http://api.example.com/v1/{$plural}/1
             }
@@ -123,14 +106,7 @@ Allows you to create a new {$uc_single}. The information should be submitted as 
 + Response 200 (application/json)
 
         {
-            "id": 1,
-            "email": "user1@example.com",
-            "username": "Lefty",
-            "created_on": "2014-12-12 10:37:59",
-            "status": null,
-            "status_message": null,
-            "active": 1,
-            "deleted": 0,
+            {$formatted}
             "meta": {
             "url": "http://api.example.com/v1/{$plural}/1
             }
@@ -157,14 +133,7 @@ Allows you to create a new {$uc_single}. The information should be submitted as 
 + Response 200 (application/json)
 
         {
-            "id": 1,
-            "email": "user1@example.com",
-            "username": "Lefty",
-            "created_on": "2014-12-12 10:37:59",
-            "status": null,
-            "status_message": null,
-            "active": 1,
-            "deleted": 0,
+            {$formatted}
             "meta": {
                 "url": "http://api.example.com/v1/{$plural}/1
             }

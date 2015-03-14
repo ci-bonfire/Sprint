@@ -299,14 +299,11 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 			$version .= '/';
 		}
 
-		// Load the controller so we can use the formatResource method.
-//		require APPPATH ."controllers/{$version}". ucfirst($plural) .'.php';
-//
-//		$class_name = ucfirst($plural);
-//
-//		$controller = new $class_name();
+		// Load the model so we can use the correct table to use
+        $model = strtolower( str_replace('.php', '', $model) );
+		$this->load->model( $model, $model, true );
 
-		// Load the model so that we can get the fields from it.
+        $obj = $this->formatObject($model);
 
 
 		$data = [
@@ -315,7 +312,8 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 			'uc_single'         => ucfirst($single),
 			'uc_plural'         => ucfirst($plural),
 			'version'           => $version,
-			'site_url'          => site_url()
+			'site_url'          => site_url(),
+            'formatted'         => $obj
 		];
 
 		$destination = APPPATH .'docs/api/'. $version . $plural .'.md';
@@ -325,7 +323,63 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
-	/**
+    /**
+     * Creates a generic representation of the object from the database
+     * table.
+     *
+     * @param $model
+     */
+    private function formatObject( $model )
+    {
+        $fields = $this->db->field_data($this->$model->table_name);
+
+        $obj = '';
+
+        foreach ($fields as $field)
+        {
+            $obj .= "\"$field->name\":  ";
+
+            switch ($field->type)
+            {
+                case 'tinyint':
+                    $obj .= "0,\n";
+                    break;
+                case 'int':
+                case 'bigint':
+                    $obj .= "1234,\n";
+                    break;
+                case 'float':
+                case 'double':
+                    $obj .= "123.45,\n";
+                    break;
+                case 'date':
+                    $obj .= date("\"Y-m-d\",\n");
+                    break;
+                case 'datetime':
+                    $obj .= date("\"Y-m-d H:i:s\",\n");
+                    break;
+            }
+
+            if ($field->name == 'email')
+            {
+                $obj .= "\"someone@example.com\",\n";
+            }
+            else if (strpos('name', $field->name) !== false)
+            {
+                $obj .= "\"Lefty\",\n";
+            }
+            else if (in_array($field->type, ['char', 'varchar', 'text']))
+            {
+                $obj .= "\"Some default string\",\n";
+            }
+        }
+
+        return $obj;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
 	 * Modifies the routes file to include a line for the API endpoints
 	 * for this resource.
 	 *
