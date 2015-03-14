@@ -202,7 +202,7 @@ Allows you to create a new {$uc_single}. The information should be submitted as 
 
 ### Delete A {$uc_single} [DELETE]
 
-+ Response 204 (application/json)
++ Response 200 (application/json)
 
         {
             "response": "{$uc_single} was deleted"

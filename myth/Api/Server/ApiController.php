@@ -141,6 +141,8 @@ class ApiController extends BaseController {
 	 * @var array
 	 */
 	protected $codes = array(
+        'created'                   => 201,
+        'deleted'                   => 200,
 		'invalid_request'           => 400,
 		'unsupported_response_type' => 400,
 		'invalid_scope'             => 400,
@@ -358,7 +360,7 @@ class ApiController extends BaseController {
 	 */
 	protected function respondCreated($data)
 	{
-		return $this->respond($data, 201, 'created');
+		return $this->respond($data, $this->codes['created'], 'created');
 	}
 
 	//--------------------------------------------------------------------
@@ -372,7 +374,7 @@ class ApiController extends BaseController {
 	 */
 	protected function respondDeleted($data)
 	{
-		return $this->respond($data, 204, 'deleted');
+		return $this->respond($data, $this->codes['deleted'], 'deleted');
 	}
 
 	//--------------------------------------------------------------------
