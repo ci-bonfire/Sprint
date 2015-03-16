@@ -442,8 +442,6 @@ class Route
         }
 
         $this->get($name, $new_name . '/list_all', $options);
-        $this->get($name . '/new', $new_name . '/creation_form', $options);
-        $this->get($name . '/' . $id . '/edit', $new_name . '/editing_form/$1', $options);
         $this->get($name . '/' . $id, $new_name . '/show/$1', $options);
         $this->post($name, $new_name . '/create', $options);
         $this->put($name . '/' . $id, $new_name . '/update/$1', $options);

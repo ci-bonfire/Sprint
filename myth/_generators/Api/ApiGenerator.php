@@ -157,13 +157,6 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 			exit(1);
 		}
 
-//		// Views
-//		if (! $this->createViews($resource_plural) )
-//		{
-//			CLI::error('Unknown error creating Views.');
-//			exit(1);
-//		}
-//
 //		// Language Files
 //		if (! $this->createLanguage($resource_plural) )
 //		{
@@ -271,14 +264,7 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
-	private function createViews( $name )
-	{
-
-	}
-
-	//--------------------------------------------------------------------
-
-	private function createLanguage( $name )
+	private function createLanguage( $single, $plural, $version, $model )
 	{
 
 	}

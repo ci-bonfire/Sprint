@@ -145,22 +145,6 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 	//--------------------------------------------------------------------
 
 	/**
-	 * Returns the form needed to create this resource.
-	 */
-	public function creation_form() 
-	{
-		\$this->load->helper('form');
-
-		\$data = [
-			'fields' => empty(\$this->fields) ? \$this->{$model_name}->get_fields() : \$this->fields
-		];
-
-		\$this->load->view('v1/{$plural}/create_form', \$data);
-	}
-	
-	//--------------------------------------------------------------------
-
-	/**
 	 * Handles creating a new resource.
 	 */
 	public function create() 
@@ -224,42 +208,6 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 		}
 
 		\$this->respond( \$this->formatResource(\${$single}) );
-	}
-	
-	//--------------------------------------------------------------------
-
-	/**
-	 * Displays the form for editing this resource.
-	 *
-	 * @param \$id
-	 *
-	 * @return mixed
-	 */
-	public function editing_form(\$id)
-	{
-		\${$single} = \$this->{$model_name}->as_array()
-								 ->with_deleted()
-								 ->find_by(\$this->primary_key, \$id);
-
-		// Valid user?
-		if (! \${$single})
-		{
-			return \$this->failNotFound('User not found');
-		}
-
-		if (\${$single}['deleted'] == 1)
-		{
-			return \$this->failResourceGone('User has been deleted.');
-		}
-
-		\$this->load->helper('form');
-
-		\$data = [
-			'fields' => empty(\$this->fields) ? \$this->{$model_name}->get_fields() : \$this->fields,
-			'resource' => \${$single}
-		];
-
-		\$this->load->view('v1/users/edit_form', \$data);
 	}
 	
 	//--------------------------------------------------------------------

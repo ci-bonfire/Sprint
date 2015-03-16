@@ -71,10 +71,8 @@ This would map the resources to the `Photos` controller, like:
 HTTP Verb	| Path				| Action		| Used for
 ------------|-------------------|---------------|----------------
 GET			| /photos			| index			| Display a list of photos
-GET			| /photos/new		| creation_form | Return an HTML form for creating a new photo
 POST		| /photos			| create		| Create a new photo
 GET			| /photos/{id}		| show			| Display a specific photo
-GET			| /photos/{id}/edit	| editing_form	| Return the HTML for editing a single photo
 PUT			| /photos/{id}		| update		| Update a specific photo
 DELETE		| /photos/{id}		| destroy		| Delete a specific photo
 OPTIONS		| /photos			| index			| Showing information about the API request.
