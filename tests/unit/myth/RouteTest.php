@@ -241,8 +241,6 @@ class RouteTest extends \Codeception\TestCase\Test
 
         $final = [
             'posts'                 => 'posts/list_all',            // GET
-            'posts/new'             => 'posts/creation_form',       // GET
-            'posts/(:any)/edit'     => 'posts/editing_form/$1',     // GET
             'posts/(:any)'          => 'posts/show/$1',             // GET
 //            'posts'                 => 'posts/create',              // POST
 //            'posts/(:any)'          => 'posts/edit/$1',             // PUT?
@@ -347,8 +345,6 @@ class RouteTest extends \Codeception\TestCase\Test
 
         $final = [
             'posts'                 => 'posts/list_all',            // GET
-            'posts/new'             => 'posts/creation_form',       // GET
-            'posts/(:num)/edit'     => 'posts/editing_form/$1',     // GET
             'posts/(:num)'          => 'posts/show/$1',             // GET
         ];
 
@@ -365,8 +361,6 @@ class RouteTest extends \Codeception\TestCase\Test
 
         $final = [
             'posts'                 => 'posts/list_all',            // GET
-            'posts/new'             => 'posts/creation_form',       // GET
-            'posts/(:num)/edit'     => 'posts/editing_form/$1',     // GET
             'posts/(:num)'          => 'posts/show/$1',             // GET
         ];
 
@@ -385,8 +379,6 @@ class RouteTest extends \Codeception\TestCase\Test
 
         $final = [
             'posts'                 => 'blog/list_all',            // GET
-            'posts/new'             => 'blog/creation_form',       // GET
-            'posts/(:any)/edit'     => 'blog/editing_form/$1',     // GET
             'posts/(:any)'          => 'blog/show/$1',             // GET
         ];
 
@@ -403,8 +395,6 @@ class RouteTest extends \Codeception\TestCase\Test
 
         $final = [
             'posts'                 => 'blog/posts/list_all',            // GET
-            'posts/new'             => 'blog/posts/creation_form',       // GET
-            'posts/(:any)/edit'     => 'blog/posts/editing_form/$1',     // GET
             'posts/(:any)'          => 'blog/posts/show/$1',             // GET
         ];
 
@@ -421,8 +411,6 @@ class RouteTest extends \Codeception\TestCase\Test
 
         $final = [
             'posts'                 => 'posts/list_all',            // GET
-            'posts/new'             => 'posts/creation_form',       // GET
-            'posts/(:any)/edit'     => 'posts/editing_form/$3',     // GET
             'posts/(:any)'          => 'posts/show/$3',             // GET
         ];
 
@@ -439,8 +427,6 @@ class RouteTest extends \Codeception\TestCase\Test
 
         $final = [
             'posts'                 => 'blog/newposts/list_all',            // GET
-            'posts/new'             => 'blog/newposts/creation_form',       // GET
-            'posts/(:num)/edit'     => 'blog/newposts/editing_form/$2',     // GET
             'posts/(:num)'          => 'blog/newposts/show/$2',             // GET
         ];
 
