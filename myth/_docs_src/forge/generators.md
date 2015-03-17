@@ -98,3 +98,6 @@ This will take the following actions:
 - Create the `model`.
 - Create the `controller` that extends from ThemedController along with all of the code and views for working CRUD.
 - Creates an empty `Seeder`.
+
+## API 
+There are a couple of generators provided for setting up the API server easily and rapidly developing the API itself. These are described in the [API Generators](api/generators) page.

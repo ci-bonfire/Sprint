@@ -275,6 +275,8 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 	 * Creates the API Blueprint file for that resource in
 	 * APPPATH/docs/api
 	 *
+     * todo create/modify the toc.ini file to include this resource.
+     *
 	 * @param $name
 	 */
 	private function createBlueprint( $single, $plural, $version, $model )
