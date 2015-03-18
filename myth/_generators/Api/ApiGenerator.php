@@ -173,13 +173,13 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 				exit(1);
 			}
 		}
-//
-//		// Modify Routes
-//		if (! $this->addRoutes($resource_plural) )
-//		{
-//			CLI::error('Unknown error adding Routes.');
-//			exit(1);
-//		}
+
+		// Modify Routes
+		if (! $this->addRoutes($resource_plural, $version) )
+		{
+			CLI::error('Unknown error adding Routes.');
+			exit(1);
+		}
 
 	}
 
@@ -411,14 +411,27 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
     //--------------------------------------------------------------------
 
     /**
-	 * Modifies the routes file to include a line for the API endpoints
-	 * for this resource.
-	 *
-	 * @param $name
-	 */
-	private function addRoutes( $name )
+     * Modifies the routes file to include a line for the API endpoints
+     * for this resource.
+     *
+     * @param string $plural
+     * @param string $version
+     *
+     * @return $this
+     */
+	private function addRoutes( $plural, $version )
 	{
+        $path = APPPATH .'config/routes.php';
 
+        $version = rtrim($version, ', ');
+        if (! empty($version))
+        {
+            $version .='/';
+        }
+
+        $content = "\$routes->resources('{$version}{$plural}');\n";
+
+        return $this->injectIntoFile($path, $content, ['after' => "// Auto-generated routes go here\n"]);
 	}
 
 	//--------------------------------------------------------------------
