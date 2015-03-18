@@ -166,7 +166,30 @@ class ApiController extends BaseController {
 		'not_implemented'           => 501
 	);
 
-
+    /**
+     * Convert common browser-sent langauge
+     * strings to a folder name in the languages folder
+     * that we want to use.
+     *
+     * Primarily used for converting to english when
+     * viewing the API in a browser.
+     *
+     * @var array
+     */
+    protected $lang_map = [
+        'en-us' => 'english',
+        'en'    => 'english',
+        'eng'   => 'english',
+        'en-au' => 'english',
+        'en-nz' => 'english',
+        'en-za' => 'english',
+        'en-tt' => 'english',
+        'en-gb' => 'english',
+        'en-ca' => 'english',
+        'en-ie' => 'english',
+        'en-jm' => 'english',
+        'en-bz' => 'english',
+    ];
 
 	//--------------------------------------------------------------------
 
@@ -719,7 +742,15 @@ class ApiController extends BaseController {
 			{
 				// Remove weight and strip space
 				list($lang) = explode(';', $lang);
-				$return_langs[] = trim($lang);
+
+                $lang = strtolower(trim($lang));
+
+                if (array_key_exists($lang, $this->lang_map))
+                {
+                    $lang = $this->lang_map[$lang];
+                }
+
+				$return_langs[] = $lang;
 			}
 
 			return $return_langs;
