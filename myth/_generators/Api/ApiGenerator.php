@@ -157,12 +157,12 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 			exit(1);
 		}
 
-//		// Language Files
-//		if (! $this->createLanguage($resource_plural) )
-//		{
-//			CLI::error('Unknown error creating Language File.');
-//			exit(1);
-//		}
+		// Language Files
+		if (! $this->createLanguage($resource_single, $resource_plural, $version, $model) )
+		{
+			CLI::error('Unknown error creating Language File.');
+			exit(1);
+		}
 //
 		// Blueprint File
 		if ($blueprint)
@@ -239,13 +239,17 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
-	/**
-	 * Creates the new APIController - based resource with basic CRUD.
-	 *
-	 * @param $name
-	 *
-	 * @return $this
-	 */
+    /**
+     * Creates the new APIController - based resource with basic CRUD.
+     *
+     * @param $single
+     * @param $plural
+     * @param $version
+     *
+     * @return $this
+     * @internal param $name
+     *
+     */
 	private function createController( $single, $plural, $version )
 	{
 		$data = [
@@ -264,21 +268,44 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
-	private function createLanguage( $single, $plural, $version, $model )
+    /**
+     * Creates the language file to accompany the controller.
+     *
+     * @param $single
+     * @param $plural
+     * @param $version
+     *
+     * @return $this
+     */
+	private function createLanguage( $single, $plural, $version )
 	{
+        $data = [
+            'plural'            => $plural,
+            'single'            => $single,
+            'uc_single'         => ucfirst($single),
+            'uc_plural'         => ucfirst($plural),
+        ];
 
+        $destination = APPPATH ."language/english/api_{$plural}_lang.php";
+
+        return $this->copyTemplate( 'controller', $destination, $data, $this->overwrite );
 	}
 
 	//--------------------------------------------------------------------
 
-	/**
-	 * Creates the API Blueprint file for that resource in
-	 * APPPATH/docs/api
-	 *
-     * todo create/modify the toc.ini file to include this resource.
+    /**
+     * Creates the API Blueprint file for that resource in
+     * APPPATH/docs/api
      *
-	 * @param $name
-	 */
+     * @param $single
+     * @param $plural
+     * @param $version
+     * @param $model
+     *
+     * @return $this
+     * @internal param $name
+     *
+     */
 	private function createBlueprint( $single, $plural, $version, $model )
 	{
 		$version = rtrim($version, '/');
@@ -359,6 +386,8 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
      * table.
      *
      * @param $model
+     *
+     * @return string
      */
     private function formatObject( $model )
     {

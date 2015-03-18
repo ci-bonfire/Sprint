@@ -30,6 +30,13 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 	 */
 	protected \$model_file = '{$model_name}';
 
+    /**
+	 * The language file used for this resource.
+	 *
+	 * @var string
+	 */
+	protected \$language_file = 'api_{$plural}';
+
 	/**
 	 * The fields used by the formatter.
 	 *
@@ -116,7 +123,7 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 		// Valid Results?
 		if (! \${$plural} || (is_array(\${$plural}) && ! count(\${$plural})) )
 		{
-			return \$this->failNotFound('No Users found that match your request');
+			return \$this->failNotFound( lang('resource_not_found') );
 		}
 
 		\$new_{$plural} = [];
@@ -156,7 +163,7 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 
 		if (\$exists)
 		{
-			return \$this->failResourceExists('It appears that user already exists.');
+			return \$this->failResourceExists( lang('resource_exists') );
 		}
 
 		// The model's default insert() method will automatically prep the data
@@ -171,7 +178,7 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 				return \$this->failValidationError( validation_errors() );
 			}
 
-			return \$this->fail('Unknown error creating user', 500);
+			return \$this->fail( lang('cannot_create_resource'), 500);
 		}
 
 		// Now we'll return the new resource, but we grab from the database
@@ -199,12 +206,12 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 		// Valid user?
 		if (! \${$single})
 		{
-			return \$this->failNotFound('User not found');
+			return \$this->failNotFound( lang('resource_not_found') );
 		}
 
 		if (\${$single}['deleted'] == 1)
 		{
-			return \$this->failResourceGone('User has already been deleted.');
+			return \$this->failResourceGone( lang('resource_gone') );
 		}
 
 		\$this->respond( \$this->formatResource(\${$single}) );
@@ -224,14 +231,14 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 	    // Does this resource already exist?
 		if (\$this->{$model_name}->is_unique(\$this->primary_key, \$id))
 		{
-			return \$this->failNotFound('Unable to locate a User with that ID');
+			return \$this->failNotFound( lang('resource_not_found') );
 		}
 
 		\$post_data = \$this->input->post();
 
 		if (! count(\$post_data))
 		{
-			return \$this->failBadRequest('No data found to update');
+			return \$this->failBadRequest( lang('resource_bad_data') );
 		}
 
 		if (! \$this->{$model_name}->update(\$id, \$post_data))
@@ -241,7 +248,7 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 				return \$this->failValidationError( validation_errors() );
 			}
 
-			return \$this->fail('Unknown error updating user', 500);
+			return \$this->fail( lang('cannot_update_resource'), 500);
 		}
 
 		// Now we'll return the new resource, but we grab from the database
@@ -264,15 +271,15 @@ class {$class_name} extends \\Myth\\Api\\Server\\ApiController {
 	{
 	    if (\$this->{$model_name}->is_unique(\$this->primary_key, \$id))
 	    {
-		    return \$this->failNotFound('Unable to find a matching User');
+		    return \$this->failNotFound( lang('resource_not_found') );
 	    }
 
 		if (! \$this->{$model_name}->delete_by(\$this->primary_key, \$id))
 		{
-			return \$this->fail('Unknown database error', 500);
+			return \$this->fail( lang('resource_unknown_db_err'), 500);
 		}
 
-		\$this->respondDeleted(['response' => 'User was deleted.']);
+		\$this->respondDeleted(['response' => lang('resource_did_delete') ]);
 	}
 	
 	//--------------------------------------------------------------------
