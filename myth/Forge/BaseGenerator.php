@@ -259,7 +259,7 @@ abstract class BaseGenerator extends CLIController {
      *
      * @return $this
      */
-    public function injectIntoFile($path, $content, $options)
+    public function injectIntoFile($path, $content, $options='append')
     {
         $kit = new FileKit();
 

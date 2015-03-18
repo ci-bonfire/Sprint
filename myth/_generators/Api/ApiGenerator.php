@@ -306,10 +306,53 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 
 		$destination = APPPATH .'docs/api/'. $version . $plural .'.md';
 
-		return $this->copyTemplate( 'blueprint', $destination, $data, $this->overwrite );
+		$success = $this->copyTemplate( 'blueprint', $destination, $data, $this->overwrite );
+
+        if (! $this->updateTOC($plural, $version))
+        {
+            CLI::write("\tUnable to modify the toc file.", 'light_red');
+        }
+
+        return $success;
 	}
 
 	//--------------------------------------------------------------------
+
+    /**
+     * Modifies the _toc.ini file (or creates) for the specified Blueprint docs.
+     *
+     * @param $plural
+     * @param $version
+     *
+     * @return $this|bool
+     */
+    private function updateTOC( $plural, $version )
+    {
+        $path = APPPATH .'docs/_toc.ini';
+
+        // We need a TOC file to exist if we're going to modify it silly.
+        if (! file_exists($path))
+        {
+            if (! $this->copyTemplate('toc', $path))
+            {
+                return false;
+            }
+        }
+
+        $version = rtrim($version, '/ ');
+        if (! empty($version))
+        {
+            $version .= '/';
+        }
+
+        $ucname = ucfirst($plural);
+
+        $content = "api/{$version}{$plural}\t= {$ucname}\n";
+
+        return $this->injectIntoFile($path, $content);
+    }
+
+    //--------------------------------------------------------------------
 
     /**
      * Creates a generic representation of the object from the database
