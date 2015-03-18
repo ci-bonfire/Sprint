@@ -1,6 +1,5 @@
 <?php
-echo "
-<?php
+echo "<?php
 
 /**
  * Language file for {$plural} API endpoints.

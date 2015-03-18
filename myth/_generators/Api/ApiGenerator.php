@@ -288,7 +288,7 @@ class ApiGenerator extends \Myth\Forge\BaseGenerator {
 
         $destination = APPPATH ."language/english/api_{$plural}_lang.php";
 
-        return $this->copyTemplate( 'controller', $destination, $data, $this->overwrite );
+        return $this->copyTemplate( 'lang', $destination, $data, $this->overwrite );
 	}
 
 	//--------------------------------------------------------------------
