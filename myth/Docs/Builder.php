@@ -256,15 +256,18 @@ class Builder implements DocBuilderInterface
      * a Mardown Extended formatter with the system, but could be used to
      * extend the
      *
-     * @param string $callback_name
+     * @param string $callback
      * @param bool $cascade // If FALSE the formatting of a component ends here. If TRUE, will be passed to next formatter.
      * @return $this
      */
-    public function registerFormatter($callback_name = '', $cascade = false)
+    public function registerFormatter($callback = null, $cascade = false)
     {
-        if (empty($callback_name)) return;
+        if (empty($callback)) return;
 
-        $this->formatters[] = array($callback_name => $cascade);
+        $this->formatters[] = [
+            'callable' => $callback,
+            'cascade'  => (bool)$cascade
+        ];
 
         return $this;
     }
@@ -282,8 +285,8 @@ class Builder implements DocBuilderInterface
         if (! is_array($this->formatters)) return $str;
 
         foreach ($this->formatters as $formatter) {
-            $method = key($formatter);
-            $cascade = $formatter[$method];
+            $method = $formatter['callable'];
+            $cascade = $formatter['cascade'];
 
             $str = call_user_func($method, $str);
 

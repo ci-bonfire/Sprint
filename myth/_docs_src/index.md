@@ -38,6 +38,7 @@ Sprint also uses the following software packages:
 * [PHP Error](http://phperror.net/)
 * [Ink: Responsive Email Framework](http://zurb.com/ink/)
 * [Kint debugging tool](http://raveren.github.io/kint/)
+* [phpLeague's Commonmark Library](http://commonmark.thephpleague.com/)
 
 For development and testing, Sprint uses:
 

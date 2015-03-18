@@ -74,8 +74,12 @@ class Docs extends \Myth\Controllers\ThemedController
         $this->load->helper('language');
 
         $this->docbuilder = new \Myth\Docs\Builder( array('apppath' => APPPATH) );
-        $this->load->helper('markdown_extended');
-        $this->docbuilder->registerFormatter('MarkdownExtended', true);
+
+        $formatter = function ($str) {
+            $converter = new \League\CommonMark\CommonMarkConverter();
+            return $converter->convertToHtml($str);
+        };
+        $this->docbuilder->registerFormatter($formatter, true);
     }
 
     //--------------------------------------------------------------------

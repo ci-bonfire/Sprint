@@ -22,7 +22,8 @@
 	"require": {
 		"php": ">=5.4",
         "mobiledetect/mobiledetectlib": "dev-master",
-        "raveren/kint": "0.9.*@dev"
+        "raveren/kint": "0.9.*@dev",
+        "league/commonmark": "0.7.*"
 	},
     "require-dev": {
         "mockery/mockery": "dev-master"
