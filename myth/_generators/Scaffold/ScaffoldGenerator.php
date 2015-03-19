@@ -71,6 +71,13 @@ class ScaffoldGenerator extends \Myth\Forge\BaseGenerator {
 	{
 		$name = strtolower($name);
 
+        // If a table already exists then we don't need a migration
+        $this->load->database();
+        if ($this->db->table_exists($name))
+        {
+            return;
+        }
+
 		$mig_name = "create_{$name}_table";
 
 		$this->generate("migration {$mig_name}", "-fields '{$this->fields}'", true);
