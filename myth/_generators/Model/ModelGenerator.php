@@ -49,7 +49,7 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 		'use_soft_deletes'  => true,
 		'soft_delete_key'   => 'deleted',
 		'protected'         => '',
-		'return_type'       => 'object',
+		'return_type'       => 'array',
 		'return_insert_id'  => true,
 		'rules'             => '[]'
 	];
