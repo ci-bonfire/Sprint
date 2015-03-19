@@ -66,7 +66,6 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 		'double'    => 0.0,
 		'char'      => NULL,
 		'varchar'   => NULL,
-		'text'      => NULL,
 	];
 
 	protected $defaultNulls = [
