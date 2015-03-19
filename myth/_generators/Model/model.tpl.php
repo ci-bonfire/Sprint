@@ -7,7 +7,7 @@
 $log_user_string            = isset($log_user) && $log_user ? 'true' : 'false';
 $set_created_string         = isset($set_created) && $set_created ? 'true' : 'false';
 $set_modified_string        = isset($set_modified) && $set_modified ? 'true' : 'false';
-$use_soft_deletes_string    = isset($soft_delete) && $soft_delete ? 'true' : 'false';
+$use_soft_deletes_string    = isset($use_soft_deletes) && $use_soft_deletes ? 'true' : 'false';
 $return_insert_id_string    = isset($return_insert_id) && $return_insert_id ? 'true' : 'false';
 
 //--------------------------------------------------------------------

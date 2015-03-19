@@ -193,8 +193,6 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 		// otherwise, try to pull from fields
 		$this->options['fields'] = $this->table_info( $this->options['table_name'] );
 
-
-
 		$this->options['primary_key'] = ! empty( $this->options['primary_key'] ) ? $this->options['primary_key'] : 'id';
 		$this->options['protected']   = [ $this->options['primary_key'] ];
 	}
@@ -227,14 +225,32 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 			return FALSE;
 		}
 
+        $this->options['set_created']       = false;
+        $this->options['set_modified']      = false;
+        $this->options['use_soft_deletes']  = false;
+
 		// Use the primary key if the table has one already set.
 		foreach ( $fields as $field )
 		{
 			if ( ! empty( $field->primary_key ) && $field->primary_key == 1 )
 			{
 				$this->options['primary_key'] = $field->name;
-				break;
 			}
+
+            if ($field->name == $this->options['created_field'])
+            {
+                $this->options['set_created'] = true;
+            }
+
+            if ($field->name == $this->options['modified_field'])
+            {
+                $this->options['set_modified'] = true;
+            }
+
+            if ($field->name == $this->options['soft_delete_key'])
+            {
+                $this->options['use_soft_deletes'] = true;
+            }
 		}
 
 		// Set our validation rules based on these fields
