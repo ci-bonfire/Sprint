@@ -163,7 +163,7 @@ tt {
     border-radius: 3px;
 }
 
-.page table {
+table {
     width: 100%;
     overflow: auto;
     display: block;

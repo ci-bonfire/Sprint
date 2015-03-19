@@ -91,38 +91,143 @@ The following is a list of all Events provided in SprintPHP core. This does not 
 
 ### Users
 
-Event Name					| Parameters					| Description
-----------------------------|-------------------------------|----------------
-beforeAddMetaToUser			| (int)$user_id, (mixed)$key	| Called prior to adding a meta value to a user.
-beforeRemoveMetaFromUser	| (int)$user_id, (mixed)$key	| Called prior to removing a meta value from a user.
+<table>
+	<thead>
+		<tr>
+			<th>Event Name</th>
+			<th>Parameters</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>beforeAddMetaToUser</td>
+			<td>(int)$user_id, (mixed)$key</td>
+			<td>Called prior to adding a meta value to a user.</td>
+		</tr>
+		<tr>
+			<td>beforeRemoveMetaFromUser</td>
+			<td>(int)$user_id, (mixed)$key</td>
+			<td>Called prior to removing a meta value from a user.</td>
+		</tr>
+	</tbody>
+</table>
 
 ### User Authentication
 
-Event Name				| Parameters				| Description
-------------------------|---------------------------|--------------------------------
-didLogin				| (array)$user				| Called after a user has logged in manually. NOT triggered for 'remember me' logins.
-beforeLogout			| (array)$user				| Called prior to logging a user out.
-didRegisterUser			| (array)$data				| Called after a new user registers. `$data` includes 'user_id', 'email', 'token', and 'method' (activation method)
-didActivate				| (array)$user				| Called after a user has been activated, either manually or automatically by the system.
-didRemindUser			| (array)$user, (str)$token	| After a user has had their password reset hash created. Used to send instructional email. `$token` is the code that should be provided in the email to reset their password.
-didResetPassword		| (array)$user				| After a user has reset their password.
-didPurgeLoginAttempts	| (str)$email				| Called after a user's LoginAttempts have been purged.
-didPurgeRememberTokens	| (str)$email				| After a user's RememberMe Tokens have been purged.
+<table>
+	<thead>
+		<tr>
+			<th>Event Name</th>
+			<th>Parameters</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>didLogin</td>
+			<td>(array)$user</td>
+			<td>Called after a user has logged in manually. NOT triggered for 'remember me' logins.</td>
+		</tr>
+		<tr>
+			<td>beforeLogout</td>
+			<td>(array)$user</td>
+			<td>Called prior to logging a user out.</td>
+		</tr>
+		<tr>
+			<td>didRegisterUser</td>
+			<td>(array)$data</td>
+			<td>Called after a new user registers. `$data` includes 'user_id', 'email', 'token', and 'method' (activation method)</td>
+		</tr>
+		<tr>
+			<td>didActivate</td>
+			<td>(array)$user</td>
+			<td>Called after a user has been activated, either manually or automatically by the system.</td>
+		</tr>
+		<tr>
+			<td>didRemindUser</td>
+			<td>(array)$user, (str)$token</td>
+			<td>After a user has had their password reset hash created. Used to send instructional email. `$token` is the code that should be provided in the email to reset their password.</td>
+		</tr>
+		<tr>
+			<td>didResetPassword</td>
+			<td>(array)$user</td>
+			<td>After a user has reset their password.</td>
+		</tr>
+		<tr>
+			<td>didPurgeLoginAttempts</td>
+			<td>(str)$email</td>
+			<td>Called after a user's LoginAttempts have been purged.</td>
+		</tr>
+		<tr>
+			<td>didPurgeRememberTokens</td>
+			<td>(str)$email</td>
+			<td>After a user's RememberMe Tokens have been purged.</td>
+		</tr>
+	</tbody>
+</table>
+
 
 ### User Authorization
 
-Event Name						| Parameters						| Description
---------------------------------|-----------------------------------|-------------------
-beforeAddUserToGroup			| (int)$user_id, (mixed)$group		| Called just prior to adding a user to a group.
-didAddUserToGroup				| (int)$user_id, (mixed)$group		| Called after adding a user to a group.
-beforeRemoveUserFromGroup		| (int)$user_id, (mixed)$group		| Called just prior to removing a user from a group.
-didRemoveUserFromGroup			| (int)$user_id, (mixed)$group		| Called after removing a user from a group.
-beforeAddPermissionToUser		| (int)$user_id, (mixed)$permission	| Called prior to adding a permission to a user.
-beforeRemovePermissionFromUser	| (int)$user_id, (mixed)$permission	| Called prior to removing a permission from a user.
+<table>
+	<thead>
+		<tr>
+			<th>Event Name</th>
+			<th>Parameters</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>beforeAddUserToGroup</td>
+			<td>(int)$user_id, (mixed)$group</td>
+			<td>Called just prior to adding a user to a group.</td>
+		</tr>
+		<tr>
+			<td>didAddUserToGroup</td>
+			<td>(int)$user_id, (mixed)$group</td>
+			<td>Called after adding a user to a group.</td>
+		</tr>
+		<tr>
+			<td>beforeRemoveUserFromGroup</td>
+			<td>(int)$user_id, (mixed)$group</td>
+			<td>Called just prior to removing a user from a group.</td>
+		</tr>
+		<tr>
+			<td>didRemoveUserFromGroup</td>
+			<td>(int)$user_id, (mixed)$group</td>
+			<td>Called after removing a user from a group.</td>
+		</tr>
+		<tr>
+			<td>beforeAddPermissionToUser</td>
+			<td>(int)$user_id, (mixed)$permission</td>
+			<td>Called prior to adding a permission to a user.</td>
+		</tr>
+		<tr>
+			<td>beforeRemovePermissionFromUser</td>
+			<td>(int)$user_id, (mixed)$permission</td>
+			<td>Called prior to removing a permission from a user.</td>
+		</tr>
+	</tbody>
+</table>
 
 
 ### Cron Jobs
 
-Event Name	| Parameters		| Description
-------------|-------------------|--------------------------------
-afterCron	| (string) $output	| The resulting output from running the cron jobs.
+<table>
+	<thead>
+		<tr>
+			<th>Event Name</th>
+			<th>Parameters</th>
+			<th>Description</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>afterCron</td>
+			<td>(string) $output</td>
+			<td>The resulting output from running the cron jobs.</td>
+		</tr>
+	</tbody>
+</table>

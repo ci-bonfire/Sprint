@@ -34,7 +34,7 @@ With the exception of the `group()` method, all of the route-generating methods 
 
 ### Parameter Offsets
  `offset` allows you to increment the numbered placeholders in the 'to' portion of the route by the amount you specify. This is occasionally handy when you are pulling a previous number out of the URL, but don't want it sent to your methods, such as in API versioning. Also handy when grouping routes or routing  a resource.
- 
+
 	$route->get('users/(:num)', 'users/show/$1', ['offset' => 1]);
 	// Creates:
 	$route['users/(:num)'] = 'users/show/$2);
@@ -68,14 +68,55 @@ If the `photos` controller is part of the `Gallery` module, then you would route
 
 This would map the resources to the `Photos` controller, like:
 
-HTTP Verb	| Path				| Action		| Used for
-------------|-------------------|---------------|----------------
-GET			| /photos			| index			| Display a list of photos
-POST		| /photos			| create		| Create a new photo
-GET			| /photos/{id}		| show			| Display a specific photo
-PUT			| /photos/{id}		| update		| Update a specific photo
-DELETE		| /photos/{id}		| destroy		| Delete a specific photo
-OPTIONS		| /photos			| index			| Showing information about the API request.
+<table>
+	<thead>
+		<tr>
+			<th>HTTP Verb</th>
+			<th>Path</th>
+			<th>Action</th>
+			<th>Used for</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>GET</td>
+			<td>/photos</td>
+			<td>index</td>
+			<td>Display a list of photos</td>
+		</tr>
+		<tr>
+			<td>POST</td>
+			<td>/photos</td>
+			<td>create</td>
+			<td>Create a new photo</td>
+		</tr>
+		<tr>
+			<td>GET</td>
+			<td>/photos/{id}</td>
+			<td>show</td>
+			<td>Display a specific photo</td>
+		</tr>
+		<tr>
+			<td>PUT</td>
+			<td>/photos/{id}</td>
+			<td>update</td>
+			<td>Update a specific photo</td>
+		</tr>
+		<tr>
+			<td>DELETE</td>
+			<td>/photos/{id}</td>
+			<td>destroy</td>
+			<td>Delete a specific photo</td>
+		</tr>
+		<tr>
+			<td>OPTIONS</td>
+			<td>/photos</td>
+			<td>index</td>
+			<td>Showing information about the API request.</td>
+		</tr>
+	</tbody>
+</table>
+
 
 ### Single Verbs
 
