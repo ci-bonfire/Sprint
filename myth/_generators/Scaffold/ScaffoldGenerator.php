@@ -38,22 +38,30 @@ class ScaffoldGenerator extends \Myth\Forge\BaseGenerator {
 
 	protected $model_name = '';
 
+    protected $table_exists = false;
+
 	//--------------------------------------------------------------------
 
 	public function run($segments = [ ], $quiet = false)
 	{
 		$name = array_shift( $segments );
 
+        // If a table already exists then we don't need a migration
+        $this->load->database();
+        if ($this->db->table_exists($name))
+        {
+            $this->table_exists = true;
+        }
+
 		// If we didn't attach any fields, then we
 		// need to generate the barebones here.
 		$this->fields = CLI::option('fields');
-		if (empty($this->fields))
-		{
-			$this->fields = "id:int id:id title:string created_on:datetime modified_on:datetime";
-		}
 
 		// Perform the steps.
-		$this->makeMigration($name);
+        if (! $this->table_exists)
+        {
+            $this->makeMigration( $name );
+        }
 		$this->makeSeed($name);
 		$this->makeModel($name);
 		$this->makeController($name);
@@ -70,13 +78,6 @@ class ScaffoldGenerator extends \Myth\Forge\BaseGenerator {
 	protected function makeMigration($name)
 	{
 		$name = strtolower($name);
-
-        // If a table already exists then we don't need a migration
-        $this->load->database();
-        if ($this->db->table_exists($name))
-        {
-            return;
-        }
 
 		$mig_name = "create_{$name}_table";
 
@@ -107,7 +108,14 @@ class ScaffoldGenerator extends \Myth\Forge\BaseGenerator {
 
 	public function makeController($name)
 	{
-		$this->generate("controller {$name}", "-model {$this->model_name} -create_views -fields '{$this->fields}'", true);
+        $options = "-model {$this->model_name} -create_views";
+
+        if (! empty($this->fields))
+        {
+            $options .= " -fields '{$this->fields}'";
+        }
+
+		$this->generate("controller {$name}", $options, true);
 	}
 
 	//--------------------------------------------------------------------

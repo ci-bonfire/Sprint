@@ -203,7 +203,15 @@ class ControllerGenerator extends \Myth\Forge\BaseGenerator {
 
 		if ( empty( $fields ) )
 		{
-			return NULL;
+            // If we have a model, we can get our fields from there
+            if (! empty($this->options['model']))
+            {
+                $fields = $this->getFieldsFromModel( $this->options['model'] );
+            }
+            else
+            {
+                return NULL;
+            }
 		}
 
 		$fields = explode( ' ', $fields );
@@ -263,5 +271,32 @@ class ControllerGenerator extends \Myth\Forge\BaseGenerator {
 	}
 
 	//--------------------------------------------------------------------
+
+    private function getFieldsFromModel( $model )
+    {
+        $this->load->model($model);
+
+        $fields = $this->db->field_data( $this->$model->table() );
+
+        $return = '';
+
+        // Prepare the fields in a string format like
+        // it would have been passed on the CLI
+        foreach ($fields as $field)
+        {
+            $temp = $field->name .':'. $field->type;
+
+            if (! empty($field->max_length))
+            {
+                $temp .= ':'. $field->max_length;
+            }
+
+            $return .= ' '. $temp;
+        }
+
+        return $return;
+    }
+
+    //--------------------------------------------------------------------
 
 }
