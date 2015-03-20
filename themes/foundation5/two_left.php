@@ -1,10 +1,8 @@
-<?= $themer->display('foundation:fragments/_vars') ?>
-
 <?= $themer->display('foundation:fragments/head') ?>
 
 <?= $themer->display('foundation:fragments/topbar') ?>
 
-<div class="row <?= $containerClass ?>">
+<div class="row container-fluid">
 
     <br/>
 

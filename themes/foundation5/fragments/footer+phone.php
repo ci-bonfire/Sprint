@@ -1,4 +1,4 @@
-    <div class="footer row <?= $containerClass ?> padded">
+    <div class="footer row padded">
         <hr/>
 
         <div style="text-align: right">

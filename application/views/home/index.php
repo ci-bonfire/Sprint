@@ -1,8 +1,6 @@
 <div id="container">
 	<h1>Welcome to SprintPHP!</h1>
 
-    <?= $notice ?>
-
     <br/>
 
     <?= $uikit->row([], function() use($uikit) {
