@@ -78,7 +78,7 @@ class {$model_name} extends CIDbModel {
 	 * Alternatively, you can do it on a per-instance basis using the
 	 * 'as_array()' and 'as_object()' methods.
 	 */
-	protected \$return_type = 'object';
+	protected \$return_type = 'array';
 
 	/*
 		If TRUE, inserts will return the last_insert_id. However,
@@ -95,7 +95,7 @@ class {$model_name} extends CIDbModel {
 	 *
 	 * Should be in the format: ['field1', 'field2', ...]
 	 */
-	protected \$field_info = [];
+	protected \$fields = [];
 
 	/**
 	 * An array of validation rules. This needs to be the same format

@@ -50,7 +50,7 @@ if (! empty($model))
 
 		if (\$this->input->method() == 'post')
 		{
-			\$post_data = \$this->{$lower_model}->prep_data( \$this->input->post() );
+			\$post_data = \$this->input->post();
 
 			if (\$this->{$lower_model}->insert(\$post_data) )
 			{
@@ -100,7 +100,7 @@ if (! empty($model))
 
 		if (\$this->input->method() == 'post')
 		{
-			\$post_data = \$this->{$lower_model}->prep_data( \$this->input->post() );
+			\$post_data = \$this->input->post();
 
 			if (\$this->{$lower_model}->update(\$id, \$post_data))
 			{
@@ -133,7 +133,7 @@ if (\$this->{$lower_model}->delete(\$id))
 		}
 
 		\$this->setMessage('Error deleting item. '. \$this->{$lower_model}->error(), 'error');
-		redirect( site_url('tweet') );
+		redirect( site_url( '{$lower_controller}' ) );
 \t\t
 EOD;
 }
@@ -199,11 +199,6 @@ class {$controller_name} extends {$base_class} {
      */
     protected \$cache_type      = {$cache_type};
     protected \$backup_cache    = {$backup_cache};
-
-    // If TRUE, will send back the notices view
-    // through the 'render_json' method in the
-    // 'fragments' array.
-    protected \$ajax_notices    = {$ajax_notices};
 
     // If set, this language file will automatically be loaded.
     protected \$language_file   = {$lang_file};
