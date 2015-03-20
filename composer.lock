@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "aa6b0035fc6b7feb4a2cf11e37c8f763",
+    "hash": "f96baa409fd22cc5c1ccea05b09d9f1c",
     "packages": [
         {
             "name": "league/commonmark",
@@ -71,12 +71,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/serbanghita/Mobile-Detect.git",
-                "reference": "c881407cc67ff2c6514ee205fd891c0e14f10aa0"
+                "reference": "385dfe3a57b096920e14873ad04a82bfb7aac3e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/c881407cc67ff2c6514ee205fd891c0e14f10aa0",
-                "reference": "c881407cc67ff2c6514ee205fd891c0e14f10aa0",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/385dfe3a57b096920e14873ad04a82bfb7aac3e9",
+                "reference": "385dfe3a57b096920e14873ad04a82bfb7aac3e9",
                 "shasum": ""
             },
             "require": {
@@ -117,7 +117,7 @@
                 "mobile detector",
                 "php mobile detect"
             ],
-            "time": "2015-02-25 16:17:15"
+            "time": "2015-03-18 16:07:46"
         },
         {
             "name": "raveren/kint",
@@ -173,17 +173,69 @@
     ],
     "packages-dev": [
         {
+            "name": "fzaninotto/faker",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fzaninotto/Faker.git",
+                "reference": "81f8e9439d0041866849c05d334584ea31c7b05e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/fzaninotto/Faker/zipball/81f8e9439d0041866849c05d334584ea31c7b05e",
+                "reference": "81f8e9439d0041866849c05d334584ea31c7b05e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0",
+                "squizlabs/php_codesniffer": "~1.5"
+            },
+            "suggest": {
+                "ext-intl": "*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.5.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Faker\\": "src/Faker/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "François Zaninotto"
+                }
+            ],
+            "description": "Faker is a PHP library that generates fake data for you.",
+            "keywords": [
+                "data",
+                "faker",
+                "fixtures"
+            ],
+            "time": "2015-03-18 16:46:58"
+        },
+        {
             "name": "mockery/mockery",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/padraic/mockery.git",
-                "reference": "d141c5b1b302d4d746e38ccc95ffe215129a8557"
+                "reference": "43006b6c41e8fa9ac7469ceea2efd8abbcb20657"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/padraic/mockery/zipball/d141c5b1b302d4d746e38ccc95ffe215129a8557",
-                "reference": "d141c5b1b302d4d746e38ccc95ffe215129a8557",
+                "url": "https://api.github.com/repos/padraic/mockery/zipball/43006b6c41e8fa9ac7469ceea2efd8abbcb20657",
+                "reference": "43006b6c41e8fa9ac7469ceea2efd8abbcb20657",
                 "shasum": ""
             },
             "require": {
@@ -235,7 +287,7 @@
                 "test double",
                 "testing"
             ],
-            "time": "2015-03-03 20:10:54"
+            "time": "2015-03-19 19:27:19"
         }
     ],
     "aliases": [],
@@ -243,7 +295,8 @@
     "stability-flags": {
         "mobiledetect/mobiledetectlib": 20,
         "raveren/kint": 20,
-        "mockery/mockery": 20
+        "mockery/mockery": 20,
+        "fzaninotto/faker": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

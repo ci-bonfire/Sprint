@@ -26,7 +26,8 @@
         "league/commonmark": "0.7.*"
 	},
     "require-dev": {
-        "mockery/mockery": "dev-master"
+        "mockery/mockery": "dev-master",
+        "fzaninotto/faker": "1.5.*@dev"
     },
     "scripts": {
       "post-create-project-cmd": [
