@@ -11,8 +11,8 @@ The exact fields that should be considered meta fields are specified in the user
 	$user = [
 		'username' => 'darth',
 		'email' => 'darth@theempire.com',
-		'first_name' => 'Darth',							// Meta field
-		'last_name' => 'Vader'							// Meta field
+		'first_name' => 'Darth',					// Meta field
+		'last_name' => 'Vader'						// Meta field
 	];
 	// Stores both normal and meta data for a new user
 	$uid = $this->user_model->insert($user);
@@ -20,8 +20,7 @@ The exact fields that should be considered meta fields are specified in the user
 ### Retrieving User Meta
 If you're getting a user from the database at the same time that you need the meta information, you can use the `withMeta()` method of the User_model to automatically retrieve the user's meta data along with the normal data. 
 
-	$user = $this->user_model->with_meta()
-                                                     ->find( 124 );
+	$user = $this->user_model->with_meta()->find( 124 );
 	// Returns: 
 	[
 		'username' => 'darth',
@@ -35,7 +34,7 @@ If you just need to retrieve a single meta value for a user, this method is your
 
 	$last_name = $this->user_model->getMetaItem(124, 'last_name');
 
-If the key doesn't exist in the database for that user, it will return NULL instead.
+If the key doesn't exist in the database for that user, it will return `null` instead.
 
 ### Saving Single Meta Items
 When you just need to save a single meta item to a user, you can use the `saveMetaToUser()` method. The first parameter is the ID of the user. The second parameter is the field name. The third parameter is the value.
