@@ -25,10 +25,13 @@
         </div>
 
         <!-- Sidebar -->
-        <div class="col-sm-4 col-md-3">
-
-            <?= $themer->display('{theme}:sidebar'); ?>
-
+        <div class="col-sm-3 col-md-2">
+            <ul class="nav nav-sidebar">
+                <li class="active"><a href="#">Overview</a></li>
+                <li><a href="#">Reports</a></li>
+                <li><a href="#">Analytics</a></li>
+                <li><a href="#">Export</a></li>
+            </ul>
         </div>
 
     </div>

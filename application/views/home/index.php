@@ -36,12 +36,9 @@
             <ul>
                 <li><a href="http://ci3docs.cibonfire.com" target="_blank">CodeIgniter 3 User Guide</a></li>
                 <li><a href="<?= site_url('docs') ?>">SprintPHP Documentation</a></li>
-                <li><a href="<?= site_url('demos/ajax') ?>">Simple AJAX Demo</a></li>
-                <li><a href="<?= site_url('demos/callbacks') ?>">View Callbacks Demo</a></li>
-                <li><a href="<?= site_url('demos/uikits') ?>">UIKits Demo</a></li>
+                <li><a href="https://github.com/ci-bonfire/sprint-demos">Sprint Demos Repo</a></li>
             </ul>
 
-            <p>And don't forget to explore the themes and layouts that come with Sprint by exploring the menu above.</p>
         <?php });
 
     }); ?>

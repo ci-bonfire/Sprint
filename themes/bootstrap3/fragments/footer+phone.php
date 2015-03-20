@@ -1,7 +1,7 @@
     <div class="footer">
         <hr/>
 
-        <div class="<?= $containerClass ?> text-right">
+        <div class="container text-right">
             <p class="text-muted small">Page rendered in {elapsed_time} seconds using {memory_usage}.</p>
             <p>Rendered just for your mobile phone!</p>
         </div>
