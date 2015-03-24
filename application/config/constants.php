@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-define('SPRINT_VERSION', '1.0-dev');
+define('SPRINT_VERSION', '1.0-beta1');
 
 /*
 |--------------------------------------------------------------------------
