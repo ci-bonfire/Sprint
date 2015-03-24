@@ -13,7 +13,7 @@ class SprintRelease extends BaseBuilder {
 	protected $source_path;
 	protected $dest_path;
 
-	protected $ignore_files = ['.', '..', '.git', 'vendor', '.idea', '.travis.yml', 'build'];
+	protected $ignore_files = ['.', '..', '.git', 'vendor', '.idea', '.travis.yml'];
 
 	public function __construct($destination)
 	{
