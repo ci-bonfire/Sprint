@@ -26,6 +26,10 @@ After you've extracted your files you should jump onto the command line, in your
 Next, you should get the autoload files generated so that all of Sprint's files can be found
 
 	$ composer dump-autoload
+	
+To take care of some post-install cleanup, and set your encryption key for you, you should run the following from the command line: 
+	
+	$ php build/build.php postCreateProject
 
 When you need to get the most performance out the system, you will want to rebuild the autoload files using the optimization tag. This scans all of the files that are discoverable, like any PSR-0/4 compliant folders and builds a class map, significantly improving your speed since it already knows where all of the files are located and doesn't have to scan the filesystem.
 
