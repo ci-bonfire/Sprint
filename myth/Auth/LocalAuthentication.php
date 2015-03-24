@@ -128,7 +128,8 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // If throttling time is above zero, we can't allow
         // logins now.
-        if ($time = (int)$this->isThrottled($user['email']) > 0)
+        $time = (int)$this->isThrottled($user['email']);
+        if ($time > 0)
         {
             $this->error = sprintf(lang('auth.throttled'), $time);
             return false;

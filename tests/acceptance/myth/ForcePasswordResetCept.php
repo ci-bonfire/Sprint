@@ -30,3 +30,4 @@ $I->seeElement('#submit');
 $I->submitForm('#login_form', ['email' => 'tester@example.com', 'password' => 'mylittlepony'], '#submit');
 $I->dontSeeElement('.alert-danger');
 $I->see('Change Password');
+$I->seeInCurrentUrl('password');

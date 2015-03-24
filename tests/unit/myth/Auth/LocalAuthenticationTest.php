@@ -293,6 +293,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     // Throttling
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingReturnsFalseIfNotThrottledWithFirstFailedAttempt()
     {
         $email = 'darth@theempire.com';
@@ -309,6 +312,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingReturnsFalseIfNotThrottledWithAllowedFailedAttempts()
     {
         $email = 'darth@theempire.com';
@@ -325,6 +331,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingReturnsTimeWhenThrottled()
     {
         $email = 'darth@theempire.com';
@@ -341,6 +350,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingReturnsTimeWhenThrottled2()
     {
         $email = 'darth@theempire.com';
@@ -357,6 +369,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingReturnsTimeWhenThrottled3()
     {
         $email = 'darth@theempire.com';
@@ -373,6 +388,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingReturnsTimeWhenThrottled4()
     {
         $email = 'darth@theempire.com';
@@ -389,6 +407,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingReturnsTimeWhenThrottled5()
     {
         $email = 'darth@theempire.com';
@@ -405,6 +426,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingReturnsTimeWhenThrottled6AndIsAboveMaxLimit()
     {
         $email = 'darth@theempire.com';
@@ -421,6 +445,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingUnderBruteForceFirstTime()
     {
         $email = 'darth@theempire.com';
@@ -441,6 +468,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingUnderPreviousBruteForce()
     {
         $email = 'darth@theempire.com';
@@ -465,6 +495,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingUnderPreviousBruteForceWithDBrute()
     {
         $email = 'darth@theempire.com';
@@ -489,6 +522,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
     public function testThrottlingWithAllowedAttemptsUnderDBrute()
     {
         $email = 'darth@theempire.com';
@@ -505,6 +541,50 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    /**
+     * @group throttle
+     */
+    public function testThrottlingThroughLoginMethod()
+    {
+        $creds = [
+            'email' => 'darth@theempire.com',
+            'password' => 'iwantthethrone'
+        ];
+
+        $user = [
+            'id' => 54,
+            'email' => 'darth@theempire.com',
+            'password_hash' => password_hash('iwantthethrone', PASSWORD_DEFAULT),
+            'active' => 1
+        ];
+
+        // Validate
+        $this->user_model->shouldReceive('as_array')->andreturn( $this->user_model );
+        $this->user_model->shouldReceive('where')->andreturn( $this->user_model );
+        $this->user_model->shouldReceive('first')->andreturn( $user );
+
+        // Not under a distributed brute force attack.
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
+
+        // Are under a brute force attack
+        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(45);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($creds['email'])->once()->andReturn( strtotime('-10 seconds') );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(113);
+
+        $this->ci->login_model->shouldReceive('isBruteForced')->andReturn(true);
+
+
+        $result = $this->auth->login($creds);
+
+        // Should set the ban time in the session.
+        $this->assertEquals( time() + (60 * 15), $_SESSION['bruteBan'] );
+        // Login should return false.
+        $this->assertFalse( $result);
+    }
+
+    //--------------------------------------------------------------------
+
+
     //--------------------------------------------------------------------
     // Utility Methods
     //--------------------------------------------------------------------
@@ -517,12 +597,5 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     }
 
     //--------------------------------------------------------------------
-
-
-    //--------------------------------------------------------------------
-    // Remember Me
-    //--------------------------------------------------------------------
-
-
 
 }
