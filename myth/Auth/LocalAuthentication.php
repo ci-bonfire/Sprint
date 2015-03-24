@@ -184,6 +184,13 @@ class LocalAuthentication implements AuthenticateInterface {
 		    return false;
 	    }
 
+        // We do not want to force case-sensitivity on things
+        // like username and email for usability sake.
+        if (! empty($credentials['email']))
+        {
+            $credentials['email'] = strtolower($credentials['email']);
+        }
+
         // Can we find a user with those credentials?
         $user = $this->user_model->as_array()
                                  ->where($credentials)
@@ -350,6 +357,12 @@ class LocalAuthentication implements AuthenticateInterface {
         $token = random_string('alnum', 24);
         $user_data['activate_hash'] = hash('sha1', config_item('auth.salt') . $token);
 
+        // Email should NOT be case sensitive.
+        if (! empty($user_data['email']))
+        {
+            $user_data['email'] = strtolower($user_data['email']);
+        }
+
         // Save the user
         if (! $id = $this->user_model->insert($user_data))
         {
@@ -474,6 +487,9 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
+        // Emails should NOT be case sensitive.
+        $email = strtolower($email);
+
         // Grab the amount of time to add if the system thinks we're
         // under a distributed brute force attack.
         $dbrute_time = $this->ci->login_model->distributedBruteForceTime();
@@ -572,6 +588,9 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function remindUser($email)
     {
+        // Emails should NOT be case sensitive.
+        $email = strtolower($email);
+
         // Is it a valid user?
         $user = $this->user_model->find_by('email', $email);
 
@@ -623,6 +642,11 @@ class LocalAuthentication implements AuthenticateInterface {
         // Generate a hash to match against the table.
         $credentials['reset_hash'] = hash('sha1', config_item('auth.salt') .$credentials['code']);
         unset($credentials['code']);
+
+        if (! empty($credentials['email']))
+        {
+            $credentials['email'] = strtolower($credentials['email']);
+        }
 
         // Is there a matching user?
         $user = $this->user_model->find_by($credentials);
@@ -716,6 +740,9 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function purgeLoginAttempts($email)
     {
+        // Emails should NOT be case sensitive.
+        $email = strtolower($email);
+
         $this->ci->login_model->purgeLoginAttempts($email);
 
         // @todo record activity of login attempts purge.
@@ -733,6 +760,9 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function purgeRememberTokens($email)
     {
+        // Emails should NOT be case sensitive.
+        $email = strtolower($email);
+
         $this->ci->login_model->purgeRememberTokens($email);
 
         // todo record activity of remember me purges.
@@ -819,6 +849,9 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     protected function invalidateRememberCookie($email, $token)
     {
+        // Emails should NOT be case sensitive.
+        $email = strtolower($email);
+
         // Remove from the database
         $this->ci->login_model->deleteRememberToken($email, $token);
 
