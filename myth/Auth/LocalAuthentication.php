@@ -123,7 +123,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // If the user is throttled due to too many invalid logins
         // or the system is under attack, kick them back.
-        // We need to test for this after validation becuase we
+        // We need to test for this after validation because we
         // don't want it to affect a valid login.
 
         // If throttling time is above zero, we can't allow
