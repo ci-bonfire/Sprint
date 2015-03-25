@@ -195,7 +195,15 @@ class HMVC_Loader extends CI_Loader {
      * @param	bool
      * @return	void
      */
-    public function view($view, $vars = array(), $return = FALSE) {
+    public function view($view, $vars = array(), $return = FALSE)
+    {
+        // Allow application/views/* to override any module
+        // views for easier app customization.
+        if (file_exists(APPPATH .'views/'. $view .'.php'))
+        {
+            return parent::view($view, $vars, $return);
+        }
+
         // Detect module
         if (list($module, $class) = $this->detect_module($view)) {
             // Module already loaded
