@@ -60,6 +60,8 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 	{
 		$name = array_shift( $segments );
 
+        $options = CLI::getOptions();
+
 		$this->options['table_name'] = array_shift( $segments );
 
 		if ( empty( $name ) )
@@ -76,11 +78,11 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 
 		if ( $quiet === false )
 		{
-			$this->collectOptions( $name );
+			$this->collectOptions( $name, $options );
 		}
 		else
 		{
-			$this->quietSetOptions( $name );
+			$this->quietSetOptions( $name, $options );
 		}
 
 		$data = [
@@ -105,11 +107,9 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 	/*
 	 * Customizes our settings
 	 */
-	protected function collectOptions( $model_name )
+	protected function collectOptions( $model_name, $options=[] )
 	{
 		$this->load->helper( 'inflector' );
-
-		$options = CLI::getOptions();
 
 		// Table Name?
 		if ( empty( $this->options['table_name'] ) )
@@ -119,7 +119,7 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 				$options['table'];
 		}
 
-		$this->options['fields'] = $this->table_info( $this->options['table_name'] );
+		$this->options['fields'] = $this->table_info( $this->options['table_name'], $options );
 
 		// Primary Key
 		if (empty($this->options['primary_key']))
@@ -180,7 +180,7 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 
 	//--------------------------------------------------------------------
 
-	protected function quietSetOptions( $model_name )
+	protected function quietSetOptions( $model_name, $options=[] )
 	{
 		$this->load->helper( 'inflector' );
 
@@ -191,7 +191,7 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 
 		// Try to set it from the database first,
 		// otherwise, try to pull from fields
-		$this->options['fields'] = $this->table_info( $this->options['table_name'] );
+		$this->options['fields'] = $this->table_info( $this->options['table_name'], $options );
 
 		$this->options['primary_key'] = ! empty( $this->options['primary_key'] ) ? $this->options['primary_key'] : 'id';
 		$this->options['protected']   = [ $this->options['primary_key'] ];
@@ -206,17 +206,24 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 	 *
 	 * @return mixed An array of fields or false if the table does not exist
 	 */
-	protected function table_info( $table_name )
+	protected function table_info( $table_name, $options=[] )
 	{
 		$this->load->database();
 
 		// Check whether the table exists in this database
 		if ( ! $this->db->table_exists( $table_name ) )
 		{
-			return FALSE;
-		}
+            if (empty($options['fields']))
+            {
+                return FALSE;
+            }
 
-		$fields = $this->db->field_data( $table_name );
+            $fields = $this->parseFieldString($options['fields']);
+		}
+        else
+        {
+            $fields = $this->db->field_data( $table_name );
+        }
 
 		// There may be something wrong or the database driver may not return
 		// field data
@@ -260,6 +267,75 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 	}
 
 	//--------------------------------------------------------------------
+
+    /**
+     * Grabs the fields from the CLI options and gets them ready for
+     * use within the views.
+     */
+    protected function parseFieldString($fields)
+    {
+        if ( empty( $fields ) )
+        {
+            return NULL;
+        }
+
+        $fields = explode( ' ', $fields );
+
+        $new_fields = [ ];
+
+        foreach ( $fields as $field )
+        {
+            $pop = [ NULL, NULL, NULL ];
+            list( $field, $type, $size ) = array_merge( explode( ':', $field ), $pop );
+            $type = strtolower( $type );
+
+            // Strings
+            if (in_array($type, ['char', 'varchar', 'string']))
+            {
+                $new_fields[] = [
+                    'name'  => $field,
+                    'type'  => 'text'
+                ];
+            }
+
+            // Textarea
+            else if ($type == 'text')
+            {
+                $new_fields[] = [
+                    'name'  => $field,
+                    'type'  => 'textarea'
+                ];
+            }
+
+            // Number
+            else if (in_array($type, ['tinyint', 'int', 'bigint', 'mediumint', 'float', 'double', 'number']))
+            {
+                $new_fields[] = [
+                    'name'  => $field,
+                    'type'  => 'number'
+                ];
+            }
+
+            // Date
+            else if (in_array($type, ['date', 'datetime', 'time']))
+            {
+                $new_fields[] = [
+                    'name'  => $field,
+                    'type'  => $type
+                ];
+            }
+        }
+
+        // Convert to objects
+        array_walk($new_fields, function(&$item, $key) {
+            $item = (object)$item;
+        });
+
+        return $new_fields;
+    }
+
+    //--------------------------------------------------------------------
+
 
 	/**
 	 * Takes the fields from field_data() and creates the basic validation
@@ -311,7 +387,6 @@ class ModelGenerator extends \Myth\Forge\BaseGenerator {
 				case 'varchar':
 				case 'text':
 					$rule[] = 'alpha_numeric_spaces';
-					$rule[] = 'xss_clean';
 					break;
 			}
 

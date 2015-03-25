@@ -57,6 +57,16 @@ class ScaffoldGenerator extends \Myth\Forge\BaseGenerator {
 		// need to generate the barebones here.
 		$this->fields = CLI::option('fields');
 
+        // If we don't have any fields, and no model
+        // exists, then we need to provide some default fields.
+        if (empty($this->fields))
+        {
+            if (! file_exists(APPPATH .'models/'. ucfirst($name) .'_model.php'))
+            {
+                $this->fields = "id:int id:id title:string created_on:datetime modified_on:datetime";
+            }
+        }
+
 		// Perform the steps.
         if (! $this->table_exists)
         {
@@ -101,7 +111,16 @@ class ScaffoldGenerator extends \Myth\Forge\BaseGenerator {
 		$name = singular($name);
 		$this->model_name = $name;
 
-		$this->generate("model {$name}", "-table $name -primary_key id", true);
+        // If a table exists, we can build it from that
+        if ($this->table_exists)
+        {
+            $this->generate( "model {$name}", "-table $name -primary_key id", TRUE );
+        }
+        // Otherwise, we need to provide the fields to make the model out of.
+        else
+        {
+            $this->generate( "model {$name}", "-fields '{$this->fields}'", TRUE );
+        }
 	}
 
 	//--------------------------------------------------------------------
