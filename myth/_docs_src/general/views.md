@@ -62,6 +62,13 @@ If the first parameter is an array, the `$value` parameter will be ignored and a
 	];
 	$this->setVar($data);
 
+### Overriding Module Views
+If you need to override the views of any module you can do so by creating a new view in the appropriately-named sub-folder within the `application/views` folder, which will be used instead of the one from the module.
+
+For example, if you want to customize the login or register views, which are located in the Auth module, you would need to create new views at: 
+
+	application/views/auth/login.php
+	application/views/auth/register.php
 
 ## Variants
 Variants are different versions of a single view that must be presented at different times. This is most commonly done to provide customized layouts or views for mobile phones or tablets.
