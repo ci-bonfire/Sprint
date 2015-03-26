@@ -80,7 +80,7 @@ class CIMailService implements MailServiceInterface {
      */
     public function attach($filename, $disposition=null, $newname=null, $mime=null)
     {
-        $this->ci->email->attaach($filename, $disposition, $newname, $mime);
+        $this->ci->email->attach($filename, $disposition, $newname, $mime);
     }
 
     //--------------------------------------------------------------------
