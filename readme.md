@@ -15,7 +15,7 @@ Where Sprint has a very simple, view-based approach to themes, Bonfire will add 
 
 So Sprint is basically CodeIgniter, but with more cowbell.
 
-NOTE: This is currently in an **Alpha-release** state. What's that mean? It means that all of the features that I intend on having in the first release are in place, but they may have bugs, documentation errors, etc. Before the Beta release I will be adding additional tests to the system, additional docs, and trying to verify that docs are correct, and possibly streamlining some code or implementing some todos in the code I missed. If you use the project and find changes to the code or docs, pull requests are accepted :) Preferably with tests in place, though I won't be enforcing that at this point.
+NOTE: This is currently in a **Beta-release** state. What's that mean? It means that no new features are expected, but is a time for bugs to get hunted down and stomped out. If you use the project and find changes to the code or docs, pull requests are accepted :) Preferably with tests in place, though I won't be enforcing that at this point.
 
 ## System Requirements
 
