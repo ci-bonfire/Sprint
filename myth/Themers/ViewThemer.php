@@ -190,27 +190,13 @@ class ViewThemer implements ThemerInterface
 		    {
 			    $variant_view = $view . $this->variants[ $this->current_variant ];
 
-			    if ( realpath( $variant_view . '.php' ) )
-			    {
-				    $output = $this->ci->load->view_path( $variant_view, $data, TRUE );
-			    }
-			    else
-			    {
-				    $output = $this->ci->load->view( $variant_view, $data, TRUE, TRUE );
-			    }
+			    $output = $this->loadView($variant_view, $data);
 		    }
 
 		    // If that didn't find anything, then try it without a variant
 		    if ( empty( $output ) )
 		    {
-			    if ( realpath( $view . '.php' ) )
-			    {
-				    $output = $this->ci->load->view_path( $view, $data, TRUE );
-			    }
-			    else
-			    {
-				    $output = $this->ci->load->view( $view, $data, TRUE );
-			    }
+			    $output = $this->loadView($view, $data);
 		    }
 
 		    // Cache it
@@ -563,4 +549,48 @@ class ViewThemer implements ThemerInterface
 
         return $this;
     }
+
+    //--------------------------------------------------------------------
+    // Private Methods
+    //--------------------------------------------------------------------
+
+    /**
+     * Handles the actual loading of a view file, and checks for any
+     * overrides in themes, etc.
+     *
+     * @param $view
+     * @param $data
+     *
+     * @return string
+     */
+    private function loadView($view, $data)
+    {
+        // First - does it exist in the current theme?
+        $theme = ! empty($this->active_theme) ? $this->active_theme : $this->default_theme;
+        $theme = ! empty($this->folders[$theme]) ? $this->folders[$theme] : $theme;
+        $theme = rtrim($theme, '/ ') .'/';
+
+        if (file_exists($theme ."{$view}.php"))
+        {
+            $output = $this->ci->load->view_path( $theme . $view, $data, TRUE );
+        }
+
+        // Next, if it's a real file with path, then load it
+        elseif ( realpath( $view . '.php' ) )
+        {
+            $output = $this->ci->load->view_path( $view, $data, TRUE );
+        }
+
+        // Otherwise, treat it as a standard view, which means
+        // application/views will override any modules. (See HMVC/Loader)
+        else
+        {
+            $output = $this->ci->load->view( $view, $data, TRUE );
+        }
+
+        return $output;
+    }
+
+    //--------------------------------------------------------------------
+
 }

@@ -70,6 +70,11 @@ For example, if you want to customize the login or register views, which are loc
 	application/views/auth/login.php
 	application/views/auth/register.php
 
+Additionally, themes can contain files that will override the application's view files, permitting themes to easily customize nearly any part of the site. All that you need to do is to provide a folder  and view within the theme file and it will automatically be used. This applies to variants as well as standard views.
+
+	themes/bootstrap3/auth/login.php
+	themes/bootstrap3/auth/register.php
+
 ## Variants
 Variants are different versions of a single view that must be presented at different times. This is most commonly done to provide customized layouts or views for mobile phones or tablets.
 
