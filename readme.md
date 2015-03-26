@@ -11,8 +11,6 @@ I found that for a number of my recent projects, the current Bonfire code was to
 
 While working on Bonfire Next and an in-progress book on modernizing CodeIgniter and it's practical usage,  I realized that I could reform the current slimmer codebase that I've been using and make it the core of Bonfire Next. The goal is to have basic functionality and workflow in place in Sprint, and to build on that in Bonfire. 
 
-Where Sprint has a very simple, view-based approach to themes, Bonfire will add the option of the current robust templating solution. Where Sprint will have a super simple role-based auth system that is intended to hard code into the controllers, Bonfire will continue to use a version of the current RBAC with fully assignable roles/permissions. Bonfire will also ship with more modules for extra functionality, along with the admin area already up and running, where Sprint requires you to build out your own. 
-
 So Sprint is basically CodeIgniter, but with more cowbell.
 
 NOTE: This is currently in a **Beta-release** state. What's that mean? It means that no new features are expected, but is a time for bugs to get hunted down and stomped out. If you use the project and find changes to the code or docs, pull requests are accepted :) Preferably with tests in place, though I won't be enforcing that at this point.
