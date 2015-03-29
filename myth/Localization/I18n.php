@@ -52,6 +52,8 @@ class I18n extends \CI_URI {
 	{
 		// Load config/application.php
 		$this->config->load('application');
+		// Getting i18n
+		$i18n = config_item('i18n');
 		// Getting languages array from config
 		$languages = config_item('i18n.languages');
 		
@@ -76,7 +78,7 @@ class I18n extends \CI_URI {
 			foreach (explode('/', trim($this->uri_string, '/')) as $key => $val)
 			{
 				// Stripping two-character ISO language code from first segment
-				if($key == 0 && array_key_exists($val, $languages))
+				if($i18n && $key == 0 && array_key_exists($val, $languages))
 				{
 					define("LANGUAGE", $languages[$val]);
 					continue;
