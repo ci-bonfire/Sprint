@@ -13,7 +13,7 @@ $(document).on('keyup', '#password', function(e) {
     }
 
     $.getJSON(
-        '/password_check/'+ current_password,
+        'password_check/'+ current_password,
         function (data)
         {
             if (data.status == 'pass')
