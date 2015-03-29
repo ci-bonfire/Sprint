@@ -71,10 +71,10 @@ class I18n extends \CI_URI {
 
 			$this->segments[0] = NULL;
 			// Populate the segments array
-			foreach (explode('/', trim($this->uri_string, '/')) as $val)
+			foreach (explode('/', trim($this->uri_string, '/')) as $key => $val)
 			{
-				// stripping two-character ISO language code
-				if(array_key_exists($val, config_item('i18n.languages')))
+				// stripping two-character ISO language code from first segment
+				if($key == 0 && array_key_exists($val, config_item('i18n.languages')))
 				{
 					continue;
 				}
