@@ -198,4 +198,3 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 	$config['i18n.languages'] = [
 		'en' => 'english'
 	];
-	
