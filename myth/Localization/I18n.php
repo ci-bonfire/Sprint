@@ -33,6 +33,16 @@
 class I18n extends \CI_URI {
 	
 	/**
+	 * Class constructor
+	 *
+	 * @return	void
+	 */
+	public function __construct()
+    {
+            parent::__construct();
+    }
+	
+	/**
 	 * Set URI String
 	 *
 	 * @param 	string	$str
@@ -40,6 +50,9 @@ class I18n extends \CI_URI {
 	 */
 	protected function _set_uri_string($str)
 	{
+		// Load config/application.php
+		$this->config->load('application');
+		
 		// Filter out control characters and trim slashes
 		$this->uri_string = trim(remove_invisible_characters($str, FALSE), '/');
 
@@ -60,6 +73,12 @@ class I18n extends \CI_URI {
 			// Populate the segments array
 			foreach (explode('/', trim($this->uri_string, '/')) as $val)
 			{
+				// stripping two-character ISO language code
+				if(array_key_exists($val, config_item('i18n.languages')))
+				{
+					continue;
+				}
+				
 				$val = trim($val);
 				// Filter segments for security
 				$this->filter_uri($val);
