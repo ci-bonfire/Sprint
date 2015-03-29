@@ -38,9 +38,9 @@ class I18n extends \CI_URI {
 	 * @return	void
 	 */
 	public function __construct()
-    {
+	{
             parent::__construct();
-    }
+	}
 	
 	/**
 	 * Set URI String
