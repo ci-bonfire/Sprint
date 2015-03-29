@@ -192,3 +192,9 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 // certain stages of testing.
 //
     $config['mail.pretend'] = FALSE;
+
+	$config['i18n'] = TRUE;
+	
+	$config['i18n.languages'] = [
+		'en' => 'english'
+	];

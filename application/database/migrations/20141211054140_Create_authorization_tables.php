@@ -32,7 +32,7 @@ class Migration_create_authorization_tables extends CI_Migration {
 
 	    $this->dbforge->add_field($fields);
 	    $this->dbforge->add_key('id', true);
-	    $this->dbforge->create_table('auth_groups');
+	    $this->dbforge->create_table('auth_groups', FALSE, array('ENGINE' => 'InnoDB'));
 	    /**
 	     * Permissions Table
 	     */
@@ -55,7 +55,7 @@ class Migration_create_authorization_tables extends CI_Migration {
 
 	    $this->dbforge->add_field($fields);
 	    $this->dbforge->add_key('id', true);
-	    $this->dbforge->create_table('auth_permissions');
+	    $this->dbforge->create_table('auth_permissions', FALSE, array('ENGINE' => 'InnoDB'));
 
 	    /**
 	     * Groups/Permissions Table
@@ -77,7 +77,7 @@ class Migration_create_authorization_tables extends CI_Migration {
 
 	    $this->dbforge->add_field($fields);
 	    $this->dbforge->add_key(['group_id', 'permission_id']);
-	    $this->dbforge->create_table('auth_groups_permissions');
+	    $this->dbforge->create_table('auth_groups_permissions', FALSE, array('ENGINE' => 'InnoDB'));
 
 	    /**
 	     * Users/Groups Table
@@ -99,7 +99,7 @@ class Migration_create_authorization_tables extends CI_Migration {
 
 	    $this->dbforge->add_field($fields);
 	    $this->dbforge->add_key(['group_id', 'user_id']);
-	    $this->dbforge->create_table('auth_groups_users');
+	    $this->dbforge->create_table('auth_groups_users', FALSE, array('ENGINE' => 'InnoDB'));
     }
 
     //--------------------------------------------------------------------
