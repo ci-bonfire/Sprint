@@ -52,6 +52,8 @@ class I18n extends \CI_URI {
 	{
 		// Load config/application.php
 		$this->config->load('application');
+		// Getting languages array from config
+		$languages = config_item('i18n.languages');
 		
 		// Filter out control characters and trim slashes
 		$this->uri_string = trim(remove_invisible_characters($str, FALSE), '/');
@@ -73,9 +75,10 @@ class I18n extends \CI_URI {
 			// Populate the segments array
 			foreach (explode('/', trim($this->uri_string, '/')) as $key => $val)
 			{
-				// stripping two-character ISO language code from first segment
-				if($key == 0 && array_key_exists($val, config_item('i18n.languages')))
+				// Stripping two-character ISO language code from first segment
+				if($key == 0 && array_key_exists($val, $languages))
 				{
+					define("LANGUAGE", $languages[$val]);
 					continue;
 				}
 				
