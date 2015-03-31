@@ -51,6 +51,7 @@ class I18n {
 		if($i18n && array_key_exists($lang_segment, $languages))
 		{
 			define("CURRENT_LANGUAGE", $languages[$lang_segment]);
+			$this->config->set_item('language', CURRENT_LANGUAGE);
 			array_shift($segments);
 		}
 	}
