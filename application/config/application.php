@@ -193,8 +193,33 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 //
     $config['mail.pretend'] = FALSE;
 
+//--------------------------------------------------------------------
+// Internationalization Settings
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+// If TRUE, will turn on the internationalization features. The primary
+// side-effect being that it will search for the first segment in the
+// URI ($uri->segment(1) ) and compare it against the languages listed
+// below. If the two-character ISO language code matches a key in
+// i18n.languages, then a constant will be set and available system-wide
+// 'CURRENT_LANGUAGE'. Also, that segment will be removed from the list
+// of segments returned in all URI functions, and will allow routing
+// to work like normally.
+//
 	$config['i18n'] = TRUE;
-	
+
+//--------------------------------------------------------------------
+// This is the array of ISO language codes and translation names that
+// the i18n system will use. When the URI segment is checked, if MUST
+// match one of the keys listed here, otherwise operation will
+// continue as normal.
+//
+// The key is the two character ISO code to search for. The value
+// must match the folder name that the translations are stored in.
+// This will be the same value that's used with load->language()
+// as the idiom.
+//
 	$config['i18n.languages'] = [
-	'en' => 'english'
+	    'en' => 'english'
 	];

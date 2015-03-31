@@ -31,29 +31,59 @@
  */
 
 class I18n {
-	
+
+    /**
+     * An instance of CI_Config.
+     *
+     * @var
+     */
+    protected $config;
+
+    //--------------------------------------------------------------------
+
+    public function __construct()
+    {
+        $this->config =& load_class('Config', 'core');
+    }
+
+    //--------------------------------------------------------------------
+
+
+
 	/**
-	 * Set CURRENT_LANGUAGE constant, shift language from Uri segments
+     * Compares the first element in $segments against
+     * the array of allowed languages in config_item 'i18n.languages'
+     * to determine the language the site is being requested in.
+     *
+	 * Set CURRENT_LANGUAGE constant, if found.
 	 *
 	 * @param 	array	&$segments
+     *
 	 * @return	void
 	 */
-	public function setLanguage(&$segments)
+	public function setLanguage($segments)
 	{
-		// Load config/application.php
-		$this->config->load('application');
-		// Getting i18n
-		$i18n = $this->config->item('i18n');
+        if (empty($segments[1]))
+        {
+            return $segments;
+        }
+
 		// Getting languages array from config
 		$languages = $this->config->item('i18n.languages');
-		
-		$lang_segment = $segments[1];		
-		if($i18n && array_key_exists($lang_segment, $languages))
+
+		$lang_segment = $segments[1];
+
+        if (array_key_exists($lang_segment, $languages) )
 		{
 			define("CURRENT_LANGUAGE", $languages[$lang_segment]);
 			$this->config->set_item('language', CURRENT_LANGUAGE);
-			array_shift($segments);
+            // Remove that element from the URI segments.
+            array_shift($segments);
 		}
+
+        return $segments;
 	}
-   
+
+    //--------------------------------------------------------------------
+
 }
