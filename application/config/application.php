@@ -207,7 +207,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 // of segments returned in all URI functions, and will allow routing
 // to work like normally.
 //
-	$config['i18n'] = TRUE;
+	$config['i18n'] = false;
 
 //--------------------------------------------------------------------
 // This is the array of ISO language codes and translation names that
