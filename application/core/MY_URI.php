@@ -16,6 +16,7 @@ class MY_URI extends \CI_URI {
         {
             $i18n = new \Myth\Localization\I18n();
             $this->segments = $i18n->setLanguage($this->segments);
+            $this->uri_string = $i18n->cleanURIString($this->uri_string);
         }
 	}
 

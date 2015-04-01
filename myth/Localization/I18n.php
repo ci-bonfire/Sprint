@@ -39,6 +39,14 @@ class I18n {
      */
     protected $config;
 
+    /**
+     * Stores the current ISO code,
+     * if a match was found.
+     *
+     * @var null
+     */
+    protected $iso_code = null;
+
     //--------------------------------------------------------------------
 
     public function __construct()
@@ -47,8 +55,6 @@ class I18n {
     }
 
     //--------------------------------------------------------------------
-
-
 
 	/**
      * Compares the first element in $segments against
@@ -75,15 +81,66 @@ class I18n {
 
         if (array_key_exists($lang_segment, $languages) )
 		{
-			define("CURRENT_LANGUAGE", $languages[$lang_segment]);
+            if (! defined('CURRENT_LANGUAGE'))
+            {
+                define( 'CURRENT_LANGUAGE', $languages[ $lang_segment ] );
+            }
 			$this->config->set_item('language', CURRENT_LANGUAGE);
+
+            // Store the ISO code for later use
+            $this->iso_code = $lang_segment;
+
             // Remove that element from the URI segments.
-            array_shift($segments);
+            // This is a slightly hacky method, but we have to ensure
+            // that element 1 is removed, and all other items are
+            // shifted down one, without having an item at [0]
+            // otherwise the URI methods will not all work.
+            $temp = [];
+
+            array_walk($segments, function ($item, $index) use(&$temp) {
+                if ($index == 1)
+                {
+                    return;
+                }
+
+                $temp[ $index -1] = $item;
+            });
+
+            $segments = $temp;
 		}
 
         return $segments;
 	}
 
     //--------------------------------------------------------------------
+
+    /**
+     * MUST be ran AFTER setLanguage() and removes the locale code
+     * from the URI string.
+     *
+     * @param $str
+     *
+     * @return mixed
+     */
+    public function cleanURIString($str)
+    {
+        // If iso_code is empty, then there
+        // is no current language set.
+        if (empty($this->iso_code))
+        {
+            return $str;
+        }
+
+        if (strpos($str, $this->iso_code) === 0)
+        {
+            $str = substr($str, strlen($this->iso_code));
+            $str = ltrim($str, '/');
+        }
+
+        return $str;
+    }
+
+    //--------------------------------------------------------------------
+
 
 }
