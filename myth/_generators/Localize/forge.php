@@ -29,19 +29,42 @@
  * @link        http://sprintphp.com
  * @since       Version 1.0
  */
+
 $descriptions = [
-	'api install' => ['install', 'Creates any files needed to setup the API Authentication.'],
-    'api scaffold' => ['scaffold', 'Creates a controller, model, migration, and view files for a single resource.']
+    'localize install' => ['install', 'Creates the migration file for localization table.'],
+    'localize theme' => ['theme <theme> [lang]', 'Copies the themes view files into a localized subfolder'],
+    'localize controller' => ['controller <name> [<lang>]', 'Copies the controllers view files into a localized subfolder'],
 ];
 
 $long_description = <<<EOT
 NAME
-	api - sets the project up with API authentication.
+	localize - Tools for localizing your application
 
 SYNOPSIS
-	api <name>
+	localize install
 
 DESCRIPTION
+    The localize generator contains a handful of tools meant to assist you in rapidly
+    localizing/translating your application.
+
+    INSTALL:
+    The 'install' command will create the migration file for the translations table.
+
+    Usage: sprint forge localize install
+
+    THEME:
+    Will copy all of the files of the specified theme into a subfolder with that language's
+    name, ready for you to edit/translate.
+
+    Usage: sprint forge localize theme {theme_name}
+
+    CONTROLLER:
+    Will copy all of the view files for a standard controller's folder into a subfolder within
+    the views folder for the specified language. Note: this does NOT work with modules at
+    this time.
+
+    Usage: sprint forge localize controller {controller_name}
+
 
 OPTIONS
 	none
