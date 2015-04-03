@@ -157,7 +157,46 @@ class LocalizeGenerator extends \Myth\Forge\BaseGenerator {
 
     private function makeController( $segments )
     {
-        die('Not Implemented yet');
+        $controller = ! empty($segments[0]) ? $segments[0] : null;
+        $lang       = ! empty($segments[1]) ? $segments[1] : null;
+
+        // Controller
+        if (empty($controller))
+        {
+            $controller = CLI::prompt("Controller");
+            $controller = strtolower($controller);
+
+            if (! is_dir(VIEWPATH . $controller))
+            {
+                CLI::error('Controller view folder does not exist for '. CLI::color($controller, 'yellow'));
+                exit(1);
+            }
+        }
+
+        $source = VIEWPATH . $controller;
+
+        // Language
+        if (empty($lang))
+        {
+            $lang = CLI::prompt('Translation name');
+            $lang = strtolower($lang);
+
+            $this->verifyLanguage($lang);
+        }
+
+        // Copy the folder to a temp folder to avoid nesting
+        // and infinite recursion issues.
+        $temp = APPPATH .'cache/copy_temp/'. $lang;
+
+        if (! $this->copyDirectory($source, $temp))
+        {
+            CLI::error('Error creating theme translation folder.');
+        }
+
+        // Now move the folder into the theme location
+        rename($temp, $source .'/'. $lang);
+
+        return true;
     }
 
     //--------------------------------------------------------------------
