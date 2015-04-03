@@ -7,13 +7,16 @@ $lang['created']            = 'Created';
 $lang['overwrote']          = 'Overwrote';
 $lang['modified']           = 'Modified';
 $lang['error']              = 'Error';
+$lang['copied']             = 'Copied';
 
 
 $lang['errors.writing_file']    = 'Unknown error writing file: %s';
 $lang['errors.creating_dir']    = 'Unknown error creating directory: %s';
+$lang['errors.copying_dir']     = 'Unknown error copying directory: %s';
 $lang['errors.reading_file']    = "Unable to read from file: %s";
 $lang['errors.file_not_found']  = "File not found: %s";
 $lang['errors.cant_instantiate'] = "Unable to create instance of class: %s";
+$lang['errors.dir_exists']      = 'The directory already exists: %s';
 
 // BaseController
 $lang['bad_json_encode']    = 'Resources can not be converted to JSON data.';
@@ -43,6 +46,7 @@ $lang['forge.cant_find_readme'] = 'Unable to find the readme file: %s';
 $lang['forge.no_themer']        = 'No themer chosen in forge config file.';
 $lang['forge.no_uikit']         = 'No uikit chosen in application config file.';
 $lang['forge.no_collections']   = 'No generator collections found.';
+$lang['forge.dir_not_writable'] = 'The folder is not writable: %s';
 
 // Mail
 $lang['mail.invalid_service']   = "Unable to find Mail Service: %s";

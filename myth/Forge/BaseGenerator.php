@@ -217,6 +217,114 @@ abstract class BaseGenerator extends CLIController {
     //--------------------------------------------------------------------
 
     /**
+     * Copies the contents of a folder into another folder. Both
+     * within the sandbox, of course.
+     *
+     * @param $source
+     * @param $destination
+     * @param bool $overwrite
+     * @param int $file_perms
+     * @param int $dir_perms
+     *
+     * @return bool
+     */
+    public function copyDirectory($source, $destination, $overwrite=false, $file_perms = 0644, $dir_perms = 0755)
+    {
+        $source = $this->sandbox($source);
+
+        if (! is_dir($source))
+        {
+            return null;
+        }
+
+        $destination = $this->sandbox($destination);
+
+        // Destination Exists?
+        if (is_dir($destination))
+        {
+            if (! $overwrite)
+            {
+                throw new \RuntimeException( sprintf( lang('errors.dir_exists'), $destination) );
+            }
+
+            CLI::write( CLI::color("\t". strtolower( lang('overwrote') ) ." ", 'light_red') . $destination );
+        }
+
+        // Otherwise create Destination
+        else
+        {
+            $this->createDirectory( $destination, $dir_perms );
+
+            CLI::write( CLI::color("\t". strtolower( lang('created') ) ." ", 'cyan') . $destination );
+        }
+
+        // Can we write?
+        if (! is_writable($destination))
+        {
+            throw new \RuntimeException( sprintf( lang('forge.dir_not_writable'), $destination) );
+        }
+
+        // Just do it!
+        if (! $this->recurse_copy($source, $destination, $file_perms, $dir_perms))
+        {
+            throw new \RuntimeException( sprintf( lang('errors.copying_dir', $source) ));
+        }
+
+        CLI::write( CLI::color("\t". strtolower( lang('copied') ) ." ", 'cyan') . $source );
+
+        return $this;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * A quiet, recursive copy method.
+     *
+     * @param $source
+     * @param $destination
+     * @param int $file_perms
+     * @param int $dir_perms
+     *
+     * @return bool
+     */
+    protected function recurse_copy($source, $destination, $file_perms = 0644, $dir_perms = 0755)
+    {
+        $dir = opendir($source);
+
+        $destination = rtrim($destination, '/ ');
+
+        if (! is_dir($destination))
+        {
+            mkdir($destination);
+            chmod($destination, $dir_perms);
+        }
+
+        while (false !== ( $file = readdir($dir)) )
+        {
+            if (( $file == '.' ) || ( $file == '..' ) || ( $file == '.DS_Store') || strpos($file, $destination) !== false)
+            {
+                continue;
+            }
+
+            if ( is_dir($source .'/'. $file) )
+            {
+                $this->recurse_copy($source .'/'. $file, $destination .'/'. $file, $file_perms, $dir_perms);
+            }
+            else
+            {
+                copy($source .'/'. $file, $destination .'/'. $file);
+                chmod($destination .'/'. $file, $file_perms);
+            }
+        }
+
+        closedir($dir);
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
      * Attempts to locate a template within the current template group,
      * parses it with the passed in data, and writes to the new location.
      *

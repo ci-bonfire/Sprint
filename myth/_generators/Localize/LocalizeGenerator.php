@@ -49,6 +49,12 @@ class LocalizeGenerator extends \Myth\Forge\BaseGenerator {
             case 'install':
                 $this->install();
                 break;
+            case 'theme':
+                $this->makeTheme($segments);
+                break;
+            case 'controller':
+                $this->makeController($segments);
+                break;
             default:
                 if (! $quiet)
                 {
@@ -64,7 +70,9 @@ class LocalizeGenerator extends \Myth\Forge\BaseGenerator {
     {
         CLI::write("\nAvailable Localization Tools");
 
-        CLI::write( CLI::color('install', 'yellow') .'   install        Creates migration file for the localizations table' );
+        CLI::write( CLI::color('install', 'yellow') .'      install       Creates migration file for the localizations table' );
+        CLI::write( CLI::color('controller', 'yellow') .'   controller    Copies controller view files to localized folder' );
+        CLI::write( CLI::color('theme', 'yellow') .'        theme         Copies theme view files to localize folder' );
     }
 
     //--------------------------------------------------------------------
@@ -99,5 +107,119 @@ class LocalizeGenerator extends \Myth\Forge\BaseGenerator {
 	}
 
 	//--------------------------------------------------------------------
+
+    /**
+     * Creates the theme's sub-folder.
+     *
+     * @param array $segments
+     *
+     * @return bool
+     */
+    private function makeTheme( array $segments )
+    {
+        $theme = ! empty($segments[0]) ? $segments[0] : null;
+        $lang  = ! empty($segments[1]) ? $segments[1] : null;
+
+        // Theme
+        if (empty($theme))
+        {
+            $theme = CLI::prompt("Theme alias");
+            $theme = strtolower($theme);
+        }
+
+        $source = $this->verifyTheme($theme);
+
+        // Language
+        if (empty($lang))
+        {
+            $lang = CLI::prompt('Translation name');
+            $lang = strtolower($lang);
+
+            $this->verifyLanguage($lang);
+        }
+
+        // Copy the folder to a temp folder to avoid nesting
+        // and infinite recursion issues.
+        $temp = APPPATH .'cache/copy_temp/'. $lang;
+
+        if (! $this->copyDirectory($source, $temp))
+        {
+            CLI::error('Error creating theme translation folder.');
+        }
+
+        // Now move the folder into the theme location
+        rename($temp, $source .'/'. $lang);
+
+        return true;
+    }
+
+    //--------------------------------------------------------------------
+
+    private function makeController( $segments )
+    {
+        die('Not Implemented yet');
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Verifies that the main language folder contains a translation
+     * folder. If it doesn't, will verify with the user or exit.
+     *
+     * @param $language
+     *
+     * @return bool
+     */
+    private function verifyLanguage( $language )
+    {
+        $continue = false;
+
+        if (! is_dir(APPPATH .'language/'. $language))
+        {
+            CLI::write("No translation exists for language: ". CLI::color($language, 'yellow') );
+            $check = CLI::prompt('Continue', ['y', 'n']);
+
+            if ($check == 'y' || $check == 'n')
+            {
+                $continue = true;
+            }
+        }
+
+        if ($continue)
+        {
+            return true;
+        }
+
+        CLI::error('Cannot continue.');
+        exit(1);
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Ensures the a theme with the alias, $theme, exists. Returns
+     * the location.
+     *
+     * @param $theme
+     *
+     * @return string
+     */
+    private function verifyTheme( $theme )
+    {
+        $folders = config_item('theme.paths');
+
+        if (! array_key_exists($theme, $folders) || ! is_dir($folders[$theme]) )
+        {
+            CLI::error('Theme does not exist: '. CLI::color($theme, 'yellow'));
+            exit(1);
+        }
+
+        $path = $folders[$theme];
+        $path = rtrim($path, '/ ');
+
+        return $path;
+    }
+
+    //--------------------------------------------------------------------
 
 }
