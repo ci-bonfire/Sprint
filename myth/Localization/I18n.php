@@ -90,23 +90,10 @@ class I18n {
             // Store the ISO code for later use
             $this->iso_code = $lang_segment;
 
-            // Remove that element from the URI segments.
-            // This is a slightly hacky method, but we have to ensure
-            // that element 1 is removed, and all other items are
-            // shifted down one, without having an item at [0]
-            // otherwise the URI methods will not all work.
-            $temp = [];
-
-            array_walk($segments, function ($item, $index) use(&$temp) {
-                if ($index == 1)
-                {
-                    return;
-                }
-
-                $temp[ $index -1] = $item;
-            });
-
-            $segments = $temp;
+			// Reset indexes of segments array, now index starts at 0
+			$segments = array_values($segments); 
+			// Remove ISO code from the URI segments
+			unset($segments[0]);
 		}
 
         return $segments;
