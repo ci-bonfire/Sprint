@@ -251,8 +251,13 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        // Destroy the session
-        $this->ci->session->sess_destroy();
+        // Destroy the session data - but ensure a session is still
+        // available for flash messages, etc.
+        foreach ($_SESSION as $key => $value)
+        {
+            $_SESSION[$key] = null;
+            unset($_SESSION[$key]);
+        }
 
         // Take care of any rememberme functionality.
         if (config_item('auth.allow_remembering'))
