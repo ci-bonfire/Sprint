@@ -253,10 +253,13 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Destroy the session data - but ensure a session is still
         // available for flash messages, etc.
-        foreach ($_SESSION as $key => $value)
+        if (isset($_SESSION))
         {
-            $_SESSION[$key] = null;
-            unset($_SESSION[$key]);
+            foreach ( $_SESSION as $key => $value )
+            {
+                $_SESSION[ $key ] = NULL;
+                unset( $_SESSION[ $key ] );
+            }
         }
 
         // Take care of any rememberme functionality.
