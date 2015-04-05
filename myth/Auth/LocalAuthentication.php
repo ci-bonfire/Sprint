@@ -896,6 +896,10 @@ class LocalAuthentication implements AuthenticateInterface {
         // Save the user for later access
         $this->user = $user;
 
+        // Regenerate the session ID to help protect
+        // against session fixation
+        $this->ci->session->sess_regenerate();
+
         // Let the session know that we're logged in.
         $this->ci->session->set_userdata('logged_in', $user['id']);
 
