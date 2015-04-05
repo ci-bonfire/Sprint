@@ -281,7 +281,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     public function testLogout()
     {
-        $this->ci->session->shouldReceive('sess_destroy');
+        $this->ci->session->shouldReceive('sess_regenerate');
         $this->ci->login_model->shouldReceive('deleteRememberToken')->once();
 
         $this->auth->logout();

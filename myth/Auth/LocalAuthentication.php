@@ -303,6 +303,10 @@ class LocalAuthentication implements AuthenticateInterface {
             }
         }
 
+        // If logged in, ensure cache control
+        // headers are in place
+        $this->setHeaders();
+
         return true;
     }
 
@@ -901,6 +905,10 @@ class LocalAuthentication implements AuthenticateInterface {
         // Record a new Login
         $this->ci->login_model->recordLogin($user);
 
+        // If logged in, ensure cache control
+        // headers are in place
+        $this->setHeaders();
+
         // We'll give a 20% chance to need to do a purge since we
         // don't need to purge THAT often, it's just a maintenance issue.
         // to keep the table from getting out of control.
@@ -911,5 +919,21 @@ class LocalAuthentication implements AuthenticateInterface {
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Sets the headers to ensure that pages are not cached when a user
+     * is logged in, helping to protect against logging out and then
+     * simply hitting the Back button on the browser and getting private
+     * information because the page was loaded from cache.
+     */
+    protected function setHeaders()
+    {
+        $this->ci->output->set_header('Cache-Control: no-store, no-cache, must-revalidate');
+        $this->ci->output->set_header('Cache-Control: post-check=0, pre-check=0');
+        $this->ci->output->set_header('Pragma: no-cache');
+    }
+
+    //--------------------------------------------------------------------
+
 
 }
