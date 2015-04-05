@@ -261,6 +261,8 @@ class LocalAuthentication implements AuthenticateInterface {
                 unset( $_SESSION[ $key ] );
             }
         }
+        // Also, regenerate the session ID for a touch of added safety.
+        $this->ci->session->sess_regenerate(true);
 
         // Take care of any rememberme functionality.
         if (config_item('auth.allow_remembering'))
