@@ -211,6 +211,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
+        $this->ci->session->shouldReceive('sess_regenerate');
         $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
@@ -236,6 +237,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
+        $this->ci->session->shouldReceive('sess_regenerate');
         $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
@@ -261,6 +263,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
+        $this->ci->session->shouldReceive('sess_regenerate');
         $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
