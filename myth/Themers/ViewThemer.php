@@ -40,8 +40,10 @@ class ViewThemer implements ThemerInterface
 
     protected $default_theme = null;
 
-	protected $active_theme = null;
-
+    protected $active_theme = null;
+    
+    protected $colon_theme = null;
+    
     protected $layout = 'index';
 
     protected $view = '';
@@ -54,7 +56,7 @@ class ViewThemer implements ThemerInterface
 
     protected $current_variant = '';
 
-	protected $parse_views = false;
+    protected $parse_views = false;
 
     protected $ci;
 
@@ -64,7 +66,7 @@ class ViewThemer implements ThemerInterface
     {
         $this->ci = $ci;
 
-	    $this->parse_views = config_item('theme.parse_views');
+        $this->parse_views = config_item('theme.parse_views');
     }
 
     //--------------------------------------------------------------------
@@ -91,24 +93,24 @@ class ViewThemer implements ThemerInterface
             throw new \LogicException( sprintf( lang('theme.bad_folder'), $theme ) );
         }
 
-	    $this->active_theme = $theme;
+        $this->active_theme = $theme;
 
         // Make the path available within views.
         $this->vars['theme_path'] = $this->folders[$theme];
 
-        return $this->display($this->folders[$theme] . '/' . $this->layout);
+        return $this->display($this->layout);
     }
 
     //--------------------------------------------------------------------
 
-	/**
-	 * Used within the template layout file to render the current content.
-	 * This content is typically used to display the current view.
-	 *
-	 * @param int $cache_time
-	 *
-	 * @return mixed
-	 */
+    /**
+     * Used within the template layout file to render the current content.
+     * This content is typically used to display the current view.
+     *
+     * @param int $cache_time
+     *
+     * @return mixed
+     */
     public function content()
     {
         // Calc our view name based on current method/controller
@@ -154,69 +156,64 @@ class ViewThemer implements ThemerInterface
      */
     public function display($view, $data = array(), $cache_time = 0, $cache_name=null)
     {
-	    if (empty($cache_name))
-	    {
-		    $cache_name = 'theme_view_' . $view . '_' . $this->ci->router->fetch_class() . '_' . $this->ci->router->fetch_method();
-		    $cache_name = str_replace( '/', '_', $cache_name );
-	    }
+        if (empty($cache_name))
+        {
+            $cache_name = 'theme_view_' . $view . '_' . $this->ci->router->fetch_class() . '_' . $this->ci->router->fetch_method();
+            $cache_name = str_replace( '/', '_', $cache_name );
+        }
 
-	    if ($cache_time == 0 || ! $output = $this->ci->cache->get($cache_name))
-	    {
-		    $theme        = NULL;
-		    $variant_view = NULL;
+        if ($cache_time == 0 || ! $output = $this->ci->cache->get($cache_name))
+        {
+            $theme        = NULL;
+            $variant_view = NULL;
 
-		    // Pull out the theme from the view, if given.
-		    if ( strpos( $view, ':' ) !== FALSE )
-		    {
-			    list( $theme, $view ) = explode( ':', $view );
+            // Pull out the theme from the view, if given.
+            if ( strpos( $view, ':' ) !== FALSE )
+            {
+                list( $this->colon_theme, $view ) = explode( ':', $view );
 
-			    $theme = str_replace('{theme}', $this->active_theme, $theme);
-		    }
+                $this->colon_theme = str_replace('{theme}', $this->active_theme, $this->colon_theme);
+            }
 
-		    if ( ! empty( $theme ) && isset( $this->folders[ $theme ] ) )
-		    {
-			    $view = rtrim( $this->folders[ $theme ], '/' ) . '/' . $view;
-		    }
+            if (! is_array($data))
+            {
+                $data = [];
+            }
 
-		    if (! is_array($data))
-		    {
-			    $data = [];
-		    }
+            $data = array_merge( $this->vars, $data );
 
-		    $data = array_merge( $this->vars, $data );
+            // if using a variant, add it to the view name.
+            if ( ! empty( $this->current_variant ) )
+            {
+                $variant_view = $view . $this->variants[ $this->current_variant ];
 
-		    // if using a variant, add it to the view name.
-		    if ( ! empty( $this->current_variant ) )
-		    {
-			    $variant_view = $view . $this->variants[ $this->current_variant ];
+                $output = $this->loadView($variant_view, $data);
+            }
 
-			    $output = $this->loadView($variant_view, $data);
-		    }
+            // If that didn't find anything, then try it without a variant
+            if ( empty( $output ) )
+            {
+                $output = $this->loadView($view, $data);
+            }
 
-		    // If that didn't find anything, then try it without a variant
-		    if ( empty( $output ) )
-		    {
-			    $output = $this->loadView($view, $data);
-		    }
+            // Cache it
+            if ((int)$cache_time > 0)
+            {
+                $this->ci->cache->save($cache_name, $output, (int)$cache_time * 60);
+            }
+        }
 
-		    // Cache it
-		    if ((int)$cache_time > 0)
-		    {
-			    $this->ci->cache->save($cache_name, $output, (int)$cache_time * 60);
-		    }
-	    }
+        // Parse views?
+        if ($this->parse_views)
+        {
+            $this->ci->load->library('parser');
 
-	    // Parse views?
-	    if ($this->parse_views)
-	    {
-		    $this->ci->load->library('parser');
+            // Any class objects will cause failure
+            // so get rid of those bad boys....
+            unset($data['uikit'], $data['themer']);
 
-		    // Any class objects will cause failure
-		    // so get rid of those bad boys....
-		    unset($data['uikit'], $data['themer']);
-
-		    $output = $this->ci->parser->parse_string($output, $data, true);
-	    }
+            $output = $this->ci->parser->parse_string($output, $data, true);
+        }
 
         return $output;
     }
@@ -233,10 +230,10 @@ class ViewThemer implements ThemerInterface
      */
     public function call($command, $cache_time=0, $cache_name=null)
     {
-	    if (empty($cache_name))
-	    {
-		    $cache_name = 'theme_call_' . md5( $command );
-	    }
+        if (empty($cache_name))
+        {
+            $cache_name = 'theme_call_' . md5( $command );
+        }
 
         if (! $output = $this->ci->cache->get($cache_name)) {
             $parts = explode(' ', $command);
@@ -428,7 +425,7 @@ class ViewThemer implements ThemerInterface
      */
     public function parseViews($parse = false)
     {
-	    $this->parse_views = $parse;
+        $this->parse_views = $parse;
 
         return $this;
     }
@@ -551,7 +548,7 @@ class ViewThemer implements ThemerInterface
     }
 
     //--------------------------------------------------------------------
-    // Private Methods
+    // Protected Methods
     //--------------------------------------------------------------------
 
     /**
@@ -563,13 +560,14 @@ class ViewThemer implements ThemerInterface
      *
      * @return string
      */
-    private function loadView($view, $data)
+    protected function loadView($view, $data)
     {
         // First - does it exist in the current theme?
         $theme = ! empty($this->active_theme) ? $this->active_theme : $this->default_theme;
+        $theme = ! empty($this->colon_theme) ? $this->colon_theme : $theme;
         $theme = ! empty($this->folders[$theme]) ? $this->folders[$theme] : $theme;
         $theme = rtrim($theme, '/ ') .'/';
-
+        
         if (file_exists($theme ."{$view}.php"))
         {
             $output = $this->ci->load->view_path( $theme . $view, $data, TRUE );
