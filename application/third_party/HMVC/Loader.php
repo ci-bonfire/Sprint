@@ -498,7 +498,7 @@ class HMVC_Loader extends CI_Loader {
      * @param	string
      * @return	array|boolean
      */
-    private function detect_module($class) {
+    protected function detect_module($class) {
         $class = str_replace('.php', '', trim($class, '/'));
         if (($first_slash = strpos($class, '/')) !== FALSE) {
             $module = substr($class, 0, $first_slash);
@@ -519,7 +519,7 @@ class HMVC_Loader extends CI_Loader {
      * @param string $module
      * @return string|boolean
      */
-    private function find_module($module) {
+    protected function find_module($module) {
         $config = & $this->_ci_get_component('config');
 
         // Check all locations for this module
