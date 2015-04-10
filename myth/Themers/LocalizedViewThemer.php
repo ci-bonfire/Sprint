@@ -76,10 +76,11 @@ class LocalizedViewThemer extends  ViewThemer
         }
 
         // Otherwise, treat it as a standard view, which means
-        // application/views will override any modules. (See HMVC/Loader)
+        // application/views will override any modules (See HMVC/Loader) 
+        // but with checking of lang idiom.
         else
         {
-            $output = $this->ci->load->view( $view, $data, TRUE );
+            $output = $this->ci->load->view_path_with_modules( $view, $data, TRUE );
         }
 
         return $output;
