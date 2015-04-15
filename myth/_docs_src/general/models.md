@@ -653,6 +653,7 @@ To observe an event and have your methods called you simply add the method name 
 * **method** Will be the name of the method that called. Like `insert`, `update`, `update_batch`, etc.
 * **fields** The data provided by the method. For inserts and updates it is the data that was just inserted/updated. When using the insert/update_batch methods, it will be an array of all of the row data that you can loop over.
 
+```
 	protected function set_created_on($data)
 	{
 		if ($data['method'] == 'insert_batch' || $data['method'] ==  'update_batch')
@@ -667,6 +668,169 @@ To observe an event and have your methods called you simply add the method name 
 
 		return $row;
 	}
+```
+
+Due to the nature of the different methods that call the observers, it's impossible to have a perfectly matching set of parameters for each. The data passed into each observer has been made as consistent as possible. 
+
+Each method calling it also has slightly different requirements for the data sent back to it. When writing observers your best bet is to sprinkle liberal var_dumps, examine the CIDBModel calling methods, and document your observers well to avoid future confusion.
+
+<table>
+	<thead>
+		<tr>
+			<th>Method</th>
+			<th>Event</th>
+			<th>$data</th>
+			<th>Return Value</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>find</td>
+			<td>before_event</td>
+			<td>id, method</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>find</td>
+			<td>after_find</td>
+			<td>id, method, fields (the query results)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>find_by</td>
+			<td>before_find</td>
+			<td>method, fields (the where key/value pairs)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>find_by</td>
+			<td>after_find</td>
+			<td>method, fields (the query results)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>find_all</td>
+			<td>before_find</td>
+			<td>method</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>find_all</td>
+			<td>after_find</td>
+			<td>method, fields (the query results)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>insert</td>
+			<td>before_insert</td>
+			<td>method, fields (the data to insert)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>insert</td>
+			<td>after_insert</td>
+			<td>id, method, fields (the query results)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>insert_batch</td>
+			<td>before_insert</td>
+			<td>method, fields (array of data to insert)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>replace</td>
+			<td>after_insert</td>
+			<td>id, method, fields (the query results)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+		<td>update</td>
+			<td>before_update</td>
+			<td>id, method, fields (the data to insert)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update</td>
+			<td>after_update</td>
+			<td>id, method, fields (the query results), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+		<td>update_batch</td>
+			<td>before_update (called for each row)</td>
+			<td>method, fields (data to insert)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update_batch</td>
+			<td>after_update (called for each row)</td>
+			<td>method, fields (the query results), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+		<td>update_many</td>
+			<td>before_update</td>
+			<td>ids, method, fields (arrays of data to update)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update_many</td>
+			<td>after_update</td>
+			<td>ids, method, fields (original update data), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>update_by</td>
+			<td>before_update</td>
+			<td>method, fields (the data to update)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update_by</td>
+			<td>after_update</td>
+			<td>method, fields (original update data), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>update_all</td>
+			<td>before_update</td>
+			<td>method, fields (the data to update)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update_all</td>
+			<td>after_update</td>
+			<td>method, fields (original update data), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>delete</td>
+			<td>before_delete</td>
+			<td>method, fields (the where key/value pairs)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>delete</td>
+			<td>after_delete</td>
+			<td>method, fields (where key/value pairs), result (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>delete_many</td>
+			<td>before_delete</td>
+			<td>ids, method</td>
+			<td>ids</td>
+		</tr>
+		<tr>
+			<td>delete_many</td>
+			<td>after_delete</td>
+			<td>ids, method, result (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+	</tbody>
+</table>
+
 
 ## Validating Data
 
