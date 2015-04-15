@@ -1311,17 +1311,38 @@ class CIDbModel
      */
     public function trigger($event, $data = false)
     {
-        if (!isset($this->$event) || !is_array($this->$event)) {
+        if (! isset($this->$event) || ! is_array($this->$event))
+        {
+            if (isset($data['fields']))
+            {
+                return $data['fields'];
+            }
+
             return $data;
         }
 
-        foreach ($this->$event as $method) {
-            if (strpos($method, '(')) {
+        foreach ($this->$event as $method)
+        {
+            if (strpos($method, '('))
+            {
                 preg_match('/([a-zA-Z0-9\_\-]+)(\(([a-zA-Z0-9\_\-\., ]+)\))?/', $method, $matches);
                 $this->callback_parameters = explode(',', $matches[3]);
             }
 
             $data = call_user_func_array(array($this, $method), array($data));
+        }
+
+        // In case no method called or method returned
+        // the entire data array, we typically just need the $fields
+        if (isset($data['fields']))
+        {
+            return $data['fields'];
+        }
+
+        // A few methods might need to return 'ids'
+        if (isset($data['ids']))
+        {
+            return $data['ids'];
         }
 
         return $data;
