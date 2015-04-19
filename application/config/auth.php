@@ -208,7 +208,7 @@ $config['auth.hash_cost'] = 10;
 //      - 'email'   The are sent an email with an activation link/code
 //      - 'manual'  Requires manual approval by a site administrator.
 //
-    $config['auth.activation_method'] = 'email';
+    $config['auth.activation_method'] = 'auto';
 
 
 //--------------------------------------------------------------------
