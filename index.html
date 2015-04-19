@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Sprint by ci-bonfire</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Sprint</h1>
+      <h2 class="project-tagline">A lightweight, modern addition to CodeIgniter 3. The heart of Bonfire Next.</h2>
+      <a href="https://github.com/ci-bonfire/Sprint" class="btn">View on GitHub</a>
+      <a href="https://github.com/ci-bonfire/Sprint/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/ci-bonfire/Sprint/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="sprint-php" class="anchor" href="#sprint-php" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sprint PHP</h1>
+
+<p>Develop Branch: <a href="https://travis-ci.org/ci-bonfire/Sprint"><img src="https://travis-ci.org/ci-bonfire/Sprint.svg?branch=develop" alt="Build Status"></a></p>
+
+<p>Based on the CodeIgniter 3 PHP framework, Sprint provides the essential running start to get you to the fun part of building your web applications. It provides additional utilities and workflow enhancements to stock CodeIgniter. In the process, it helps to modernize the code a bit. </p>
+
+<p>Sprint is intended to be the heart of <a href="https://github.com/ci-bonfire/Bonfire-Next">Bonfire Next</a>, though that integration has not happened yet. </p>
+
+<h2>
+<a id="why-sprint" class="anchor" href="#why-sprint" aria-hidden="true"><span class="octicon octicon-link"></span></a>Why Sprint?</h2>
+
+<p>I found that for a number of my recent projects, the current Bonfire code was too much, too opinionated and fully developed. And the clients were requesting for me to use the Foundation CSS Framework since that's what they use in house, and Bonfire was built on Bootstrap. Besides, sometimes Bonfire is just too big of an application for your projects. </p>
+
+<p>While working on Bonfire Next and an in-progress book on modernizing CodeIgniter and it's practical usage,  I realized that I could reform the current slimmer codebase that I've been using and make it the core of Bonfire Next. The goal is to have basic functionality and workflow in place in Sprint, and to build on that in Bonfire. </p>
+
+<p>So Sprint is basically CodeIgniter, but with more cowbell.</p>
+
+<p>NOTE: This is currently in a <strong>Beta-release</strong> state. What's that mean? It means that no new features are expected, but is a time for bugs to get hunted down and stomped out. If you use the project and find changes to the code or docs, pull requests are accepted :) Preferably with tests in place, though I won't be enforcing that at this point.</p>
+
+<h2>
+<a id="system-requirements" class="anchor" href="#system-requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a>System Requirements</h2>
+
+<ul>
+<li>PHP version 5.4 or newer.</li>
+<li>SimpleXML enabled on your PHP installation for the docs to work.</li>
+<li>Composer installed on development server.</li>
+<li>A Database. We currently use MySQL but try to keep it fairly flexible.</li>
+</ul>
+
+<h2>
+<a id="how-to-install" class="anchor" href="#how-to-install" aria-hidden="true"><span class="octicon octicon-link"></span></a>How To Install?</h2>
+
+<p>Installation instructions can be found in the docs source here on <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/installation.md">GitHub</a>.</p>
+
+<h2>
+<a id="whats-in-the-box" class="anchor" href="#whats-in-the-box" aria-hidden="true"><span class="octicon octicon-link"></span></a>What's In The Box?</h2>
+
+<p>The following is being built for the initial release:</p>
+
+<ul>
+<li>Powerful <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/models.md">MY_Model</a> with standard CRUD, db wrappers, observer methods and in-model validation</li>
+<li>
+<a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/controllers.md">MY_Controller</a> with simple theming, rendering methods for other data types (like json) and more</li>
+<li>
+<a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/routes.md">Extended Router</a> to include module support, named routes, HTTP verb-based routing, Restful resources and scoped routes/areas.</li>
+<li>Simple, but flexible, <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/themes.md">Template</a> system</li>
+<li>Module Support, without being able to call other controllers. That simply gets too complex and causes too many problems. Instead, it's simply the ability to keep MVC triads in modules that can still be called from the URI.</li>
+<li>Better <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/database/migrations.md">Database Migrations</a>, with CLI tool for building and running</li>
+<li>Database <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/database/seeding.md">Seeding</a> with CLI tool</li>
+<li>Markdown-based <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/writing_docs.md">documentation system</a>.</li>
+<li>Flexible <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/events.md">Events system</a> with priotized publish/subscribe methodology.</li>
+<li>Simple, GUI-less <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/cronjobs.md">cron controller</a> that can be used through standard crontab or scheduled tasks.</li>
+<li>
+<a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/settings.md">Settings library</a> for maintaining system-wide settings, either in the database, config files, or a combination.</li>
+<li>Simple, but expandable, <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/security/authentication.md">Authentication</a> and Authorization system with flexible <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/security/passwords.md">Password strength checking</a>
+</li>
+<li>
+<a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/general/email.md">Email Queue system</a> allows for very flexible email generations and sending. </li>
+<li>
+<a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/overview.md">The Forge</a> - a code builder with simple <a href="https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/forge/generators.md">generators</a> in place, but fully customizable and easy to add your own.</li>
+</ul>
+
+<h2>
+<a id="whats-not-included" class="anchor" href="#whats-not-included" aria-hidden="true"><span class="octicon octicon-link"></span></a>What's NOT included?</h2>
+
+<p>Sprint will not include much in the way of a built-in admin area, though it will have default views that can be incorporated into your own areas.</p>
+
+<p>It will not include a method for working with assets as much of this can be handled easier and with higher performance on a per-project basis, often using something like <a href="http://incident57.com/codekit/">CodeKit</a>.</p>
+
+<h2>
+<a id="wheres-the-docs" class="anchor" href="#wheres-the-docs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Where's the Docs?</h2>
+
+<p>Docs are included in the repo itself, and it comes with a pretty nice documentation system built on simple Markdown-formatted files. </p>
+
+<p>To view the documentation, download the code, and point your browser to <code>/docs</code>. The rest should be working fine, but please <a href="https://github.com/ci-bonfire/Sprint/issues">let me know</a> if you hit any snags! </p>
+
+<p>To view the docs prior to downloading, you'll have to <a href="https://github.com/ci-bonfire/Sprint/tree/develop/myth/_docs_src">browse the files</a> in the repo for now. Before too long, we'll have a site setup for it. But the current focus is on the initial release getting whipped into shape. </p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/ci-bonfire/Sprint">Sprint</a> is maintained by <a href="https://github.com/ci-bonfire">ci-bonfire</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
+
