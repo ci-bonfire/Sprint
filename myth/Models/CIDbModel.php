@@ -1241,6 +1241,13 @@ class CIDbModel
      */
     public function created_on($row)
     {
+        if (empty($row['fields']))
+        {
+            return null;
+        }
+
+        $row = $row['fields'];
+
         if (!array_key_exists($this->created_field, $row)) {
             $row[$this->created_field] = $this->set_date();
         }
@@ -1260,6 +1267,13 @@ class CIDbModel
      */
     public function modified_on($row)
     {
+        if (empty($row['fields']))
+        {
+            return null;
+        }
+
+        $row = $row['fields'];
+
         if (is_array($row) && !array_key_exists($this->modified_field, $row)) {
             $row[$this->modified_field] = $this->set_date();
         }

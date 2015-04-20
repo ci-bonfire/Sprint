@@ -763,6 +763,34 @@ class CIDbModelTest extends \Codeception\TestCase\Test
     }
     
     //--------------------------------------------------------------------
+
+    /**
+     * @group single
+     */
+    public function testCreatedOnInsertsDate()
+    {
+        $this->model->set_created = true;
+
+        $data = array('name' => 'MyName', 'title' => 'MyTitle');
+        $expected = array('name' => 'MyName', 'title' => 'MyTitle', 'created_on' => date('Y-m-d H:i:s'));
+
+        $this->assertEquals($expected, $this->model->created_on(['method' => 'insert', 'fields' => $data]));
+    }
     
-    
+    //--------------------------------------------------------------------
+
+    /**
+     * @group single
+     */
+    public function testModifiedOnInsertsDate()
+    {
+        $this->model->set_modified = true;
+
+        $data = array('name' => 'MyName', 'title' => 'MyTitle');
+        $expected = array('name' => 'MyName', 'title' => 'MyTitle', 'modified_on' => date('Y-m-d H:i:s'));
+
+        $this->assertEquals($expected, $this->model->modified_on(['method' => 'insert', 'fields' => $data]));
+    }
+
+    //--------------------------------------------------------------------
 }
