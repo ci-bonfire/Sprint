@@ -63,7 +63,7 @@ $I->submitForm('#login_form', ['email' => 'tester@example.com', 'password' => 'm
 $I->dontSeeElement('.alert-danger');
 
 $I->expect('login action was logged');
-$I->seeInDatabase('auth_logins', ['user_id' => 1, 'ip_address' => '127.0.0.1']);
+$I->seeInDatabase('auth_logins', ['user_id' => 1]);
 
 $I->expect('login attempts were cleared');
 $I->dontSeeInDatabase('auth_login_attempts', ['email' => 'tester@example.com']);

@@ -32,6 +32,7 @@
 
 use Myth\Auth\Flat\FlatGroupsModel;
 use Myth\Auth\Flat\FlatPermissionsModel;
+use Myth\Events\Events;
 
 class FlatAuthorization implements AuthorizeInterface {
 
@@ -198,7 +199,7 @@ class FlatAuthorization implements AuthorizeInterface {
 			return null;
 		}
 
-		if (! \Myth\Events::trigger('beforeAddUserToGroup', [$user_id, $group]))
+		if (! Events::trigger('beforeAddUserToGroup', [$user_id, $group]))
 		{
 			return false;
 		}
@@ -218,7 +219,7 @@ class FlatAuthorization implements AuthorizeInterface {
 			return FALSE;
 		}
 
-		\Myth\Events::trigger('didAddUserToGroup', [$user_id, $group]);
+		Events::trigger('didAddUserToGroup', [$user_id, $group]);
 
 		return TRUE;
 	}
@@ -245,7 +246,7 @@ class FlatAuthorization implements AuthorizeInterface {
 			return null;
 		}
 
-		if (! \Myth\Events::trigger('beforeRemoveUserFromGroup', [$user_id, $group]))
+		if (! Events::trigger('beforeRemoveUserFromGroup', [$user_id, $group]))
 		{
 			return false;
 		}
@@ -265,7 +266,7 @@ class FlatAuthorization implements AuthorizeInterface {
 			return FALSE;
 		}
 
-		\Myth\Events::trigger('didRemoveUserFromGroup', [$user_id, $group]);
+		Events::trigger('didRemoveUserFromGroup', [$user_id, $group]);
 
 		return TRUE;
 	}
@@ -373,7 +374,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 		$user_id = (int)$user_id;
 
-		if (! \Myth\Events::trigger('beforeAddPermissionToUser', [$user_id, $permission]))
+		if (! Events::trigger('beforeAddPermissionToUser', [$user_id, $permission]))
 		{
 			return false;
 		}
@@ -426,7 +427,7 @@ class FlatAuthorization implements AuthorizeInterface {
 
 		$user_id = (int)$user_id;
 
-		if (! \Myth\Events::trigger('beforeRemovePermissionFromUser', [$user_id, $permission]))
+		if (! Events::trigger('beforeRemovePermissionFromUser', [$user_id, $permission]))
 		{
 			return false;
 		}

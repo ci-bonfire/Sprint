@@ -1,5 +1,7 @@
 <?php
 
+use Myth\Events\Events;
+
 class User_model extends \Myth\Models\CIDbModel {
 
     protected $table_name = 'users';
@@ -228,7 +230,7 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     public function saveMetaToUser($user_id, $key, $value=null)
     {
-        if (! \Myth\Events::trigger('beforeAddMetaToUser', [$user_id, $key]))
+        if (! Events::trigger('beforeAddMetaToUser', [$user_id, $key]))
         {
             return false;
         }
@@ -294,7 +296,7 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     public function removeMetaFromUser($user_id, $key)
     {
-        if (! \Myth\Events::trigger('beforeRemoveMetaFromUser', [$user_id, $key]))
+        if (! Events::trigger('beforeRemoveMetaFromUser', [$user_id, $key]))
         {
             return false;
         }

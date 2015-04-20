@@ -31,7 +31,7 @@
  */
 
 use Myth\Auth\AuthenticateInterface;
-use Myth\Events as Events;
+use Myth\Events\Events;
 
 /**
  * Class LocalAuthentication

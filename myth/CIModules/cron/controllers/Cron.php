@@ -32,6 +32,7 @@
 
 use Myth\CLI;
 use Myth\Settings\Settings;
+use Myth\Events\Events;
 
 // todo Add ability to log actual cron jobs to database to verify when they ran for sure.
 class Cron extends \Myth\Controllers\CLIController {
@@ -138,7 +139,7 @@ class Cron extends \Myth\Controllers\CLIController {
         // Give other people a chance to respond.
         echo CLI::write('Done. Firing the event so others can play too...');
 
-        \Myth\Events::trigger('afterCron', [$output]);
+        Events::trigger('afterCron', [$output]);
 
         // And we're out of here boys and girls!
         echo CLI::write('Done');

@@ -1,4 +1,4 @@
-<?php namespace Myth;
+<?php namespace Myth\Events;
 /**
  * Sprint
  *
