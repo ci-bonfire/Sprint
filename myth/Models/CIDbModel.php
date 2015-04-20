@@ -1168,6 +1168,11 @@ class CIDbModel
         $data = array();
         $skippedFields = array();
 
+        if (empty($post_data))
+        {
+            return [];
+        }
+
         // Though the model doesn't support multiple keys well, $this->key
         // could be an array or a string...
         $skippedFields = array_merge($skippedFields, (array)$this->primary_key);

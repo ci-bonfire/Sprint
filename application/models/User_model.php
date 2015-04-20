@@ -98,12 +98,10 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     protected function hashPassword($data)
     {
-        if (empty($data['fields']))
+        if (isset($data['fields']))
         {
-            return null;
+            $data = $data['fields'];
         }
-
-        $data = $data['fields'];
 
         if (isset($data['password']))
         {
@@ -178,13 +176,6 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     public function updateMeta($data)
     {
-        if (empty($data['fields']))
-        {
-            return null;
-        }
-
-        $data = $data['fields'];
-
         // If no 'id' is in the $data array, then
         // we don't have successful insert, get out of here
         if (empty($data['id']) || ($data['method'] != 'insert' && $data['method'] != 'update'))
