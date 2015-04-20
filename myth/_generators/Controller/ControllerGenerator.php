@@ -276,6 +276,11 @@ class ControllerGenerator extends \Myth\Forge\BaseGenerator {
     {
         $this->load->model($model);
 
+        if (! $this->db->table_exists( $this->$model->table() ))
+        {
+            return '';
+        }
+
         $fields = $this->db->field_data( $this->$model->table() );
 
         $return = '';

@@ -5,45 +5,45 @@
 <?= $uikit->row([], function() use($uikit, $fields)
 {
 
-	$sizes = [
-		's' => 12,
-		'm' => 6,
-		'l' => 4
-	];
-	echo $uikit->column( [ 'sizes' => $sizes ], function () use ( $uikit, $fields )
-	{
+    $sizes = [
+        's' => 12,
+        'm' => 6,
+        'l' => 4
+    ];
+    echo $uikit->column( [ 'sizes' => $sizes ], function () use ( $uikit, $fields )
+    {
 
-		foreach ( $fields as $field )
-		{
+        foreach ( $fields as $field )
+        {
 
-			echo $uikit->inputWrap( humanize( $field['name'] ), NULL, function () use ( $uikit, $field )
-			{
+            echo $uikit->inputWrap( humanize( $field['name'] ), NULL, function () use ( $uikit, $field )
+            {
 
-				switch ( $field['type'] )
-				{
-					case 'text':
-						echo "\t\t\t<input type='text' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
-						break;
-					case 'number':
-						echo "\t\t\t<input type='number' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
-						break;
-					case 'date':
-						echo "\t\t\t<input type='date' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
-						break;
-					case 'datetime':
-						echo "\t\t\t<input type='datetime' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
-						break;
-					case 'time':
-						echo "\t\t\t<input type='time' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
-						break;
-					case 'textarea':
-						echo "\t\t\t<textarea  class='form-control' name='{$field['name']}'>@= set_value('" . $field["name"] . "') ?></textarea>\n";
-						break;
-				}
+                switch ( $field['type'] )
+                {
+                    case 'text':
+                        echo "            <input type='text' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
+                        break;
+                    case 'number':
+                        echo "            <input type='number' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
+                        break;
+                    case 'date':
+                        echo "            <input type='date' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
+                        break;
+                    case 'datetime':
+                        echo "            <input type='datetime' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
+                        break;
+                    case 'time':
+                        echo "            <input type='time' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
+                        break;
+                    case 'textarea':
+                        echo "            <textarea  class='form-control' name='{$field['name']}'>@= set_value('" . $field["name"] . "') ?></textarea>\n";
+                        break;
+                }
 
-			} );
-		}
-	} );
+            } );
+        }
+    } );
 } );
 ?>
 
