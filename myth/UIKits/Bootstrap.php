@@ -55,11 +55,11 @@ class Bootstrap extends BaseUIKit {
     {
         list($classes, $id, $attributes) = $this->parseStandardOptions($options, 'row', true);
 
-        $output = "<div {$classes} {$id} {$attributes}>";
+        $output = "<div {$classes} {$id} {$attributes}>\n";
 
         $output .= $this->runClosure($c);
 
-        $output .= "</div>";
+        $output .= "</div>\n";
 
         return $output;
     }
@@ -121,11 +121,11 @@ class Bootstrap extends BaseUIKit {
 
         list($classes, $id, $attributes) = $this->parseStandardOptions($options, $classes, true);
 
-        $output = "<div {$classes} {$id} {$attributes}>";
+        $output = "<div {$classes} {$id} {$attributes}>\n";
 
         $output .= $this->runClosure($c);
 
-        $output .= "</div>";
+        $output .= "</div>\n";
 
         return $output;
     }
@@ -171,7 +171,7 @@ class Bootstrap extends BaseUIKit {
         list($class, $id, $attributes) = $this->parseStandardOptions($options, $classes, true);
 
         $output .= "<nav {$class} {$id} {$attributes} role='navigation'>
-  <div class='container-fluid'>";
+  <div class='container-fluid'>\n";
 
         /*
          * Do any user content inside the bar
@@ -181,7 +181,7 @@ class Bootstrap extends BaseUIKit {
         /*
          * Close out the navbar
          */
-        $output .= '</div></nav>';
+        $output .= "</div></nav>\n";
 
         return $output;
     }
@@ -260,7 +260,7 @@ class Bootstrap extends BaseUIKit {
 
         list($classes, $id, $attributes) = $this->parseStandardOptions($options, $class, true);
 
-        return "\t<li {$classes} {$id} {$attributes}><a href='{$url}'>{$title}</a></li>";
+        return "    <li {$classes} {$id} {$attributes}><a href='{$url}'>{$title}</a></li>\n";
     }
     
     //--------------------------------------------------------------------
@@ -278,11 +278,11 @@ class Bootstrap extends BaseUIKit {
 
         $output = "\t<li {$classes} {$id} {$attributes}>
         <a href='#' class='dropdown-toggle' data-toggle='dropdown'>{$title} <span class='caret'></span></a>
-        <ul class='dropdown-menu' role='menu'>";
+        <ul class='dropdown-menu' role='menu'>\n";
 
         $output .= $this->runClosure($c);
 
-        $output .= "\t</ul></li>";
+        $output .= "    </ul></li>\n";
 
         return $output;
     }
@@ -296,7 +296,7 @@ class Bootstrap extends BaseUIKit {
      */
     public function navDivider()
     {
-        return '<li class="divider"></li>';
+        return "<li class=\"divider\"></li>\n";
     }
 
     //--------------------------------------------------------------------

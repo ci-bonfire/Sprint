@@ -207,6 +207,11 @@ class ControllerGenerator extends \Myth\Forge\BaseGenerator {
             if (! empty($this->options['model']))
             {
                 $fields = $this->getFieldsFromModel( $this->options['model'] );
+
+                if (empty($fields))
+                {
+                    return NULL;
+                }
             }
             else
             {
