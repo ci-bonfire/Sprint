@@ -1,0 +1,29 @@
+{
+  "name": "myth/events",
+  "description": "The SprintPHP events class",
+  "license": "MIT",
+  "homepage": "http://sprintphp.com",
+  "support": {
+    "issues": "https://github.com/ci-bonfire/Sprint/issues",
+    "source": "https://github.com/ci-bonfire/Sprint"
+  },
+  "authors": [
+    {
+      "name": "Lonnie Ezell",
+      "email": "lonnieje@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "Myth\\Events\\": ""
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-master": "1.0-dev"
+    }
+  }
+}
