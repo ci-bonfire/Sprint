@@ -218,15 +218,32 @@ class HMVC_Router extends CI_Router {
             }
         }
 
-        // Root folder controller?
-        if (is_file(APPPATH . 'controllers/' . $_ucfirst($module) . '.php')) {
-            return $segments;
-        }
+//        // Root folder controller?
+//        if (is_file(APPPATH . 'controllers/' . $_ucfirst($module) . '.php')) {
+//            return $segments;
+//        }
+//
+//        // Sub-directory controller?
+//        if ($directory && is_file(APPPATH . 'controllers/' . $module . '/' . $_ucfirst($directory) . '.php')) {
+//            $this->directory = $module . '/';
+//            return array_slice($segments, 1);
+//        }
 
-        // Sub-directory controller?
-        if ($directory && is_file(APPPATH . 'controllers/' . $module . '/' . $_ucfirst($directory) . '.php')) {
-            $this->directory = $module . '/';
-            return array_slice($segments, 1);
+        $c = count($segments);
+        // Loop through our segments and return as soon as a controller
+        // is found or when such a directory doesn't exist
+        while ($c-- > 0)
+        {
+            $test = $this->directory
+                    .ucfirst($this->translate_uri_dashes === TRUE ? str_replace('-', '_', $segments[0]) : $segments[0]);
+
+            if ( ! file_exists(APPPATH.'controllers/'.$test.'.php') && is_dir(APPPATH.'controllers/'.$this->directory.$segments[0]))
+            {
+                $this->set_directory(array_shift($segments), TRUE);
+                continue;
+            }
+
+            return $segments;
         }
 
         // Default controller?
