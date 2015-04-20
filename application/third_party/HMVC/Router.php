@@ -230,21 +230,26 @@ class HMVC_Router extends CI_Router {
 //        }
 
         $c = count($segments);
+        $s = $segments;
         // Loop through our segments and return as soon as a controller
         // is found or when such a directory doesn't exist
         while ($c-- > 0)
         {
             $test = $this->directory
-                    .ucfirst($this->translate_uri_dashes === TRUE ? str_replace('-', '_', $segments[0]) : $segments[0]);
+                    .ucfirst($this->translate_uri_dashes === TRUE ? str_replace('-', '_', $s[0]) : $s[0]);
 
-            if ( ! file_exists(APPPATH.'controllers/'.$test.'.php') && is_dir(APPPATH.'controllers/'.$this->directory.$segments[0]))
+            if ( ! file_exists(APPPATH.'controllers/'.$test.'.php') && is_dir(APPPATH.'controllers/'.$this->directory.$s[0]))
             {
-                $this->set_directory(array_shift($segments), TRUE);
+                $this->set_directory(array_shift($s), TRUE);
                 continue;
             }
-
-            return $segments;
+            elseif (file_exists(APPPATH .'controllers/'. $test .'.php'))
+            {
+                return $s;
+            }
         }
+
+        unset($s);
 
         // Default controller?
         if (is_file(APPPATH . 'controllers/' . $module . '/' . $_ucfirst($this->default_controller) . '.php')) {
