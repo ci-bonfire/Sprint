@@ -627,10 +627,11 @@ class CIDbModel
             $data = $this->validate($data);
         }
 
-        $data = $this->trigger('before_update', ['id' => $id, 'method' =>'update', 'fields' => $data] );
-
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
+            
+            $data = $this->trigger('before_update', ['id' => $id, 'method' =>'update', 'fields' => $data] );
+            
             $this->db->where($this->primary_key, $id);
             $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
