@@ -99,7 +99,7 @@ class Migration_create_user_tables extends CI_Migration {
         ];
 
         $this->dbforge->add_field($fields);
-        $this->dbforge->add_key(['user_id', 'meta_key']);
+        $this->dbforge->add_key(['user_id', 'meta_key'], true);
 
         $this->dbforge->create_table('user_meta');
 

@@ -26,7 +26,7 @@ class Migration_create_settings_table extends CI_Migration {
             ]
         ];
         $this->dbforge->add_field($fields);
-        $this->dbforge->add_key(['name', 'group']);
+        $this->dbforge->add_key(['name', 'group'], true);
         $this->dbforge->create_table('settings');
     }
 
