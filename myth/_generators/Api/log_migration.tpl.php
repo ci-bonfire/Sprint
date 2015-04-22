@@ -60,7 +60,7 @@ class Migration_Create_api_log_table extends CI_Migration {
 		\$this->dbforge->add_key('id', true);
 		\$this->dbforge->add_key('user_id');
 
-		\$this->dbforge->create_table('api_logs');
+		\$this->dbforge->create_table('api_logs', true, config_item('migration_create_table_attr'));
     }
 
     //--------------------------------------------------------------------

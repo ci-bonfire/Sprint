@@ -40,7 +40,7 @@ class Migration_Createsessiontable extends CI_Migration {
         $this->dbforge->add_key('ip_address', TRUE);
         $this->dbforge->add_key('ci_sessions_timestamp');
 
-        $this->dbforge->create_table('ci_sessions');
+        $this->dbforge->create_table('ci_sessions', true, config_item('migration_create_table_attr'));
     }
 
     //--------------------------------------------------------------------

@@ -23,7 +23,7 @@ if ($action == 'create')
 ";
     }
 
-    $up .="	    \$this->dbforge->create_table('{$table}');
+    $up .="	    \$this->dbforge->create_table('{$table}', true, config_item('migration_create_table_attr') );
     ";
 
     $down = "\$this->dbforge->drop_table('{$table}');";
