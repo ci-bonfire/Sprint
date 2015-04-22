@@ -316,7 +316,10 @@ class CIDbModel
         else {
             $this->load->library('form_validation');
         }
-
+        
+        // Fix for HMVC form validation rules with callbacks.
+        $this->form_validation->CI =& $this;
+        
         log_message('debug', 'CIDbModel Class Initialized');
     }
 
