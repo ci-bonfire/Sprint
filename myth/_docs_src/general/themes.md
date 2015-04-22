@@ -133,3 +133,83 @@ Callbacks are simple classes. The system will attempt to locate them through Com
 The methods must NOT be static methods.
 
 The methods must return the data as a string. This will be cached, if desired, and echoed out directly the view file.
+
+
+## Meta Tags
+The ThemedController has an instance of `Myth\MetaCollection` available to any child controller as `$this->meta`. This provides a simple interface for collecting your desired HTML meta tags from anywhere in your controller.
+
+### Setting An Item
+You set an item using the `set()` method. The first parameter is the name of the meta tag, the second parameter is the value to set it to. 
+
+	$this->meta->set('keywords', 'one,two,three');
+
+You can set multiple items at once by passing in an array of key/value pairs as the first parameter.
+
+	$meta = [
+		'keywords' => 'one,two,three',
+		'description' => 'Alphabet Street Songs'
+	];
+	$this->meta->set( $meta );
+	
+You can also set an item by assigning the value to the `$meta` object itself.
+
+	$this->meta->keywords = 'one,two,three';
+
+If you pass an array of items as the `value`, then it will be imploded and joined with a comma.
+
+	$this->meta->keywords = ['one', 'two', 'three'];
+	// Becomes 'one,two,three'
+
+### Setting Items In Config File
+You can define default site-wide meta tags by entering them in the config array in `application/config/html_meta.php`. 
+
+	$config['meta'] = [
+	    'x-ua-compatible'   => 'ie=edge',
+    	'viewport'          => 'width=device-width, initial-scale=1',
+	];
+
+These item will be loaded by default. You can override the values of any presets via the `set()` method as normal.
+
+### Getting A Value
+You can retrieve a value at any time with the `get()` method. The only parameter is the name of tag to get. 
+
+	echo $this->meta->get('keywords');
+
+Alternatively, you can retrieve it as if it's a property of the object. 
+
+	echo $this->meta->keywords;
+
+### Rendering Meta Tags
+The ThemedController will ensure that the meta object is available within your themes as the `$html_meta` object. You can have it create the tags for you by calling the `renderTags()` method. 
+
+	<?= $html_meta->renderTags() ?>
+
+This will render out tags for each of the meta items you've specified. 
+
+```
+	<meta name="keywords" content="one,two,three" >
+```
+
+The `charset` item will get special treatment since it's not structured the same as others. 
+
+```
+	<meta charset="utf-8">
+```
+
+Also, any `http-equiv` tags will be rendered out appropriately.
+
+```
+	<meta http-equiv="cache-control" content="no-cache">
+```
+
+### Defining New HTTP-Equiv Tags
+The class is only aware of a handful of http-equiv tags (cache-control, content-language, content-type, default-style, expires, pragma, refresh, and set-cookie). There are a large number of custom tags that can be used, though. To ensure they are output correctly, you should use the `registerHTTPEquivTag()` method. The only parameter is the name of the tag.
+
+	$this->meta->registerHTTPEquivTag('custom1');
+
+Now, when the tag is rendered, it will use the `http-equiv` instead of `name`.
+
+### Define HTTP-Equiv Tags In Config File
+You can also register site-wide http-equiv tags in the `application/config/html_meta.php` file.
+
+	$config['http-equiv'] = [ 'x-dns-prefetch-control' ];

@@ -29,6 +29,7 @@
  * @link        http://sprintphp.com
  * @since       Version 1.0
  */
+use Myth\Themers\MetaCollection;
 
 /**
  * Class ThemedController
@@ -85,6 +86,12 @@ class ThemedController extends BaseController
      */
     protected $stylesheets = array();
 
+    /**
+     * A MenuCollection instance
+     * @var
+     */
+    protected $meta;
+
     //--------------------------------------------------------------------
 
     /**
@@ -131,6 +138,9 @@ class ThemedController extends BaseController
         {
             $this->uikit = new $uikit();
         }
+
+        // Load up our meta collection
+        $this->meta = new MetaCollection( get_instance() );
     }
 
     //--------------------------------------------------------------------
@@ -161,6 +171,9 @@ class ThemedController extends BaseController
 
         // Merge any saved vars into the data
         $data = array_merge($data, $this->vars);
+
+        // Make sure the MetaCollection is available in the view.
+        $data['html_meta'] = $this->meta;
 
         // Include our UIKit so views can use it
         if (! empty($this->uikit)) {
