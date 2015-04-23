@@ -860,7 +860,7 @@ class CIDbModel
         $this->db->where($this->primary_key, $id);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user && ! empty($this->authenticate)
+            $sets = $this->log_user && empty($this->authenticate)
                 ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
                 : array($this->soft_delete_key => 1);
 
@@ -885,7 +885,7 @@ class CIDbModel
         $where = $this->trigger('before_delete', ['method' => 'delete_by', 'fields' => $where]);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user && ! empty($this->authenticate)
+            $sets = $this->log_user && empty($this->authenticate)
                 ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
                 : array($this->soft_delete_key => 1);
 
@@ -910,7 +910,7 @@ class CIDbModel
         $this->db->where_in($this->primary_key, $ids);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user && ! empty($this->authenticate)
+            $sets = $this->log_user && empty($this->authenticate)
                 ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
                 : array($this->soft_delete_key => 1);
 
@@ -1267,7 +1267,7 @@ class CIDbModel
         }
 
         // Created by
-        if ($this->log_user && ! array_key_exists($this->created_by_field, $row) && ! empty($this->authenticate))
+        if ($this->log_user && ! array_key_exists($this->created_by_field, $row) && empty($this->authenticate))
         {
             // If you're here because of an error with $this->authenticate
             // not being available, it's likely due to you not using
@@ -1303,7 +1303,7 @@ class CIDbModel
         }
 
         // Modified by
-        if ($this->log_user && ! array_key_exists($this->modified_by_field, $row) && ! empty($this->authenticate))
+        if ($this->log_user && ! array_key_exists($this->modified_by_field, $row) && empty($this->authenticate))
         {
             // If you're here because of an error with $this->authenticate
             // not being available, it's likely due to you not using
