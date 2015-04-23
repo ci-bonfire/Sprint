@@ -121,7 +121,9 @@ class ViewThemer implements ThemerInterface
             }
         }
 
-        if (substr($dir, -strlen($this->ci->router->fetch_module() .'/')) == $this->ci->router->fetch_module() . '/') {
+        $module = $this->ci->router->fetch_module();
+
+        if (! empty($module) && substr($dir, -strlen($module .'/')) == $module . '/') {
             $dir = '';
         }
 
