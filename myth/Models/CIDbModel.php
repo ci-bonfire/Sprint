@@ -297,6 +297,14 @@ class CIDbModel
         if ($this->set_created === true) array_unshift($this->before_insert, 'created_on');
         if ($this->set_modified === true) array_unshift($this->before_update, 'modified_on');
 
+        // If we can't access $this->authenticate, then the user isn't using
+        // the AuthTrait and we have no way of knowing the correct user id,
+        // so they'll have to set those fields manually.
+        if (empty($this->authenticate))
+        {
+            $this->log_user = false;
+        }
+
         // Make sure our temp return type is correct.
         $this->temp_return_type = $this->return_type;
 
@@ -863,7 +871,9 @@ class CIDbModel
         $this->db->where($this->primary_key, $id);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->auth->user_id()) : array($this->soft_delete_key => 1);
+            $sets = $this->log_user
+                ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
+                : array($this->soft_delete_key => 1);
 
             $result = $this->db->update($this->table_name, $sets);
         } // Hard Delete
@@ -886,7 +896,9 @@ class CIDbModel
         $where = $this->trigger('before_delete', ['method' => 'delete_by', 'fields' => $where]);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->auth->user_id()) : array($this->soft_delete_key => 1);
+            $sets = $this->log_user
+                ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
+                : array($this->soft_delete_key => 1);
 
             $result = $this->db->update($this->table_name, $sets);
         } else {
@@ -909,7 +921,9 @@ class CIDbModel
         $this->db->where_in($this->primary_key, $ids);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->auth->user_id()) : array($this->soft_delete_key => 1);
+            $sets = $this->log_user
+                ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
+                : array($this->soft_delete_key => 1);
 
             $result = $this->db->update($this->table_name, $sets);
         } else {
@@ -1257,8 +1271,19 @@ class CIDbModel
 
         $row = $row['fields'];
 
-        if (!array_key_exists($this->created_field, $row)) {
+        // Created_on
+        if (! array_key_exists($this->created_field, $row))
+        {
             $row[$this->created_field] = $this->set_date();
+        }
+
+        // Created by
+        if ($this->log_user && ! array_key_exists($this->created_by_field, $row))
+        {
+            // If you're here because of an error with $this->authenticate
+            // not being available, it's likely due to you not using
+            // the AuthTrait and/or setting log_user after model is instantiated.
+            $row[$this->created_by_field] = $this->authenticate->id();
         }
 
         return $row;
@@ -1283,8 +1308,18 @@ class CIDbModel
 
         $row = $row['fields'];
 
-        if (is_array($row) && !array_key_exists($this->modified_field, $row)) {
+        if (is_array($row) && ! array_key_exists($this->modified_field, $row))
+        {
             $row[$this->modified_field] = $this->set_date();
+        }
+
+        // Modified by
+        if ($this->log_user && ! array_key_exists($this->modified_by_field, $row))
+        {
+            // If you're here because of an error with $this->authenticate
+            // not being available, it's likely due to you not using
+            // the AuthTrait and/or setting log_user after model is instantiated.
+            $row[$this->modified_by_field] = $this->authenticate->id();
         }
 
         return $row;
