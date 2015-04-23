@@ -316,7 +316,10 @@ class CIDbModel
         else {
             $this->load->library('form_validation');
         }
-
+        
+        // Fix for HMVC form validation rules with callbacks.
+        $this->form_validation->CI =& $this;
+        
         log_message('debug', 'CIDbModel Class Initialized');
     }
 
@@ -351,7 +354,7 @@ class CIDbModel
      */
     public function find($id)
     {
-        $this->trigger('before_find');
+        $this->trigger('before_find', ['id' => $id, 'method' => 'find']);
 
         // Ignore any soft-deleted rows
         if ($this->soft_deletes) {
@@ -368,7 +371,7 @@ class CIDbModel
         $row = $this->db->get($this->table_name);
         $row = $row->{$this->_return_type()}();
 
-        $row = $this->trigger('after_find', $row);
+        $row = $this->trigger('after_find', ['id' => $id, 'method' => 'find', 'fields' => $row]);
 
         if ($this->temp_return_type == 'json') {
             $row = json_encode($row);
@@ -405,12 +408,12 @@ class CIDbModel
             $this->temp_with_deleted = false;
         }
 
-        $this->trigger('before_find');
+        $this->trigger('before_find', ['method' => 'find_by', 'fields' => $where]);
 
         $row = $this->db->get($this->table_name);
         $row = $row->{$this->_return_type()}();
 
-        $row = $this->trigger('after_find', $row);
+        $row = $this->trigger('after_find', ['method' => 'find_by', 'fields' => $row]);
 
         if ($this->temp_return_type == 'json') {
             $row = json_encode($row);
@@ -464,7 +467,7 @@ class CIDbModel
      */
     public function find_all()
     {
-        $this->trigger('before_find');
+        $this->trigger('before_find', ['method' => 'find_all']);
 
         // Ignore any soft-deleted rows
         if ($this->soft_deletes) {
@@ -482,7 +485,7 @@ class CIDbModel
 
         if (is_array($rows)) {
             foreach ($rows as $key => &$row) {
-                $row = $this->trigger('after_find', $row, ($key == count($rows) - 1));
+                $row = $this->trigger('after_find', ['method' => 'find_all', 'fields' => $row] );
             }
         }
 
@@ -514,7 +517,7 @@ class CIDbModel
         }
 
         if ($data !== FALSE) {
-            $data = $this->trigger('before_insert', $data);
+            $data = $this->trigger('before_insert', ['method' => 'insert', 'fields' => $data]);
 
             $this->db->insert($this->table_name, $this->prep_data($data) );
 
@@ -561,7 +564,7 @@ class CIDbModel
 
         if ($data !== FALSE) {
             $data['batch'] = true;
-            $data = $this->trigger('before_insert', $data);
+            $data = $this->trigger('before_insert', ['method' => 'insert_batch', 'fields' => $data] );
             unset($data['batch']);
 
             return $this->db->insert_batch($this->table_name, $data);
@@ -627,15 +630,16 @@ class CIDbModel
             $data = $this->validate($data);
         }
 
-        $data = $this->trigger('before_update', array_merge([$this->primary_key => $id], $data), $skip_validation);
-
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
+            
+            $data = $this->trigger('before_update', ['id' => $id, 'method' =>'update', 'fields' => $data] );
+            
             $this->db->where($this->primary_key, $id);
             $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', ['id' => $id, 'fields' => $data, 'result'=>$result, 'method' => 'update']);
+            $this->trigger('after_update', ['id' => $id, 'fields' => $data, 'result' => $result, 'method' => 'update']);
 
             return $result;
         } else {
@@ -671,13 +675,13 @@ class CIDbModel
     public function update_batch($data, $where_key)
     {
         foreach ($data as &$row) {
-            $row = $this->trigger('before_update', $row);
+            $row = $this->trigger('before_update', ['method' => 'update_batch', 'fields' => $row] );
         }
 
         $result = $this->db->update_batch($this->table_name, $data, $where_key);
 
         foreach ($data as &$row) {
-            $this->trigger('after_update', ['fields' => $data, 'result'=>$result, 'method' => 'update_batch']);
+            $this->trigger('after_update', ['fields' => $data, 'result' => $result, 'method' => 'update_batch']);
         }
 
         return $result;
@@ -713,7 +717,7 @@ class CIDbModel
             $data = $this->validate($data, 'update', $skip_validation);
         }
 
-        $data = $this->trigger('before_update', $data);
+        $data = $this->trigger('before_update', ['ids' => $ids, 'method' => 'update_many', 'fields' => $data]);
 
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
@@ -721,7 +725,7 @@ class CIDbModel
             $this->db->set($data);
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', ['id' => $ids, 'fields' => $data, 'result'=>$result, 'method' => 'update_many']);
+            $this->trigger('after_update', ['ids' => $ids, 'fields' => $data, 'result'=>$result, 'method' => 'update_many']);
 
             return $result;
         } else {
@@ -755,14 +759,14 @@ class CIDbModel
         $data = array_pop($args);
         $this->_set_where($args);
 
-        $data = $this->trigger('before_update', $data);
+        $data = $this->trigger('before_update', ['method' => 'update_by', 'fields' => $data]);
 
         // Will be false if it didn't validate.
         if ($this->validate($data) !== FALSE) {
             $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', array($data, $result));
+            $this->trigger('after_update', ['method' => 'update_by', 'fields' => $data, 'result' => $result] );
 
             return $result;
         } else {
@@ -781,7 +785,7 @@ class CIDbModel
      */
     public function update_all($data, $skip_validation = FALSE)
     {
-        $data = $this->trigger('before_update', $data);
+        $data = $this->trigger('before_update', ['method' => 'update_all', 'fields' => $data] );
 
         $skip_validation = is_null($skip_validation) ? $this->skip_validation : $skip_validation;
 
@@ -794,7 +798,7 @@ class CIDbModel
             $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', array($data, $result));
+            $this->trigger('after_update', ['method' => 'update_all', 'fields' => $data, 'result' => $result] );
 
             return $result;
         } else {
@@ -854,12 +858,12 @@ class CIDbModel
      */
     public function delete($id)
     {
-        $this->trigger('before_delete', $id);
+        $this->trigger('before_delete', ['id' => $id, 'method' => 'delete'] );
 
         $this->db->where($this->primary_key, $id);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->auth->user_id()) : array($this->soft_delete_key => 1);
+            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id()) : array($this->soft_delete_key => 1);
 
             $result = $this->db->update($this->table_name, $sets);
         } // Hard Delete
@@ -867,7 +871,7 @@ class CIDbModel
             $result = $this->db->delete($this->table_name);
         }
 
-        $this->trigger('after_delete', $result);
+        $this->trigger('after_delete', ['id' => $id, 'method' => 'delete', 'result' => $result] );
 
         return $result;
     }
@@ -879,17 +883,17 @@ class CIDbModel
         $where = func_get_args();
         $this->_set_where($where);
 
-        $where = $this->trigger('before_delete', $where);
+        $where = $this->trigger('before_delete', ['method' => 'delete_by', 'fields' => $where]);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->auth->user_id()) : array($this->soft_delete_key => 1);
+            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id()) : array($this->soft_delete_key => 1);
 
             $result = $this->db->update($this->table_name, $sets);
         } else {
             $result = $this->db->delete($this->table_name);
         }
 
-        $this->trigger('after_delete', $result);
+        $this->trigger('after_delete', ['method' => 'delete_by', 'fields' => $where, 'result' => $result] );
 
         return $result;
     }
@@ -900,19 +904,19 @@ class CIDbModel
     {
         if (!is_array($ids) || count($ids) == 0) return NULL;
 
-        $ids = $this->trigger('before_delete', $ids);
+        $ids = $this->trigger('before_delete', ['ids' => $ids, 'method' => 'delete_many'] );
 
         $this->db->where_in($this->primary_key, $ids);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->auth->user_id()) : array($this->soft_delete_key => 1);
+            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id()) : array($this->soft_delete_key => 1);
 
             $result = $this->db->update($this->table_name, $sets);
         } else {
             $result = $this->db->delete($this->table_name);
         }
 
-        $this->trigger('after_delete', $result);
+        $this->trigger('after_delete', ['ids' => $ids, 'method' => 'delete_many', 'result' => $result]);
 
         return $result;
     }
@@ -1168,6 +1172,11 @@ class CIDbModel
         $data = array();
         $skippedFields = array();
 
+        if (empty($post_data))
+        {
+            return [];
+        }
+
         // Though the model doesn't support multiple keys well, $this->key
         // could be an array or a string...
         $skippedFields = array_merge($skippedFields, (array)$this->primary_key);
@@ -1241,6 +1250,13 @@ class CIDbModel
      */
     public function created_on($row)
     {
+        if (empty($row['fields']))
+        {
+            return null;
+        }
+
+        $row = $row['fields'];
+
         if (!array_key_exists($this->created_field, $row)) {
             $row[$this->created_field] = $this->set_date();
         }
@@ -1260,6 +1276,13 @@ class CIDbModel
      */
     public function modified_on($row)
     {
+        if (empty($row['fields']))
+        {
+            return null;
+        }
+
+        $row = $row['fields'];
+
         if (is_array($row) && !array_key_exists($this->modified_field, $row)) {
             $row[$this->modified_field] = $this->set_date();
         }
@@ -1311,17 +1334,38 @@ class CIDbModel
      */
     public function trigger($event, $data = false)
     {
-        if (!isset($this->$event) || !is_array($this->$event)) {
+        if (! isset($this->$event) || ! is_array($this->$event))
+        {
+            if (isset($data['fields']))
+            {
+                return $data['fields'];
+            }
+
             return $data;
         }
 
-        foreach ($this->$event as $method) {
-            if (strpos($method, '(')) {
+        foreach ($this->$event as $method)
+        {
+            if (strpos($method, '('))
+            {
                 preg_match('/([a-zA-Z0-9\_\-]+)(\(([a-zA-Z0-9\_\-\., ]+)\))?/', $method, $matches);
                 $this->callback_parameters = explode(',', $matches[3]);
             }
 
             $data = call_user_func_array(array($this, $method), array($data));
+        }
+
+        // In case no method called or method returned
+        // the entire data array, we typically just need the $fields
+        if (isset($data['fields']))
+        {
+            return $data['fields'];
+        }
+
+        // A few methods might need to return 'ids'
+        if (isset($data['ids']))
+        {
+            return $data['ids'];
         }
 
         return $data;
