@@ -297,14 +297,6 @@ class CIDbModel
         if ($this->set_created === true) array_unshift($this->before_insert, 'created_on');
         if ($this->set_modified === true) array_unshift($this->before_update, 'modified_on');
 
-        // If we can't access $this->authenticate, then the user isn't using
-        // the AuthTrait and we have no way of knowing the correct user id,
-        // so they'll have to set those fields manually.
-        if (empty($this->authenticate))
-        {
-            $this->log_user = false;
-        }
-
         // Make sure our temp return type is correct.
         $this->temp_return_type = $this->return_type;
 
@@ -871,7 +863,7 @@ class CIDbModel
         $this->db->where($this->primary_key, $id);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user
+            $sets = $this->log_user && ! empty($this->authenticate)
                 ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
                 : array($this->soft_delete_key => 1);
 
@@ -896,7 +888,7 @@ class CIDbModel
         $where = $this->trigger('before_delete', ['method' => 'delete_by', 'fields' => $where]);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user
+            $sets = $this->log_user && ! empty($this->authenticate)
                 ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
                 : array($this->soft_delete_key => 1);
 
@@ -921,7 +913,7 @@ class CIDbModel
         $this->db->where_in($this->primary_key, $ids);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user
+            $sets = $this->log_user && ! empty($this->authenticate)
                 ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
                 : array($this->soft_delete_key => 1);
 
@@ -1278,7 +1270,7 @@ class CIDbModel
         }
 
         // Created by
-        if ($this->log_user && ! array_key_exists($this->created_by_field, $row))
+        if ($this->log_user && ! array_key_exists($this->created_by_field, $row) && ! empty($this->authenticate))
         {
             // If you're here because of an error with $this->authenticate
             // not being available, it's likely due to you not using
@@ -1314,7 +1306,7 @@ class CIDbModel
         }
 
         // Modified by
-        if ($this->log_user && ! array_key_exists($this->modified_by_field, $row))
+        if ($this->log_user && ! array_key_exists($this->modified_by_field, $row) && ! empty($this->authenticate))
         {
             // If you're here because of an error with $this->authenticate
             // not being available, it's likely due to you not using
