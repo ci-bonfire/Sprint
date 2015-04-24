@@ -317,9 +317,6 @@ class CIDbModel
             $this->load->library('form_validation');
         }
         
-        // Fix for HMVC form validation rules with callbacks.
-        $this->form_validation->CI =& $this;
-        
         log_message('debug', 'CIDbModel Class Initialized');
     }
 
@@ -1444,13 +1441,13 @@ class CIDbModel
 
                 $this->form_validation->set_rules($this->validation_rules);
 
-                if ($this->form_validation->run() === TRUE) {
+                if ($this->form_validation->run($this) === TRUE) {
                     return $data;
                 } else {
                     return FALSE;
                 }
             } else {
-                if ($this->form_validation->run($this->validate) === TRUE) {
+                if ($this->form_validation->run($this, $this->validate) === TRUE) {
                     return $data;
                 } else {
                     return FALSE;
