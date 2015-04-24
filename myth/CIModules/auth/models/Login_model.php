@@ -265,7 +265,7 @@ class Login_model extends \Myth\Models\CIDbModel {
             return;
         }
 
-        $date = time() - config_item('auth.remember_length') - strtotime('-1 week');
+        $date = time() - config_item('auth.remember_length') - 604800; // 1 week
         $date = date('Y-m-d 00:00:00', $date);
 
         $this->db->where('created <=', $date)
