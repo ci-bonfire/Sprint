@@ -1441,13 +1441,13 @@ class CIDbModel
 
                 $this->form_validation->set_rules($this->validation_rules);
 
-                if ($this->form_validation->run($this) === TRUE) {
+                if ($this->form_validation->run('', $this) === TRUE) {
                     return $data;
                 } else {
                     return FALSE;
                 }
             } else {
-                if ($this->form_validation->run($this, $this->validate) === TRUE) {
+                if ($this->form_validation->run($this->validate, $this) === TRUE) {
                     return $data;
                 } else {
                     return FALSE;
