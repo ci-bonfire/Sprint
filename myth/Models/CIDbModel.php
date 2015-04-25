@@ -368,7 +368,10 @@ class CIDbModel
         $row = $this->db->get($this->table_name);
         $row = $row->{$this->_return_type()}();
 
-        $row = $this->trigger('after_find', ['id' => $id, 'method' => 'find', 'fields' => $row]);
+        if ( ! empty($row))
+        {
+            $row = $this->trigger('after_find', ['id' => $id, 'method' => 'find', 'fields' => $row]);
+        }
 
         if ($this->temp_return_type == 'json') {
             $row = json_encode($row);
@@ -410,7 +413,10 @@ class CIDbModel
         $row = $this->db->get($this->table_name);
         $row = $row->{$this->_return_type()}();
 
-        $row = $this->trigger('after_find', ['method' => 'find_by', 'fields' => $row]);
+        if ( ! empty($row))
+        {
+            $row = $this->trigger('after_find', ['method' => 'find_by', 'fields' => $row]);
+        }
 
         if ($this->temp_return_type == 'json') {
             $row = json_encode($row);
