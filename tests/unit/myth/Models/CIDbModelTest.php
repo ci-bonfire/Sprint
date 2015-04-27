@@ -543,10 +543,10 @@ class CIDbModelTest extends \Codeception\TestCase\Test
     {
         $this->model->db->shouldReceive('where')->once()->with('id', 1)->andReturn( $this->model->db );
         $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
-        $this->model->db->shouldReceive('row_array')->once()->andReturn('fake object');
+        $this->model->db->shouldReceive('row_array')->once()->andReturn(NULL);
 
         $obj = $this->model->as_json()->find(1);
-        $this->assertEquals( json_encode('fake object'), $obj );
+        $this->assertEquals( '{}', $obj );
     }
 
     //--------------------------------------------------------------------
@@ -579,7 +579,7 @@ class CIDbModelTest extends \Codeception\TestCase\Test
         $this->model->db->shouldReceive('result_array')->once()->andReturn('fake object');
 
         $obj = $this->model->as_json()->find_all();
-        $this->assertEquals( json_encode('fake object'), $obj );
+        $this->assertEquals( '[]', $obj );
     }
 
     //--------------------------------------------------------------------
