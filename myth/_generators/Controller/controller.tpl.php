@@ -6,8 +6,8 @@
 
 $model_string = $model ? "'{$model}'" : 'null';
 $lower_model  = trim( strtolower($model_string), "' " );
+$lower_model_esc = strpos($lower_model, 'null') !== false ? 'null' : "'{$lower_model}'";
 $lower_controller   = strtolower($controller_name);
-
 
 //--------------------------------------------------------------------
 // Build our Methods
@@ -204,7 +204,7 @@ class {$controller_name} extends {$base_class} {
     protected \$language_file   = {$lang_file};
 
     // If set, this model file will automatically be loaded.
-    protected \$model_file      = '{$lower_model}';
+    protected \$model_file      = {$lower_model_esc};
 
     {$fields}
 
