@@ -48,12 +48,12 @@ class FlatPermissionsModel extends CIDbModel {
 		[
 			'field' => 'name',
 			'label' => 'Name',
-			'rules' => 'trim|max_length[255]|xss_clean'
+			'rules' => 'trim|max_length[255]'
 		],
 		[
 			'field' => 'description',
 			'label' => 'Description',
-			'rules' => 'trim|max_length[255]|xss_clean'
+			'rules' => 'trim|max_length[255]'
 		],
 	];
 
