@@ -374,7 +374,7 @@ class CIDbModel
         }
 
         if ($this->temp_return_type == 'json') {
-            $row = json_encode($row);
+            $row = ! empty($row) ? json_encode($row) : '{}';
         }
 
         // Reset our return type
@@ -419,7 +419,7 @@ class CIDbModel
         }
 
         if ($this->temp_return_type == 'json') {
-            $row = json_encode($row);
+            $row = ! empty($row) ? json_encode($row) : '{}';
         }
 
         // Reset our return type
@@ -493,7 +493,7 @@ class CIDbModel
         }
 
         if ($this->temp_return_type == 'json') {
-            $rows = json_encode($rows);
+            $rows = is_array($rows) ? json_encode($rows) : '[]';
         }
 
         // Reset our return type
