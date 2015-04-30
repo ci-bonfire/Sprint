@@ -7,7 +7,7 @@ In order to use the view and template methods in this document, your controller 
 
 	class SuperHeroController extends \Myth\Controllers\ThemedController
 	{
-		...
+	    ...
 	}
 
 ## Views
@@ -57,10 +57,31 @@ The first parameter is the name that you want the value to be called in the view
 If the first parameter is an array, the `$value` parameter will be ignored and all of the values in the `$name` array will be treated key/value pairs to make available in the view.
 
 	$data = [
-		'user'     => $user,
-		'location' => $location
+	    'user'     => $user,
+	    'location' => $location
 	];
 	$this->setVar($data);
+
+### Auto-Escaping Data
+To help protect your site against malicious entries, all strings set by `setVar()` are escaped using `htmlspecialchars($str, ENT_COMPAT, 'UTF-8')`. If an array is passed, then any string values within that array will be escaped. Other forms of variables are left untouched.
+
+If you don’t want a certain variable to be auto-escaped, then you can pass if `true` as the third parameter.
+
+	$this->setVar('user', $user, true);
+
+You can turn this feature off globally by editing `application/config/application.php` and turn the `auto_escape` feature off. 
+
+	$config['theme.auto_escape'] = false;
+
+If you have specific data that you want to escape within your view, you can use the `e()` function, which is the same function that is used by the ThemedController to handle the escaping anyway. 
+
+	// In a View
+	<?= e($username) ?>
+
+Note that any data passed into the `render()` method is also auto-escaped. 
+
+	// $data is escaped
+	$this->render($data);
 
 ### Overriding Module Views
 If you need to override the views of any module you can do so by creating a new view in the appropriately-named sub-folder within the `application/views` folder, which will be used instead of the one from the module.
@@ -91,8 +112,8 @@ Out of the box, that's all that variants are used for. However, don't let that s
 If you would like to add additional variants for the system to recognize, you can modify the `application/config/application.php` file as needed. The key in the `theme.variants` setting is a name it can be referenced by. The value in the array is the postfix to add to the end of the file (but before the file extension).
 
 	$config['theme.variants'] = array(
-		'phone'  => '+phone',
-		'tablet' => '+tablet',
+	    'phone'  => '+phone',
+	    'tablet' => '+tablet',
 	);
 
 ### Auto-Detecting Variant
@@ -100,6 +121,9 @@ If you would like Sprint to attempt to automatically determine which variant to 
 
 	$config['theme.autodetect_variant'] = true;
  
-If TRUE, this will use the [Mobile Detect](http://mobiledetect.net/) library to determine. This library is built buy the gang at [BrowserStack](http://www.browserstack.com/) and kept up to date.
+If TRUE, this will use the [Mobile Detect][1] library to determine. This library is built buy the gang at [BrowserStack][2] and kept up to date.
 
 If you need to modify how this works (by adding browser or OS detection, for example) you will need to modify the `__construct()` method of the `ThemedController` file. Or you can turn off autodetection and do your own detection routine in `MY_Controller`.
+
+[1]:	http://mobiledetect.net/
+[2]:	http://www.browserstack.com/

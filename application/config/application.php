@@ -152,6 +152,16 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 	$config['theme.parse_views'] = false;
 
 //--------------------------------------------------------------------
+// Auto Escape Vars
+//--------------------------------------------------------------------
+// If TRUE, will auto escape any vars set using set_var() or passed
+// in a $data array to one of the theme methods.
+//
+// This can be overridden on a per-call basis.
+//
+    $config['theme.auto_escape'] = true;
+
+//--------------------------------------------------------------------
 // Settings Stores
 //--------------------------------------------------------------------
 // Lists the Settings stores to use. Must include full namespace to

@@ -92,6 +92,12 @@ class ThemedController extends BaseController
      */
     protected $meta;
 
+    /**
+     * Whether set() should escape the output...
+     * @var bool
+     */
+    protected $auto_escape = true;
+
     //--------------------------------------------------------------------
 
     /**
@@ -141,6 +147,9 @@ class ThemedController extends BaseController
 
         // Load up our meta collection
         $this->meta = new MetaCollection( get_instance() );
+
+        // Should we autoescape vars?
+        $this->auto_escape = config_item('theme.auto_escape');
     }
 
     //--------------------------------------------------------------------
@@ -170,6 +179,11 @@ class ThemedController extends BaseController
         $this->themer->setLayout($layout);
 
         // Merge any saved vars into the data
+        // But first, escape the data if needed
+        if ($this->auto_escape)
+        {
+            $data = e($data);
+        }
         $data = array_merge($data, $this->vars);
 
         // Make sure the MetaCollection is available in the view.
@@ -201,14 +215,20 @@ class ThemedController extends BaseController
      * @param string $name
      * @param mixed $value
      */
-    public function setVar($name, $value = null)
+    public function setVar($name, $value = null, $skip_escape=false)
     {
-        if (is_array($name)) {
-            foreach ($name as $k => $v) {
-                $this->vars[$k] = $v;
+        $escape = $skip_escape ? true : $this->auto_escape;
+
+        if (is_array($name))
+        {
+            foreach ($name as $k => $v)
+            {
+                $this->vars[$k] = $escape ? e($v) : $v;
             }
-        } else {
-            $this->vars[$name] = $value;
+        }
+        else
+        {
+            $this->vars[$name] = $escape ? e($value) : $value;
         }
     }
 
@@ -346,4 +366,37 @@ class ThemedController extends BaseController
     }
 
     //--------------------------------------------------------------------
+}
+
+//--------------------------------------------------------------------
+
+if (! function_exists('e'))
+{
+    /**
+     * Escapes strings to make them safe for use
+     * within HTML templates. Used by the auto-escaping
+     * functionality in setVar() and available to
+     * use within your views.
+     *
+     * @param $data
+     *
+     * @return string
+     */
+    function e($data)
+    {
+        if (is_array($data))
+        {
+            foreach ($data as $key => &$value)
+            {
+                $value = e($value);
+            }
+        }
+
+        if (! is_string($data))
+        {
+            return $data;
+        }
+
+        return htmlspecialchars($data, ENT_COMPAT, 'UTF-8');
+    }
 }
