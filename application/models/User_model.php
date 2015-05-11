@@ -33,7 +33,7 @@ class User_model extends \Myth\Models\CIDbModel {
         [
             'field' => 'username',
             'label' => 'lang:auth.username',
-            'rules' => 'trim|alpha|max_length[255]'
+            'rules' => 'trim|alpha_numeric|max_length[255]'
         ],
         [
             'field' => 'password',
