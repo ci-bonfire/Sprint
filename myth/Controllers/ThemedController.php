@@ -182,7 +182,7 @@ class ThemedController extends BaseController
         // But first, escape the data if needed
         if ($this->auto_escape)
         {
-            $data = e($data);
+            $data = esc($data);
         }
         $data = array_merge($data, $this->vars);
 
@@ -223,12 +223,12 @@ class ThemedController extends BaseController
         {
             foreach ($name as $k => $v)
             {
-                $this->vars[$k] = $escape ? e($v) : $v;
+                $this->vars[$k] = $escape ? esc($v) : $v;
             }
         }
         else
         {
-            $this->vars[$name] = $escape ? e($value) : $value;
+            $this->vars[$name] = $escape ? esc($value) : $value;
         }
     }
 
@@ -370,7 +370,7 @@ class ThemedController extends BaseController
 
 //--------------------------------------------------------------------
 
-if (! function_exists('e'))
+if (! function_exists('esc'))
 {
     /**
      * Escapes strings to make them safe for use
@@ -382,7 +382,7 @@ if (! function_exists('e'))
      *
      * @return string
      */
-    function e($data)
+    function esc($data)
     {
         if (is_array($data))
         {

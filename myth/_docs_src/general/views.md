@@ -73,10 +73,10 @@ You can turn this feature off globally by editing `application/config/applicatio
 
 	$config['theme.auto_escape'] = false;
 
-If you have specific data that you want to escape within your view, you can use the `e()` function, which is the same function that is used by the ThemedController to handle the escaping anyway. 
+If you have specific data that you want to escape within your view, you can use the `esc()` function, which is the same function that is used by the ThemedController to handle the escaping anyway. 
 
 	// In a View
-	<?= e($username) ?>
+	<?= esc($username) ?>
 
 Note that any data passed into the `render()` method is also auto-escaped. 
 
