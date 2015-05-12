@@ -388,7 +388,7 @@ if (! function_exists('esc'))
         {
             foreach ($data as $key => &$value)
             {
-                $value = e($value);
+                $value = esc($value);
             }
         }
 
