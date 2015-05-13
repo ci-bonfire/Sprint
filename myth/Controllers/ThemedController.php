@@ -96,7 +96,7 @@ class ThemedController extends BaseController
      * Whether set() should escape the output...
      * @var bool
      */
-    protected $auto_escape = true;
+    protected $auto_escape = null;
 
     //--------------------------------------------------------------------
 
@@ -149,7 +149,10 @@ class ThemedController extends BaseController
         $this->meta = new MetaCollection( get_instance() );
 
         // Should we autoescape vars?
-        $this->auto_escape = config_item('theme.auto_escape');
+        if (is_null($this->auto_escape))
+        {
+            $this->auto_escape = config_item( 'theme.auto_escape' );
+        }
     }
 
     //--------------------------------------------------------------------

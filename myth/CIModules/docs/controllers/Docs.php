@@ -49,6 +49,8 @@ class Docs extends \Myth\Controllers\ThemedController
 
     protected $theme = 'docs';
 
+    protected $auto_escape = false;
+
     //--------------------------------------------------------------------------
 
     /**
