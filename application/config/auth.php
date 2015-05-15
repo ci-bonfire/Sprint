@@ -134,7 +134,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 //
 // This is the number of SECONDS max.
 //
-    $config['auth.max_throttle_time'] = 45;
+    $config['auth.max_throttle_time'] = 50;
 
 //--------------------------------------------------------------------
 // Start Throttling After

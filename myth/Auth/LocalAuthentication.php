@@ -574,7 +574,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $max_time = config_item('auth.max_throttle_time');
 
-        $add_time = pow(2, $attempts);
+        $add_time = pow(5, $attempts);
 
         if ($add_time > $max_time)
         {
