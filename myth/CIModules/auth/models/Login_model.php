@@ -128,8 +128,13 @@ class Login_model extends \Myth\Models\CIDbModel {
 
             // Compute our daily average over the last 3 months.
             $avg_start_time = date('Y-m-d 00:00:00', strtotime('-3 months'));
-
-            $query = $this->db->query("SELECT COUNT(*) / COUNT(DISTINCT DATE(`datetime`)) as num_rows FROM `auth_login_attempts` WHERE `datetime` >= ?", $avg_start_time);
+            $selected_fields = array("COUNT(*) / COUNT(DISTINCT DATE(`datetime`)) num_rows");
+	        $tablename = "auth_login_attempts";
+	        $this->db->select($selected_fields);
+	        $this->db->from($tablename);
+	        $this->db->where("datetime >= ", $avg_start_time);
+	        $query =$this->db->get(); 
+           
 
             if (! $query->num_rows())
             {
