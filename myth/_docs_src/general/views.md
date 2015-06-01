@@ -63,22 +63,38 @@ If the first parameter is an array, the `$value` parameter will be ignored and a
 	$this->setVar($data);
 
 ### Auto-Escaping Data
-To help protect your site against malicious entries, all strings set by `setVar()` are escaped using `htmlspecialchars($str, ENT_COMPAT, 'UTF-8')`. If an array is passed, then any string values within that array will be escaped. Other forms of variables are left untouched.
+To help protect your site against malicious entries, all strings set by `setVar()` are escaped using [Zend Framework's Escaper](http://framework.zend.com/manual/current/en/modules/zend.escaper.introduction.html). If an array is passed, then any string values within that array will be escaped. Other forms of variables are left untouched.
 
-If you don’t want a certain variable to be auto-escaped, then you can pass if `true` as the third parameter.
+Whenever you use the `setVar()` method, you should consider the context that you are using this variable, in order to maintain good secure best practices on your site.  You should pass the context in as the third parameter. 
 
-	$this->setVar('user', $user, true);
+	$this->setVar('user', $username, 'html');
 
-You can turn this feature off globally by editing `application/config/application.php` and turn the `auto_escape` feature off. 
+The Escaper recognizes the following contexts: 
+
+- [html](http://framework.zend.com/manual/current/en/modules/zend.escaper.escaping-html.html) - escape a string for use within the HTML Body.
+- [htmlAttr](http://framework.zend.com/manual/current/en/modules/zend.escaper.escaping-html-attributes.html) - escape a string for use within an HTML attribute
+- [js](http://framework.zend.com/manual/current/en/modules/zend.escaper.escaping-javascript.html) - escape a string for use within variables and data within dynamic javascript
+- [css](http://framework.zend.com/manual/current/en/modules/zend.escaper.escaping-css.html) - escape a string for use within variables and data in dynamic CSS 
+- [url](http://framework.zend.com/manual/current/en/modules/zend.escaper.escaping-url.html) - escape a string for use within data being inserted into a URL, and not entire URL's.
+
+To create a secure application, with industry-standard protection against, read through each of the linked articles above and ensure that you understand how to escape data, and within what context you are operating, otherwise, many other security measures could prove invalid. 
+
+NOTE: This escape is meant to replace the use of CodeIgniter's `xss_clean()` functionality.  
+
+If you don’t want a certain variable to be auto-escaped, then you can pass if `false` as the fourth parameter.
+
+	$this->setVar('user', $user, 'html', false);
+
+You can turn this feature off globally by editing `application/config/application.php` and turn the `auto_escape` feature off. **This is not recommended unless you are prepared to ensure that every use of untrusted data within your application is covered.**
 
 	$config['theme.auto_escape'] = false;
 
-If you have specific data that you want to escape within your view, you can use the `esc()` function, which is the same function that is used by the ThemedController to handle the escaping anyway. 
+If you have specific data that you want to escape within your view, you can use the `esc()` function, which is the same function that is used by the ThemedController to handle the escaping.  The first parameter is the data to escape. The second parameter is the context (see above).
 
 	// In a View
-	<?= esc($username) ?>
+	<?= esc($username, 'htmlAttr') ?>
 
-Note that any data passed into the `render()` method is also auto-escaped. 
+Note that any data passed into the `render()` method is also auto-escaped. **Since the script has no way of knowing the context this data will be used in, it is assumed that all data is going to be used within the HTML body. If any data passed here is not to be used in an HTML context, you are creating potential XSS security holes.**
 
 	// $data is escaped
 	$this->render($data);

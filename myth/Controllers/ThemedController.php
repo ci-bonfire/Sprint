@@ -30,6 +30,7 @@
  * @since       Version 1.0
  */
 use Myth\Themers\MetaCollection;
+use Zend\Escaper\Escaper;
 
 /**
  * Class ThemedController
@@ -97,6 +98,12 @@ class ThemedController extends BaseController
      * @var bool
      */
     protected $auto_escape = null;
+
+    /**
+     * An instance of ZendFrameworks Escaper
+     * @var null
+     */
+    protected $escaper = null;
 
     //--------------------------------------------------------------------
 
@@ -185,7 +192,7 @@ class ThemedController extends BaseController
         // But first, escape the data if needed
         if ($this->auto_escape)
         {
-            $data = esc($data);
+            $data = esc($data, 'html');
         }
         $data = array_merge($data, $this->vars);
 
@@ -214,24 +221,40 @@ class ThemedController extends BaseController
 
     /**
      * Sets a data variable to be sent to the view during the render() method.
+     * Will auto-escape data on the way in, unless specifically told not to.
+     *
+     * Uses ZendFramework's Escaper to handle the data escaping,
+     * based on context. Valid contexts are:
+     *      - html
+     *      - htmlAttr
+     *      - js
+     *      - css
+     *      - url
      *
      * @param string $name
      * @param mixed $value
+     * @param string $context
+     * @param bool $do_escape
      */
-    public function setVar($name, $value = null, $skip_escape=false)
+    public function setVar($name, $value = null, $context='html', $do_escape=null)
     {
-        $escape = $skip_escape ? true : $this->auto_escape;
+        $escape = $do_escape == true ? true : $this->auto_escape;
+
+        if (is_null($this->escaper))
+        {
+            $this->escaper = new Escaper(config_item('charset'));
+        }
 
         if (is_array($name))
         {
             foreach ($name as $k => $v)
             {
-                $this->vars[$k] = $escape ? esc($v) : $v;
+                $this->vars[$k] = $escape ? esc($v, $context, $this->escaper) : $v;
             }
         }
         else
         {
-            $this->vars[$name] = $escape ? esc($value) : $value;
+            $this->vars[$name] = $escape ? esc($value, $context, $this->escaper) : $value;
         }
     }
 
@@ -381,18 +404,41 @@ if (! function_exists('esc'))
      * functionality in setVar() and available to
      * use within your views.
      *
+     * Uses ZendFramework's Escaper to handle the actual escaping,
+     * based on context. Valid contexts are:
+     *      - html
+     *      - htmlAttr
+     *      - js
+     *      - css
+     *      - url
+     *
      * @param $data
+     * @param $context
+     * @param escaper   // An instance of ZF's Escaper to avoid repeated class instantiation.
      *
      * @return string
      */
-    function esc($data)
+    function esc($data, $context='html', $escaper=null)
     {
         if (is_array($data))
         {
             foreach ($data as $key => &$value)
             {
-                $value = esc($value);
+                $value = esc($value, $context);
             }
+        }
+
+        $context = strtolower($context);
+
+        if (! is_object($escaper))
+        {
+            $escaper = new Escaper(config_item('charset'));
+        }
+
+        // Valid context?
+        if (! in_array($context, ['html', 'htmlattr', 'js', 'css', 'url']))
+        {
+            throw new \InvalidArgumentException('Invalid Context type: '. $context);
         }
 
         if (! is_string($data))
@@ -400,6 +446,27 @@ if (! function_exists('esc'))
             return $data;
         }
 
-        return htmlspecialchars($data, ENT_COMPAT, 'UTF-8');
+        switch ($context)
+        {
+            case 'html':
+                $data = $escaper->escapeHtml($data);
+                break;
+            case 'htmlattr':
+                $data = $escaper->escapeHtmlAttr($data);
+                break;
+            case 'js':
+                $data = $escaper->escapeJs($data);
+                break;
+            case 'css':
+                $data = $escaper->escapeCss($data);
+                break;
+            case 'url':
+                $data = $escaper->escapeUrl($data);
+                break;
+            default:
+                break;
+        }
+
+        return $data;
     }
 }
