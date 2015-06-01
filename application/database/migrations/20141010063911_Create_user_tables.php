@@ -5,6 +5,8 @@
  *
  * Created by: SprintPHP
  * Created on: 2014-10-10 06:39:11 am
+ *
+ * @property $dbforge
  */
 class Migration_create_user_tables extends CI_Migration {
 

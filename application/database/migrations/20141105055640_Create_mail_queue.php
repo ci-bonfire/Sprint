@@ -5,6 +5,8 @@
  *
  * Created by: SprintPHP
  * Created on: 2014-11-05 05:56:40 am
+ *
+ * @property $dbforge
  */
 class Migration_create_mail_queue extends CI_Migration {
 

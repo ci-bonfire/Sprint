@@ -5,6 +5,8 @@
  *
  * Created by: SprintPHP
  * Created on: 2014-01-23 15:51:12 am
+ *
+ * @property $dbforge
  */
 class Migration_Createsessiontable extends CI_Migration {
 

@@ -62,6 +62,8 @@ echo "<?php
  *
  * Created by: SprintPHP
  * Created on: {$today}
+ *
+ * @property \$dbforge
  */
 class Migration_{$name} extends CI_Migration {
 

@@ -5,6 +5,8 @@
  *
  * Created by: SprintPHP
  * Created on: 2014-10-20 18:49:26 pm
+ *
+ * @property $dbforge
  */
 class Migration_create_settings_table extends CI_Migration {
 

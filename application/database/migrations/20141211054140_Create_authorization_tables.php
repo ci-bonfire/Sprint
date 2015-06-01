@@ -5,6 +5,8 @@
  *
  * Created by: SprintPHP
  * Created on: 2014-12-11 05:41:40 am
+ *
+ * @property $dbforge
  */
 class Migration_create_authorization_tables extends CI_Migration {
 
