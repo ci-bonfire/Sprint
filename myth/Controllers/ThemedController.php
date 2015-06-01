@@ -412,6 +412,10 @@ if (! function_exists('esc'))
      *      - css
      *      - url
      *
+     * References:
+     *  - https://www.owasp.org/index.php/XSS_(Cross_Site_Scripting)_Prevention_Cheat_Sheet
+     *  - http://framework.zend.com/manual/current/en/modules/zend.escaper.introduction.html
+     *
      * @param $data
      * @param $context
      * @param escaper   // An instance of ZF's Escaper to avoid repeated class instantiation.
