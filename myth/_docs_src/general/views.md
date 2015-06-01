@@ -77,7 +77,7 @@ The Escaper recognizes the following contexts:
 - [css](http://framework.zend.com/manual/current/en/modules/zend.escaper.escaping-css.html) - escape a string for use within variables and data in dynamic CSS 
 - [url](http://framework.zend.com/manual/current/en/modules/zend.escaper.escaping-url.html) - escape a string for use within data being inserted into a URL, and not entire URL's.
 
-To create a secure application, with industry-standard protection against, read through each of the linked articles above and ensure that you understand how to escape data, and within what context you are operating, otherwise, many other security measures could prove invalid. 
+To create a secure application, with industry-standard protection against XSS, read through each of the linked articles above and ensure that you understand how to escape data, and within what context you are operating, otherwise, many other security measures could prove invalid. 
 
 NOTE: This escape is meant to replace the use of CodeIgniter's `xss_clean()` functionality.  
 
