@@ -23,7 +23,8 @@
 		"php": ">=5.4",
         "mobiledetect/mobiledetectlib": "dev-master",
         "raveren/kint": "0.9.*@dev",
-        "league/commonmark": "0.7.*"
+        "league/commonmark": "0.7.*",
+        "zendframework/zend-escaper": "2.4.2"
 	},
     "require-dev": {
         "mockery/mockery": "dev-master",
