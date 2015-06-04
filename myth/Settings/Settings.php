@@ -70,7 +70,7 @@ class Settings {
         {
             foreach ($user_stores as $alias => $class)
             {
-                self::$stores[ strtolower($alias) ][] = new $class();
+                self::$stores[ strtolower($alias) ] = new $class();
             }
         }
 
@@ -103,7 +103,7 @@ class Settings {
             $store = self::$default_store;
         }
 
-        return self::$stores[ $store ][0]->save($key, $value, $group);
+        return self::$stores[ $store ]->save($key, $value, $group);
     }
 
     //--------------------------------------------------------------------
@@ -140,7 +140,7 @@ class Settings {
         // Otherwise loop through each store until we find it
         foreach (self::$stores as $s)
         {
-            if ($found = $s[0]->get($key, $group))
+            if ($found = $s->get($key, $group))
             {
                 return $found;
             }
