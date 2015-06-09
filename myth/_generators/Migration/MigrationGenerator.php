@@ -211,7 +211,7 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 		// Otherwise try to use any fields from the CLI
 		else
 		{
-			$fields = $options['fields'];
+			$fields = ! empty($options['fields']) ? $options['fields'] : null;
 			if (empty($fields) && $quiet)
 			{
 				return;
