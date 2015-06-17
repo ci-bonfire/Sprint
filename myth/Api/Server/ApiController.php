@@ -191,6 +191,15 @@ class ApiController extends BaseController {
         'en-bz' => 'english',
     ];
 
+    /**
+	 * If you wish to override the default authentication
+	 * library used for authentication, set this to the
+	 * fully namespaced class name.
+	 *
+	 * @var string
+	 */
+	protected $authenticate_class = '\Myth\Api\Auth\APIAuthentication';
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -244,6 +253,11 @@ class ApiController extends BaseController {
 
 		if ($this->do_auth_check)
 		{
+			// Override the config setting for authentication
+			// so that we can have an application and API co-exist
+			// in a single codebase.
+			get_instance()->config->set_item('api.authenticate_lib', $this->authenticate_class);
+
 			if (! $this->restrict(null, true) )
 			{
 				$this->logTime();
@@ -306,7 +320,7 @@ class ApiController extends BaseController {
 	 *
 	 * @param     $data
 	 * @param int $status_code
-	 * 
+	 *
 	 * @return mixed
 	 */
 	public function respond ($data = null, $status_code = 200)
