@@ -69,8 +69,6 @@ class CIMailService implements MailServiceInterface {
 
         $result = $this->ci->email->send(false);
 
-        die($this->ci->email->print_debugger() );
-
         return $result;
     }
 
