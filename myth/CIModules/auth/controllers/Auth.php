@@ -333,6 +333,8 @@ class Auth extends \Myth\Controllers\ThemedController
     {
         $this->load->helper('auth/password');
 
+        $str = urldecode( base64_decode($str) );
+
         $strength = isStrongPassword($str);
 
         $this->renderJSON(['status' => $strength ? 'pass' : 'fail']);
