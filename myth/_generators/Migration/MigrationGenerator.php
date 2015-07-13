@@ -165,7 +165,7 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 	{
 	    $segments = explode('_', $name);
 
-		$action = trim(strtolower($segments[0]));
+		$action = trim(strtolower(array_shift($segments)));
 
 		// Is the action a convenience mapping?
 		if (array_key_exists($action, $this->actionMap))
@@ -187,7 +187,7 @@ class MigrationGenerator extends \Myth\Forge\BaseGenerator {
 
 			// The name of the table is assumed to be the one
 			// prior to the $index found.
-			$this->table = plural( $segments[$index - 1] );
+			$this->table = plural( implode('_', array_slice($segments, 0, $index) ) );
 		}
 
 		// Are we referencing a column?
