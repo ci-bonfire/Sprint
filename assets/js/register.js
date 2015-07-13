@@ -12,7 +12,7 @@ $(document).on('keyup', '#password', function(e) {
         return false;
     }
 
-    $.getJSON(
+    $.post(
         '/password_check/'+ current_password,
         function (data)
         {
