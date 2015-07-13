@@ -160,6 +160,12 @@ If you pass an array of items as the `value`, then it will be imploded and joine
 	$this->meta->keywords = ['one', 'two', 'three'];
 	// Becomes 'one,two,three'
 
+#### Auto-Escaping Tag Values
+
+By default, all data is escaped to create a more secure usage of all values. This is done with the [esc()](general/views#auto-escaping_data) method that is used to sanitize data in the views. If you do not want the value to be escaped, you can pass `TRUE` as the third parameter to the `set()` method.
+
+	$this->meta->set( 'tag', 'value', true);
+
 ### Setting Items In Config File
 You can define default site-wide meta tags by entering them in the config array in `application/config/html_meta.php`. 
 

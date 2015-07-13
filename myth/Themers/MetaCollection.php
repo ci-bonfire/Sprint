@@ -1,5 +1,7 @@
 <?php namespace Myth\Themers;
 
+require_once dirname(__FILE__) .'/escape.php';
+
 /**
  * Sprint
  *
@@ -106,7 +108,7 @@ class MetaCollection implements MetaInterface {
      *
      * @return mixed
      */
-    public function set($alias, $value=null)
+    public function set($alias, $value=null, $escape=true)
     {
         if (is_array($alias))
         {
@@ -126,7 +128,7 @@ class MetaCollection implements MetaInterface {
             return $this;
         }
 
-        $this->meta[ strtolower($alias) ] = $value;
+        $this->meta[ strtolower($alias) ] = $escape ? esc($value, 'htmlAttr') : $value;
 
         return $this;
     }
