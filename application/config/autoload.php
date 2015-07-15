@@ -39,9 +39,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |  $autoload['packages'] = array(APPPATH.'third_party', '/usr/local/shared');
 |
 */
-
 $autoload['packages'] = array(APPPATH.'third_party');
-
 
 /*
 | -------------------------------------------------------------------
@@ -59,9 +57,7 @@ $autoload['packages'] = array(APPPATH.'third_party');
 |
 |	$autoload['libraries'] = array('user_agent' => 'ua');
 */
-
 $autoload['libraries'] = array();
-
 
 /*
 | -------------------------------------------------------------------
@@ -75,9 +71,7 @@ $autoload['libraries'] = array();
 |
 |	$autoload['drivers'] = array('cache');
 */
-
 $autoload['drivers'] = array();
-
 
 /*
 | -------------------------------------------------------------------
@@ -87,9 +81,7 @@ $autoload['drivers'] = array();
 |
 |	$autoload['helper'] = array('url', 'file');
 */
-
 $autoload['helper'] = array('url', 'language');
-
 
 /*
 | -------------------------------------------------------------------
@@ -103,9 +95,7 @@ $autoload['helper'] = array('url', 'language');
 | config files.  Otherwise, leave it blank.
 |
 */
-
 $autoload['config'] = array('application');
-
 
 /*
 | -------------------------------------------------------------------
@@ -119,9 +109,7 @@ $autoload['config'] = array('application');
 | "codeigniter_lang.php" would be referenced as array('codeigniter');
 |
 */
-
 $autoload['language'] = array('application');
-
 
 /*
 | -------------------------------------------------------------------
@@ -136,10 +124,7 @@ $autoload['language'] = array('application');
 |
 |	$autoload['model'] = array('first_model' => 'first');
 */
-
 $autoload['model'] = array();
-
-
 
 /**
  * Load PHPError
