@@ -9,7 +9,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | Upload class to help identify allowed file types.
 |
 */
-
 return array(
 	'hqx'	=>	array('application/mac-binhex40', 'application/mac-binhex', 'application/x-binhex40', 'application/x-mac-binhex40'),
 	'cpt'	=>	'application/mac-compactpro',
@@ -154,5 +153,6 @@ return array(
 	'svg'	=>	array('image/svg+xml', 'application/xml', 'text/xml'),
 	'vcf'	=>	'text/x-vcard',
 	'srt'	=>	array('text/srt', 'text/plain'),
-	'vtt'	=>	array('text/vtt', 'text/plain')
+	'vtt'	=>	array('text/vtt', 'text/plain'),
+	'ico'	=>	array('image/x-icon', 'image/x-ico', 'image/vnd.microsoft.icon')
 );

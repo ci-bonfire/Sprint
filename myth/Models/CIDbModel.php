@@ -284,7 +284,7 @@ class CIDbModel
      * to use that $db instead of the global CI one.
      *
      * @param object $db // A database/driver instance
-     * @param object $form_validaiton // A form_validation library instance
+     * @param object $form_validation // A form_validation library instance
      */
     public function __construct($db = null, $form_validation = null)
     {

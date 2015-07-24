@@ -116,7 +116,7 @@ class ConfigStore implements SettingsStoreInterface {
 
         // Try to load the 'group' file, then try to load a
         // config file that matches the group name
-        $this->ci->load->config($group, false, true)
+        $this->ci->load->config($group, false, true);
         
         $result = $this->ci->config->item($key);
 
