@@ -30,6 +30,7 @@
  * @since       Version 1.0
  */
 use Myth\Themers\MetaCollection;
+use Zend\Escaper\Escaper;
 
 require_once dirname(__FILE__) .'/../Themers/escape.php';
 
