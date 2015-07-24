@@ -22,6 +22,9 @@ NOTE: This is currently in a **Beta-release** state. What's that mean? It means 
 - Composer installed on development server.
 - A Database. We currently use MySQL but try to keep it fairly flexible.
 
+## Found A Security Issue?
+I take security very seriously in Sprint and strive to create the most secure package that I can. If you have located what you believe to be security issues, please contact me at [lonnie@newmythmedia.com](mailto://lonnie@newmythmedia.com) with the details, instead of posting them as an issue on the repo or forums. That only releases the security hole to potential attackers before it's had a chance to be fixed. 
+
 ## How To Install?
 
 Installation instructions can be found in the docs source here on [GitHub](https://github.com/ci-bonfire/Sprint/blob/develop/myth/_docs_src/installation.md).
