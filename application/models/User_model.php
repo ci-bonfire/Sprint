@@ -281,7 +281,7 @@ class User_model extends \Myth\Models\CIDbModel {
             return null;
         }
 
-        return $query->row()->$key;
+        return $query->row()->meta_value;
     }
 
     //--------------------------------------------------------------------
