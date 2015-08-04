@@ -82,7 +82,7 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     public function withMeta()
     {
-        $this->db->join('user_meta', 'users.id = user_meta.user_id', 'inner');
+        $this->after_find[] = 'grabMeta';
 
         return $this;
     }
@@ -315,5 +315,52 @@ class User_model extends \Myth\Models\CIDbModel {
     }
 
     //--------------------------------------------------------------------
+
+    public function getMetaForUser($user_id)
+    {
+        $query = $this->db->where('user_id', (int)$user_id)
+                          ->select('meta_key, meta_value')
+                          ->get('user_meta');
+
+        $rows = $query->result();
+
+        $meta = [];
+
+        if (count($rows))
+        {
+            array_walk( $rows, function ( $row ) use ( &$meta )
+            {
+                $meta[ $row->meta_key ] = $row->meta_value;
+            } );
+        }
+
+        return $meta;
+    }
+
+    //--------------------------------------------------------------------
+
+    protected function grabMeta($data)
+    {
+        if (strpos($data['method'], 'find') === false)
+        {
+            return $data;
+        }
+
+        $meta = $this->getMetaForUser($data['fields']->id);
+
+        if (is_object($data['fields']))
+        {
+            $data['fields']->meta = (object)$meta;
+        }
+        else
+        {
+            $data['fields']['meta']= $meta;
+        }
+
+        return $data;
+    }
+
+    //--------------------------------------------------------------------
+
 
 }
