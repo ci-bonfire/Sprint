@@ -331,7 +331,7 @@ class CIDbModel
      */
     public function first()
     {
-        $rows = $this->limit(1)->find_all();
+        $rows = $this->limit(1, 0)->find_all();
 
         if (is_array($rows) && count($rows)) {
             return $rows[0];
@@ -1526,222 +1526,8 @@ class CIDbModel
 
     //--------------------------------------------------------------------
 
-
-
     //--------------------------------------------------------------------
-    // CI Database  Wrappers
-    //--------------------------------------------------------------------
-    // To allow for more expressive syntax, we provide wrapper functions
-    // for most of the query builder methods here.
-    //
-    // This allows for calls such as:
-    //      $result = $this->model->select('...')
-    //                            ->where('...')
-    //                            ->having('...')
-    //                            ->get();
-    //
-
-    public function select($select = '*', $escape = NULL)
-    {
-        $this->db->select($select, $escape);
-        return $this;
-    }
-
-    public function select_max($select = '', $alias = '')
-    {
-        $this->db->select_max($select, $alias);
-        return $this;
-    }
-
-    public function select_min($select = '', $alias = '')
-    {
-        $this->db->select_min($select, $alias);
-        return $this;
-    }
-
-    public function select_avg($select = '', $alias = '')
-    {
-        $this->db->select_avg($select, $alias);
-        return $this;
-    }
-
-    public function select_sum($select = '', $alias = '')
-    {
-        $this->db->select_sum($select, $alias);
-        return $this;
-    }
-
-    public function distinct($val = TRUE)
-    {
-        $this->db->distinct($val);
-        return $this;
-    }
-
-    public function from($from)
-    {
-        $this->db->from($from);
-        return $this;
-    }
-
-    public function join($table, $cond, $type = '')
-    {
-        $this->db->join($table, $cond, $type);
-        return $this;
-    }
-
-    public function where($key, $value = NULL, $escape = TRUE)
-    {
-        $this->db->where($key, $value, $escape);
-        return $this;
-    }
-
-    public function or_where($key, $value = NULL, $escape = TRUE)
-    {
-        $this->db->or_where($key, $value, $escape);
-        return $this;
-    }
-
-    public function where_in($key = NULL, $values = NULL)
-    {
-        $this->db->where_in($key, $values);
-        return $this;
-    }
-
-    public function or_where_in($key = NULL, $values = NULL)
-    {
-        $this->db->or_where_in($key, $values);
-        return $this;
-    }
-
-    public function where_not_in($key = NULL, $values = NULL)
-    {
-        $this->db->where_not_in($key, $values);
-        return $this;
-    }
-
-    public function or_where_not_in($key = NULL, $values = NULL)
-    {
-        $this->db->or_where_not_in($key, $values);
-        return $this;
-    }
-
-    public function like($field, $match = '', $side = 'both')
-    {
-        $this->db->like($field, $match, $side);
-        return $this;
-    }
-
-    public function not_like($field, $match = '', $side = 'both')
-    {
-        $this->db->not_like($field, $match, $side);
-        return $this;
-    }
-
-    public function or_like($field, $match = '', $side = 'both')
-    {
-        $this->db->or_like($field, $match, $side);
-        return $this;
-    }
-
-    public function or_not_like($field, $match = '', $side = 'both')
-    {
-        $this->db->or_not_like($field, $match, $side);
-        return $this;
-    }
-
-    public function group_by($by)
-    {
-        $this->db->group_by($by);
-        return $this;
-    }
-
-    public function having($key, $value = '', $escape = TRUE)
-    {
-        $this->db->having($key, $value, $escape);
-        return $this;
-    }
-
-    public function or_having($key, $value = '', $escape = TRUE)
-    {
-        $this->db->or_having($key, $value, $escape);
-        return $this;
-    }
-
-    public function order_by($orderby, $direction = '')
-    {
-        $this->db->order_by($orderby, $direction);
-        return $this;
-    }
-
-    public function limit($value, $offset = '')
-    {
-        $this->db->limit($value, $offset);
-        return $this;
-    }
-
-    public function offset($offset)
-    {
-        $this->db->offset($offset);
-        return $this;
-    }
-
-    public function set($key, $value = '', $escape = TRUE)
-    {
-        $this->db->set($key, $value, $escape);
-        return $this;
-    }
-
-    public function count_all_results()
-    {
-        return $this->db->count_all_results($this->table_name);
-    }
-
-    public function group_start($not = '', $type = 'AND ')
-    {
-        return $this->db->group_start($not, $type);
-    }
-
-    public function or_group_start()
-    {
-        return $this->db->or_group_start();
-    }
-
-    public function not_group_start()
-    {
-        return $this->db->not_group_start();
-    }
-
-    public function or_not_group_start()
-    {
-        return $this->db->or_not_group_start();
-    }
-
-    public function group_end()
-    {
-        return $this->db->group_end();
-    }
-
-    public function get_compiled_select($reset = TRUE)
-    {
-        return $this->db->get_compiled_select($this->table_name, $reset);
-    }
-
-    public function get_compiled_insert($reset = TRUE)
-    {
-        return $this->db->get_compiled_insert($this->table_name, $reset);
-    }
-
-    public function get_compiled_update($reset = TRUE)
-    {
-        return $this->db->get_compiled_update($this->table_name, $reset);
-    }
-
-    public function get_compiled_delete($reset = TRUE)
-    {
-        return $this->db->get_compiled_delete($this->table_name, $reset);
-    }
-
-
+    // Magic Methods
     //--------------------------------------------------------------------
 
     /**
@@ -1771,5 +1557,24 @@ class CIDbModel
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Provide direct access to any of CodeIgniter's DB methods but
+     * make it look like it's part of the class, purely for convenience.
+     *
+     * @param $name
+     * @param $params
+     */
+    public function __call($name, $params=null)
+    {
+        if (method_exists($this->db, $name))
+        {
+            call_user_func_array([$this->db, $name], $params);
+            return $this;
+        }
+    }
+
+    //--------------------------------------------------------------------
+
 
 }

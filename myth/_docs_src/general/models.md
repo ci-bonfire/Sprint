@@ -530,74 +530,13 @@ Thanks to CodeIgniter's [Query Builder](http://www.codeigniter.com/userguide3/da
 
 Chainable methods are a feature of PHP 5 and higher that allow you to return the results of one function into another, and to keep this 'chain' of events continuing through several functions. Sprint duplicates several of the stock Query Builder methods in CIDbModel to make it simple and elegant to customize your queries.
 
-Sprint's model supports chaining for most of the Query Builder methods available, including:
-
-* select
-* select_max
-* select_min
-* select_avg
-* select_sum
-* from
-* join
-* where
-* or_where
-* where_in
-* or_where_in
-* where_not_in
-* or_where_not_in
-* like
-* or_like
-* not_like
-* or_not_like
-* group_by
-* distinct
-* having
-* or_having
-* order_by
-* limit
-* count_all
-* count_all_results
-* group_start
-* or_group_start
-* not_group_start
-* or_not_group_start
-* group_end
-* set
-* offset
-* get_compiled_select
-* get_compiled_insert
-* get_compiled_update
-* get_compiled_delete
-
-All of these methods accept the same parameters as their [CodeIgniter](http://www.codeigniter.com/userguide3/database/query_builder.html) counterparts. These are included for the sole reason of making your syntax more expressive. You can now do things like:
+Sprint's model supports chaining for all of the Query Builder methods available through the `__call()` magic method. This simply means that you can use any standard `$this->db` methods by simply calling it on the model class.
 
 	$this->user_model->where('city', 'Detroit')
 					 ->or_where('city', 'Cleveland')
 					 ->join('tour_dates', 'x on y')
 					 ->find_all();
 
-### where()
-
-Modifies the query to a specific `where` condition. Can be used with any of the read-type queries (find, find_all, etc).
-
-The first parameter is the field to match against. The second parameter is the value of the field to find.
-
-Accepts any of the standard CodeIgniter Query Builder where statements.
-
-	$this->user_model->where('email', 'darth@theempire.com');
-	$this->user_model->where('email !=', 'darth@theempire.com');
-	$this->user_model->where( array('email' => 'darth@theempire.com') );
-
-	$this->user_model->where('email', 'darth@theempire.com')
-					 ->find_all();
-
-You can also pass an array of field/value pairs as the first parameter. In this case, the second parameter is ignored.
-
-	$wheres = array(
-		‘active’  => 1,
-		‘deleted’ => 0
-	);
-	$results = $this->model->where($wheres)->find_all();
 
 ## Extending Methods
 
