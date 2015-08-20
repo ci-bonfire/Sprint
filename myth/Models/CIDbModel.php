@@ -366,15 +366,11 @@ class CIDbModel
 
         $this->db->where($this->primary_key, $id);
         $row = $this->db->get($this->table_name);
-        $row = $row->{$this->_return_type()}();
+        $row = $this->temp_return_type == 'array' ? $row->row_array() : $row->row(0, $this->temp_return_type);
 
         if ( ! empty($row))
         {
             $row = $this->trigger('after_find', ['id' => $id, 'method' => 'find', 'fields' => $row]);
-        }
-
-        if ($this->temp_return_type == 'json') {
-            $row = ! empty($row) ? json_encode($row) : '{}';
         }
 
         // Reset our return type
@@ -411,15 +407,11 @@ class CIDbModel
         $this->trigger('before_find', ['method' => 'find_by', 'fields' => $where]);
 
         $row = $this->db->get($this->table_name);
-        $row = $row->{$this->_return_type()}();
+        $row = $this->temp_return_type == 'array' ? $row->row_array() : $row->row(0, $this->temp_return_type);
 
         if ( ! empty($row))
         {
             $row = $this->trigger('after_find', ['method' => 'find_by', 'fields' => $row]);
-        }
-
-        if ($this->temp_return_type == 'json') {
-            $row = ! empty($row) ? json_encode($row) : '{}';
         }
 
         // Reset our return type
@@ -484,16 +476,12 @@ class CIDbModel
         }
 
         $rows = $this->db->get($this->table_name);
-        $rows = $rows->{$this->_return_type(true)}();
+        $rows = $this->temp_return_type == 'array' ? $rows->result_array() : $rows->result($this->temp_return_type);
 
         if (is_array($rows)) {
             foreach ($rows as $key => &$row) {
                 $row = $this->trigger('after_find', ['method' => 'find_all', 'fields' => $row] );
             }
-        }
-
-        if ($this->temp_return_type == 'json') {
-            $rows = is_array($rows) ? json_encode($rows) : '[]';
         }
 
         // Reset our return type
@@ -964,28 +952,22 @@ class CIDbModel
 
     /**
      * Temporarily sets our return type to an object.
+     *
+     * If $class is provided, the rows will be returned as objects that
+     * are instances of that class. $class MUST be an fully qualified
+     * class name, meaning that it must include the namespace, if applicable.
+     *
+     * @param string $class
+     * @return $this
      */
-    public function as_object()
+    public function as_object($class=null)
     {
-        $this->temp_return_type = 'object';
+        $this->temp_return_type = ! empty($class) ? $class : 'object';
 
         return $this;
     }
 
     //--------------------------------------------------------------------
-
-    /**
-     * Temporarily sets our object return to a json object.
-     */
-    public function as_json()
-    {
-        $this->temp_return_type = 'json';
-
-        return $this;
-    }
-
-    //--------------------------------------------------------------------
-
 
     /**
      * Also fetches deleted items for this request only.
@@ -1324,20 +1306,6 @@ class CIDbModel
 
     //--------------------------------------------------------------------
     // Internal Methods
-    //--------------------------------------------------------------------
-
-    /**
-     * Return the method name for the current return type
-     */
-    protected function _return_type($multi = FALSE)
-    {
-        $method = ($multi) ? 'result' : 'row';
-
-        // If our type is either 'array' or 'json', we'll simply use the array version
-        // of the function, since the database library doesn't support json.
-        return $this->temp_return_type == 'array' || $this->temp_return_type == 'json' ? $method . '_array' : $method;
-    }
-
     //--------------------------------------------------------------------
 
     /**

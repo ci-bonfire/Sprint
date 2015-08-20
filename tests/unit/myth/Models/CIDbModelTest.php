@@ -539,32 +539,6 @@ class CIDbModelTest extends \Codeception\TestCase\Test
 
     //--------------------------------------------------------------------
 
-    public function testFindAsJsonReturnsEmptyObjectOnNoResults()
-    {
-        $this->model->db->shouldReceive('where')->once()->with('id', 1)->andReturn( $this->model->db );
-        $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
-        $this->model->db->shouldReceive('row_array')->once()->andReturn(NULL);
-
-        $obj = $this->model->as_json()->find(1);
-        $this->assertEquals( '{}', $obj );
-    }
-
-    //--------------------------------------------------------------------
-
-    public function testFindAsJsonReturnsJSON()
-    {
-        $expected = ['one', 'two', 'three'];
-
-        $this->model->db->shouldReceive('where')->once()->with('id', 1)->andReturn( $this->model->db );
-        $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
-        $this->model->db->shouldReceive('row_array')->once()->andReturn( $expected );
-
-        $obj = $this->model->as_json()->find(1);
-        $this->assertEquals( json_encode($expected), $obj );
-    }
-
-    //--------------------------------------------------------------------
-
     public function testFindAllAsObject()
     {
         $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
@@ -583,32 +557,6 @@ class CIDbModelTest extends \Codeception\TestCase\Test
 
         $obj = $this->model->as_array()->find_all();
         $this->assertEquals( 'fake object', $obj );
-    }
-
-    //--------------------------------------------------------------------
-
-    public function testFindAllAsJsonReturnsEmptyArrayOnNoData()
-    {
-        $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
-        $this->model->db->shouldReceive('result_array')->once()->andReturn(false);
-
-        $obj = $this->model->as_json()->find_all();
-
-        $this->assertEquals( '[]', $obj );
-    }
-
-    //--------------------------------------------------------------------
-
-    public function testFindAllAsJsonReturnsJSON()
-    {
-        $expected = ['one', 'two', 'three'];
-
-        $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
-        $this->model->db->shouldReceive('result_array')->once()->andReturn($expected);
-
-        $obj = $this->model->as_json()->find_all();
-
-        $this->assertEquals( json_encode($expected), $obj );
     }
 
     //--------------------------------------------------------------------
