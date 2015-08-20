@@ -115,7 +115,7 @@ The name of the fields to store the user id in can be set by changing the `creat
 
 ### $return_type
 
-Specifies whether the model returns records as an object or an array. The only valid values here are `object` or `array`.
+Specifies whether the model returns records as an object, an array, or a custom class. The only valid values here are `object` , `array`, or fully-qualified class name.
 
 The format can be overridden on a per-call basis using the `as_array` and `as_object` methods.
 
@@ -520,9 +520,9 @@ A chainable method that specifies the model should return the results as an arra
 
 A chainable method that specifies the model should return the results as an object (for single results) or an array of objects (for multiple rows). This overrides the models `$result_type` class variable.
 
-### as_json()
+You can also pass in the name of a class (including namespace) to have the results brought back as instances of that class. 
 
-A chainable method that specifies the model should return the results as a JSON object suitable for returning in AJAX methods. This overrides the models `$result_type` class variable.
+	$this->user_model->as_object('\\App\\Entities\\User')->find_all();
 
 ## Chainable Methods
 
