@@ -372,29 +372,13 @@ class CI_Router {
 		// Get HTTP verb
 		$http_verb = isset($_SERVER['REQUEST_METHOD']) ? strtolower($_SERVER['REQUEST_METHOD']) : 'cli';
 
-		// Is there a literal match?  If so we're done
-		if (isset($this->routes[$uri]))
-		{
-			// Check default routes format
-			if (is_string($this->routes[$uri]))
-			{
-				$this->_set_request(explode('/', $this->routes[$uri]));
-				return;
-			}
-			// Is there a matching http verb?
-			elseif (is_array($this->routes[$uri]) && isset($this->routes[$uri][$http_verb]))
-			{
-				$this->_set_request(explode('/', $this->routes[$uri][$http_verb]));
-				return;
-			}
-		}
-
 		// Loop through the route array looking for wildcards
 		foreach ($this->routes as $key => $val)
 		{
-			// Check if route format is using http verb
+			// Check if route format is using HTTP verbs
 			if (is_array($val))
 			{
+				$val = array_change_key_case($val, CASE_LOWER);
 				if (isset($val[$http_verb]))
 				{
 					$val = $val[$http_verb];
@@ -494,7 +478,7 @@ class CI_Router {
 	 * Set directory name
 	 *
 	 * @param	string	$dir	Directory name
-	 * @param	bool	$appent	Whether we're appending rather than setting the full value
+	 * @param	bool	$append	Whether we're appending rather than setting the full value
 	 * @return	void
 	 */
 	public function set_directory($dir, $append = FALSE)
