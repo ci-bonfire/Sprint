@@ -27,7 +27,7 @@ The name of the folder is the name of the module, as far as the system is concer
 				/models
 				/views
 
-You can map a call to URL with the name of the module, as long as your controller name is the same as the module name. A module named `users` would have a controller named `users.php`, and a class named `Users`. This could be reached in the browser at `example.com/users`.
+You can map a call to URL with the name of the module, as long as your controller name is the same as the module name. A module named `users` would have a controller named `Users.php`, and a class named `Users`. This could be reached in the browser at `example.com/users`.
 
 	// Module: users, Controller: Users
 	mysite.com/users					// Runs the index() method
