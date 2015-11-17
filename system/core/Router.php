@@ -153,6 +153,28 @@ class CI_Router {
 	 */
 	protected function _set_routing()
 	{
+		// Load the routes.php file. It would be great if we could
+		// skip this for enable_query_strings = TRUE, but then
+		// default_controller would be empty ...
+		if (file_exists(APPPATH.'config/routes.php'))
+		{
+			include(APPPATH.'config/routes.php');
+		}
+
+		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/routes.php'))
+		{
+			include(APPPATH.'config/'.ENVIRONMENT.'/routes.php');
+		}
+
+		// Validate & get reserved routes
+		if (isset($route) && is_array($route))
+		{
+			isset($route['default_controller']) && $this->default_controller = $route['default_controller'];
+			isset($route['translate_uri_dashes']) && $this->translate_uri_dashes = $route['translate_uri_dashes'];
+			unset($route['default_controller'], $route['translate_uri_dashes']);
+			$this->routes = $route;
+		}
+
 		// Are query strings enabled in the config file? Normally CI doesn't utilize query strings
 		// since URI segments are more search-engine friendly, but they can optionally be used.
 		// If this feature is enabled, we will gather the directory/class/method a little differently
@@ -197,26 +219,6 @@ class CI_Router {
 			// Routing rules don't apply to query strings and we don't need to detect
 			// directories, so we're done here
 			return;
-		}
-
-		// Load the routes.php file.
-		if (file_exists(APPPATH.'config/routes.php'))
-		{
-			include(APPPATH.'config/routes.php');
-		}
-
-		if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/routes.php'))
-		{
-			include(APPPATH.'config/'.ENVIRONMENT.'/routes.php');
-		}
-
-		// Validate & get reserved routes
-		if (isset($route) && is_array($route))
-		{
-			isset($route['default_controller']) && $this->default_controller = $route['default_controller'];
-			isset($route['translate_uri_dashes']) && $this->translate_uri_dashes = $route['translate_uri_dashes'];
-			unset($route['default_controller'], $route['translate_uri_dashes']);
-			$this->routes = $route;
 		}
 
 		// Is there anything to parse?
@@ -372,29 +374,13 @@ class CI_Router {
 		// Get HTTP verb
 		$http_verb = isset($_SERVER['REQUEST_METHOD']) ? strtolower($_SERVER['REQUEST_METHOD']) : 'cli';
 
-		// Is there a literal match?  If so we're done
-		if (isset($this->routes[$uri]))
-		{
-			// Check default routes format
-			if (is_string($this->routes[$uri]))
-			{
-				$this->_set_request(explode('/', $this->routes[$uri]));
-				return;
-			}
-			// Is there a matching http verb?
-			elseif (is_array($this->routes[$uri]) && isset($this->routes[$uri][$http_verb]))
-			{
-				$this->_set_request(explode('/', $this->routes[$uri][$http_verb]));
-				return;
-			}
-		}
-
 		// Loop through the route array looking for wildcards
 		foreach ($this->routes as $key => $val)
 		{
-			// Check if route format is using http verb
+			// Check if route format is using HTTP verbs
 			if (is_array($val))
 			{
+				$val = array_change_key_case($val, CASE_LOWER);
 				if (isset($val[$http_verb]))
 				{
 					$val = $val[$http_verb];
@@ -494,7 +480,7 @@ class CI_Router {
 	 * Set directory name
 	 *
 	 * @param	string	$dir	Directory name
-	 * @param	bool	$appent	Whether we're appending rather than setting the full value
+	 * @param	bool	$append	Whether we're appending rather than setting the full value
 	 * @return	void
 	 */
 	public function set_directory($dir, $append = FALSE)

@@ -20,10 +20,16 @@ $config['modules_locations'] = array(
 |
 |	http://example.com/
 |
-| If this is not set then CodeIgniter will try guess the protocol, domain
-| and path to your installation. However, you should always configure this
-| explicitly and never rely on auto-guessing, especially in production
-| environments.
+| WARNING: You MUST set this value!
+|
+| If it is not set, then CodeIgniter will try guess the protocol and path
+| your installation, but due to security concerns the hostname will be set
+| to $_SERVER['SERVER_ADDR'] if available, or localhost otherwise.
+| The auto-detection mechanism exists only for convenience during
+| development and MUST NOT be used in production!
+|
+| If you need to allow multiple domains, remember that this file is still
+| a PHP script and you can easily do that on your own.
 |
 */
 $config['base_url'] = '';
@@ -352,6 +358,9 @@ $config['encryption_key'] = 'PLEASE_CHANGE_ME!';
 | 'sess_match_ip'
 |
 |	Whether to match the user's IP address when reading the session data.
+|
+|	WARNING: If you're using the database driver, don't forget to update
+|	         your session table's PRIMARY KEY when changing this setting.
 |
 | 'sess_time_to_update'
 |

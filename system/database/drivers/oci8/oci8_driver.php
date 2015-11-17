@@ -306,12 +306,12 @@ class CI_DB_oci8_driver extends CI_DB {
 	 *
 	 * params array keys
 	 *
-	 * KEY	  OPTIONAL	NOTES
-	 * name		no	the name of the parameter should be in :<param_name> format
-	 * value	no	the value of the parameter.  If this is an OUT or IN OUT parameter,
-	 *				this should be a reference to a variable
-	 * type		yes	the type of the parameter
-	 * length	yes	the max size of the parameter
+	 * KEY      OPTIONAL  NOTES
+	 * name     no        the name of the parameter should be in :<param_name> format
+	 * value    no        the value of the parameter.  If this is an OUT or IN OUT parameter,
+	 *                    this should be a reference to a variable
+	 * type     yes       the type of the parameter
+	 * length   yes       the max size of the parameter
 	 */
 	public function stored_procedure($package, $procedure, array $params)
 	{
@@ -378,27 +378,10 @@ class CI_DB_oci8_driver extends CI_DB {
 	/**
 	 * Begin Transaction
 	 *
-	 * @param	bool	$test_mode
 	 * @return	bool
 	 */
-	public function trans_begin($test_mode = FALSE)
+	protected function _trans_begin()
 	{
-		if ( ! $this->trans_enabled)
-		{
-			return TRUE;
-		}
-
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if ($this->_trans_depth > 0)
-		{
-			return TRUE;
-		}
-
-		// Reset the transaction failure flag.
-		// If the $test_mode flag is set to TRUE transactions will be rolled back
-		// even if the queries produce a successful result.
-		$this->_trans_failure = ($test_mode === TRUE);
-
 		$this->commit_mode = is_php('5.3.2') ? OCI_NO_AUTO_COMMIT : OCI_DEFAULT;
 		return TRUE;
 	}
@@ -410,20 +393,10 @@ class CI_DB_oci8_driver extends CI_DB {
 	 *
 	 * @return	bool
 	 */
-	public function trans_commit()
+	protected function _trans_commit()
 	{
-		if ( ! $this->trans_enabled)
-		{
-			return TRUE;
-		}
-
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if ($this->_trans_depth > 0)
-		{
-			return TRUE;
-		}
-
 		$this->commit_mode = OCI_COMMIT_ON_SUCCESS;
+
 		return oci_commit($this->conn_id);
 	}
 
@@ -434,14 +407,8 @@ class CI_DB_oci8_driver extends CI_DB {
 	 *
 	 * @return	bool
 	 */
-	public function trans_rollback()
+	protected function _trans_rollback()
 	{
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if ( ! $this->trans_enabled OR $this->_trans_depth > 0)
-		{
-			return TRUE;
-		}
-
 		$this->commit_mode = OCI_COMMIT_ON_SUCCESS;
 		return oci_rollback($this->conn_id);
 	}
