@@ -34,6 +34,8 @@
  * Class Bootstrap3UIKit
  *
  * Provides a UIKit designed to work with the Bootstrap 3.2 CSS Framework.
+ * 
+ * @package Myth\UIKit
  */
 class Bootstrap extends BaseUIKit {
 

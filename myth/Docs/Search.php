@@ -33,10 +33,12 @@
 use Myth\Docs\DocSearchInterface;
 
 /**
- * Class docSearch
+ * Class Search
  *
  * Implements basic search capabilities for Bonfire docs. Includes application,
  * core bonfire, and module docs.
+ *
+ * @package Myth\Docs
  */
 class Search implements DocSearchInterface
 {

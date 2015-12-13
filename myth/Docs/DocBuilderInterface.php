@@ -31,12 +31,11 @@
  */
 
 /**
- * Class DocBuilder
+ * Interface DocBuilderInterface
  *
  * Handles the brunt of building documentation from Markdown formatted files.
- *
- * @category Documentation
- * @author   Lonnie Ezell <lonnie@newmythmedia.com>
+ *  
+ * @package Myth\Docs
  */
 interface DocBuilderInterface
 {

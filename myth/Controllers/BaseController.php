@@ -79,6 +79,12 @@ spl_autoload_register( '\Myth\Modules::autoload' );
  * @property \CI_Utf8                $utf8
  * @property \CI_Security            $security
  */
+
+/**
+ * Class BaseController
+ *
+ * @package Myth\Controllers
+ */
 class BaseController extends \CI_Controller {
 	/**
 	 * The type of caching to use. The default values are

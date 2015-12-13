@@ -31,6 +31,11 @@
  * @since       Version 1.0
  */
 
+/**
+ * Interface MetaInterface
+ *
+ * @package Myth\Themers
+ */
 interface MetaInterface {
 
     /**
