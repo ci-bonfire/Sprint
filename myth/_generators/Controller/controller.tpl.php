@@ -58,7 +58,7 @@ if (! empty($model))
                 redirect( site_url('{$lower_controller}') );
             }
 
-            \$this->setMessage('Error creating item. '. \$this->{$lower_model}->error(), 'error');
+            \$this->setMessage('Error creating item. '. \$this->{$lower_model}->error(), 'danger');
         }
 
 \t\t
@@ -108,7 +108,7 @@ if (! empty($model))
                 redirect( site_url('{$lower_controller}') );
             }
 
-            \$this->setMessage('Error updating item. '. \$this->{$lower_model}->error(), 'error');
+            \$this->setMessage('Error updating item. '. \$this->{$lower_model}->error(), 'danger');
         }
 
         \$item = \$this->{$lower_model}->find(\$id);
@@ -132,7 +132,7 @@ if (\$this->{$lower_model}->delete(\$id))
             redirect( site_url('{$lower_controller}') );
         }
 
-        \$this->setMessage('Error deleting item. '. \$this->{$lower_model}->error(), 'error');
+        \$this->setMessage('Error deleting item. '. \$this->{$lower_model}->error(), 'danger');
         redirect( site_url( '{$lower_controller}' ) );
 \t\t
 EOD;
