@@ -25,7 +25,7 @@ The method returns either `TRUE` or `FALSE` depending on the success/failure of 
 
 	if (! $auth->login($credentials) )
 	{
-		$this->setMessage($auth->error(), 'error');
+		$this->setMessage($auth->error(), 'danger');
 	}
 
 The second parameter is a boolean value that tells whether we should remember the user. See the section on [Remembering Users](#remembering_users) for more details. The system does allow for a user to be remembered on more than one device and more than one browser at a time. Which allows them to maintain separate persistent logins at home and work and even on their mobile device simultaneously. 
