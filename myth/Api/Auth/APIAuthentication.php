@@ -33,6 +33,11 @@
 use Myth\Auth\LocalAuthentication;
 use Myth\Events;
 
+/**
+ * Class APIAuthentication
+ * 
+ * @package Myth\Api\Auth
+ */
 class APIAuthentication extends LocalAuthentication {
 
 	protected $logged_in = false;

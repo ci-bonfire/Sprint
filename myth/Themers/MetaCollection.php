@@ -33,6 +33,11 @@ require_once dirname(__FILE__) .'/escape.php';
  * @since       Version 1.0
  */
 
+/**
+ * Class MetaCollection
+ *
+ * @package Myth\Themers
+ */
 class MetaCollection implements MetaInterface {
 
     /**

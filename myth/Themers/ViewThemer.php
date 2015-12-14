@@ -32,6 +32,11 @@
 
 use Myth\Modules as Modules;
 
+/**
+ * Class ViewThemer
+ *
+ * @package Myth\Themers
+ */
 class ViewThemer implements ThemerInterface
 {
 

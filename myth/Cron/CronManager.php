@@ -32,6 +32,11 @@
 
 use Myth\Cron\CronTask as CronTask;
 
+/**
+ * Class CronManager
+ *
+ * @package Myth\Cron
+ */
 class CronManager {
 
     protected static $tasks = [];
