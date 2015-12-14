@@ -88,7 +88,6 @@ $config['docs.default_group'] = 'developer';
 |
 | If you change it, ensure that it includes the period (.).
 */
-
 $config['docs.extension']    = '.md';
 
 /*
