@@ -37,7 +37,7 @@ require_once dirname(__FILE__) .'/../Themers/escape.php';
 /**
  * Class ThemedController
  *
- * @package Bonfire\Libraries\Controllers
+ * @package Myth\Controllers
  */
 class ThemedController extends BaseController
 {
