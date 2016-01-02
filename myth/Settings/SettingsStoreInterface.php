@@ -31,12 +31,13 @@
  */
 
 /**
+ * Interface SettingsStoreInterface
+ * 
  * Provides the required structure for a Settings
  * provider that stores and saves settings used by the
  * application.
  *
- * Class SettingsInterface
- * @package Myth\Interfaces
+ * @package Myth\Settings
  */
 interface SettingsStoreInterface {
 

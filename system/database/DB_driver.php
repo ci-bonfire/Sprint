@@ -505,6 +505,18 @@ abstract class CI_DB_driver {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Last error
+	 *
+	 * @return	array
+	 */
+	public function error()
+	{
+		return array('code' => NULL, 'message' => NULL);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Set client character set
 	 *
 	 * @param	string
@@ -774,7 +786,10 @@ abstract class CI_DB_driver {
 	{
 		if ( ! $this->conn_id)
 		{
-			$this->initialize();
+			if ( ! $this->initialize())
+			{
+				return FALSE;
+			}
 		}
 
 		return $this->_execute($sql);

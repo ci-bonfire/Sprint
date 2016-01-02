@@ -34,6 +34,8 @@
  * Class Foundation5UIKit
  *
  * Provides a UIKit designed to work with Foundation 5.
+ * 
+ * @package Myth\UIKit
  */
 class Foundation extends BaseUIKit {
 

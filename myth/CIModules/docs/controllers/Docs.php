@@ -164,7 +164,7 @@ class Docs extends \Myth\Controllers\ThemedController
         if (config_item('docs.permitted_environments')
             && !in_array(ENVIRONMENT, config_item('docs.permitted_environments'))
         ) {
-            $this->setMessage(lang('docs_env_disabled'), 'error');
+            $this->setMessage(lang('docs_env_disabled'), 'danger');
             redirect();
         }
 

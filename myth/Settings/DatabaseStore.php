@@ -30,6 +30,11 @@
  * @since       Version 1.0
  */
 
+/**
+ * Class DatabaseStore
+ *
+ * @package Myth\Settings
+ */
 class DatabaseStore implements SettingsStoreInterface {
 
     protected $ci;

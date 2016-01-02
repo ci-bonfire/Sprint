@@ -30,6 +30,11 @@
  * @since       Version 1.0
  */
 
+/**
+ * Interface DocSearchInterface
+ *
+ * @package Myth\Docs
+ */
 interface DocSearchInterface {
 
     /**
