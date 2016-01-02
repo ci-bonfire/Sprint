@@ -160,6 +160,8 @@ If the `per_page` var is set to zero, then the `nextURL` and `prevURL` will not 
 ## Multilingual Support
 To aid in creating multilingual sites, the controller will automatically parse the `Accept-Language` header and attempt to load the language file specified in `$this->language_file` in that idiom/language. If that language file doesn't exist, it will default to the 'application' language file.
 
+The default language used, if no `Accept-Language` header can be found, is 'english'. This can be changed within any controller that extends the APIController by setting the `default_language` class property to the desired default idiom.
+
 ## Class Variables
 
 ### $request

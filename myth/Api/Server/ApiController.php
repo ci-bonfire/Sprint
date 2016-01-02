@@ -200,6 +200,14 @@ class ApiController extends BaseController {
 	 */
 	protected $authenticate_class = '\Myth\Api\Auth\APIAuthentication';
 
+	/**
+	 * The idiom that should be used for the language if
+	 * no specific language is requested in Accept-Language header.
+	 *
+	 * @var string
+	 */
+	protected $default_language = 'english';
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -742,7 +750,7 @@ class ApiController extends BaseController {
 	{
 		if ( ! $lang = $this->input->get_request_header('Accept-Language'))
 		{
-			return null;
+			return $this->default_language;
 		}
 
 		// They might have sent a few, make it an array
@@ -771,7 +779,7 @@ class ApiController extends BaseController {
 		}
 
 		// Nope, just return the string
-		return $lang;
+		return empty($lang) ? $this->default_language : $lang;
 	}
 
 	//--------------------------------------------------------------------
