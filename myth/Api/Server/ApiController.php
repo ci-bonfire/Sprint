@@ -772,10 +772,21 @@ class ApiController extends BaseController {
                     $lang = $this->lang_map[$lang];
                 }
 
-				$return_langs[] = $lang;
+				// We must check to see if the folder exists
+				// here since CI's lang->load will throw
+				// an error if the language doesn't exist.
+				if (is_dir(APPPATH .'language/'. $lang))
+				{
+					$return_langs[] = $lang;
+				}
 			}
 
-			return $return_langs;
+			// If no languages were added, let the script
+			// send the default language back instead.
+			if (! empty($return_langs))
+			{
+				return $return_langs;
+			}
 		}
 
 		// Nope, just return the string
