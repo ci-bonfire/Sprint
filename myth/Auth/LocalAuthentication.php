@@ -105,35 +105,36 @@ class LocalAuthentication implements AuthenticateInterface {
     {
         $user = $this->validate($credentials, true);
 
-        if (! $user)
-        {
-	        // We need to send an error even if no
-	        // user was found!
-	        $this->error = lang('auth.invalid_user');
-
-	        // If an email is present, log the attempt
-	        if (! empty($credentials['email']) )
-	        {
-		        $this->ci->login_model->recordLoginAttempt($credentials['email']);
-	        }
-
-            $this->user = null;
-            return $user;
-        }
-
         // If the user is throttled due to too many invalid logins
         // or the system is under attack, kick them back.
         // We need to test for this after validation because we
         // don't want it to affect a valid login.
 
-        // If throttling time is above zero, we can't allow
-        // logins now.
-        $time = (int)$this->isThrottled($user['email']);
-        if ($time > 0)
+        // If there is user or email field available
+        if ($user || ! empty($credentials['email']))
         {
-            $this->error = sprintf(lang('auth.throttled'), $time);
-            return false;
+        	// Set email to check
+            $email = $user ? $user['email'] : $credentials['email'];
+            // If throttling time is above zero, we can't allow
+        	// logins now.
+            $time = (int)$this->isThrottled($email);
+            if ($time > 0)
+            {
+                $this->error = sprintf(lang('auth.throttled'), $time);
+                return false;
+            }
         }
+
+        if (! $user)
+        {
+        	if (empty($this->error))
+            {
+                // We need to set an error if there is no one
+                $this->error = lang('auth.invalid_user');
+            }
+            $this->user = null;
+            return $user;
+        }       
 
         $this->loginUser($user);
 
@@ -161,35 +162,50 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function validate($credentials, $return_user=false)
     {
+        // We do not want to force case-sensitivity on things
+        // like username and email for usability sake.
+        if (! empty($credentials['email']))
+        {
+            $credentials['email'] = strtolower($credentials['email']);
+        }
+
         // Can't validate without a password.
         if (empty($credentials['password']) || count($credentials) < 2)
         {
+        	// If an email is present, log the attempt
+            if (! empty($credentials['email']))
+            {
+                $this->ci->login_model->recordLoginAttempt($credentials['email']);
+            }
             return null;
         }
 
         $password = $credentials['password'];
         unset($credentials['password']);
 
-	    // We should only be allowed 1 single other credential to
-	    // test against.
-	    if (count($credentials) > 1)
-	    {
-		    $this->error = lang('auth.too_many_credentials');
-		    return false;
-	    }
+        // We should only be allowed 1 single other credential to
+        // test against.
+        if (count($credentials) > 1)
+        {
+            $this->error = lang('auth.too_many_credentials');
+            // If an email is present, log the attempt
+            if (! empty($credentials['email']))
+            {
+                $this->ci->login_model->recordLoginAttempt($credentials['email']);
+            }
+            return false;
+        }
 
         // Ensure that the fields are allowed validation fields
-	    if (! in_array(key($credentials), config_item('auth.valid_fields')) )
-	    {
-		    $this->error = lang('auth.invalid_credentials');
-		    return false;
-	    }
-
-        // We do not want to force case-sensitivity on things
-        // like username and email for usability sake.
-        if (! empty($credentials['email']))
+        if (! in_array(key($credentials), config_item('auth.valid_fields')) )
         {
-            $credentials['email'] = strtolower($credentials['email']);
+            $this->error = lang('auth.invalid_credentials');
+            // If an email is present, log the attempt
+            if (! empty($credentials['email']))
+            {
+                $this->ci->login_model->recordLoginAttempt($credentials['email']);
+            }
+            return false;
         }
 
         // Can we find a user with those credentials?
@@ -200,6 +216,11 @@ class LocalAuthentication implements AuthenticateInterface {
         if (! $user)
         {
             $this->error = lang('auth.invalid_user');
+            // If an email is present, log the attempt
+            if (! empty($credentials['email']))
+            {
+                $this->ci->login_model->recordLoginAttempt($credentials['email']);
+            }
             return false;
         }
 
