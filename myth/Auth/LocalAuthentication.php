@@ -508,9 +508,13 @@ class LocalAuthentication implements AuthenticateInterface {
         // Emails should NOT be case sensitive.
         $email = strtolower($email);
 
+        // Have any attempts been made?
+        $attempts = $this->ci->login_model->countLoginAttempts($email);
+
         // Grab the amount of time to add if the system thinks we're
         // under a distributed brute force attack.
-        $dbrute_time = $this->ci->login_model->distributedBruteForceTime();
+        // Affect users that have at least 1 failure login attempt
+        $dbrute_time = ($attempts === 0) ? 0 : $this->ci->login_model->distributedBruteForceTime();
 
         // If this user was found to possibly be under a brute
         // force attack, their account would have been banned
@@ -534,9 +538,6 @@ class LocalAuthentication implements AuthenticateInterface {
         // Grab the time of last attempt and
         // determine if we're throttled by amount of time passed.
         $last_time = $this->ci->login_model->lastLoginAttemptTime($email);
-
-        // Have any attempts been made?
-        $attempts = $this->ci->login_model->countLoginAttempts($email);
 
         $allowed = config_item('auth.allowed_login_attempts');
 
