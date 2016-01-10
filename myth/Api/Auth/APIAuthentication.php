@@ -44,6 +44,8 @@ class APIAuthentication extends LocalAuthentication {
 
 	protected $realm = 'WallyWorld';
 
+	protected $email = null;
+
 	//--------------------------------------------------------------------
 
 	public function __construct($ci=null)
@@ -121,6 +123,12 @@ class APIAuthentication extends LocalAuthentication {
 			'password'  => $password
 		];
 
+		// Set email for later throttling check
+		if (config_item('api.auth_field') === 'email')
+		{
+			$this->email = $username;
+		}
+
 	    $user = $this->validate($data, true);
 
 		$this->user = $user;
@@ -176,6 +184,12 @@ class APIAuthentication extends LocalAuthentication {
 		{
 			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
 			return false;
+		}
+
+		// Set email for later throttling check
+		if (config_item('api.auth_field') === 'email')
+		{
+			$this->email = $digest['username'];
 		}
 
 		// Grab the user that corresponds to that "username"
@@ -238,23 +252,28 @@ class APIAuthentication extends LocalAuthentication {
 				break;
 		}
 
-		if (! $user)
-		{
-			$this->user = null;
-			return $user;
-		}
-
 		// If the user is throttled due to too many invalid logins
 		// or the system is under attack, kick them back.
 		// We need to test for this after validation because we
 		// don't want it to affect a valid login.
 
-		// If throttling time is above zero, we can't allow
-		// logins now.
-		if ($time = (int)$this->isThrottled($user['email']) > 0)
+		if ($this->email)
 		{
-			$this->error = sprintf(lang('api.throttled'), $time);
-			return false;
+			// If throttling time is above zero, we can't allow
+			// logins now.
+			if ($time = (int)$this->isThrottled($this->email) > 0)
+			{
+				$this->error = sprintf(lang('api.throttled'), $time);
+				return false;
+			}
+
+			$this->email = null;
+		}
+
+		if (! $user)
+		{
+			$this->user = null;
+			return $user;
 		}
 
 		$this->loginUser($user);
