@@ -68,6 +68,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
             'email' => 'darth@theempire.com',
         ];
 
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
+
         $result = $this->auth->validate($data);
 
         $this->assertNull($result);
@@ -85,6 +87,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn(false);
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->validate($data);
 
@@ -135,6 +138,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
             'email' => 'darth@theempire.com'
         );
 
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime');
+        $this->ci->login_model->shouldReceive('countLoginAttempts');
 	    $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
@@ -172,6 +178,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( false );
 
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime');
+        $this->ci->login_model->shouldReceive('countLoginAttempts');
 	    $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
@@ -191,6 +200,10 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
+
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime');
+        $this->ci->login_model->shouldReceive('countLoginAttempts');
         $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
