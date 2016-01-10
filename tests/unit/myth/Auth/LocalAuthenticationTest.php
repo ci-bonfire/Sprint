@@ -380,7 +380,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
         $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(7);
 
-        $this->assertEquals(25, $this->auth->isThrottled($email));
+        $this->assertEquals(10, $this->auth->isThrottled($email));
     }
 
     //--------------------------------------------------------------------
@@ -399,7 +399,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
         $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(8);
 
-        $this->assertEquals(50, $this->auth->isThrottled($email));
+        $this->assertEquals(20, $this->auth->isThrottled($email));
     }
 
     //--------------------------------------------------------------------
@@ -418,7 +418,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
         $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(9);
 
-        $this->assertEquals(50, $this->auth->isThrottled($email));
+        $this->assertEquals(40, $this->auth->isThrottled($email));
     }
 
     //--------------------------------------------------------------------
