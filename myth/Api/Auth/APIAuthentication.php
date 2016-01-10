@@ -198,6 +198,11 @@ class APIAuthentication extends LocalAuthentication {
 		if (!  $user)
 		{
 			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
+			// If an email is used, log the attempt
+            if (config_item('api.auth_field') === 'email')
+            {
+                $this->ci->login_model->recordLoginAttempt($digest['username']);
+            }
 			return false;
 		}
 
@@ -216,6 +221,11 @@ class APIAuthentication extends LocalAuthentication {
 		if ($digest['response'] != $valid_response)
 		{
 			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
+			// If an email is used, log the attempt
+            if (config_item('api.auth_field') === 'email')
+            {
+                $this->ci->login_model->recordLoginAttempt($digest['username']);
+            }
 			return false;
 		}
 
