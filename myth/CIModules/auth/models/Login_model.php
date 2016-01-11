@@ -54,19 +54,47 @@ class Login_model extends \Myth\Models\CIDbModel {
 
     /**
      * Records a login attempt. This is used to implement
-     * throttling of user login attempts.
+     * throttling of application, ip address and user login attempts.
      *
-     * @param $email
-     * @return object
+     * @param $ip_address
+     * @param $user_id
+     * @return void
      */
-    public function recordLoginAttempt($email)
+    public function recordLoginAttempt($ip_address, $user_id = null)
     {
+        $datetime = date('Y-m-d H:i:s');
+
+        // log attempt for app
         $data = [
-            'email' => $email,
-            'datetime' => date('Y-m-d H:i:s')
+            'type' => 'app',
+            'datetime' => $datetime
         ];
 
-        return $this->db->insert('auth_login_attempts', $data);
+        $this->db->insert('auth_login_attempts', $data);
+
+        // log attempt for ip address
+        if (! empty($ip_address))
+        {
+            $data = [
+                'type' => 'ip',
+                'ip_address' => $ip_address,
+                'datetime' => $datetime
+            ];
+
+            $this->db->insert('auth_login_attempts', $data);
+        }
+
+        // log attempt for user
+        if ($user_id)
+        {
+            $data = [
+                'type' => 'user',
+                'user_id' => $user_id,
+                'datetime' => $datetime
+            ];
+
+            $this->db->insert('auth_login_attempts', $data);
+        }
     }
 
     //--------------------------------------------------------------------
@@ -74,12 +102,14 @@ class Login_model extends \Myth\Models\CIDbModel {
     /**
      * Purges all login attempt records from the database.
      *
-     * @param $email
+     * @param $ip_address
+     * @param $user_id
      * @return mixed
      */
-    public function purgeLoginAttempts($email)
+    public function purgeLoginAttempts($ip_address, $user_id)
     {
-        return $this->db->where('email', $email)
+        return $this->db->where('ip_address', $ip_address)
+                        ->or_where('user_id', $user_id)
                         ->delete('auth_login_attempts');
     }
 
@@ -90,18 +120,37 @@ class Login_model extends \Myth\Models\CIDbModel {
      * last 60 seconds. If over 100, it is considered to be under a
      * brute force attempt.
      *
-     * @param $email
+     * @param $ip_address
+     * @param $user_id
      * @return bool
      */
-    public function isBruteForced($email)
+    public function isBruteForced($ip_address, $user_id)
     {
         $start_time = date('Y-m-d H:i:s', time() - 60);
 
-        $attempts = $this->db->where('email', $email)
-                             ->where('datetime >=', $start_time)
-                             ->count_all_results('auth_login_attempts');
+        $attempts_ip = $this->db->where('type', 'ip')
+                                ->where('ip_address', $ip_address)
+                                ->where('datetime >=', $start_time)
+                                ->count_all_results('auth_login_attempts');
 
-        return $attempts > 100;
+        if (! $user_id)
+        {
+            return $attempts_ip > 100;
+        }
+
+        $attempts_user = $this->db->where('type', 'user')
+                                  ->where('user_id', $user_id)
+                                  ->where('datetime >=', $start_time)
+                                  ->count_all_results('auth_login_attempts');
+
+        if ($attempts_user > $attempts_ip) 
+        {
+            return $attempts_user > 100;
+        }
+        else
+        {
+            return $attempts_ip > 100;
+        }
     }
 
     //--------------------------------------------------------------------
@@ -129,7 +178,7 @@ class Login_model extends \Myth\Models\CIDbModel {
             // Compute our daily average over the last 3 months.
             $avg_start_time = date('Y-m-d 00:00:00', strtotime('-3 months'));
 
-            $query = $this->db->query("SELECT COUNT(*) / COUNT(DISTINCT DATE(`datetime`)) as num_rows FROM `auth_login_attempts` WHERE `datetime` >= ?", $avg_start_time);
+            $query = $this->db->query("SELECT COUNT(*) / COUNT(DISTINCT DATE(`datetime`)) as num_rows FROM `auth_login_attempts` WHERE `type` = 'app' AND `datetime` >= ?", $avg_start_time);
 
             if (! $query->num_rows())
             {
@@ -143,7 +192,8 @@ class Login_model extends \Myth\Models\CIDbModel {
             // Get the total in the last 24 hours
             $today_start_time = date('Y-m-d H:i:s', strtotime('-24 hours'));
 
-            $attempts = $this->db->where('datetime >=', $today_start_time)
+            $attempts = $this->db->where('type', 'app')
+                                 ->where('datetime >=', $today_start_time)
                                  ->count_all_results('auth_login_attempts');
 
             if ($attempts > (config_item('auth.dbrute_multiplier') * $average))
@@ -277,36 +327,61 @@ class Login_model extends \Myth\Models\CIDbModel {
     /**
      * Gets the timestamp of the last attempted login for this user.
      *
-     * @param $email
+     * @param $ip_address
+     * @param $user_id
      * @return int|null
      */
-    public function lastLoginAttemptTime($email)
+    public function lastLoginAttemptTime($ip_address, $user_id)
     {
-        $query = $this->db->where('email', $email)
+        $query = $this->db->where('type', 'ip')
+                          ->where('ip_address', $ip_address)
                           ->order_by('datetime', 'desc')
                           ->limit(1)
                           ->get('auth_login_attempts');
 
-        if (! $query->num_rows())
+        $last_ip = ! $query->num_rows() ? 0 : strtotime($query->row()->datetime);
+
+        if (! $user_id)
         {
-            return 0;
+            return $last_ip;
         }
 
-        return strtotime($query->row()->datetime);
+        $query = $this->db->where('type', 'user')
+                          ->where('user_id', $user_id)
+                          ->order_by('datetime', 'desc')
+                          ->limit(1)
+                          ->get('auth_login_attempts');
+
+        $last_user = ! $query->num_rows() ? 0 : strtotime($query->row()->datetime);
+
+        return ($last_user > $last_ip) ? $last_user : $last_ip;
     }
 
     //--------------------------------------------------------------------
 
     /**
-     * Returns the number of failed login attempts for a single email.
+     * Returns the number of failed login attempts for a given type.
      *
-     * @param $email
+     * @param $ip_address
+     * @param $user_id
      * @return int
      */
-    public function countLoginAttempts($email)
+    public function countLoginAttempts($ip_address, $user_id)
     {
-        return $this->db->where('email', $email)
-                        ->count_all_results('auth_login_attempts');
+        $count_ip = $this->db->where('type', 'ip')
+                             ->where('ip_address', $ip_address)
+                             ->count_all_results('auth_login_attempts');
+
+        if (! $user_id)
+        {
+            return $count_ip;
+        }
+
+        $count_user = $this->db->where('type', 'user')
+                               ->where('user_id', $user_id)
+                               ->count_all_results('auth_login_attempts');
+
+        return ($count_user > $count_ip) ? $count_user : $count_ip;
     }
 
     //--------------------------------------------------------------------
