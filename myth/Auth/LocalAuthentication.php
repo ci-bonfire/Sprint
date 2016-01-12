@@ -110,24 +110,18 @@ class LocalAuthentication implements AuthenticateInterface {
         // We need to test for this after validation because we
         // don't want it to affect a valid login.
 
-        // If there is user or email field available
-        if ($user || ! empty($credentials['email']))
+        // If throttling time is above zero, we can't allow
+        // logins now.
+        $time = (int)$this->isThrottled($user);
+        if ($time > 0)
         {
-        	// Set email to check
-            $email = $user ? $user['email'] : $credentials['email'];
-            // If throttling time is above zero, we can't allow
-        	// logins now.
-            $time = (int)$this->isThrottled($email);
-            if ($time > 0)
-            {
-                $this->error = sprintf(lang('auth.throttled'), $time);
-                return false;
-            }
+            $this->error = sprintf(lang('auth.throttled'), $time);
+            return false;
         }
 
         if (! $user)
         {
-        	if (empty($this->error))
+            if (empty($this->error))
             {
                 // We need to set an error if there is no one
                 $this->error = lang('auth.invalid_user');
@@ -162,6 +156,9 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function validate($credentials, $return_user=false)
     {
+        // Get ip address
+        $ip_address = $this->ci->input->ip_address();
+
         // We do not want to force case-sensitivity on things
         // like username and email for usability sake.
         if (! empty($credentials['email']))
@@ -172,11 +169,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // Can't validate without a password.
         if (empty($credentials['password']) || count($credentials) < 2)
         {
-        	// If an email is present, log the attempt
-            if (! empty($credentials['email']))
-            {
-                $this->ci->login_model->recordLoginAttempt($credentials['email']);
-            }
+            $this->ci->login_model->recordLoginAttempt($ip_address);
             return null;
         }
 
@@ -188,11 +181,7 @@ class LocalAuthentication implements AuthenticateInterface {
         if (count($credentials) > 1)
         {
             $this->error = lang('auth.too_many_credentials');
-            // If an email is present, log the attempt
-            if (! empty($credentials['email']))
-            {
-                $this->ci->login_model->recordLoginAttempt($credentials['email']);
-            }
+            $this->ci->login_model->recordLoginAttempt($ip_address);
             return false;
         }
 
@@ -200,11 +189,7 @@ class LocalAuthentication implements AuthenticateInterface {
         if (! in_array(key($credentials), config_item('auth.valid_fields')) )
         {
             $this->error = lang('auth.invalid_credentials');
-            // If an email is present, log the attempt
-            if (! empty($credentials['email']))
-            {
-                $this->ci->login_model->recordLoginAttempt($credentials['email']);
-            }
+            $this->ci->login_model->recordLoginAttempt($ip_address);
             return false;
         }
 
@@ -216,11 +201,7 @@ class LocalAuthentication implements AuthenticateInterface {
         if (! $user)
         {
             $this->error = lang('auth.invalid_user');
-            // If an email is present, log the attempt
-            if (! empty($credentials['email']))
-            {
-                $this->ci->login_model->recordLoginAttempt($credentials['email']);
-            }
+            $this->ci->login_model->recordLoginAttempt($ip_address);
             return false;
         }
 
@@ -230,7 +211,7 @@ class LocalAuthentication implements AuthenticateInterface {
         if (! $result)
         {
             $this->error = lang('auth.invalid_password');
-            $this->ci->login_model->recordLoginAttempt($user['email']);
+            $this->ci->login_model->recordLoginAttempt($ip_address, $user['id']);
             return false;
         }
 
@@ -518,7 +499,7 @@ class LocalAuthentication implements AuthenticateInterface {
      * @param $email
      * @return mixed
      */
-    public function isThrottled($email)
+    public function isThrottled($user)
     {
         // Not throttling? Get outta here!
         if (! config_item('auth.allow_throttling'))
@@ -526,11 +507,14 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        // Emails should NOT be case sensitive.
-        $email = strtolower($email);
+        // Get user_id
+        $user_id = $user ? $user['id'] : null;
+        
+        // Get ip address
+        $ip_address = $this->ci->input->ip_address();
 
         // Have any attempts been made?
-        $attempts = $this->ci->login_model->countLoginAttempts($email);
+        $attempts = $this->ci->login_model->countLoginAttempts($ip_address, $user_id);
 
         // Grab the amount of time to add if the system thinks we're
         // under a distributed brute force attack.
@@ -558,7 +542,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Grab the time of last attempt and
         // determine if we're throttled by amount of time passed.
-        $last_time = $this->ci->login_model->lastLoginAttemptTime($email);
+        $last_time = $this->ci->login_model->lastLoginAttemptTime($ip_address, $user_id);
 
         $allowed = config_item('auth.allowed_login_attempts');
 
@@ -582,7 +566,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // to check the elapsed time of all of these attacks. If they are
         // less than 1 minute it's obvious this is a brute force attack,
         // so we'll set a session flag and block that user for 15 minutes.
-        if ($attempts > 100 && $this->ci->login_model->isBruteForced($email))
+        if ($attempts > 100 && $this->ci->login_model->isBruteForced($ip_address, $user_id))
         {
             $this->error = lang('auth.bruteBan_notice');
 
@@ -918,6 +902,9 @@ class LocalAuthentication implements AuthenticateInterface {
         // Save the user for later access
         $this->user = $user;
 
+        // Get ip address
+        $ip_address = $this->ci->input->ip_address();
+
         // Regenerate the session ID to help protect
         // against session fixation
         $this->ci->session->sess_regenerate();
@@ -926,7 +913,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->ci->session->set_userdata('logged_in', $user['id']);
 
         // Clear our login attempts
-        $this->ci->login_model->purgeLoginAttempts($user['email']);
+        $this->ci->login_model->purgeLoginAttempts($ip_address, $user['id']);
 
         // Record a new Login
         $this->ci->login_model->recordLogin($user);

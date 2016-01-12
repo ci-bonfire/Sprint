@@ -92,7 +92,6 @@ class APIAuthenticationTests extends CodeIgniterTestCase {
 		$this->auth->user_model->shouldReceive('as_array')->once()->andReturn( $this->auth->user_model );
 		$this->auth->user_model->shouldReceive('where')->once()->andReturn( $this->auth->user_model );
 		$this->auth->user_model->shouldReceive('first')->once()->andReturn( false );
-		$this->ci->login_model->shouldReceive('recordLoginAttempt');
 
 		$this->ci->login_model->shouldReceive('recordLoginAttempt');
 
