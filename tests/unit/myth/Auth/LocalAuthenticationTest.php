@@ -114,21 +114,21 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
-	public function testValidateReturnsFalseWithInvalidField()
-	{
-		$data = [
-			'display_name' => 'darth@theempire.com',
-			'password' => 'father'
-		];
+    public function testValidateReturnsFalseWithInvalidField()
+    {
+        $data = [
+            'display_name' => 'darth@theempire.com',
+            'password' => 'father'
+        ];
 
         $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
-		$result = $this->auth->validate($data);
+        $result = $this->auth->validate($data);
 
-		$this->assertFalse($result);
-	}
+        $this->assertFalse($result);
+    }
 
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 
     //--------------------------------------------------------------------
     // Login
@@ -143,7 +143,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
         $this->ci->login_model->shouldReceive('distributedBruteForceTime');
         $this->ci->login_model->shouldReceive('countLoginAttempts');
-	    $this->ci->login_model->shouldReceive('recordLoginAttempt');
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
 
@@ -188,7 +188,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
         $this->ci->login_model->shouldReceive('distributedBruteForceTime');
         $this->ci->login_model->shouldReceive('countLoginAttempts');
-	    $this->ci->login_model->shouldReceive('recordLoginAttempt');
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
 
@@ -222,7 +222,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     public function testLoginReturnsTrueWithGoodCreds()
     {
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         $creds = array(
             'email' => 'darth@theempire.com',
@@ -234,7 +234,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
         $this->ci->session->shouldReceive('sess_regenerate');
-        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('192.168.10.1', 15);
+        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with($_SERVER['REMOTE_ADDR'], 15);
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->andReturn(0);
@@ -250,7 +250,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     public function testLoginSetsUserObjectAndUserGrabsIt()
     {
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         $creds = array(
             'email' => 'darth@theempire.com',
@@ -262,7 +262,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
         $this->ci->session->shouldReceive('sess_regenerate');
-        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('192.168.10.1', 15);
+        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with($_SERVER['REMOTE_ADDR'], 15);
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->andReturn(0);
@@ -278,7 +278,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     public function testIdReturnsCorrectlyWithValidLogin()
     {
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         $creds = array(
             'email' => 'darth@theempire.com',
@@ -290,7 +290,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
         $this->ci->session->shouldReceive('sess_regenerate');
-        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('192.168.10.1', 15);
+        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with($_SERVER['REMOTE_ADDR'], 15);
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->andReturn(0);
@@ -328,7 +328,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingReturnsFalseIfNotThrottledWithFirstFailedAttempt()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
@@ -348,7 +348,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingReturnsFalseIfNotThrottledWithAllowedFailedAttempts()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
@@ -368,7 +368,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingReturnsTimeWhenThrottled()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
@@ -388,7 +388,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingReturnsTimeWhenThrottled2()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
@@ -408,7 +408,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingReturnsTimeWhenThrottled3()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
@@ -428,7 +428,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingReturnsTimeWhenThrottled4()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
@@ -448,7 +448,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingReturnsTimeWhenThrottled5()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
@@ -468,7 +468,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingReturnsTimeWhenThrottled6AndIsAboveMaxLimit()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
@@ -488,7 +488,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingUnderBruteForceFirstTime()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
@@ -512,7 +512,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingUnderPreviousBruteForce()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         $bruteTime = (60*14) + time();
         $_SESSION['bruteBan'] = $bruteTime;
@@ -540,7 +540,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingUnderPreviousBruteForceWithDBrute()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         $bruteTime = (60*14) + time();
         $_SESSION['bruteBan'] = $bruteTime;
@@ -568,7 +568,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
     public function testThrottlingWithAllowedAttemptsUnderDBrute()
     {
         $user = ['id' => 15];
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(45);
@@ -587,7 +587,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingThroughLoginMethod()
     {
-        $_SERVER['REMOTE_ADDR'] = '192.168.10.1';
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
         $user_id = 54;
 
         $creds = [

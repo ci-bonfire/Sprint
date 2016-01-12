@@ -184,7 +184,7 @@ class APIAuthentication extends LocalAuthentication {
 		if (!  $user)
 		{
 			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );          
-            $this->ci->login_model->recordLoginAttempt($_SERVER['REMOTE_ADDR']);
+			$this->ci->login_model->recordLoginAttempt($this->ci->input->ip_address());
 			return false;
 		}
 
@@ -203,7 +203,7 @@ class APIAuthentication extends LocalAuthentication {
 		if ($digest['response'] != $valid_response)
 		{
 			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
-			$this->ci->login_model->recordLoginAttempt($_SERVER['REMOTE_ADDR'], $user['id']);
+			$this->ci->login_model->recordLoginAttempt($this->ci->input->ip_address(), $user['id']);
 			return false;
 		}
 

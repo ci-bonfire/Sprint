@@ -121,7 +121,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $user)
         {
-        	if (empty($this->error))
+            if (empty($this->error))
             {
                 // We need to set an error if there is no one
                 $this->error = lang('auth.invalid_user');
@@ -157,7 +157,7 @@ class LocalAuthentication implements AuthenticateInterface {
     public function validate($credentials, $return_user=false)
     {
         // Get ip address
-        $ip_address = $this->ci->input->server('REMOTE_ADDR');
+        $ip_address = $this->ci->input->ip_address();
 
         // We do not want to force case-sensitivity on things
         // like username and email for usability sake.
@@ -169,7 +169,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // Can't validate without a password.
         if (empty($credentials['password']) || count($credentials) < 2)
         {
-        	$this->ci->login_model->recordLoginAttempt($ip_address);
+            $this->ci->login_model->recordLoginAttempt($ip_address);
             return null;
         }
 
@@ -511,7 +511,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $user_id = $user ? $user['id'] : null;
         
         // Get ip address
-        $ip_address = $this->ci->input->server('REMOTE_ADDR');
+        $ip_address = $this->ci->input->ip_address();
 
         // Have any attempts been made?
         $attempts = $this->ci->login_model->countLoginAttempts($ip_address, $user_id);
@@ -903,7 +903,7 @@ class LocalAuthentication implements AuthenticateInterface {
         $this->user = $user;
 
         // Get ip address
-        $ip_address = $this->ci->input->server('REMOTE_ADDR');
+        $ip_address = $this->ci->input->ip_address();
 
         // Regenerate the session ID to help protect
         // against session fixation
