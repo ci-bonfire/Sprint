@@ -8,7 +8,7 @@
  *
  * @property $dbforge
  */
-class Migration_UpdateLoginAttemmptsTable extends CI_Migration {
+class Migration_UpdateLoginAttemptsTable extends CI_Migration {
 
     public function up()
     {
