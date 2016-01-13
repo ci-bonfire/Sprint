@@ -496,7 +496,7 @@ class LocalAuthentication implements AuthenticateInterface {
      *  - If they are NOT, will return FALSE.
      *  - If they ARE, will return the number of seconds until they can try again.
      *
-     * @param $email
+     * @param $user
      * @return mixed
      */
     public function isThrottled($user)
@@ -664,7 +664,7 @@ class LocalAuthentication implements AuthenticateInterface {
         }
 
         // Generate a hash to match against the table.
-        $credentials['reset_hash'] = hash('sha1', config_item('auth.salt') .$credentials['code']);
+        $reset_hash = hash('sha1', config_item('auth.salt') .$credentials['code']);
         unset($credentials['code']);
 
         if (! empty($credentials['email']))
@@ -673,11 +673,34 @@ class LocalAuthentication implements AuthenticateInterface {
         }
 
         // Is there a matching user?
-        $user = $this->user_model->find_by($credentials);
+        $user = $this->user_model->as_array()
+                                 ->where($credentials)
+                                 ->first();
+
+        // If throttling time is above zero, we can't allow
+        // logins now.
+        $time = (int)$this->isThrottled($user);
+        if ($time > 0)
+        {
+            $this->error = sprintf(lang('auth.throttled'), $time);
+            return false;
+        }
+
+        // Get ip address
+        $ip_address = $this->ci->input->ip_address();
 
         if (! $user)
         {
             $this->error = lang('auth.reset_no_user');
+            $this->ci->login_model->recordLoginAttempt($ip_address);
+            return false;
+        }
+
+        // Is generated reset_hash string matches one from the table?
+        if ($reset_hash !== $user['reset_hash'])
+        {
+            $this->error = lang('auth.reset_no_user');
+            $this->ci->login_model->recordLoginAttempt($ip_address, $user['id']);
             return false;
         }
 
@@ -688,13 +711,16 @@ class LocalAuthentication implements AuthenticateInterface {
             'reset_hash'   => null
         ];
 
-        if (! $this->user_model->update($user->id, $data))
+        if (! $this->user_model->update($user['id'], $data))
         {
             $this->error = $this->user_model->error();
             return false;
         }
 
-        Events::trigger('didResetPassword', [(array)$user]);
+        // Clear our login attempts
+        $this->ci->login_model->purgeLoginAttempts($ip_address, $user['id']);
+
+        Events::trigger('didResetPassword', [$user]);
 
         return true;
     }
