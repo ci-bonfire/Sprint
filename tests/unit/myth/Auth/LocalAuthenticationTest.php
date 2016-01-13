@@ -628,6 +628,136 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    //--------------------------------------------------------------------
+    // Reset password
+    //--------------------------------------------------------------------
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsFalseWithNoCode()
+    {
+        $creds = [
+            'email' => 'darth@theempire.com'
+        ];
+
+        $result = $this->auth->resetPassword($creds, null, null);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsFalseWithNoUser()
+    {
+        $creds = [
+            'email' => 'darth@theempire.com',
+            'code' => 'reset_code'
+        ];
+
+        $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( false );
+
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
+
+        $result = $this->auth->resetPassword($creds, 'new_password', 'new_password');
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsFalseWithWrongCode()
+    {
+        $creds = [
+            'email' => 'darth@theempire.com',
+            'code' => 'token'
+        ];
+
+        $this->final_user['reset_hash'] = 'hash';
+
+        $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
+
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
+
+        $result = $this->auth->resetPassword($creds, 'new_password', 'new_password');
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsFalseWithPasswordsNotMatch()
+    {
+        // Generate/store our codes
+        $this->ci->load->helper('string');
+        $token = random_string('alnum', 24);
+        $hash = hash('sha1', config_item('auth.salt') .$token);
+
+        $creds = [
+            'email' => 'darth@theempire.com',
+            'code' => $token
+        ];
+
+        $this->final_user['reset_hash'] = $hash;
+
+        $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
+
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
+
+        $this->auth->user_model->shouldReceive('update')->andReturn( false );
+        $this->auth->user_model->shouldReceive('error')->andReturn( 'some error about password match' );
+
+        $result = $this->auth->resetPassword($creds, 'new_password1', 'new_password2');
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsTrue()
+    {
+        // Generate/store our codes
+        $this->ci->load->helper('string');
+        $token = random_string('alnum', 24);
+        $hash = hash('sha1', config_item('auth.salt') .$token);
+
+        $creds = [
+            'email' => 'darth@theempire.com',
+            'code' => $token
+        ];
+
+        $this->final_user['reset_hash'] = $hash;
+
+        $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
+
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
+
+        $this->auth->user_model->shouldReceive('update')->andReturn( true );
+
+        $this->ci->login_model->shouldReceive('purgeLoginAttempts');
+
+        $result = $this->auth->resetPassword($creds, 'new_password', 'new_password');
+
+        $this->assertTrue($result);
+    }
 
     //--------------------------------------------------------------------
     // Utility Methods
