@@ -217,9 +217,10 @@ interface AuthenticateInterface {
     /**
      * Purges all login attempt records from the database.
      *
-     * @param $email
+     * @param null $ip_address
+     * @param null $user_id
      */
-    public function purgeLoginAttempts($email);
+    public function purgeLoginAttempts($ip_address = null, $user_id = null);
 
     //--------------------------------------------------------------------
 

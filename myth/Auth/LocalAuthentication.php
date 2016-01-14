@@ -786,14 +786,12 @@ class LocalAuthentication implements AuthenticateInterface {
     /**
      * Purges all login attempt records from the database.
      *
-     * @param $email
+     * @param null $ip_address
+     * @param null $user_id
      */
-    public function purgeLoginAttempts($email)
+    public function purgeLoginAttempts($ip_address = null, $user_id = null)
     {
-        // Emails should NOT be case sensitive.
-        $email = strtolower($email);
-
-        $this->ci->login_model->purgeLoginAttempts($email);
+        $this->ci->login_model->purgeLoginAttempts($ip_address, $user_id);
 
         // @todo record activity of login attempts purge.
         Events::trigger('didPurgeLoginAttempts', [$email]);
