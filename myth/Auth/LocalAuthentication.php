@@ -105,27 +105,8 @@ class LocalAuthentication implements AuthenticateInterface {
     {
         $user = $this->validate($credentials, true);
 
-        // If the user is throttled due to too many invalid logins
-        // or the system is under attack, kick them back.
-        // We need to test for this after validation because we
-        // don't want it to affect a valid login.
-
-        // If throttling time is above zero, we can't allow
-        // logins now.
-        $time = (int)$this->isThrottled($user);
-        if ($time > 0)
-        {
-            $this->error = sprintf(lang('auth.throttled'), $time);
-            return false;
-        }
-
         if (! $user)
         {
-            if (empty($this->error))
-            {
-                // We need to set an error if there is no one
-                $this->error = lang('auth.invalid_user');
-            }
             $this->user = null;
             return $user;
         }       
@@ -156,20 +137,9 @@ class LocalAuthentication implements AuthenticateInterface {
      */
     public function validate($credentials, $return_user=false)
     {
-        // Get ip address
-        $ip_address = $this->ci->input->ip_address();
-
-        // We do not want to force case-sensitivity on things
-        // like username and email for usability sake.
-        if (! empty($credentials['email']))
-        {
-            $credentials['email'] = strtolower($credentials['email']);
-        }
-
         // Can't validate without a password.
         if (empty($credentials['password']) || count($credentials) < 2)
         {
-            $this->ci->login_model->recordLoginAttempt($ip_address);
             return null;
         }
 
@@ -181,7 +151,6 @@ class LocalAuthentication implements AuthenticateInterface {
         if (count($credentials) > 1)
         {
             $this->error = lang('auth.too_many_credentials');
-            $this->ci->login_model->recordLoginAttempt($ip_address);
             return false;
         }
 
@@ -189,14 +158,35 @@ class LocalAuthentication implements AuthenticateInterface {
         if (! in_array(key($credentials), config_item('auth.valid_fields')) )
         {
             $this->error = lang('auth.invalid_credentials');
-            $this->ci->login_model->recordLoginAttempt($ip_address);
             return false;
+        }
+
+        // We do not want to force case-sensitivity on things
+        // like username and email for usability sake.
+        if (! empty($credentials['email']))
+        {
+            $credentials['email'] = strtolower($credentials['email']);
         }
 
         // Can we find a user with those credentials?
         $user = $this->user_model->as_array()
                                  ->where($credentials)
                                  ->first();
+
+        // If the user is throttled due to too many invalid logins
+        // or the system is under attack, kick them back.
+
+        // If throttling time is above zero, we can't allow
+        // logins now.
+        $time = (int)$this->isThrottled($user);
+        if ($time > 0)
+        {
+            $this->error = sprintf(lang('auth.throttled'), $time);
+            return false;
+        }
+
+        // Get ip address
+        $ip_address = $this->ci->input->ip_address();
 
         if (! $user)
         {
@@ -548,7 +538,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // We're not throttling if there are 0 attempts or
         // the number is less than or equal to the allowed free attempts
-        if ($attempts === 0 || $attempts <= $allowed)
+        if ($attempts === 0 || $attempts < $allowed)
         {
             // Before we can say there's nothing up here,
             // we need to check dbrute time.
@@ -580,7 +570,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $max_time = config_item('auth.max_throttle_time');
 
-        $add_time = 5 * pow(2, $attempts - 1);
+        $add_time = 5 * pow(2, $attempts);
 
         if ($add_time > $max_time)
         {
