@@ -108,9 +108,17 @@ class Login_model extends \Myth\Models\CIDbModel {
      */
     public function purgeLoginAttempts($ip_address, $user_id)
     {
-        return $this->db->where('ip_address', $ip_address)
-                        ->or_where('user_id', $user_id)
-                        ->delete('auth_login_attempts');
+        if ($ip_address)
+        {
+            $this->db->where('ip_address', $ip_address);
+        }
+
+        if ($user_id)
+        {
+            $this->db->or_where('user_id', $user_id);
+        }
+
+        return $this->db->delete('auth_login_attempts');
     }
 
     //--------------------------------------------------------------------
