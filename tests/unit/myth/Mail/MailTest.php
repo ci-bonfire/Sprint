@@ -5,7 +5,17 @@ use \Mockery as m;
 use Myth\Mail\Queue;
 
 class MailTest extends CodeIgniterTestCase {
-	
+
+	public function __construct()
+	{
+	    parent::__construct();
+
+		$this->queue = \Mockery::mock('\Myth\Mail\Queue');
+	}
+
+	//--------------------------------------------------------------------
+
+
 	public function _before() {
 		// Make sure we're not sending real emails.
 		$this->ci->config->set_item('mail.default_service', '\Myth\Mail\LogMailService');
@@ -64,7 +74,7 @@ class MailTest extends CodeIgniterTestCase {
 	
 	public function testQueueReturnsFalseOnError()
 	{
-	    $model = m::mock('\Myth\Mail\Queue');
+	    $model = $this->queue;
 
 		$model->shouldReceive('insert')->once()->andReturn(false);
 
@@ -77,7 +87,7 @@ class MailTest extends CodeIgniterTestCase {
 
 	public function testQueueReturnsIDOnSuccess()
 	{
-		$model = m::mock('\Myth\Mail\Queue');
+		$model = $this->queue;
 
 		$model->shouldReceive('insert')->once()->andReturn(13);
 
@@ -94,7 +104,7 @@ class MailTest extends CodeIgniterTestCase {
 
 	public function testProcessReturnsTrueWhenNothingToDo()
 	{
-		$model = m::mock('\Myth\Mail\Queue');
+		$model = $this->queue;
 
 		$model->shouldReceive('find_many_by')->andReturn(false);
 
@@ -105,7 +115,7 @@ class MailTest extends CodeIgniterTestCase {
 
 	public function testProcessReturnsDoneString()
 	{
-		$model = m::mock('\Myth\Mail\Queue');
+		$model = $this->queue;
 
 		$queue = [];
 		$item  = new stdClass();
