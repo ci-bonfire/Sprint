@@ -553,8 +553,8 @@ class Route
     public function reset()
     {
         $this->routes = array();
-        $this->names  = array();
         $this->group  = null;
+        self::$names  = array();
         self::$areas  = array();
     }
 

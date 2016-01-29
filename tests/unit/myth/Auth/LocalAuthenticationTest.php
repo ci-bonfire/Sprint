@@ -27,13 +27,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
             'password_hash' => password_hash('father', PASSWORD_BCRYPT),
             'active' => 1
         ];
-    }
 
-    //--------------------------------------------------------------------
-
-
-    public function _before()
-    {
         $this->user_model = m::mock('User_model');
         $session = m::mock('CI_Session');
 
@@ -42,11 +36,18 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->load->model('auth/login_model');
 
         $this->ci->session = $session;
-        $this->ci->login_model = m::mock('Login_model');
+        $this->login_mock = m::mock('Login_model');
 
         $this->auth = new Authenticate( $this->ci );
         $this->auth->useModel($this->user_model, true);
+    }
 
+    //--------------------------------------------------------------------
+
+
+    public function _before()
+    {
+        $this->ci->login_model = $this->login_mock;
     }
 
     //--------------------------------------------------------------------
@@ -572,6 +573,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     /**
      * @group throttle
+     * @group single
      */
     public function testThrottlingWithAllowedAttemptsUnderDBrute()
     {
