@@ -78,7 +78,7 @@ class {$model_name} extends CIDbModel {
      * Alternatively, you can do it on a per-instance basis using the
      * 'as_array()' and 'as_object()' methods.
      */
-    protected \$return_type = 'array';
+    protected \$return_type = 'object';
 
     /*
         If TRUE, inserts will return the last_insert_id. However,
