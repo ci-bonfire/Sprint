@@ -28,6 +28,7 @@
 	},
     "require-dev": {
         "mockery/mockery": "dev-master",
+        "hamcrest/hamcrest-php": "dev-master",
         "fzaninotto/faker": "1.5.*@dev"
     },
     "scripts": {
