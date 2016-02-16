@@ -1565,7 +1565,7 @@ class CIDbModel
      * @param $name
      * @param $params
      */
-    public function __call($name, $params=null)
+    public function __call($name, $params)
     {
         if (method_exists($this->db, $name))
         {

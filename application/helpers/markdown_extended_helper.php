@@ -19,7 +19,7 @@ class MarkdownExtraExtended_Parser extends MarkdownExtra_Parser
 
     var $default_classes;
 
-    function MarkdownExtraExtended_Parser($default_classes = array())
+    function __construct($default_classes = array())
     {
         $default_classes = $default_classes;
 
@@ -27,7 +27,7 @@ class MarkdownExtraExtended_Parser extends MarkdownExtra_Parser
             "doFencedFigures" => 7,
         );
 
-        parent::MarkdownExtra_Parser();
+        parent::__construct();
     }
 
     function transform($text)
