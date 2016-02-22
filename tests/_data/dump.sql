@@ -1,13 +1,13 @@
 # ************************************************************
 # Sequel Pro SQL dump
-# Version 4096
+# Version 4529
 #
 # http://www.sequelpro.com/
-# http://code.google.com/p/sequel-pro/
+# https://github.com/sequelpro/sequelpro
 #
-# Host: localhost (MySQL 5.5.38-log)
-# Database: sprint_test
-# Generation Time: 2015-03-04 15:18:17 +0000
+# Host: localhost (MySQL 5.5.42)
+# Database: sprint
+# Generation Time: 2016-02-22 04:04:45 +0000
 # ************************************************************
 
 
@@ -67,10 +67,11 @@ DROP TABLE IF EXISTS `auth_login_attempts`;
 
 CREATE TABLE `auth_login_attempts` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `email` varchar(255) NOT NULL,
+  `type` varchar(64) NOT NULL DEFAULT 'app',
+  `ip_address` varchar(255) DEFAULT NULL,
+  `user_id` int(11) unsigned DEFAULT NULL,
   `datetime` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `email` (`email`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

@@ -24,7 +24,7 @@ for ($i = 0; $i <= 101; $i++)
 {
 //	$I->submitForm('form', ['email' => 'tester@example.com', 'password' => 'badstuff'], 'submit');
 	$I->haveInDatabase('auth_login_attempts', [
-		'email' => 'tester@example.com',
+		'ip_address' => '::1',
 		'datetime' => date('Y-m-d H:i:s')
 	]);
 }

@@ -39,7 +39,7 @@ $I->submitForm('#login_form', ['email' => 'tester@example.com', 'password' => 'b
 $I->seeElement('.alert-danger');
 
 $I->expect('login attempt was logged');
-$I->seeInDatabase('auth_login_attempts', ['email' => 'tester@example.com']);
+$I->seeInDatabase('auth_login_attempts', ['user_id' => '1']);
 
 //--------------------------------------------------------------------
 // Error without bad email
