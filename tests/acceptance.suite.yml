@@ -13,6 +13,8 @@ modules:
     config:
         PhpBrowser:
           url: 'http://sprint.dev'
+          curl:
+            CURLOPT_INTERFACE: '127.0.0.1'
         Db:
           dsn: 'mysql:host=localhost;dbname=sprint'
           user: 'root'

@@ -51,7 +51,7 @@ $I->submitForm('#login_form', ['email' => 'testy@examples.com', 'password' => 'm
 $I->seeElement('.alert-danger');
 
 $I->expect('login attempt was logged');
-$I->seeInDatabase('auth_login_attempts', ['ip_address' => '::1']);
+$I->seeInDatabase('auth_login_attempts', ['ip_address' => '127.0.0.1']);
 
 //--------------------------------------------------------------------
 // Successfully login
