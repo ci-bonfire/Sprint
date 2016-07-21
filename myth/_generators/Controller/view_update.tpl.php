@@ -37,7 +37,7 @@
                         echo "            <input type='time' name='{$field['name']}' class='form-control' value='@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?>' />\n";
                         break;
                     case 'textarea':
-                        echo "            <textarea  class='form-control' name='{$field['name']}'>@= set_value('" . $field["name"] . "') ?></textarea>\n";
+                        echo "            <textarea  class='form-control' name='{$field['name']}'>@= set_value('" . $field["name"] . "', \$item->" . $field['name'] . " ) ?></textarea>\n";
                         break;
                 }
 
