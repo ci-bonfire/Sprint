@@ -595,7 +595,7 @@ class Builder implements DocBuilderInterface
         }
 
         // If it's a full local path, get rid of it.
-        if (strpos($href, $site_url) !== false) {
+        if ($site_url !== "/" && strpos($href, $site_url) !== false) {
             $href = str_replace($site_url, '', $href);
         }
 
