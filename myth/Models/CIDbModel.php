@@ -358,7 +358,7 @@ class CIDbModel
             // We only need to modify the where statement if
             // temp_with_deleted is false.
             if ($this->temp_with_deleted !== true) {
-                $this->db->where($this->soft_delete_key, false);
+                $this->db->where($this->table_name . "." . $this->soft_delete_key, false);
             }
 
             $this->temp_with_deleted = false;
@@ -398,7 +398,7 @@ class CIDbModel
             // We only need to modify the where statement if
             // temp_with_deleted is false.
             if ($this->temp_with_deleted !== true) {
-                $this->db->where($this->soft_delete_key, false);
+                $this->db->where($this->table_name . "." . $this->soft_delete_key, false);
             }
 
             $this->temp_with_deleted = false;
@@ -469,7 +469,7 @@ class CIDbModel
             // We only need to modify the where statement if
             // temp_with_deleted is false.
             if ($this->temp_with_deleted !== true) {
-                $this->db->where($this->soft_delete_key, false);
+                $this->db->where($this->table_name . "." . $this->soft_delete_key, false);
             }
 
             $this->temp_with_deleted = false;
