@@ -102,7 +102,7 @@ class CIDbModelTest extends \Codeception\TestCase\Test
     {
         $this->model->soft_delete(true);
 
-        $this->model->db->shouldReceive('where')->once()->with('deleted', 0)->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('where')->once()->with('records_table.deleted', 0)->andReturn( $this->model->db );
         $this->model->db->shouldReceive('where')->once()->with('id', 1)->andReturn( $this->model->db );
         $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
         $this->model->db->shouldReceive('row')->once()->andReturn('fake object');
@@ -146,7 +146,7 @@ class CIDbModelTest extends \Codeception\TestCase\Test
     {
         $this->model->soft_delete(true);
 
-        $this->model->db->shouldReceive('where')->once()->with('deleted', 0)->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('where')->once()->with('records_table.deleted', 0)->andReturn( $this->model->db );
         $this->model->db->shouldReceive('where')->once()->with('name', 'Darth')->andReturn( $this->model->db );
         $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
         $this->model->db->shouldReceive('row')->once()->andReturn('fake object');
@@ -192,7 +192,7 @@ class CIDbModelTest extends \Codeception\TestCase\Test
 
         $this->model->soft_delete(true);
 
-        $this->model->db->shouldReceive('where')->once()->with('deleted', 0)->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('where')->once()->with('records_table.deleted', 0)->andReturn( $this->model->db );
         $this->model->db->shouldReceive('where_in')->once()->with('id', $ids)->andReturn( $this->model->db );
         $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
         $this->model->db->shouldReceive('result')->once()->andReturn('fake object');
@@ -240,7 +240,7 @@ class CIDbModelTest extends \Codeception\TestCase\Test
 
         $this->model->soft_delete(true);
 
-        $this->model->db->shouldReceive('where')->once()->with('deleted', 0)->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('where')->once()->with('records_table.deleted', 0)->andReturn( $this->model->db );
         $this->model->db->shouldReceive('where')->once()->with('name', $ids)->andReturn( $this->model->db );
         $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db );
         $this->model->db->shouldReceive('result')->once()->andReturn('fake object');
@@ -283,7 +283,7 @@ class CIDbModelTest extends \Codeception\TestCase\Test
     {
         $this->model->soft_delete(true);
 
-        $this->model->db->shouldReceive('where')->once()->with('deleted', 0)->andReturn( $this->model->db );
+        $this->model->db->shouldReceive('where')->once()->with('records_table.deleted', 0)->andReturn( $this->model->db );
         $this->model->db->shouldReceive('get')->once()->with('records_table')->andReturn( $this->model->db);
         $this->model->db->shouldReceive('result')->once()->andReturn('fake object');
 
