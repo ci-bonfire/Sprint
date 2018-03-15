@@ -526,7 +526,7 @@ You can also pass in the name of a class (including namespace) to have the resul
 
 ## Chainable Methods
 
-Thanks to CodeIgniter's [Query Builder](http://www.codeigniter.com/userguide3/database/query_builder.html) library, it is very simply to modify the CIDbModel's methods. This can be done through either chainable methods or by extending methods.
+Thanks to CodeIgniter's [Query Builder](http://www.codeigniter.com/userguide3/database/query_builder.html) library, it is very simple to modify the CIDbModel's methods. This can be done through either chainable methods or by extending methods.
 
 Chainable methods are a feature of PHP 5 and higher that allow you to return the results of one function into another, and to keep this 'chain' of events continuing through several functions. Sprint duplicates several of the stock Query Builder methods in CIDbModel to make it simple and elegant to customize your queries.
 
