@@ -219,7 +219,7 @@ class BaseController extends \CI_Controller {
 	//--------------------------------------------------------------------
 
 	/**
-	 * Renders a string of aribritrary text. This is best used during an AJAX
+	 * Renders a string of arbitrary text. This is best used during an AJAX
 	 * call or web service request that are expecting something other then
 	 * proper HTML.
 	 *
@@ -256,7 +256,7 @@ class BaseController extends \CI_Controller {
 	 *
 	 * @param  mixed $json The data to be converted to JSON.
 	 *
-	 * @throws RenderException
+	 * @throws \RuntimeException
 	 * @return void
 	 */
 	public function renderJSON( $json )
@@ -287,7 +287,7 @@ class BaseController extends \CI_Controller {
 	 *
 	 * @param  mixed $js The javascript to output.
 	 *
-	 * @throws RenderException
+	 * @throws \RuntimeException
 	 * @return void
 	 */
 	public function renderJS( $js = NULL )
@@ -316,7 +316,7 @@ class BaseController extends \CI_Controller {
 	{
 		if ( ob_get_level() > 0 )
 		{
-			end_end_flush();
+			ob_end_flush();
 		}
 		ob_implicit_flush( TRUE );
 	}
