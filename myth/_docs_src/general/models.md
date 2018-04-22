@@ -48,7 +48,7 @@ To get started with a new model, you can use the following skeleton file. Many o
 		protected $field_info = array();
 	}
 
-This is all that is needed to take advantage of CIDbModel's built-in functions. All variables shown here are set to their default, so you don't need to show them if you are using the default values.  Model_name is the name of your class and follows the same rules as [CodeIgniter models](http://www.codeigniter.com/userguide3/general/models.html).
+This is all that is needed to take advantage of CIDbModel's built-in functions. All variables shown here are set to their default, so you don't need to show them if you are using the default values.  X_model is the name of your class and follows the same rules as [CodeIgniter models](http://www.codeigniter.com/userguide3/general/models.html).
 
 CIDbModel supports quite a few ways to customize how your class works with the database.
 
@@ -64,7 +64,7 @@ The var `$primary_key` should be the name of the primary key for your table. CID
 
 ### $soft_deletes
 
-Sprint uses the concept of *soft deletes* that will set a flag that an item has been deleted instead of actually deleting the item. This allows you to later restore the user in case the deletion was accidental, or to keep a permanent record of any sensitive information, like transaction records.
+Sprint uses the concept of *soft deletes* that will set a flag that an item has been deleted instead of actually deleting the item. This allows you to later restore the item in case the deletion was accidental, or to keep a permanent record of any sensitive information, like transaction records.
 
 To use soft_deletes, your table must have a `deleted` field that is a **TINYINT (1)**. A value of `0` means the record has not been deleted, while a value of `1` shows that the item has been deleted.
 The name of the `deleted` field may be modified by setting `$deleted_field`.
@@ -265,7 +265,7 @@ Allows for inserting more than one record at a time. Works just like CodeIgniter
 ### replace()
 Performs the SQL standard for a combined `DELETE` + `INSERT`, using primary and unique keys to determine which rows to replace.
 
-See CI's documentation for the replcae method. This is simply a wrapper to allow our validation and triggers to work with the method.
+See CI's documentation for the replace method. This is simply a wrapper to allow our validation and triggers to work with the method.
 
 ## Updating Data
 
@@ -808,7 +808,7 @@ Unlike, the $validation_rules array, the $insert_validation_rules array consists
 
 ### Skipping Validation
 
-If you need to turn off validation for any reason (like performance durin a large CSV import) you can use the `skip_validation()` method, passing either `true` or `false` to the skip or not skip the validation process. This stays in effect as long as the model is loaded but will reset the next time the model is loaded in memory. Typically the next page request.
+If you need to turn off validation for any reason (like performance durin a large CSV import) you can use the `skip_validation()` method, passing either `true` or `false` to skip or not skip the validation process. This stays in effect as long as the model is loaded but will reset the next time the model is loaded in memory. Typically the next page request.
 
 	$this->user_model->skip_validation(true);
 
