@@ -30,6 +30,11 @@
  * @since       Version 1.0
  */
 
+/**
+ * Class FileKit
+ *
+ * @package Myth\Forge
+ */
 class FileKit {
 
     /**

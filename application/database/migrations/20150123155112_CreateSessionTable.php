@@ -5,6 +5,8 @@
  *
  * Created by: SprintPHP
  * Created on: 2014-01-23 15:51:12 am
+ *
+ * @property $dbforge
  */
 class Migration_Createsessiontable extends CI_Migration {
 
@@ -40,7 +42,7 @@ class Migration_Createsessiontable extends CI_Migration {
         $this->dbforge->add_key('ip_address', TRUE);
         $this->dbforge->add_key('ci_sessions_timestamp');
 
-        $this->dbforge->create_table('ci_sessions');
+        $this->dbforge->create_table('ci_sessions', true, config_item('migration_create_table_attr'));
     }
 
     //--------------------------------------------------------------------

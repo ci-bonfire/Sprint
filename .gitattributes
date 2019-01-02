@@ -1,0 +1,12 @@
+# Lists files and folders that should NOT be included
+# in archives made by git. Mostly used when pulling
+# the project in through Composer and using --prefer-dist
+
+.travis.yml
+.gitattributes
+readme.md
+
+tests/unit/myth/
+tests/acceptance/myth/
+tests/functional/myth/
+

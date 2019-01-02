@@ -30,32 +30,14 @@
  * @since       Version 1.0
  */
 
-/**
- * Bonfire
- *
- * An open source project to allow developers get a jumpstart their development of
- * Web-based Applications.
- *
- * PHP Version 5.4
- *
- * @package   Bonfire
- * @author    Lonnie Ezell <lonnie@newmythmedia.com>
- * @copyright 2014 Lonnie Ezell
- * @license   MIT http://opensource.org/licenses/MIT
- * @link      http://cibonfire.com
- * @since     Version 1.0
- * @filesource
- */
-
 use Myth\Docs\DocBuilderInterface;
 
 /**
- * Class DocBuilder
+ * Class Builder
  *
  * Handles the brunt of building documentation from Markdown formatted files.
  *
- * @category Documentation
- * @author   Lonnie Ezell <lonnie@newmythmedia.com>
+ * @package Myth\Docs
  */
 class Builder implements DocBuilderInterface
 {
@@ -613,7 +595,7 @@ class Builder implements DocBuilderInterface
         }
 
         // If it's a full local path, get rid of it.
-        if (strpos($href, $site_url) !== false) {
+        if ($site_url !== "/" && strpos($href, $site_url) !== false) {
             $href = str_replace($site_url, '', $href);
         }
 

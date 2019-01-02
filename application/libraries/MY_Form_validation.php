@@ -38,11 +38,11 @@ if (! class_exists('MY_Form_validation'))
          *
          * @return bool Success or Failure
          */
-//    public function run($module = '', $group = '')
-//    {
-//        is_object($module) && $this->CI =& $module;
-//        return parent::run($group);
-//    }
+        public function run($group = '', $module = '')
+        {
+            is_object($module) && $this->CI =& $module;
+            return parent::run($group);
+        }
 
         //--------------------------------------------------------------------
 

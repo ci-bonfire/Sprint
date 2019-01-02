@@ -284,7 +284,7 @@ class CIDbModel
      * to use that $db instead of the global CI one.
      *
      * @param object $db // A database/driver instance
-     * @param object $form_validaiton // A form_validation library instance
+     * @param object $form_validation // A form_validation library instance
      */
     public function __construct($db = null, $form_validation = null)
     {
@@ -316,7 +316,7 @@ class CIDbModel
         else {
             $this->load->library('form_validation');
         }
-
+        
         log_message('debug', 'CIDbModel Class Initialized');
     }
 
@@ -331,7 +331,7 @@ class CIDbModel
      */
     public function first()
     {
-        $rows = $this->limit(1)->find_all();
+        $rows = $this->limit(1, 0)->find_all();
 
         if (is_array($rows) && count($rows)) {
             return $rows[0];
@@ -351,14 +351,14 @@ class CIDbModel
      */
     public function find($id)
     {
-        $this->trigger('before_find');
+        $this->trigger('before_find', ['id' => $id, 'method' => 'find']);
 
         // Ignore any soft-deleted rows
         if ($this->soft_deletes) {
             // We only need to modify the where statement if
             // temp_with_deleted is false.
             if ($this->temp_with_deleted !== true) {
-                $this->db->where($this->soft_delete_key, false);
+                $this->db->where($this->table_name . "." . $this->soft_delete_key, false);
             }
 
             $this->temp_with_deleted = false;
@@ -366,12 +366,11 @@ class CIDbModel
 
         $this->db->where($this->primary_key, $id);
         $row = $this->db->get($this->table_name);
-        $row = $row->{$this->_return_type()}();
+        $row = $this->temp_return_type == 'array' ? $row->row_array() : $row->row(0, $this->temp_return_type);
 
-        $row = $this->trigger('after_find', $row);
-
-        if ($this->temp_return_type == 'json') {
-            $row = json_encode($row);
+        if ( ! empty($row))
+        {
+            $row = $this->trigger('after_find', ['id' => $id, 'method' => 'find', 'fields' => $row]);
         }
 
         // Reset our return type
@@ -399,21 +398,20 @@ class CIDbModel
             // We only need to modify the where statement if
             // temp_with_deleted is false.
             if ($this->temp_with_deleted !== true) {
-                $this->db->where($this->soft_delete_key, false);
+                $this->db->where($this->table_name . "." . $this->soft_delete_key, false);
             }
 
             $this->temp_with_deleted = false;
         }
 
-        $this->trigger('before_find');
+        $this->trigger('before_find', ['method' => 'find_by', 'fields' => $where]);
 
         $row = $this->db->get($this->table_name);
-        $row = $row->{$this->_return_type()}();
+        $row = $this->temp_return_type == 'array' ? $row->row_array() : $row->row(0, $this->temp_return_type);
 
-        $row = $this->trigger('after_find', $row);
-
-        if ($this->temp_return_type == 'json') {
-            $row = json_encode($row);
+        if ( ! empty($row))
+        {
+            $row = $this->trigger('after_find', ['method' => 'find_by', 'fields' => $row]);
         }
 
         // Reset our return type
@@ -464,30 +462,26 @@ class CIDbModel
      */
     public function find_all()
     {
-        $this->trigger('before_find');
+        $this->trigger('before_find', ['method' => 'find_all']);
 
         // Ignore any soft-deleted rows
         if ($this->soft_deletes) {
             // We only need to modify the where statement if
             // temp_with_deleted is false.
             if ($this->temp_with_deleted !== true) {
-                $this->db->where($this->soft_delete_key, false);
+                $this->db->where($this->table_name . "." . $this->soft_delete_key, false);
             }
 
             $this->temp_with_deleted = false;
         }
 
         $rows = $this->db->get($this->table_name);
-        $rows = $rows->{$this->_return_type(true)}();
+        $rows = $this->temp_return_type == 'array' ? $rows->result_array() : $rows->result($this->temp_return_type);
 
         if (is_array($rows)) {
             foreach ($rows as $key => &$row) {
-                $row = $this->trigger('after_find', $row, ($key == count($rows) - 1));
+                $row = $this->trigger('after_find', ['method' => 'find_all', 'fields' => $row] );
             }
-        }
-
-        if ($this->temp_return_type == 'json') {
-            $rows = json_encode($rows);
         }
 
         // Reset our return type
@@ -514,7 +508,7 @@ class CIDbModel
         }
 
         if ($data !== FALSE) {
-            $data = $this->trigger('before_insert', $data);
+            $data = $this->trigger('before_insert', ['method' => 'insert', 'fields' => $data]);
 
             $this->db->insert($this->table_name, $this->prep_data($data) );
 
@@ -561,7 +555,7 @@ class CIDbModel
 
         if ($data !== FALSE) {
             $data['batch'] = true;
-            $data = $this->trigger('before_insert', $data);
+            $data = $this->trigger('before_insert', ['method' => 'insert_batch', 'fields' => $data] );
             unset($data['batch']);
 
             return $this->db->insert_batch($this->table_name, $data);
@@ -627,15 +621,16 @@ class CIDbModel
             $data = $this->validate($data);
         }
 
-        $data = $this->trigger('before_update', array_merge([$this->primary_key => $id], $data), $skip_validation);
-
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
+            
+            $data = $this->trigger('before_update', ['id' => $id, 'method' =>'update', 'fields' => $data] );
+            
             $this->db->where($this->primary_key, $id);
             $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', ['id' => $id, 'fields' => $data, 'result'=>$result, 'method' => 'update']);
+            $this->trigger('after_update', ['id' => $id, 'fields' => $data, 'result' => $result, 'method' => 'update']);
 
             return $result;
         } else {
@@ -671,13 +666,13 @@ class CIDbModel
     public function update_batch($data, $where_key)
     {
         foreach ($data as &$row) {
-            $row = $this->trigger('before_update', $row);
+            $row = $this->trigger('before_update', ['method' => 'update_batch', 'fields' => $row] );
         }
 
         $result = $this->db->update_batch($this->table_name, $data, $where_key);
 
         foreach ($data as &$row) {
-            $this->trigger('after_update', ['fields' => $data, 'result'=>$result, 'method' => 'update_batch']);
+            $this->trigger('after_update', ['fields' => $data, 'result' => $result, 'method' => 'update_batch']);
         }
 
         return $result;
@@ -713,7 +708,7 @@ class CIDbModel
             $data = $this->validate($data, 'update', $skip_validation);
         }
 
-        $data = $this->trigger('before_update', $data);
+        $data = $this->trigger('before_update', ['ids' => $ids, 'method' => 'update_many', 'fields' => $data]);
 
         // Will be false if it didn't validate.
         if ($data !== FALSE) {
@@ -721,7 +716,7 @@ class CIDbModel
             $this->db->set($data);
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', ['id' => $ids, 'fields' => $data, 'result'=>$result, 'method' => 'update_many']);
+            $this->trigger('after_update', ['ids' => $ids, 'fields' => $data, 'result'=>$result, 'method' => 'update_many']);
 
             return $result;
         } else {
@@ -755,14 +750,14 @@ class CIDbModel
         $data = array_pop($args);
         $this->_set_where($args);
 
-        $data = $this->trigger('before_update', $data);
+        $data = $this->trigger('before_update', ['method' => 'update_by', 'fields' => $data]);
 
         // Will be false if it didn't validate.
         if ($this->validate($data) !== FALSE) {
             $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', array($data, $result));
+            $this->trigger('after_update', ['method' => 'update_by', 'fields' => $data, 'result' => $result] );
 
             return $result;
         } else {
@@ -781,7 +776,7 @@ class CIDbModel
      */
     public function update_all($data, $skip_validation = FALSE)
     {
-        $data = $this->trigger('before_update', $data);
+        $data = $this->trigger('before_update', ['method' => 'update_all', 'fields' => $data] );
 
         $skip_validation = is_null($skip_validation) ? $this->skip_validation : $skip_validation;
 
@@ -794,7 +789,7 @@ class CIDbModel
             $this->db->set( $this->prep_data($data) );
             $result = $this->db->update($this->table_name);
 
-            $this->trigger('after_update', array($data, $result));
+            $this->trigger('after_update', ['method' => 'update_all', 'fields' => $data, 'result' => $result] );
 
             return $result;
         } else {
@@ -854,12 +849,14 @@ class CIDbModel
      */
     public function delete($id)
     {
-        $this->trigger('before_delete', $id);
+        $this->trigger('before_delete', ['id' => $id, 'method' => 'delete'] );
 
         $this->db->where($this->primary_key, $id);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->auth->user_id()) : array($this->soft_delete_key => 1);
+            $sets = $this->log_user && is_object($this->authenticate)
+                ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
+                : array($this->soft_delete_key => 1);
 
             $result = $this->db->update($this->table_name, $sets);
         } // Hard Delete
@@ -867,7 +864,7 @@ class CIDbModel
             $result = $this->db->delete($this->table_name);
         }
 
-        $this->trigger('after_delete', $result);
+        $this->trigger('after_delete', ['id' => $id, 'method' => 'delete', 'result' => $result] );
 
         return $result;
     }
@@ -879,17 +876,19 @@ class CIDbModel
         $where = func_get_args();
         $this->_set_where($where);
 
-        $where = $this->trigger('before_delete', $where);
+        $where = $this->trigger('before_delete', ['method' => 'delete_by', 'fields' => $where]);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->auth->user_id()) : array($this->soft_delete_key => 1);
+            $sets = $this->log_user && is_object($this->authenticate)
+                ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
+                : array($this->soft_delete_key => 1);
 
             $result = $this->db->update($this->table_name, $sets);
         } else {
             $result = $this->db->delete($this->table_name);
         }
 
-        $this->trigger('after_delete', $result);
+        $this->trigger('after_delete', ['method' => 'delete_by', 'fields' => $where, 'result' => $result] );
 
         return $result;
     }
@@ -900,19 +899,21 @@ class CIDbModel
     {
         if (!is_array($ids) || count($ids) == 0) return NULL;
 
-        $ids = $this->trigger('before_delete', $ids);
+        $ids = $this->trigger('before_delete', ['ids' => $ids, 'method' => 'delete_many'] );
 
         $this->db->where_in($this->primary_key, $ids);
 
         if ($this->soft_deletes) {
-            $sets = $this->log_user ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->auth->user_id()) : array($this->soft_delete_key => 1);
+            $sets = $this->log_user && is_object($this->authenticate)
+                ? array($this->soft_delete_key => 1, $this->deleted_by_field => $this->authenticate->id())
+                : array($this->soft_delete_key => 1);
 
             $result = $this->db->update($this->table_name, $sets);
         } else {
             $result = $this->db->delete($this->table_name);
         }
 
-        $this->trigger('after_delete', $result);
+        $this->trigger('after_delete', ['ids' => $ids, 'method' => 'delete_many', 'result' => $result]);
 
         return $result;
     }
@@ -951,28 +952,22 @@ class CIDbModel
 
     /**
      * Temporarily sets our return type to an object.
+     *
+     * If $class is provided, the rows will be returned as objects that
+     * are instances of that class. $class MUST be an fully qualified
+     * class name, meaning that it must include the namespace, if applicable.
+     *
+     * @param string $class
+     * @return $this
      */
-    public function as_object()
+    public function as_object($class=null)
     {
-        $this->temp_return_type = 'object';
+        $this->temp_return_type = ! empty($class) ? $class : 'object';
 
         return $this;
     }
 
     //--------------------------------------------------------------------
-
-    /**
-     * Temporarily sets our object return to a json object.
-     */
-    public function as_json()
-    {
-        $this->temp_return_type = 'json';
-
-        return $this;
-    }
-
-    //--------------------------------------------------------------------
-
 
     /**
      * Also fetches deleted items for this request only.
@@ -1168,6 +1163,11 @@ class CIDbModel
         $data = array();
         $skippedFields = array();
 
+        if (empty($post_data))
+        {
+            return [];
+        }
+
         // Though the model doesn't support multiple keys well, $this->key
         // could be an array or a string...
         $skippedFields = array_merge($skippedFields, (array)$this->primary_key);
@@ -1241,8 +1241,26 @@ class CIDbModel
      */
     public function created_on($row)
     {
-        if (!array_key_exists($this->created_field, $row)) {
+        if (empty($row['fields']))
+        {
+            return null;
+        }
+
+        $row = $row['fields'];
+
+        // Created_on
+        if (! array_key_exists($this->created_field, $row))
+        {
             $row[$this->created_field] = $this->set_date();
+        }
+
+        // Created by
+        if ($this->log_user && ! array_key_exists($this->created_by_field, $row) && is_object($this->authenticate))
+        {
+            // If you're here because of an error with $this->authenticate
+            // not being available, it's likely due to you not using
+            // the AuthTrait and/or setting log_user after model is instantiated.
+            $row[$this->created_by_field] = (int)$this->authenticate->id();
         }
 
         return $row;
@@ -1260,8 +1278,25 @@ class CIDbModel
      */
     public function modified_on($row)
     {
-        if (is_array($row) && !array_key_exists($this->modified_field, $row)) {
+        if (empty($row['fields']))
+        {
+            return null;
+        }
+
+        $row = $row['fields'];
+
+        if (is_array($row) && ! array_key_exists($this->modified_field, $row))
+        {
             $row[$this->modified_field] = $this->set_date();
+        }
+
+        // Modified by
+        if ($this->log_user && ! array_key_exists($this->modified_by_field, $row) && is_object($this->authenticate))
+        {
+            // If you're here because of an error with $this->authenticate
+            // not being available, it's likely due to you not using
+            // the AuthTrait and/or setting log_user after model is instantiated.
+            $row[$this->modified_by_field] = $this->authenticate->id();
         }
 
         return $row;
@@ -1271,20 +1306,6 @@ class CIDbModel
 
     //--------------------------------------------------------------------
     // Internal Methods
-    //--------------------------------------------------------------------
-
-    /**
-     * Return the method name for the current return type
-     */
-    protected function _return_type($multi = FALSE)
-    {
-        $method = ($multi) ? 'result' : 'row';
-
-        // If our type is either 'array' or 'json', we'll simply use the array version
-        // of the function, since the database library doesn't support json.
-        return $this->temp_return_type == 'array' || $this->temp_return_type == 'json' ? $method . '_array' : $method;
-    }
-
     //--------------------------------------------------------------------
 
     /**
@@ -1311,17 +1332,38 @@ class CIDbModel
      */
     public function trigger($event, $data = false)
     {
-        if (!isset($this->$event) || !is_array($this->$event)) {
+        if (! isset($this->$event) || ! is_array($this->$event))
+        {
+            if (isset($data['fields']))
+            {
+                return $data['fields'];
+            }
+
             return $data;
         }
 
-        foreach ($this->$event as $method) {
-            if (strpos($method, '(')) {
+        foreach ($this->$event as $method)
+        {
+            if (strpos($method, '('))
+            {
                 preg_match('/([a-zA-Z0-9\_\-]+)(\(([a-zA-Z0-9\_\-\., ]+)\))?/', $method, $matches);
                 $this->callback_parameters = explode(',', $matches[3]);
             }
 
             $data = call_user_func_array(array($this, $method), array($data));
+        }
+
+        // In case no method called or method returned
+        // the entire data array, we typically just need the $fields
+        if (isset($data['fields']))
+        {
+            return $data['fields'];
+        }
+
+        // A few methods might need to return 'ids'
+        if (isset($data['ids']))
+        {
+            return $data['ids'];
         }
 
         return $data;
@@ -1373,13 +1415,13 @@ class CIDbModel
 
                 $this->form_validation->set_rules($this->validation_rules);
 
-                if ($this->form_validation->run() === TRUE) {
+                if ($this->form_validation->run('', $this) === TRUE) {
                     return $data;
                 } else {
                     return FALSE;
                 }
             } else {
-                if ($this->form_validation->run($this->validate) === TRUE) {
+                if ($this->form_validation->run($this->validate, $this) === TRUE) {
                     return $data;
                 } else {
                     return FALSE;
@@ -1484,222 +1526,8 @@ class CIDbModel
 
     //--------------------------------------------------------------------
 
-
-
     //--------------------------------------------------------------------
-    // CI Database  Wrappers
-    //--------------------------------------------------------------------
-    // To allow for more expressive syntax, we provide wrapper functions
-    // for most of the query builder methods here.
-    //
-    // This allows for calls such as:
-    //      $result = $this->model->select('...')
-    //                            ->where('...')
-    //                            ->having('...')
-    //                            ->get();
-    //
-
-    public function select($select = '*', $escape = NULL)
-    {
-        $this->db->select($select, $escape);
-        return $this;
-    }
-
-    public function select_max($select = '', $alias = '')
-    {
-        $this->db->select_max($select, $alias);
-        return $this;
-    }
-
-    public function select_min($select = '', $alias = '')
-    {
-        $this->db->select_min($select, $alias);
-        return $this;
-    }
-
-    public function select_avg($select = '', $alias = '')
-    {
-        $this->db->select_avg($select, $alias);
-        return $this;
-    }
-
-    public function select_sum($select = '', $alias = '')
-    {
-        $this->db->select_sum($select, $alias);
-        return $this;
-    }
-
-    public function distinct($val = TRUE)
-    {
-        $this->db->distinct($val);
-        return $this;
-    }
-
-    public function from($from)
-    {
-        $this->db->from($from);
-        return $this;
-    }
-
-    public function join($table, $cond, $type = '')
-    {
-        $this->db->join($table, $cond, $type);
-        return $this;
-    }
-
-    public function where($key, $value = NULL, $escape = TRUE)
-    {
-        $this->db->where($key, $value, $escape);
-        return $this;
-    }
-
-    public function or_where($key, $value = NULL, $escape = TRUE)
-    {
-        $this->db->or_where($key, $value, $escape);
-        return $this;
-    }
-
-    public function where_in($key = NULL, $values = NULL)
-    {
-        $this->db->where_in($key, $values);
-        return $this;
-    }
-
-    public function or_where_in($key = NULL, $values = NULL)
-    {
-        $this->db->or_where_in($key, $values);
-        return $this;
-    }
-
-    public function where_not_in($key = NULL, $values = NULL)
-    {
-        $this->db->where_not_in($key, $values);
-        return $this;
-    }
-
-    public function or_where_not_in($key = NULL, $values = NULL)
-    {
-        $this->db->or_where_not_in($key, $values);
-        return $this;
-    }
-
-    public function like($field, $match = '', $side = 'both')
-    {
-        $this->db->like($field, $match, $side);
-        return $this;
-    }
-
-    public function not_like($field, $match = '', $side = 'both')
-    {
-        $this->db->not_like($field, $match, $side);
-        return $this;
-    }
-
-    public function or_like($field, $match = '', $side = 'both')
-    {
-        $this->db->or_like($field, $match, $side);
-        return $this;
-    }
-
-    public function or_not_like($field, $match = '', $side = 'both')
-    {
-        $this->db->or_not_like($field, $match, $side);
-        return $this;
-    }
-
-    public function group_by($by)
-    {
-        $this->db->group_by($by);
-        return $this;
-    }
-
-    public function having($key, $value = '', $escape = TRUE)
-    {
-        $this->db->having($key, $value, $escape);
-        return $this;
-    }
-
-    public function or_having($key, $value = '', $escape = TRUE)
-    {
-        $this->db->or_having($key, $value, $escape);
-        return $this;
-    }
-
-    public function order_by($orderby, $direction = '')
-    {
-        $this->db->order_by($orderby, $direction);
-        return $this;
-    }
-
-    public function limit($value, $offset = '')
-    {
-        $this->db->limit($value, $offset);
-        return $this;
-    }
-
-    public function offset($offset)
-    {
-        $this->db->offset($offset);
-        return $this;
-    }
-
-    public function set($key, $value = '', $escape = TRUE)
-    {
-        $this->db->set($key, $value, $escape);
-        return $this;
-    }
-
-    public function count_all_results()
-    {
-        return $this->db->count_all_results($this->table_name);
-    }
-
-    public function group_start($not = '', $type = 'AND ')
-    {
-        return $this->db->group_start($not, $type);
-    }
-
-    public function or_group_start()
-    {
-        return $this->db->or_group_start();
-    }
-
-    public function not_group_start()
-    {
-        return $this->db->not_group_start();
-    }
-
-    public function or_not_group_start()
-    {
-        return $this->db->or_not_group_start();
-    }
-
-    public function group_end()
-    {
-        return $this->db->group_end();
-    }
-
-    public function get_compiled_select($reset = TRUE)
-    {
-        return $this->db->get_compiled_select($this->table_name, $reset);
-    }
-
-    public function get_compiled_insert($reset = TRUE)
-    {
-        return $this->db->get_compiled_insert($this->table_name, $reset);
-    }
-
-    public function get_compiled_update($reset = TRUE)
-    {
-        return $this->db->get_compiled_update($this->table_name, $reset);
-    }
-
-    public function get_compiled_delete($reset = TRUE)
-    {
-        return $this->db->get_compiled_delete($this->table_name, $reset);
-    }
-
-
+    // Magic Methods
     //--------------------------------------------------------------------
 
     /**
@@ -1729,5 +1557,24 @@ class CIDbModel
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Provide direct access to any of CodeIgniter's DB methods but
+     * make it look like it's part of the class, purely for convenience.
+     *
+     * @param $name
+     * @param $params
+     */
+    public function __call($name, $params)
+    {
+        if (method_exists($this->db, $name))
+        {
+            call_user_func_array([$this->db, $name], $params);
+            return $this;
+        }
+    }
+
+    //--------------------------------------------------------------------
+
 
 }

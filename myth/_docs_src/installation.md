@@ -46,6 +46,17 @@ Once that's ready, from the web root at the command line run the [migrations](da
 
 When it prompts you for information, just accept the defaults: the "app" group, and 'Y' you want to migrate to the latest version.
 
+#### Troubleshooting
+If you run into database errors during this step, your might need to pass along an ENGINE to use. This has happened when the user's MySQL database was using MyISAM tables by default, though we've designed it to work while using InnoDB tables. Since it's intended to be database-agnostic, we can't hardcode the engine in there. 
+
+To solve this issue, edit `application/config/migration.php` and add `'ENGINE' => 'InnoDB'` to the `migration_create_table_attr` setting. 
+
+	$config['migration_create_table_attr'] = [
+		'ENGINE' => 'InnoDB'
+	];
+
+Try running the migrations again and you should hopefully be back in business now. 
+
 ### Enjoy A Break
 
 You're done!

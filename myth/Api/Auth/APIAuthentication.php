@@ -33,6 +33,11 @@
 use Myth\Auth\LocalAuthentication;
 use Myth\Events;
 
+/**
+ * Class APIAuthentication
+ * 
+ * @package Myth\Api\Auth
+ */
 class APIAuthentication extends LocalAuthentication {
 
 	protected $logged_in = false;
@@ -176,9 +181,22 @@ class APIAuthentication extends LocalAuthentication {
 		// Grab the user that corresponds to that "username"
 		// exact field determined in the api config file - api.auth_field setting.
 		$user = $this->user_model->as_array()->find_by( config_item('api.auth_field'), $digest['username'] );
+
+		// If the user is throttled due to too many invalid logins
+		// or the system is under attack, kick them back.
+
+		// If throttling time is above zero, we can't allow
+		// logins now.
+		if ($time = (int)$this->isThrottled($user) > 0)
+		{
+			$this->error = sprintf(lang('api.throttled'), $time);
+			return false;
+		}
+
 		if (!  $user)
 		{
-			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
+			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );          
+			$this->ci->login_model->recordLoginAttempt($this->ci->input->ip_address());
 			return false;
 		}
 
@@ -197,6 +215,7 @@ class APIAuthentication extends LocalAuthentication {
 		if ($digest['response'] != $valid_response)
 		{
 			$this->ci->output->set_header( sprintf('WWW-Authenticate: Digest realm="%s", nonce="%s", opaque="%s"', config_item('api.realm'), $nonce, $opaque) );
+			$this->ci->login_model->recordLoginAttempt($this->ci->input->ip_address(), $user['id']);
 			return false;
 		}
 
@@ -237,19 +256,6 @@ class APIAuthentication extends LocalAuthentication {
 		{
 			$this->user = null;
 			return $user;
-		}
-
-		// If the user is throttled due to too many invalid logins
-		// or the system is under attack, kick them back.
-		// We need to test for this after validation because we
-		// don't want it to affect a valid login.
-
-		// If throttling time is above zero, we can't allow
-		// logins now.
-		if ($time = (int)$this->isThrottled($user['email']) > 0)
-		{
-			$this->error = sprintf(lang('api.throttled'), $time);
-			return false;
 		}
 
 		$this->loginUser($user);

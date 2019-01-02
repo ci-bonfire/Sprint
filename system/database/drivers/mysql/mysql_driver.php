@@ -84,7 +84,7 @@ class CI_DB_mysql_driver extends CI_DB {
 	 *
 	 * @var	bool
 	 */
-	public $stricton = FALSE;
+	public $stricton;
 
 	// --------------------------------------------------------------------
 
@@ -147,9 +147,26 @@ class CI_DB_mysql_driver extends CI_DB {
 				: FALSE;
 		}
 
-		if ($this->stricton && is_resource($this->conn_id))
+		if (isset($this->stricton) && is_resource($this->conn_id))
 		{
-			$this->simple_query('SET SESSION sql_mode="STRICT_ALL_TABLES"');
+			if ($this->stricton)
+			{
+				$this->simple_query('SET SESSION sql_mode = CONCAT(@@sql_mode, ",", "STRICT_ALL_TABLES")');
+			}
+			else
+			{
+				$this->simple_query(
+					'SET SESSION sql_mode =
+					REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+					@@sql_mode,
+					"STRICT_ALL_TABLES,", ""),
+					",STRICT_ALL_TABLES", ""),
+					"STRICT_ALL_TABLES", ""),
+					"STRICT_TRANS_TABLES,", ""),
+					",STRICT_TRANS_TABLES", ""),
+					"STRICT_TRANS_TABLES", "")'
+				);
+			}
 		}
 
 		return $this->conn_id;
@@ -272,25 +289,12 @@ class CI_DB_mysql_driver extends CI_DB {
 	/**
 	 * Begin Transaction
 	 *
-	 * @param	bool	$test_mode
 	 * @return	bool
 	 */
-	public function trans_begin($test_mode = FALSE)
+	protected function _trans_begin()
 	{
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if ( ! $this->trans_enabled OR $this->_trans_depth > 0)
-		{
-			return TRUE;
-		}
-
-		// Reset the transaction failure flag.
-		// If the $test_mode flag is set to TRUE transactions will be rolled back
-		// even if the queries produce a successful result.
-		$this->_trans_failure = ($test_mode === TRUE);
-
 		$this->simple_query('SET AUTOCOMMIT=0');
-		$this->simple_query('START TRANSACTION'); // can also be BEGIN or BEGIN WORK
-		return TRUE;
+		return $this->simple_query('START TRANSACTION'); // can also be BEGIN or BEGIN WORK
 	}
 
 	// --------------------------------------------------------------------
@@ -300,17 +304,15 @@ class CI_DB_mysql_driver extends CI_DB {
 	 *
 	 * @return	bool
 	 */
-	public function trans_commit()
+	protected function _trans_commit()
 	{
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if ( ! $this->trans_enabled OR $this->_trans_depth > 0)
+		if ($this->simple_query('COMMIT'))
 		{
+			$this->simple_query('SET AUTOCOMMIT=1');
 			return TRUE;
 		}
 
-		$this->simple_query('COMMIT');
-		$this->simple_query('SET AUTOCOMMIT=1');
-		return TRUE;
+		return FALSE;
 	}
 
 	// --------------------------------------------------------------------
@@ -320,17 +322,15 @@ class CI_DB_mysql_driver extends CI_DB {
 	 *
 	 * @return	bool
 	 */
-	public function trans_rollback()
+	protected function _trans_rollback()
 	{
-		// When transactions are nested we only begin/commit/rollback the outermost ones
-		if ( ! $this->trans_enabled OR $this->_trans_depth > 0)
+		if ($this->simple_query('ROLLBACK'))
 		{
+			$this->simple_query('SET AUTOCOMMIT=1');
 			return TRUE;
 		}
 
-		$this->simple_query('ROLLBACK');
-		$this->simple_query('SET AUTOCOMMIT=1');
-		return TRUE;
+		return FALSE;
 	}
 
 	// --------------------------------------------------------------------

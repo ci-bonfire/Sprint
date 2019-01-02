@@ -5,6 +5,8 @@
  *
  * Created by: SprintPHP
  * Created on: 2014-11-05 05:56:40 am
+ *
+ * @property $dbforge
  */
 class Migration_create_mail_queue extends CI_Migration {
 
@@ -44,7 +46,7 @@ class Migration_create_mail_queue extends CI_Migration {
         $this->dbforge->add_field($fields);
         $this->dbforge->add_key('id', true);
         $this->dbforge->add_key('sent');
-        $this->dbforge->create_table('mail_queue');
+        $this->dbforge->create_table('mail_queue', true, config_item('migration_create_table_attr'));
     }
 
     //--------------------------------------------------------------------

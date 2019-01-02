@@ -134,7 +134,7 @@ if (!defined('BASEPATH')) exit('No direct script access allowed');
 //
 // This is the number of SECONDS max.
 //
-    $config['auth.max_throttle_time'] = 45;
+    $config['auth.max_throttle_time'] = 50;
 
 //--------------------------------------------------------------------
 // Start Throttling After
@@ -208,7 +208,7 @@ $config['auth.hash_cost'] = 10;
 //      - 'email'   The are sent an email with an activation link/code
 //      - 'manual'  Requires manual approval by a site administrator.
 //
-    $config['auth.activation_method'] = 'email';
+    $config['auth.activation_method'] = 'auto';
 
 
 //--------------------------------------------------------------------

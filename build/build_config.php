@@ -10,9 +10,8 @@
 //
 	$config['builds'] = [
 		'release'           => 'SprintRelease',
-		'postCreateProject' => 'InitialCleanup'
-//		'demo'      => 'sprint_demo',
-//		'docs'      => 'sprint_docs'
+		'postCreateProject' => 'InitialCleanup',
+        'publishSubTrees'   => 'SubTreeSplit'
 	];
 
 //--------------------------------------------------------------------
@@ -27,6 +26,4 @@
 	$config['destinations'] = [
 		'release'           => '../../SprintBuilds/',
 		'postCreateProject' => ''
-//		'demo'      => '',
-//		'docs'      => ''
 	];

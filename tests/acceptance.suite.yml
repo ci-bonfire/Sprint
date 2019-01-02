@@ -14,7 +14,7 @@ modules:
         PhpBrowser:
           url: 'http://sprint.dev'
         Db:
-          dsn: 'mysql:host=localhost;dbname=sprint_test'
+          dsn: 'mysql:host=localhost;dbname=sprint'
           user: 'root'
           password: 'root'
           dump: 'tests/_data/dump.sql'

@@ -1,5 +1,7 @@
 <?php
 
+use Myth\Events\Events;
+
 class User_model extends \Myth\Models\CIDbModel {
 
     protected $table_name = 'users';
@@ -31,7 +33,7 @@ class User_model extends \Myth\Models\CIDbModel {
         [
             'field' => 'username',
             'label' => 'lang:auth.username',
-            'rules' => 'trim|alpha|max_length[255]'
+            'rules' => 'trim|alpha_numeric|max_length[255]'
         ],
         [
             'field' => 'password',
@@ -80,7 +82,7 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     public function withMeta()
     {
-        $this->db->join('user_meta', 'users.id = user_meta.user_id', 'inner');
+        $this->after_find[] = 'grabMeta';
 
         return $this;
     }
@@ -98,6 +100,11 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     protected function hashPassword($data)
     {
+        if (isset($data['fields']))
+        {
+            $data = $data['fields'];
+        }
+
         if (isset($data['password']))
         {
             $data['password_hash'] = \Myth\Auth\Password::hashPassword($data['password']);
@@ -223,7 +230,7 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     public function saveMetaToUser($user_id, $key, $value=null)
     {
-        if (! \Myth\Events::trigger('beforeAddMetaToUser', [$user_id, $key]))
+        if (! Events::trigger('beforeAddMetaToUser', [$user_id, $key]))
         {
             return false;
         }
@@ -274,7 +281,7 @@ class User_model extends \Myth\Models\CIDbModel {
             return null;
         }
 
-        return $query->row()->$key;
+        return $query->row()->meta_value;
     }
 
     //--------------------------------------------------------------------
@@ -289,7 +296,7 @@ class User_model extends \Myth\Models\CIDbModel {
      */
     public function removeMetaFromUser($user_id, $key)
     {
-        if (! \Myth\Events::trigger('beforeRemoveMetaFromUser', [$user_id, $key]))
+        if (! Events::trigger('beforeRemoveMetaFromUser', [$user_id, $key]))
         {
             return false;
         }
@@ -308,5 +315,52 @@ class User_model extends \Myth\Models\CIDbModel {
     }
 
     //--------------------------------------------------------------------
+
+    public function getMetaForUser($user_id)
+    {
+        $query = $this->db->where('user_id', (int)$user_id)
+                          ->select('meta_key, meta_value')
+                          ->get('user_meta');
+
+        $rows = $query->result();
+
+        $meta = [];
+
+        if (count($rows))
+        {
+            array_walk( $rows, function ( $row ) use ( &$meta )
+            {
+                $meta[ $row->meta_key ] = $row->meta_value;
+            } );
+        }
+
+        return $meta;
+    }
+
+    //--------------------------------------------------------------------
+
+    protected function grabMeta($data)
+    {
+        if (strpos($data['method'], 'find') === false)
+        {
+            return $data;
+        }
+
+        $meta = $this->getMetaForUser($data['fields']->id);
+
+        if (is_object($data['fields']))
+        {
+            $data['fields']->meta = (object)$meta;
+        }
+        else
+        {
+            $data['fields']['meta']= $meta;
+        }
+
+        return $data;
+    }
+
+    //--------------------------------------------------------------------
+
 
 }

@@ -35,6 +35,8 @@
  *
  * Provides a foundation that other UIKits can build upon, as well as
  * common methods that are ready for use.
+ * 
+ * @package Myth\UIKit
  */
 abstract class BaseUIKit {
 

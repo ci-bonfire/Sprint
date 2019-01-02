@@ -33,10 +33,12 @@
 use Myth\Docs\DocSearchInterface;
 
 /**
- * Class docSearch
+ * Class Search
  *
  * Implements basic search capabilities for Bonfire docs. Includes application,
  * core bonfire, and module docs.
+ *
+ * @package Myth\Docs
  */
 class Search implements DocSearchInterface
 {
@@ -410,10 +412,15 @@ class Search implements DocSearchInterface
 
                 is_dir($source_dir . $file) && $file .= DIRECTORY_SEPARATOR;
 
-                if (($directory_depth < 1 OR $new_depth > 0) && is_dir($source_dir . $file)) {
+                if (($directory_depth < 1 OR $new_depth > 0) && is_dir($source_dir . $file))
+                {
                     $filedata[$file] = $this->directory_map($source_dir . $file, $new_depth, $hidden);
-                } else {
-                    $filedata[] = $file;
+                } else
+                {
+                    // Replace the directory separator here with a forward slash since
+                    // Windows uses backward slashes and not all browsers will auto-replace
+                    // those slashes in URLs.
+                    $filedata[] = str_replace(DIRECTORY_SEPARATOR, '/', $file);
                 }
             }
 

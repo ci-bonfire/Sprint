@@ -121,7 +121,7 @@ class CI_Encryption {
 	);
 
 	/**
-	 * List of supported HMAC algorightms
+	 * List of supported HMAC algorithms
 	 *
 	 * name => digest size pairs
 	 *
@@ -337,6 +337,11 @@ class CI_Encryption {
 	 */
 	public function create_key($length)
 	{
+		if (function_exists('random_bytes'))
+		{
+			return random_bytes((int) $length);
+		}
+
 		return ($this->_driver === 'mcrypt')
 			? mcrypt_create_iv($length, MCRYPT_DEV_URANDOM)
 			: openssl_random_pseudo_bytes($length);

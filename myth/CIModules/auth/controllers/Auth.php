@@ -86,7 +86,7 @@ class Auth extends \Myth\Controllers\ThemedController
                 redirect($redirect_url);
             }
 
-            $this->setMessage($auth->error(), 'danger');
+            $this->setMessage(lang('auth.invalid_user'), 'danger');
         }
 
         $this->themer->setLayout('login');

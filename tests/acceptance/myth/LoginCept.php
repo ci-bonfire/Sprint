@@ -39,7 +39,7 @@ $I->submitForm('#login_form', ['email' => 'tester@example.com', 'password' => 'b
 $I->seeElement('.alert-danger');
 
 $I->expect('login attempt was logged');
-$I->seeInDatabase('auth_login_attempts', ['email' => 'tester@example.com']);
+$I->seeInDatabase('auth_login_attempts', ['user_id' => '1']);
 
 //--------------------------------------------------------------------
 // Error without bad email
@@ -51,7 +51,7 @@ $I->submitForm('#login_form', ['email' => 'testy@examples.com', 'password' => 'm
 $I->seeElement('.alert-danger');
 
 $I->expect('login attempt was logged');
-$I->seeInDatabase('auth_login_attempts', ['email' => 'testy@examples.com']);
+$I->seeInDatabase('auth_login_attempts', ['ip_address' => '::1']);
 
 //--------------------------------------------------------------------
 // Successfully login
@@ -63,7 +63,7 @@ $I->submitForm('#login_form', ['email' => 'tester@example.com', 'password' => 'm
 $I->dontSeeElement('.alert-danger');
 
 $I->expect('login action was logged');
-$I->seeInDatabase('auth_logins', ['user_id' => 1, 'ip_address' => '127.0.0.1']);
+$I->seeInDatabase('auth_logins', ['user_id' => 1]);
 
 $I->expect('login attempts were cleared');
-$I->dontSeeInDatabase('auth_login_attempts', ['email' => 'tester@example.com']);
+$I->dontSeeInDatabase('auth_login_attempts', ['user_id' => '1']);

@@ -2,6 +2,8 @@
 
 Develop Branch: [![Build Status](https://travis-ci.org/ci-bonfire/Sprint.svg?branch=develop)](https://travis-ci.org/ci-bonfire/Sprint)
 
+**NOTE: This repo is no longer being maintained. If you would like to take it over please email me at lonnieje@gmail.com.**
+
 Based on the CodeIgniter 3 PHP framework, Sprint provides the essential running start to get you to the fun part of building your web applications. It provides additional utilities and workflow enhancements to stock CodeIgniter. In the process, it helps to modernize the code a bit. 
 
 Sprint is intended to be the heart of [Bonfire Next](https://github.com/ci-bonfire/Bonfire-Next), though that integration has not happened yet. 
@@ -21,6 +23,9 @@ NOTE: This is currently in a **Beta-release** state. What's that mean? It means 
 - SimpleXML enabled on your PHP installation for the docs to work.
 - Composer installed on development server.
 - A Database. We currently use MySQL but try to keep it fairly flexible.
+
+## Found A Security Issue?
+I take security very seriously in Sprint and strive to create the most secure package that I can. If you have located what you believe to be security issues, please contact me at [lonnie@newmythmedia.com](mailto://lonnie@newmythmedia.com) with the details, instead of posting them as an issue on the repo or forums. That only releases the security hole to potential attackers before it's had a chance to be fixed. 
 
 ## How To Install?
 

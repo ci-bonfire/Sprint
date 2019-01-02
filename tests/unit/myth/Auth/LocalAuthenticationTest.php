@@ -27,13 +27,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
             'password_hash' => password_hash('father', PASSWORD_BCRYPT),
             'active' => 1
         ];
-    }
 
-    //--------------------------------------------------------------------
-
-
-    public function _before()
-    {
         $this->user_model = m::mock('User_model');
         $session = m::mock('CI_Session');
 
@@ -42,11 +36,18 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->load->model('auth/login_model');
 
         $this->ci->session = $session;
-        $this->ci->login_model = m::mock('Login_model');
+        $this->login_mock = m::mock('Login_model');
 
         $this->auth = new Authenticate( $this->ci );
         $this->auth->useModel($this->user_model, true);
+    }
 
+    //--------------------------------------------------------------------
+
+
+    public function _before()
+    {
+        $this->ci->login_model = $this->login_mock;
     }
 
     //--------------------------------------------------------------------
@@ -68,6 +69,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
             'email' => 'darth@theempire.com',
         ];
 
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
+
         $result = $this->auth->validate($data);
 
         $this->assertNull($result);
@@ -85,6 +88,11 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn(false);
+
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime');
+        $this->ci->login_model->shouldReceive('countLoginAttempts');
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->validate($data);
 
@@ -104,6 +112,10 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
 
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime');
+        $this->ci->login_model->shouldReceive('countLoginAttempts');
+
         $result = $this->auth->validate($data);
 
         $this->assertTrue($result);
@@ -111,19 +123,21 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
-	public function testValidateReturnsFalseWithInvalidField()
-	{
-		$data = [
-			'display_name' => 'darth@theempire.com',
-			'password' => 'father'
-		];
+    public function testValidateReturnsFalseWithInvalidField()
+    {
+        $data = [
+            'display_name' => 'darth@theempire.com',
+            'password' => 'father'
+        ];
 
-		$result = $this->auth->validate($data);
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
-		$this->assertFalse($result);
-	}
+        $result = $this->auth->validate($data);
 
-	//--------------------------------------------------------------------
+        $this->assertFalse($result);
+    }
+
+    //--------------------------------------------------------------------
 
     //--------------------------------------------------------------------
     // Login
@@ -135,7 +149,10 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
             'email' => 'darth@theempire.com'
         );
 
-	    $this->ci->login_model->shouldReceive('recordLoginAttempt');
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime');
+        $this->ci->login_model->shouldReceive('countLoginAttempts');
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
 
@@ -153,6 +170,11 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('select')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('where')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( null );
+
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime');
+        $this->ci->login_model->shouldReceive('countLoginAttempts');
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
 
@@ -172,7 +194,10 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( false );
 
-	    $this->ci->login_model->shouldReceive('recordLoginAttempt');
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime');
+        $this->ci->login_model->shouldReceive('countLoginAttempts');
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
 
@@ -191,6 +216,10 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
+
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+        $this->ci->login_model->shouldReceive('distributedBruteForceTime');
+        $this->ci->login_model->shouldReceive('countLoginAttempts');
         $this->ci->login_model->shouldReceive('recordLoginAttempt');
 
         $result = $this->auth->login($creds);
@@ -202,6 +231,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     public function testLoginReturnsTrueWithGoodCreds()
     {
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
+
         $creds = array(
             'email' => 'darth@theempire.com',
             'password' => 'father'
@@ -211,7 +242,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
-        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
+        $this->ci->session->shouldReceive('sess_regenerate');
+        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with($_SERVER['REMOTE_ADDR'], 15);
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->andReturn(0);
@@ -227,6 +259,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     public function testLoginSetsUserObjectAndUserGrabsIt()
     {
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
+
         $creds = array(
             'email' => 'darth@theempire.com',
             'password' => 'father'
@@ -236,7 +270,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
-        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
+        $this->ci->session->shouldReceive('sess_regenerate');
+        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with($_SERVER['REMOTE_ADDR'], 15);
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->andReturn(0);
@@ -252,6 +287,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     public function testIdReturnsCorrectlyWithValidLogin()
     {
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
+
         $creds = array(
             'email' => 'darth@theempire.com',
             'password' => 'father'
@@ -261,7 +298,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
         $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
         $this->ci->session->shouldReceive('set_userdata')->with('logged_in', true);
-        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with('darth@theempire.com');
+        $this->ci->session->shouldReceive('sess_regenerate');
+        $this->ci->login_model->shouldReceive('purgeLoginAttempts')->with($_SERVER['REMOTE_ADDR'], 15);
         $this->ci->login_model->shouldReceive('recordLogin')->with($this->final_user);
         $this->ci->login_model->shouldReceive('purgeOldRememberTokens')->zeroOrMoreTimes();
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->andReturn(0);
@@ -281,7 +319,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     public function testLogout()
     {
-        $this->ci->session->shouldReceive('sess_destroy');
+        $this->ci->session->shouldReceive('sess_regenerate');
         $this->ci->login_model->shouldReceive('deleteRememberToken')->once();
 
         $this->auth->logout();
@@ -298,16 +336,17 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingReturnsFalseIfNotThrottledWithFirstFailedAttempt()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn(0);
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(0);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(0);
 
-        $this->assertFalse($this->auth->isThrottled($email));
+        $this->assertFalse($this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -317,16 +356,17 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingReturnsFalseIfNotThrottledWithAllowedFailedAttempts()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn(0);
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(3);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(3);
 
-        $this->assertFalse($this->auth->isThrottled($email));
+        $this->assertFalse($this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -336,16 +376,17 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingReturnsTimeWhenThrottled()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(6);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(5);
 
-        $this->assertEquals(2, $this->auth->isThrottled($email));
+        $this->assertEquals(5, $this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -355,16 +396,17 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingReturnsTimeWhenThrottled2()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(7);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(6);
 
-        $this->assertEquals(4, $this->auth->isThrottled($email));
+        $this->assertEquals(10, $this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -374,16 +416,17 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingReturnsTimeWhenThrottled3()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(8);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(7);
 
-        $this->assertEquals(8, $this->auth->isThrottled($email));
+        $this->assertEquals(20, $this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -393,16 +436,17 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingReturnsTimeWhenThrottled4()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(9);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(8);
 
-        $this->assertEquals(16, $this->auth->isThrottled($email));
+        $this->assertEquals(40, $this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -412,16 +456,17 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingReturnsTimeWhenThrottled5()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(10);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(9);
 
-        $this->assertEquals(32, $this->auth->isThrottled($email));
+        $this->assertEquals(50, $this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -431,16 +476,17 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingReturnsTimeWhenThrottled6AndIsAboveMaxLimit()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(11);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(10);
 
-        $this->assertEquals(45, $this->auth->isThrottled($email));
+        $this->assertEquals(50, $this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -450,20 +496,21 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingUnderBruteForceFirstTime()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( time() );
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(101);
-        $this->ci->login_model->shouldReceive('isBruteForced')->with($email)->once()->andReturn(true);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn( time() );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(101);
+        $this->ci->login_model->shouldReceive('isBruteForced')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(true);
 
         // Should store current time+15 minutes in the session
         $this->ci->session->shouldReceive('set_userdata')->with('bruteBan', time() + (60*15))->once();
 
-        $this->assertEquals(60*15, $this->auth->isThrottled($email));
+        $this->assertEquals(60*15, $this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -473,7 +520,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingUnderPreviousBruteForce()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         $bruteTime = (60*14) + time();
         $_SESSION['bruteBan'] = $bruteTime;
@@ -482,14 +530,14 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(0);
         // Not under a brute force attack
 //        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn( $bruteTime );
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->never();
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->never();
-        $this->ci->login_model->shouldReceive('isBruteForced')->with($email)->never();
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->never();
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->never();
+        $this->ci->login_model->shouldReceive('isBruteForced')->with($_SERVER['REMOTE_ADDR'], $user['id'])->never();
 
         // Should store current time+15 minutes in the session
         $this->ci->session->shouldReceive('set_userdata')->with('bruteBan', time() + (60*15))->never();
 
-        $this->assertEquals($bruteTime - time(), $this->auth->isThrottled($email));
+        $this->assertEquals($bruteTime - time(), $this->auth->isThrottled($user));
         unset($_SESSION['bruteBan']);
     }
 
@@ -500,7 +548,8 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingUnderPreviousBruteForceWithDBrute()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         $bruteTime = (60*14) + time();
         $_SESSION['bruteBan'] = $bruteTime;
@@ -509,14 +558,14 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(45);
         // Not under a brute force attack
 //        $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn( $bruteTime );
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->never();
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->never();
-        $this->ci->login_model->shouldReceive('isBruteForced')->with($email)->never();
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->never();
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->never();
+        $this->ci->login_model->shouldReceive('isBruteForced')->with($_SERVER['REMOTE_ADDR'], $user['id'])->never();
 
         // Should store current time+15 minutes in the session
         $this->ci->session->shouldReceive('set_userdata')->with('bruteBan', time() + (60*15))->never();
 
-        $this->assertEquals($bruteTime - time() + 45, $this->auth->isThrottled($email));
+        $this->assertEquals($bruteTime - time() + 45, $this->auth->isThrottled($user));
         unset($_SESSION['bruteBan']);
     }
 
@@ -524,19 +573,21 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     /**
      * @group throttle
+     * @group single
      */
     public function testThrottlingWithAllowedAttemptsUnderDBrute()
     {
-        $email = 'darth@theempire.com';
+        $user = ['id' => 15];
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
 
         // Not under a distributed brute force attack.
         $this->ci->login_model->shouldReceive('distributedBruteForceTime')->once()->andReturn(45);
         // Not under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(false);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($email)->once()->andReturn( strtotime('-10 seconds') );
-        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($email)->once()->andReturn(3);
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn( strtotime('-10 seconds') );
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->with($_SERVER['REMOTE_ADDR'], $user['id'])->once()->andReturn(3);
 
-        $this->assertEquals(35, $this->auth->isThrottled($email));
+        $this->assertEquals(35, $this->auth->isThrottled($user));
     }
 
     //--------------------------------------------------------------------
@@ -546,6 +597,9 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
      */
     public function testThrottlingThroughLoginMethod()
     {
+        $_SERVER['REMOTE_ADDR'] = '0.0.0.0';
+        $user_id = 54;
+
         $creds = [
             'email' => 'darth@theempire.com',
             'password' => 'iwantthethrone'
@@ -568,7 +622,7 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
         // Are under a brute force attack
         $this->ci->session->shouldReceive('userdata')->with('bruteBan')->once()->andReturn(45);
-        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($creds['email'])->once()->andReturn( strtotime('-10 seconds') );
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->with($_SERVER['REMOTE_ADDR'], $user_id)->once()->andReturn( strtotime('-10 seconds') );
         $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(113);
 
         $this->ci->login_model->shouldReceive('isBruteForced')->andReturn(true);
@@ -584,6 +638,136 @@ class LocalAuthenticationTest extends CodeIgniterTestCase {
 
     //--------------------------------------------------------------------
 
+    //--------------------------------------------------------------------
+    // Reset password
+    //--------------------------------------------------------------------
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsFalseWithNoCode()
+    {
+        $creds = [
+            'email' => 'darth@theempire.com'
+        ];
+
+        $result = $this->auth->resetPassword($creds, null, null);
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsFalseWithNoUser()
+    {
+        $creds = [
+            'email' => 'darth@theempire.com',
+            'code' => 'reset_code'
+        ];
+
+        $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( false );
+
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
+
+        $result = $this->auth->resetPassword($creds, 'new_password', 'new_password');
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsFalseWithWrongCode()
+    {
+        $creds = [
+            'email' => 'darth@theempire.com',
+            'code' => 'token'
+        ];
+
+        $this->final_user['reset_hash'] = 'hash';
+
+        $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
+
+        $this->ci->login_model->shouldReceive('recordLoginAttempt');
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
+
+        $result = $this->auth->resetPassword($creds, 'new_password', 'new_password');
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsFalseWithPasswordsNotMatch()
+    {
+        // Generate/store our codes
+        $this->ci->load->helper('string');
+        $token = random_string('alnum', 24);
+        $hash = hash('sha1', config_item('auth.salt') .$token);
+
+        $creds = [
+            'email' => 'darth@theempire.com',
+            'code' => $token
+        ];
+
+        $this->final_user['reset_hash'] = $hash;
+
+        $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
+
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
+
+        $this->auth->user_model->shouldReceive('update')->andReturn( false );
+        $this->auth->user_model->shouldReceive('error')->andReturn( 'some error about password match' );
+
+        $result = $this->auth->resetPassword($creds, 'new_password1', 'new_password2');
+
+        $this->assertFalse($result);
+    }
+
+    /**
+     * @group reset_password
+     */
+    public function testResetPasswordReturnsTrue()
+    {
+        // Generate/store our codes
+        $this->ci->load->helper('string');
+        $token = random_string('alnum', 24);
+        $hash = hash('sha1', config_item('auth.salt') .$token);
+
+        $creds = [
+            'email' => 'darth@theempire.com',
+            'code' => $token
+        ];
+
+        $this->final_user['reset_hash'] = $hash;
+
+        $this->auth->user_model->shouldReceive('where')->with(['email' => 'darth@theempire.com'])->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('as_array')->andReturn( $this->auth->user_model );
+        $this->auth->user_model->shouldReceive('first')->andReturn( $this->final_user );
+
+        $this->ci->login_model->shouldReceive('lastLoginAttemptTime')->andReturn(0);
+        $this->ci->login_model->shouldReceive('countLoginAttempts')->andReturn(0);
+
+        $this->auth->user_model->shouldReceive('update')->andReturn( true );
+
+        $this->ci->login_model->shouldReceive('purgeLoginAttempts');
+
+        $result = $this->auth->resetPassword($creds, 'new_password', 'new_password');
+
+        $this->assertTrue($result);
+    }
 
     //--------------------------------------------------------------------
     // Utility Methods

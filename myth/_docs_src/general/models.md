@@ -48,7 +48,7 @@ To get started with a new model, you can use the following skeleton file. Many o
 		protected $field_info = array();
 	}
 
-This is all that is needed to take advantage of CIDbModel's built-in functions. All variables shown here are set to their default, so you don't need to show them if you are using the default values.  Model_name is the name of your class and follows the same rules as [CodeIgniter models](http://www.codeigniter.com/userguide3/general/models.html).
+This is all that is needed to take advantage of CIDbModel's built-in functions. All variables shown here are set to their default, so you don't need to show them if you are using the default values.  X_model is the name of your class and follows the same rules as [CodeIgniter models](http://www.codeigniter.com/userguide3/general/models.html).
 
 CIDbModel supports quite a few ways to customize how your class works with the database.
 
@@ -64,7 +64,7 @@ The var `$primary_key` should be the name of the primary key for your table. CID
 
 ### $soft_deletes
 
-Sprint uses the concept of *soft deletes* that will set a flag that an item has been deleted instead of actually deleting the item. This allows you to later restore the user in case the deletion was accidental, or to keep a permanent record of any sensitive information, like transaction records.
+Sprint uses the concept of *soft deletes* that will set a flag that an item has been deleted instead of actually deleting the item. This allows you to later restore the item in case the deletion was accidental, or to keep a permanent record of any sensitive information, like transaction records.
 
 To use soft_deletes, your table must have a `deleted` field that is a **TINYINT (1)**. A value of `0` means the record has not been deleted, while a value of `1` shows that the item has been deleted.
 The name of the `deleted` field may be modified by setting `$deleted_field`.
@@ -115,7 +115,7 @@ The name of the fields to store the user id in can be set by changing the `creat
 
 ### $return_type
 
-Specifies whether the model returns records as an object or an array. The only valid values here are `object` or `array`.
+Specifies whether the model returns records as an object, an array, or a custom class. The only valid values here are `object` , `array`, or fully-qualified class name.
 
 The format can be overridden on a per-call basis using the `as_array` and `as_object` methods.
 
@@ -265,7 +265,7 @@ Allows for inserting more than one record at a time. Works just like CodeIgniter
 ### replace()
 Performs the SQL standard for a combined `DELETE` + `INSERT`, using primary and unique keys to determine which rows to replace.
 
-See CI's documentation for the replcae method. This is simply a wrapper to allow our validation and triggers to work with the method.
+See CI's documentation for the replace method. This is simply a wrapper to allow our validation and triggers to work with the method.
 
 ## Updating Data
 
@@ -520,84 +520,23 @@ A chainable method that specifies the model should return the results as an arra
 
 A chainable method that specifies the model should return the results as an object (for single results) or an array of objects (for multiple rows). This overrides the models `$result_type` class variable.
 
-### as_json()
+You can also pass in the name of a class (including namespace) to have the results brought back as instances of that class. 
 
-A chainable method that specifies the model should return the results as a JSON object suitable for returning in AJAX methods. This overrides the models `$result_type` class variable.
+	$this->user_model->as_object('\\App\\Entities\\User')->find_all();
 
 ## Chainable Methods
 
-Thanks to CodeIgniter's [Query Builder](http://www.codeigniter.com/userguide3/database/query_builder.html) library, it is very simply to modify the CIDbModel's methods. This can be done through either chainable methods or by extending methods.
+Thanks to CodeIgniter's [Query Builder](http://www.codeigniter.com/userguide3/database/query_builder.html) library, it is very simple to modify the CIDbModel's methods. This can be done through either chainable methods or by extending methods.
 
 Chainable methods are a feature of PHP 5 and higher that allow you to return the results of one function into another, and to keep this 'chain' of events continuing through several functions. Sprint duplicates several of the stock Query Builder methods in CIDbModel to make it simple and elegant to customize your queries.
 
-Sprint's model supports chaining for most of the Query Builder methods available, including:
-
-* select
-* select_max
-* select_min
-* select_avg
-* select_sum
-* from
-* join
-* where
-* or_where
-* where_in
-* or_where_in
-* where_not_in
-* or_where_not_in
-* like
-* or_like
-* not_like
-* or_not_like
-* group_by
-* distinct
-* having
-* or_having
-* order_by
-* limit
-* count_all
-* count_all_results
-* group_start
-* or_group_start
-* not_group_start
-* or_not_group_start
-* group_end
-* set
-* offset
-* get_compiled_select
-* get_compiled_insert
-* get_compiled_update
-* get_compiled_delete
-
-All of these methods accept the same parameters as their [CodeIgniter](http://www.codeigniter.com/userguide3/database/query_builder.html) counterparts. These are included for the sole reason of making your syntax more expressive. You can now do things like:
+Sprint's model supports chaining for all of the Query Builder methods available through the `__call()` magic method. This simply means that you can use any standard `$this->db` methods by simply calling it on the model class.
 
 	$this->user_model->where('city', 'Detroit')
 					 ->or_where('city', 'Cleveland')
 					 ->join('tour_dates', 'x on y')
 					 ->find_all();
 
-### where()
-
-Modifies the query to a specific `where` condition. Can be used with any of the read-type queries (find, find_all, etc).
-
-The first parameter is the field to match against. The second parameter is the value of the field to find.
-
-Accepts any of the standard CodeIgniter Query Builder where statements.
-
-	$this->user_model->where('email', 'darth@theempire.com');
-	$this->user_model->where('email !=', 'darth@theempire.com');
-	$this->user_model->where( array('email' => 'darth@theempire.com') );
-
-	$this->user_model->where('email', 'darth@theempire.com')
-					 ->find_all();
-
-You can also pass an array of field/value pairs as the first parameter. In this case, the second parameter is ignored.
-
-	$wheres = array(
-		‘active’  => 1,
-		‘deleted’ => 0
-	);
-	$results = $this->model->where($wheres)->find_all();
 
 ## Extending Methods
 
@@ -653,6 +592,7 @@ To observe an event and have your methods called you simply add the method name 
 * **method** Will be the name of the method that called. Like `insert`, `update`, `update_batch`, etc.
 * **fields** The data provided by the method. For inserts and updates it is the data that was just inserted/updated. When using the insert/update_batch methods, it will be an array of all of the row data that you can loop over.
 
+```
 	protected function set_created_on($data)
 	{
 		if ($data['method'] == 'insert_batch' || $data['method'] ==  'update_batch')
@@ -667,6 +607,169 @@ To observe an event and have your methods called you simply add the method name 
 
 		return $row;
 	}
+```
+
+Due to the nature of the different methods that call the observers, it's impossible to have a perfectly matching set of parameters for each. The data passed into each observer has been made as consistent as possible. 
+
+Each method calling it also has slightly different requirements for the data sent back to it. When writing observers your best bet is to sprinkle liberal var_dumps, examine the CIDBModel calling methods, and document your observers well to avoid future confusion.
+
+<table>
+	<thead>
+		<tr>
+			<th>Method</th>
+			<th>Event</th>
+			<th>$data</th>
+			<th>Return Value</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>find</td>
+			<td>before_event</td>
+			<td>id, method</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>find</td>
+			<td>after_find</td>
+			<td>id, method, fields (the query results)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>find_by</td>
+			<td>before_find</td>
+			<td>method, fields (the where key/value pairs)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>find_by</td>
+			<td>after_find</td>
+			<td>method, fields (the query results)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>find_all</td>
+			<td>before_find</td>
+			<td>method</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>find_all</td>
+			<td>after_find</td>
+			<td>method, fields (the query results)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>insert</td>
+			<td>before_insert</td>
+			<td>method, fields (the data to insert)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>insert</td>
+			<td>after_insert</td>
+			<td>id, method, fields (the query results)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>insert_batch</td>
+			<td>before_insert</td>
+			<td>method, fields (array of data to insert)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>replace</td>
+			<td>after_insert</td>
+			<td>id, method, fields (the query results)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+		<td>update</td>
+			<td>before_update</td>
+			<td>id, method, fields (the data to insert)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update</td>
+			<td>after_update</td>
+			<td>id, method, fields (the query results), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+		<td>update_batch</td>
+			<td>before_update (called for each row)</td>
+			<td>method, fields (data to insert)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update_batch</td>
+			<td>after_update (called for each row)</td>
+			<td>method, fields (the query results), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+		<td>update_many</td>
+			<td>before_update</td>
+			<td>ids, method, fields (arrays of data to update)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update_many</td>
+			<td>after_update</td>
+			<td>ids, method, fields (original update data), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>update_by</td>
+			<td>before_update</td>
+			<td>method, fields (the data to update)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update_by</td>
+			<td>after_update</td>
+			<td>method, fields (original update data), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>update_all</td>
+			<td>before_update</td>
+			<td>method, fields (the data to update)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>update_all</td>
+			<td>after_update</td>
+			<td>method, fields (original update data), results (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>delete</td>
+			<td>before_delete</td>
+			<td>method, fields (the where key/value pairs)</td>
+			<td>fields</td>
+		</tr>
+		<tr>
+			<td>delete</td>
+			<td>after_delete</td>
+			<td>method, fields (where key/value pairs), result (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+		<tr>
+			<td>delete_many</td>
+			<td>before_delete</td>
+			<td>ids, method</td>
+			<td>ids</td>
+		</tr>
+		<tr>
+			<td>delete_many</td>
+			<td>after_delete</td>
+			<td>ids, method, result (bool for success/fail)</td>
+			<td>--</td>
+		</tr>
+	</tbody>
+</table>
+
 
 ## Validating Data
 
@@ -705,7 +808,7 @@ Unlike, the $validation_rules array, the $insert_validation_rules array consists
 
 ### Skipping Validation
 
-If you need to turn off validation for any reason (like performance durin a large CSV import) you can use the `skip_validation()` method, passing either `true` or `false` to the skip or not skip the validation process. This stays in effect as long as the model is loaded but will reset the next time the model is loaded in memory. Typically the next page request.
+If you need to turn off validation for any reason (like performance durin a large CSV import) you can use the `skip_validation()` method, passing either `true` or `false` to skip or not skip the validation process. This stays in effect as long as the model is loaded but will reset the next time the model is loaded in memory. Typically the next page request.
 
 	$this->user_model->skip_validation(true);
 

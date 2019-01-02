@@ -65,7 +65,11 @@ class CIMailService implements MailServiceInterface {
      */
     public function send($clear_after=true)
     {
-        return $this->ci->email->send($clear_after);
+        $this->ci->email->mailtype = $this->format;
+
+        $result = $this->ci->email->send(false);
+
+        return $result;
     }
 
     //--------------------------------------------------------------------
@@ -204,6 +208,8 @@ class CIMailService implements MailServiceInterface {
     {
         $this->ci->email->message($message);
 
+        $this->format = 'html';
+
         return $this;
     }
 
@@ -218,6 +224,8 @@ class CIMailService implements MailServiceInterface {
     public function text_message($message)
     {
         $this->ci->email->set_alt_message($message);
+
+        $this->format = 'text';
 
         return $this;
     }

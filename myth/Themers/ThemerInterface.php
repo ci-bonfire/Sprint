@@ -31,10 +31,12 @@
  */
 
 /**
- * ThemerInterface
+ * Interface ThemerInterface
  *
  * Provides a consistent manner to implement different theme engines
  * without having to make sweeping changes to your application.
+ *
+ * @package Myth\Themers
  */
 interface ThemerInterface
 {

@@ -25,7 +25,7 @@ The method returns either `TRUE` or `FALSE` depending on the success/failure of 
 
 	if (! $auth->login($credentials) )
 	{
-		$this->setMessage($auth->error(), 'error');
+		$this->setMessage($auth->error(), 'danger');
 	}
 
 The second parameter is a boolean value that tells whether we should remember the user. See the section on [Remembering Users](#remembering_users) for more details. The system does allow for a user to be remembered on more than one device and more than one browser at a time. Which allows them to maintain separate persistent logins at home and work and even on their mobile device simultaneously. 
@@ -127,8 +127,8 @@ If a user has legitimately forgotten their password and needs to make a number o
 Our goal is to balance the needs of the user against the need for security by making the time needed to attempt a brute force attack unreasonably long. Obviously, if an attacker is really determined and has enough time, they can modify their script and bypass these, and any, protection. So, while this won't guarantee complete protection (only methods like those unfriendly methods described above can do that), it will discourage almost all attackers.
 
 - A user gets, by default, 5 failed login attempts before throttling kicks in at all.
-- On the 6th failed attempt, the system requires 2 seconds before another attempt can be made. This is unlikely to affect a regular user.
-- On each attempt after this the delay time is doubled, so it goes 2 seconds, 4, 8, 16, 32 up to a maximum length. By default, this is 45 seconds, the shortest recommended amount by [OWASP](https://www.owasp.org/index.php/Guide_to_Authentication#Suggested_Timeouts).
+- On the 6th failed attempt, the system requires 5 seconds before another attempt can be made. This is unlikely to affect a regular user.
+- On each attempt after this the delay time is doubled, so it goes 5 seconds, 10, 20, 40 up to a maximum length. By default, this is 50 seconds, the shortest recommended amount by [OWASP](https://www.owasp.org/index.php/Guide_to_Authentication#Suggested_Timeouts).
 - After the maximum value has been attained, that time will be the same for each following login attempt.
 
 ### Distributed Brute Force Protection

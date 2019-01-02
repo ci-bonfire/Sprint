@@ -253,7 +253,7 @@ if ( ! function_exists('increment_string'))
 	 */
 	function increment_string($str, $separator = '_', $first = 1)
 	{
-		preg_match('/(.+)'.$separator.'([0-9]+)$/', $str, $match);
+		preg_match('/(.+)'.preg_quote($separator, '/').'([0-9]+)$/', $str, $match);
 		return isset($match[2]) ? $match[1].$separator.($match[2] + 1) : $str.$separator.$first;
 	}
 }
@@ -270,7 +270,7 @@ if ( ! function_exists('alternator'))
 	 * @param	string (as many parameters as needed)
 	 * @return	string
 	 */
-	function alternator($args)
+	function alternator()
 	{
 		static $i;
 
@@ -279,6 +279,7 @@ if ( ! function_exists('alternator'))
 			$i = 0;
 			return '';
 		}
+
 		$args = func_get_args();
 		return $args[($i++ % count($args))];
 	}

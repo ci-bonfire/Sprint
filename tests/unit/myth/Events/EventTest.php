@@ -2,7 +2,7 @@
 
 namespace Myth;
 
-use \Myth\Events as Events;
+use \Myth\Events\Events as Events;
 
 class EventTest extends \CodeIgniterTestCase
 {

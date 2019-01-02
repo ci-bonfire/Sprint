@@ -5,6 +5,8 @@
  *
  * Created by: SprintPHP
  * Created on: 2014-10-10 06:39:11 am
+ *
+ * @property $dbforge
  */
 class Migration_create_user_tables extends CI_Migration {
 
@@ -79,7 +81,7 @@ class Migration_create_user_tables extends CI_Migration {
         $this->dbforge->add_key('id', true);
         $this->dbforge->add_key('email');
 
-        $this->dbforge->create_table('users');
+        $this->dbforge->create_table('users', true, config_item('migration_create_table_attr'));
 
         // User Meta
         $fields = [
@@ -99,9 +101,9 @@ class Migration_create_user_tables extends CI_Migration {
         ];
 
         $this->dbforge->add_field($fields);
-        $this->dbforge->add_key(['user_id', 'meta_key']);
+        $this->dbforge->add_key(['user_id', 'meta_key'], true);
 
-        $this->dbforge->create_table('user_meta');
+        $this->dbforge->create_table('user_meta', true, config_item('migration_create_table_attr'));
 
     }
 

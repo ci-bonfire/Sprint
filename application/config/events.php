@@ -31,7 +31,7 @@
  */
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-use \Myth\Events as Events;
+use \Myth\Events\Events as Events;
 use Myth\Mail\Mail as Mail;
 
 //--------------------------------------------------------------------

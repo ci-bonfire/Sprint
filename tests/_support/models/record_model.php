@@ -6,8 +6,8 @@ class Record_model extends CIDbModel {
 
 	protected $table_name = 'records_table';
 
-	protected $set_created = false;
-	protected $set_modified = false;
+	public $set_created = false;
+	public $set_modified = false;
 
     protected $validation_rules = array(
         array(

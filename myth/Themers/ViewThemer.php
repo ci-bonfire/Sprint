@@ -31,8 +31,12 @@
  */
 
 use Myth\Modules as Modules;
-use Myth\Themers\ThemerInterface;
 
+/**
+ * Class ViewThemer
+ *
+ * @package Myth\Themers
+ */
 class ViewThemer implements ThemerInterface
 {
 
@@ -124,7 +128,9 @@ class ViewThemer implements ThemerInterface
             }
         }
 
-        if (substr($dir, -strlen($this->ci->router->fetch_module() .'/')) == $this->ci->router->fetch_module() . '/') {
+        $module = $this->ci->router->fetch_module();
+
+        if (! empty($module) && substr($dir, -strlen($module .'/')) == $module . '/') {
             $dir = '';
         }
 

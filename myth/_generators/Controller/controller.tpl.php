@@ -6,8 +6,8 @@
 
 $model_string = $model ? "'{$model}'" : 'null';
 $lower_model  = trim( strtolower($model_string), "' " );
+$lower_model_esc = strpos($lower_model, 'null') !== false ? 'null' : "'{$lower_model}'";
 $lower_controller   = strtolower($controller_name);
-
 
 //--------------------------------------------------------------------
 // Build our Methods
@@ -23,14 +23,14 @@ $index_method = '';
 
 if (! empty($model) )
 {
-	$index_method = <<<EOD
+    $index_method = <<<EOD
 \$this->load->library('table');
 
-		\$offset = \$this->uri->segment( \$this->uri->total_segments() );
+        \$offset = \$this->uri->segment( \$this->uri->total_segments() );
 
         \$rows = \$this->{$lower_model}->limit(\$this->limit, \$offset)
-	                 ->as_array()
-	                 ->find_all();
+                     ->as_array()
+                     ->find_all();
         \$this->setVar('rows', \$rows);
 
 \t\t
@@ -44,22 +44,22 @@ $create_method = '';
 
 if (! empty($model))
 {
-	$create_method = <<<EOD
+    $create_method = <<<EOD
 \$this->load->helper('form');
-		\$this->load->helper('inflector');
+        \$this->load->helper('inflector');
 
-		if (\$this->input->method() == 'post')
-		{
-			\$post_data = \$this->input->post();
+        if (\$this->input->method() == 'post')
+        {
+            \$post_data = \$this->input->post();
 
-			if (\$this->{$lower_model}->insert(\$post_data) )
-			{
-				\$this->setMessage('Successfully created item.', 'success');
-				redirect( site_url('{$lower_controller}') );
-			}
+            if (\$this->{$lower_model}->insert(\$post_data) )
+            {
+                \$this->setMessage('Successfully created item.', 'success');
+                redirect( site_url('{$lower_controller}') );
+            }
 
-			\$this->setMessage('Error creating item. '. \$this->{$lower_model}->error(), 'error');
-		}
+            \$this->setMessage('Error creating item. '. \$this->{$lower_model}->error(), 'danger');
+        }
 
 \t\t
 EOD;
@@ -72,16 +72,16 @@ $show_method = '';
 
 if (! empty($model))
 {
-	$show_method = <<<EOD
+    $show_method = <<<EOD
 \$item = \$this->{$lower_model}->find(\$id);
 
-		if (! \$item)
-		{
-			\$this->setMessage('Unable to find that item.', 'warning');
-			redirect( site_url('{$lower_controller}') );
-		}
+        if (! \$item)
+        {
+            \$this->setMessage('Unable to find that item.', 'warning');
+            redirect( site_url('{$lower_controller}') );
+        }
 
-		\$this->setVar('item', \$item);
+        \$this->setVar('item', \$item);
 
 \t\t
 EOD;
@@ -94,25 +94,25 @@ $update_method = '';
 
 if (! empty($model))
 {
-	$update_method = <<<EOD
+    $update_method = <<<EOD
 \$this->load->helper('form');
-		\$this->load->helper('inflector');
+        \$this->load->helper('inflector');
 
-		if (\$this->input->method() == 'post')
-		{
-			\$post_data = \$this->input->post();
+        if (\$this->input->method() == 'post')
+        {
+            \$post_data = \$this->input->post();
 
-			if (\$this->{$lower_model}->update(\$id, \$post_data))
-			{
-				\$this->setMessage('Successfully updated item.', 'success');
-				redirect( site_url('{$lower_controller}') );
-			}
+            if (\$this->{$lower_model}->update(\$id, \$post_data))
+            {
+                \$this->setMessage('Successfully updated item.', 'success');
+                redirect( site_url('{$lower_controller}') );
+            }
 
-			\$this->setMessage('Error updating item. '. \$this->{$lower_model}->error(), 'error');
-		}
+            \$this->setMessage('Error updating item. '. \$this->{$lower_model}->error(), 'danger');
+        }
 
-		\$item = \$this->{$lower_model}->find(\$id);
-		\$this->setVar('item', \$item);
+        \$item = \$this->{$lower_model}->find(\$id);
+        \$this->setVar('item', \$item);
 
 \t\t
 EOD;
@@ -125,15 +125,15 @@ $delete_method = '';
 
 if (! empty($model))
 {
-	$delete_method = <<<EOD
+    $delete_method = <<<EOD
 if (\$this->{$lower_model}->delete(\$id))
-		{
-			\$this->setMessage('Successfully deleted item.', 'success');
-			redirect( site_url('{$lower_controller}') );
-		}
+        {
+            \$this->setMessage('Successfully deleted item.', 'success');
+            redirect( site_url('{$lower_controller}') );
+        }
 
-		\$this->setMessage('Error deleting item. '. \$this->{$lower_model}->error(), 'error');
-		redirect( site_url( '{$lower_controller}' ) );
+        \$this->setMessage('Error deleting item. '. \$this->{$lower_model}->error(), 'danger');
+        redirect( site_url( '{$lower_controller}' ) );
 \t\t
 EOD;
 }
@@ -145,13 +145,13 @@ $fields = '';
 
 if ($themed)
 {
-	$index_method   .= "\$this->render();";
-	$create_method  .= "\$this->render();";
-	$show_method    .= "\$this->render();";
-	$update_method  .= "\$this->render();";
+    $index_method   .= "\$this->render();";
+    $create_method  .= "\$this->render();";
+    $show_method    .= "\$this->render();";
+    $update_method  .= "\$this->render();";
 
-	$fields = "
-	/**
+    $fields = "
+    /**
      * Allows per-controller override of theme.
      * @var null
      */
@@ -163,7 +163,7 @@ if ($themed)
      */
     protected \$layout = null;
 
-	/**
+    /**
      * The UIKit to make available to the template views.
      * @var string
      */
@@ -173,7 +173,7 @@ if ($themed)
      * The number of rows to show when paginating results.
      * @var int
      */
-	protected \$limit = 25;
+    protected \$limit = 25;
 ";
 }
 
@@ -192,7 +192,7 @@ use {$base_path}{$base_class};
  */
 class {$controller_name} extends {$base_class} {
 
-	/**
+    /**
      * The type of caching to use. The default values are
      * set globally in the environment's start file, but
      * these will override if they are set.
@@ -204,7 +204,7 @@ class {$controller_name} extends {$base_class} {
     protected \$language_file   = {$lang_file};
 
     // If set, this model file will automatically be loaded.
-    protected \$model_file      = '{$lower_model}';
+    protected \$model_file      = {$lower_model_esc};
 
     {$fields}
 
@@ -216,24 +216,24 @@ class {$controller_name} extends {$base_class} {
      *
      * @return mixed
      */
-	public function index()
-	{
-		{$index_method}
-	}
+    public function index()
+    {
+        {$index_method}
+    }
 
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 
     /**
      * Create a single item.
      *
      * @return mixed
      */
-	public function create()
-	{
-		{$create_method}
-	}
+    public function create()
+    {
+        {$create_method}
+    }
 
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 
     /**
      * Displays a single item.
@@ -241,12 +241,12 @@ class {$controller_name} extends {$base_class} {
      * @param  int \$id  The primary_key of the object.
      * @return mixed
      */
-	public function show(\$id)
-	{
-		{$show_method}
-	}
+    public function show(\$id)
+    {
+        {$show_method}
+    }
 
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 
     /**
      * Updates a single item.
@@ -254,24 +254,24 @@ class {$controller_name} extends {$base_class} {
      * @param  int \$id  The primary_key of the object.
      * @return mixed
      */
-	public function update(\$id)
-	{
-		{$update_method}
-	}
+    public function update(\$id)
+    {
+        {$update_method}
+    }
 
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 
-	/**
-	 * Deletes a single item
-	 *
+    /**
+     * Deletes a single item
+     *
      * @param  int \$id  The primary_key of the object.
      * @return mixed
-	 */
-	public function delete(\$id)
-	{
-		{$delete_method}
-	}
+     */
+    public function delete(\$id)
+    {
+        {$delete_method}
+    }
 
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 }
 ";

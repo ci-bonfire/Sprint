@@ -566,20 +566,22 @@ abstract class BaseGenerator extends CLIController {
 	 */
 	public function sandbox($path)
 	{
+        $path = $this->normalizePath($path);
+
 		// If it's writing to BASEPATH - FIX IT
-		if (strpos($path, BASEPATH) === 0)
+		if (strpos($path, $this->normalizePath(BASEPATH) ) === 0)
 		{
 			return APPPATH . $path;
 		}
 
 		// Exact match for FCPATH?
-		if (strpos($path, FCPATH) === 0)
+		if (strpos($path, $this->normalizePath(FCPATH) ) === 0)
 		{
 			return $path;
 		}
 
 		// Exact match for APPPATH?
-		if (strpos($path, APPPATH) === 0)
+		if (strpos($path, $this->normalizePath(APPPATH) ) === 0)
 		{
 			return $path;
 		}
@@ -744,4 +746,67 @@ abstract class BaseGenerator extends CLIController {
 	}
 
 	//--------------------------------------------------------------------
+
+    /**
+     * Normalizes a path and cleans it up for healthy use within
+     * realpath() and helps to mitigate changes between Windows and *nix
+     * operating systems.
+     *
+     * Found at http://php.net/manual/en/function.realpath.php#112367
+     *
+     * @param $path
+     *
+     * @return string
+     */
+    protected function normalizePath($path)
+    {
+        // Array to build a new path from the good parts
+        $parts = array();
+
+        // Replace backslashes with forward slashes
+        $path = str_replace('\\', '/', $path);
+
+        // Combine multiple slashes into a single slash
+        $path = preg_replace('/\/+/', '/', $path);
+
+        // Collect path segments
+        $segments = explode('/', $path);
+
+        // Initialize testing variable
+        $test = '';
+
+        foreach($segments as $segment)
+        {
+            if($segment != '.')
+            {
+                $test = array_pop($parts);
+
+                if(is_null($test))
+                {
+                    $parts[] = $segment;
+                }
+                else if ($segment == '..')
+                {
+                    if ($test == '..')
+                    {
+                        $parts[] = $test;
+                    }
+
+                    if ($test == '..' || $test == '')
+                    {
+                        $parts[] = $segment;
+                    }
+                }
+                else
+                {
+                    $parts[] = $test;
+                    $parts[] = $segment;
+                }
+            }
+        }
+        return implode('/', $parts);
+    }
+
+    //--------------------------------------------------------------------
+
 }

@@ -795,7 +795,7 @@ class CI_Session {
 	/**
 	 * Set flashdata
 	 *
-	 * Legacy CI_Session compatibiliy method
+	 * Legacy CI_Session compatibility method
 	 *
 	 * @param	mixed	$data	Session data key or an associative array
 	 * @param	mixed	$value	Value to store
@@ -869,7 +869,7 @@ class CI_Session {
 	public function set_tempdata($data, $value = NULL, $ttl = 300)
 	{
 		$this->set_userdata($data, $value);
-		$this->mark_as_temp($data, $ttl);
+		$this->mark_as_temp(is_array($data) ? array_keys($data) : $data, $ttl);
 	}
 
 	// ------------------------------------------------------------------------

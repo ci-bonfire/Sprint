@@ -29,11 +29,15 @@
  * @link        http://sprintphp.com
  * @since       Version 1.0
  */
+use Myth\Themers\MetaCollection;
+use Zend\Escaper\Escaper;
+
+require_once dirname(__FILE__) .'/../Themers/escape.php';
 
 /**
  * Class ThemedController
  *
- * @package Bonfire\Libraries\Controllers
+ * @package Myth\Controllers
  */
 class ThemedController extends BaseController
 {
@@ -85,6 +89,24 @@ class ThemedController extends BaseController
      */
     protected $stylesheets = array();
 
+    /**
+     * A MenuCollection instance
+     * @var
+     */
+    protected $meta;
+
+    /**
+     * Whether set() should escape the output...
+     * @var bool
+     */
+    protected $auto_escape = null;
+
+    /**
+     * An instance of ZendFrameworks Escaper
+     * @var null
+     */
+    protected $escaper = null;
+
     //--------------------------------------------------------------------
 
     /**
@@ -131,6 +153,15 @@ class ThemedController extends BaseController
         {
             $this->uikit = new $uikit();
         }
+
+        // Load up our meta collection
+        $this->meta = new MetaCollection( get_instance() );
+
+        // Should we autoescape vars?
+        if (is_null($this->auto_escape))
+        {
+            $this->auto_escape = config_item( 'theme.auto_escape' );
+        }
     }
 
     //--------------------------------------------------------------------
@@ -160,7 +191,15 @@ class ThemedController extends BaseController
         $this->themer->setLayout($layout);
 
         // Merge any saved vars into the data
+        // But first, escape the data if needed
+        if ($this->auto_escape)
+        {
+            $data = esc($data, 'html');
+        }
         $data = array_merge($data, $this->vars);
+
+        // Make sure the MetaCollection is available in the view.
+        $data['html_meta'] = $this->meta;
 
         // Include our UIKit so views can use it
         if (! empty($this->uikit)) {
@@ -184,18 +223,40 @@ class ThemedController extends BaseController
 
     /**
      * Sets a data variable to be sent to the view during the render() method.
+     * Will auto-escape data on the way in, unless specifically told not to.
+     *
+     * Uses ZendFramework's Escaper to handle the data escaping,
+     * based on context. Valid contexts are:
+     *      - html
+     *      - htmlAttr
+     *      - js
+     *      - css
+     *      - url
      *
      * @param string $name
      * @param mixed $value
+     * @param string $context
+     * @param bool $do_escape
      */
-    public function setVar($name, $value = null)
+    public function setVar($name, $value = null, $context='html', $do_escape=null)
     {
-        if (is_array($name)) {
-            foreach ($name as $k => $v) {
-                $this->vars[$k] = $v;
+        $escape = $do_escape == true ? true : $this->auto_escape;
+
+        if (is_null($this->escaper))
+        {
+            $this->escaper = new Escaper(config_item('charset'));
+        }
+
+        if (is_array($name))
+        {
+            foreach ($name as $k => $v)
+            {
+                $this->vars[$k] = $escape ? esc($v, $context, $this->escaper) : $v;
             }
-        } else {
-            $this->vars[$name] = $value;
+        }
+        else
+        {
+            $this->vars[$name] = $escape ? esc($value, $context, $this->escaper) : $value;
         }
     }
 
@@ -334,3 +395,4 @@ class ThemedController extends BaseController
 
     //--------------------------------------------------------------------
 }
+

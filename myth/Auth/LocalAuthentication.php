@@ -31,7 +31,7 @@
  */
 
 use Myth\Auth\AuthenticateInterface;
-use Myth\Events as Events;
+use Myth\Events\Events;
 
 /**
  * Class LocalAuthentication
@@ -107,33 +107,9 @@ class LocalAuthentication implements AuthenticateInterface {
 
         if (! $user)
         {
-	        // We need to send an error even if no
-	        // user was found!
-	        $this->error = lang('auth.invalid_user');
-
-	        // If an email is present, log the attempt
-	        if (! empty($credentials['email']) )
-	        {
-		        $this->ci->login_model->recordLoginAttempt($credentials['email']);
-	        }
-
             $this->user = null;
             return $user;
-        }
-
-        // If the user is throttled due to too many invalid logins
-        // or the system is under attack, kick them back.
-        // We need to test for this after validation because we
-        // don't want it to affect a valid login.
-
-        // If throttling time is above zero, we can't allow
-        // logins now.
-        $time = (int)$this->isThrottled($user['email']);
-        if ($time > 0)
-        {
-            $this->error = sprintf(lang('auth.throttled'), $time);
-            return false;
-        }
+        }       
 
         $this->loginUser($user);
 
@@ -170,20 +146,20 @@ class LocalAuthentication implements AuthenticateInterface {
         $password = $credentials['password'];
         unset($credentials['password']);
 
-	    // We should only be allowed 1 single other credential to
-	    // test against.
-	    if (count($credentials) > 1)
-	    {
-		    $this->error = lang('auth.too_many_credentials');
-		    return false;
-	    }
+        // We should only be allowed 1 single other credential to
+        // test against.
+        if (count($credentials) > 1)
+        {
+            $this->error = lang('auth.too_many_credentials');
+            return false;
+        }
 
         // Ensure that the fields are allowed validation fields
-	    if (! in_array(key($credentials), config_item('auth.valid_fields')) )
-	    {
-		    $this->error = lang('auth.invalid_credentials');
-		    return false;
-	    }
+        if (! in_array(key($credentials), config_item('auth.valid_fields')) )
+        {
+            $this->error = lang('auth.invalid_credentials');
+            return false;
+        }
 
         // We do not want to force case-sensitivity on things
         // like username and email for usability sake.
@@ -197,9 +173,25 @@ class LocalAuthentication implements AuthenticateInterface {
                                  ->where($credentials)
                                  ->first();
 
+        // If the user is throttled due to too many invalid logins
+        // or the system is under attack, kick them back.
+
+        // If throttling time is above zero, we can't allow
+        // logins now.
+        $time = (int)$this->isThrottled($user);
+        if ($time > 0)
+        {
+            $this->error = sprintf(lang('auth.throttled'), $time);
+            return false;
+        }
+
+        // Get ip address
+        $ip_address = $this->ci->input->ip_address();
+
         if (! $user)
         {
             $this->error = lang('auth.invalid_user');
+            $this->ci->login_model->recordLoginAttempt($ip_address);
             return false;
         }
 
@@ -209,7 +201,7 @@ class LocalAuthentication implements AuthenticateInterface {
         if (! $result)
         {
             $this->error = lang('auth.invalid_password');
-            $this->ci->login_model->recordLoginAttempt($user['email']);
+            $this->ci->login_model->recordLoginAttempt($ip_address, $user['id']);
             return false;
         }
 
@@ -251,8 +243,18 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        // Destroy the session
-        $this->ci->session->sess_destroy();
+        // Destroy the session data - but ensure a session is still
+        // available for flash messages, etc.
+        if (isset($_SESSION))
+        {
+            foreach ( $_SESSION as $key => $value )
+            {
+                $_SESSION[ $key ] = NULL;
+                unset( $_SESSION[ $key ] );
+            }
+        }
+        // Also, regenerate the session ID for a touch of added safety.
+        $this->ci->session->sess_regenerate(true);
 
         // Take care of any rememberme functionality.
         if (config_item('auth.allow_remembering'))
@@ -292,6 +294,10 @@ class LocalAuthentication implements AuthenticateInterface {
                 return false;
             }
         }
+
+        // If logged in, ensure cache control
+        // headers are in place
+        $this->setHeaders();
 
         return true;
     }
@@ -480,10 +486,10 @@ class LocalAuthentication implements AuthenticateInterface {
      *  - If they are NOT, will return FALSE.
      *  - If they ARE, will return the number of seconds until they can try again.
      *
-     * @param $email
+     * @param $user
      * @return mixed
      */
-    public function isThrottled($email)
+    public function isThrottled($user)
     {
         // Not throttling? Get outta here!
         if (! config_item('auth.allow_throttling'))
@@ -491,12 +497,19 @@ class LocalAuthentication implements AuthenticateInterface {
             return false;
         }
 
-        // Emails should NOT be case sensitive.
-        $email = strtolower($email);
+        // Get user_id
+        $user_id = $user ? $user['id'] : null;
+        
+        // Get ip address
+        $ip_address = $this->ci->input->ip_address();
+
+        // Have any attempts been made?
+        $attempts = $this->ci->login_model->countLoginAttempts($ip_address, $user_id);
 
         // Grab the amount of time to add if the system thinks we're
         // under a distributed brute force attack.
-        $dbrute_time = $this->ci->login_model->distributedBruteForceTime();
+        // Affect users that have at least 1 failure login attempt
+        $dbrute_time = ($attempts === 0) ? 0 : $this->ci->login_model->distributedBruteForceTime();
 
         // If this user was found to possibly be under a brute
         // force attack, their account would have been banned
@@ -519,16 +532,13 @@ class LocalAuthentication implements AuthenticateInterface {
 
         // Grab the time of last attempt and
         // determine if we're throttled by amount of time passed.
-        $last_time = $this->ci->login_model->lastLoginAttemptTime($email);
-
-        // Have any attempts been made?
-        $attempts = $this->ci->login_model->countLoginAttempts($email);
+        $last_time = $this->ci->login_model->lastLoginAttemptTime($ip_address, $user_id);
 
         $allowed = config_item('auth.allowed_login_attempts');
 
         // We're not throttling if there are 0 attempts or
         // the number is less than or equal to the allowed free attempts
-        if ($attempts === 0 || $attempts <= $allowed)
+        if ($attempts === 0 || $attempts < $allowed)
         {
             // Before we can say there's nothing up here,
             // we need to check dbrute time.
@@ -546,7 +556,7 @@ class LocalAuthentication implements AuthenticateInterface {
         // to check the elapsed time of all of these attacks. If they are
         // less than 1 minute it's obvious this is a brute force attack,
         // so we'll set a session flag and block that user for 15 minutes.
-        if ($attempts > 100 && $this->ci->login_model->isBruteForced($email))
+        if ($attempts > 100 && $this->ci->login_model->isBruteForced($ip_address, $user_id))
         {
             $this->error = lang('auth.bruteBan_notice');
 
@@ -560,7 +570,7 @@ class LocalAuthentication implements AuthenticateInterface {
 
         $max_time = config_item('auth.max_throttle_time');
 
-        $add_time = pow(2, $attempts);
+        $add_time = 5 * pow(2, $attempts);
 
         if ($add_time > $max_time)
         {
@@ -644,7 +654,7 @@ class LocalAuthentication implements AuthenticateInterface {
         }
 
         // Generate a hash to match against the table.
-        $credentials['reset_hash'] = hash('sha1', config_item('auth.salt') .$credentials['code']);
+        $reset_hash = hash('sha1', config_item('auth.salt') .$credentials['code']);
         unset($credentials['code']);
 
         if (! empty($credentials['email']))
@@ -653,11 +663,34 @@ class LocalAuthentication implements AuthenticateInterface {
         }
 
         // Is there a matching user?
-        $user = $this->user_model->find_by($credentials);
+        $user = $this->user_model->as_array()
+                                 ->where($credentials)
+                                 ->first();
+
+        // If throttling time is above zero, we can't allow
+        // logins now.
+        $time = (int)$this->isThrottled($user);
+        if ($time > 0)
+        {
+            $this->error = sprintf(lang('auth.throttled'), $time);
+            return false;
+        }
+
+        // Get ip address
+        $ip_address = $this->ci->input->ip_address();
 
         if (! $user)
         {
             $this->error = lang('auth.reset_no_user');
+            $this->ci->login_model->recordLoginAttempt($ip_address);
+            return false;
+        }
+
+        // Is generated reset_hash string matches one from the table?
+        if ($reset_hash !== $user['reset_hash'])
+        {
+            $this->error = lang('auth.reset_no_user');
+            $this->ci->login_model->recordLoginAttempt($ip_address, $user['id']);
             return false;
         }
 
@@ -668,13 +701,16 @@ class LocalAuthentication implements AuthenticateInterface {
             'reset_hash'   => null
         ];
 
-        if (! $this->user_model->update($user->id, $data))
+        if (! $this->user_model->update($user['id'], $data))
         {
             $this->error = $this->user_model->error();
             return false;
         }
 
-        Events::trigger('didResetPassword', [(array)$user]);
+        // Clear our login attempts
+        $this->ci->login_model->purgeLoginAttempts($ip_address, $user['id']);
+
+        Events::trigger('didResetPassword', [$user]);
 
         return true;
     }
@@ -740,14 +776,12 @@ class LocalAuthentication implements AuthenticateInterface {
     /**
      * Purges all login attempt records from the database.
      *
-     * @param $email
+     * @param null $ip_address
+     * @param null $user_id
      */
-    public function purgeLoginAttempts($email)
+    public function purgeLoginAttempts($ip_address = null, $user_id = null)
     {
-        // Emails should NOT be case sensitive.
-        $email = strtolower($email);
-
-        $this->ci->login_model->purgeLoginAttempts($email);
+        $this->ci->login_model->purgeLoginAttempts($ip_address, $user_id);
 
         // @todo record activity of login attempts purge.
         Events::trigger('didPurgeLoginAttempts', [$email]);
@@ -882,14 +916,25 @@ class LocalAuthentication implements AuthenticateInterface {
         // Save the user for later access
         $this->user = $user;
 
+        // Get ip address
+        $ip_address = $this->ci->input->ip_address();
+
+        // Regenerate the session ID to help protect
+        // against session fixation
+        $this->ci->session->sess_regenerate();
+
         // Let the session know that we're logged in.
         $this->ci->session->set_userdata('logged_in', $user['id']);
 
         // Clear our login attempts
-        $this->ci->login_model->purgeLoginAttempts($user['email']);
+        $this->ci->login_model->purgeLoginAttempts($ip_address, $user['id']);
 
         // Record a new Login
         $this->ci->login_model->recordLogin($user);
+
+        // If logged in, ensure cache control
+        // headers are in place
+        $this->setHeaders();
 
         // We'll give a 20% chance to need to do a purge since we
         // don't need to purge THAT often, it's just a maintenance issue.
@@ -901,5 +946,21 @@ class LocalAuthentication implements AuthenticateInterface {
     }
 
     //--------------------------------------------------------------------
+
+    /**
+     * Sets the headers to ensure that pages are not cached when a user
+     * is logged in, helping to protect against logging out and then
+     * simply hitting the Back button on the browser and getting private
+     * information because the page was loaded from cache.
+     */
+    protected function setHeaders()
+    {
+        $this->ci->output->set_header('Cache-Control: no-store, no-cache, must-revalidate');
+        $this->ci->output->set_header('Cache-Control: post-check=0, pre-check=0');
+        $this->ci->output->set_header('Pragma: no-cache');
+    }
+
+    //--------------------------------------------------------------------
+
 
 }

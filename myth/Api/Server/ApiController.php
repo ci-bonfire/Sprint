@@ -191,6 +191,23 @@ class ApiController extends BaseController {
         'en-bz' => 'english',
     ];
 
+    /**
+	 * If you wish to override the default authentication
+	 * library used for authentication, set this to the
+	 * fully namespaced class name.
+	 *
+	 * @var string
+	 */
+	protected $authenticate_class = '\Myth\Api\Auth\APIAuthentication';
+
+	/**
+	 * The idiom that should be used for the language if
+	 * no specific language is requested in Accept-Language header.
+	 *
+	 * @var string
+	 */
+	protected $default_language = 'english';
+
 	//--------------------------------------------------------------------
 
 	public function __construct()
@@ -244,6 +261,11 @@ class ApiController extends BaseController {
 
 		if ($this->do_auth_check)
 		{
+			// Override the config setting for authentication
+			// so that we can have an application and API co-exist
+			// in a single codebase.
+			get_instance()->config->set_item('api.authenticate_lib', $this->authenticate_class);
+
 			if (! $this->restrict(null, true) )
 			{
 				$this->logTime();
@@ -306,7 +328,7 @@ class ApiController extends BaseController {
 	 *
 	 * @param     $data
 	 * @param int $status_code
-	 * 
+	 *
 	 * @return mixed
 	 */
 	public function respond ($data = null, $status_code = 200)
@@ -728,7 +750,7 @@ class ApiController extends BaseController {
 	{
 		if ( ! $lang = $this->input->get_request_header('Accept-Language'))
 		{
-			return null;
+			return $this->default_language;
 		}
 
 		// They might have sent a few, make it an array
@@ -750,14 +772,25 @@ class ApiController extends BaseController {
                     $lang = $this->lang_map[$lang];
                 }
 
-				$return_langs[] = $lang;
+				// We must check to see if the folder exists
+				// here since CI's lang->load will throw
+				// an error if the language doesn't exist.
+				if (is_dir(APPPATH .'language/'. $lang))
+				{
+					$return_langs[] = $lang;
+				}
 			}
 
-			return $return_langs;
+			// If no languages were added, let the script
+			// send the default language back instead.
+			if (! empty($return_langs))
+			{
+				return $return_langs;
+			}
 		}
 
 		// Nope, just return the string
-		return $lang;
+		return empty($lang) ? $this->default_language : $lang;
 	}
 
 	//--------------------------------------------------------------------

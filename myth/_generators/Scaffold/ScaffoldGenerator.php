@@ -61,7 +61,7 @@ class ScaffoldGenerator extends \Myth\Forge\BaseGenerator {
         // exists, then we need to provide some default fields.
         if (empty($this->fields))
         {
-            if (! file_exists(APPPATH .'models/'. ucfirst($name) .'_model.php'))
+            if (! $this->table_exists)
             {
                 $this->fields = "id:int id:id title:string created_on:datetime modified_on:datetime";
             }

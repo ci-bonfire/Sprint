@@ -155,6 +155,30 @@ class HMVC_Router extends CI_Router {
 
         list($module, $directory, $controller) = array_pad($segments, 3, NULL);
 
+        // Look for it in the standar APPPATH/controllers first so that it can override modules.
+        $c = count($segments);
+        $s = $segments;
+        // Loop through our segments and return as soon as a controller
+        // is found or when such a directory doesn't exist
+        while ($c-- > 0)
+        {
+            $test = $this->directory
+                    .ucfirst($this->translate_uri_dashes === TRUE ? str_replace('-', '_', $s[0]) : $s[0]);
+
+            if ( ! file_exists(APPPATH.'controllers/'.$test.'.php') && is_dir(APPPATH.'controllers/'.$this->directory.$s[0]))
+            {
+                $this->set_directory(array_shift($s), TRUE);
+                continue;
+            }
+            elseif (file_exists(APPPATH .'controllers/'. $test .'.php'))
+            {
+                return $s;
+            }
+        }
+
+        unset($s);
+
+        // Now look for it in all of our modules.
         foreach ($this->config->item('modules_locations') as $location) {
             $relative = $location;
 
@@ -216,17 +240,6 @@ class HMVC_Router extends CI_Router {
                     return $segments;
                 }
             }
-        }
-
-        // Root folder controller?
-        if (is_file(APPPATH . 'controllers/' . $_ucfirst($module) . '.php')) {
-            return $segments;
-        }
-
-        // Sub-directory controller?
-        if ($directory && is_file(APPPATH . 'controllers/' . $module . '/' . $_ucfirst($directory) . '.php')) {
-            $this->directory = $module . '/';
-            return array_slice($segments, 1);
         }
 
         // Default controller?

@@ -12,21 +12,21 @@ $down   = '';
  */
 if ($action == 'create')
 {
-	$up = "\$fields = {$fields};
+    $up = "\$fields = {$fields};
 
-		\$this->dbforge->add_field(\$fields);
+        \$this->dbforge->add_field(\$fields);
 ";
 
-	if (! empty($primary_key))
-	{
-		$up .= "        \$this->dbforge->add_key('{$primary_key}', true);
+    if (! empty($primary_key))
+    {
+        $up .= "        \$this->dbforge->add_key('{$primary_key}', true);
 ";
-	}
+    }
 
-	$up .="	    \$this->dbforge->create_table('{$table}');
-	";
+    $up .="	    \$this->dbforge->create_table('{$table}', true, config_item('migration_create_table_attr') );
+    ";
 
-	$down = "\$this->dbforge->drop_table('{$table}');";
+    $down = "\$this->dbforge->drop_table('{$table}');";
 }
 
 /*
@@ -34,10 +34,10 @@ if ($action == 'create')
  */
 if ($action == 'add' && ! empty($column))
 {
-	$up = "\$field = {$column_string};
-		\$this->dbforge->add_column('{$table}', \$field);";
+    $up = "\$field = {$column_string};
+        \$this->dbforge->add_column('{$table}', \$field);";
 
-	$down = "\$this->dbforge->drop_column('{$table}', '{$column}');";
+    $down = "\$this->dbforge->drop_column('{$table}', '{$column}');";
 }
 
 /*
@@ -45,10 +45,10 @@ if ($action == 'add' && ! empty($column))
  */
 if ($action == 'remove' && ! empty($column))
 {
-	$up = "\$this->dbforge->drop_column('{$table}', '{$column}');";
+    $up = "\$this->dbforge->drop_column('{$table}', '{$column}');";
 
-	$down = "\$field = {$column_string};
-		\$this->dbforge->add_column('{$table}', \$field);";
+    $down = "\$field = {$column_string};
+        \$this->dbforge->add_column('{$table}', \$field);";
 }
 
 //--------------------------------------------------------------------
@@ -62,19 +62,21 @@ echo "<?php
  *
  * Created by: SprintPHP
  * Created on: {$today}
+ *
+ * @property \$dbforge
  */
 class Migration_{$name} extends CI_Migration {
 
     public function up ()
     {
-		{$up}
+        {$up}
     }
 
     //--------------------------------------------------------------------
 
     public function down ()
     {
-		{$down}
+        {$down}
     }
 
     //--------------------------------------------------------------------

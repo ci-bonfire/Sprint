@@ -93,6 +93,11 @@ class APIAuthenticationTests extends CodeIgniterTestCase {
 		$this->auth->user_model->shouldReceive('where')->once()->andReturn( $this->auth->user_model );
 		$this->auth->user_model->shouldReceive('first')->once()->andReturn( false );
 
+		$this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+		$this->ci->login_model->shouldReceive('distributedBruteForceTime');
+		$this->ci->login_model->shouldReceive('countLoginAttempts');
+		$this->ci->login_model->shouldReceive('recordLoginAttempt');
+
 		$this->assertFalse( $this->auth->tryBasicAuthentication() );
 	}
 
@@ -113,6 +118,10 @@ class APIAuthenticationTests extends CodeIgniterTestCase {
 		$this->auth->user_model->shouldReceive('as_array')->once()->andReturn( $this->auth->user_model );
 		$this->auth->user_model->shouldReceive('where')->once()->andReturn( $this->auth->user_model );
 		$this->auth->user_model->shouldReceive('first')->once()->andReturn( $user );
+
+		$this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+		$this->ci->login_model->shouldReceive('distributedBruteForceTime');
+		$this->ci->login_model->shouldReceive('countLoginAttempts');
 		$this->ci->login_model->shouldReceive('recordLoginAttempt');
 
 		$this->assertEquals($user, $this->auth->tryBasicAuthentication() );
@@ -179,6 +188,10 @@ class APIAuthenticationTests extends CodeIgniterTestCase {
 
 		$this->auth->user_model->shouldReceive('as_array')->once()->andReturn( $this->auth->user_model );
 		$this->auth->user_model->shouldReceive('find_by')->once()->andReturn( $user );
+
+		$this->ci->login_model->shouldReceive('lastLoginAttemptTime');
+		$this->ci->login_model->shouldReceive('distributedBruteForceTime');
+		$this->ci->login_model->shouldReceive('countLoginAttempts');
 
 		$ruser = $this->auth->tryDigestAuthentication();
 

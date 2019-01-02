@@ -5,6 +5,8 @@
  *
  * Created by: SprintPHP
  * Created on: 2014-10-20 18:49:26 pm
+ *
+ * @property $dbforge
  */
 class Migration_create_settings_table extends CI_Migration {
 
@@ -26,8 +28,8 @@ class Migration_create_settings_table extends CI_Migration {
             ]
         ];
         $this->dbforge->add_field($fields);
-        $this->dbforge->add_key(['name', 'group']);
-        $this->dbforge->create_table('settings');
+        $this->dbforge->add_key(['name', 'group'], true);
+        $this->dbforge->create_table('settings', true, config_item('migration_create_table_attr'));
     }
 
     //--------------------------------------------------------------------
