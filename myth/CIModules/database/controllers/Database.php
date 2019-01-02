@@ -171,6 +171,9 @@ class Database extends \Myth\Controllers\CLIController
     public function refresh($type=null)
     {
         $this->load->library('migration');
+        
+        //Load the migration config
+        $this->config->load('migration');
 
         if (empty($type))
         {
